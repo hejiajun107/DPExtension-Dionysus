@@ -43,5 +43,27 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Extension.AttachEffectScript\Extension.AttachEffectScript.csproj">
+      <Project>{81332597-88fd-4d4d-96ba-79ec1f848aef}</Project>
+      <Name>Extension.AttachEffectScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extension.Ext\Extension.Ext.csproj">
+      <Project>{d0c97578-1f0d-419c-a3db-31946cf25cc6}</Project>
+      <Name>Extension.Ext</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extension.Script\Extension.Script.csproj">
+      <Project>{FB5159D2-722B-4161-9EA6-A77B10350107}</Project>
+      <Name>Extension.Script</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extension\Extension.csproj">
+      <Project>{957e3c34-e736-4145-8b05-2dc1bcfa79e1}</Project>
+      <Name>Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YRpp\PatcherYRpp.csproj">
+      <Project>{4c392077-a5ed-46cc-bc94-e1449610105c}</Project>
+      <Name>PatcherYRpp</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

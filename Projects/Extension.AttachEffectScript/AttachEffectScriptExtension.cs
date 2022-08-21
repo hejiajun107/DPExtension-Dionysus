@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
 using PatcherYRpp;
@@ -12,10 +13,10 @@ namespace Scripts
     {
 
         [INIField(Key = "AttachEffect.Scripts")]
-        public string AttachEffectScript;
+        public string AttachEffectScript = string.Empty;
 
         [INIField(Key = "AttachEffect.Scripts.Duration")]
-        public int AttachEffectDuration;
+        public int AttachEffectDuration = 0;
 
         [INIField(Key = "AttachEffect.Scripts.Cumulative")]
         public bool AttachEffectCumulative = false;
@@ -46,7 +47,6 @@ namespace Scripts
         public override void Awake()
         {
             INI = this.CreateRulesIniComponentWith<AttachEffectWarheadConfig>("Special");
-            base.Awake();
         }
 
         public override void OnPut(CoordStruct coord, Direction faceDir)
@@ -126,7 +126,7 @@ namespace Scripts
                             if (INI.Data.AttachEffectDuration > 0)
                             {
                                 var script = ScriptManager.GetScript(INI.Data.AttachEffectScript);
-                                currentScript = ScriptManager.CreateScriptableTo<TechnoExt>(GameObject,script, Owner) as AttachEffectScriptable;
+                                currentScript = ScriptManager.CreateScriptableTo(GameObject, script, Owner) as AttachEffectScriptable;
                                 currentScript.Duration = INI.Data.AttachEffectDuration;
                                 currentScript.OnAttachEffectPut(pDamage, pWH, pAttacker, pAttackingHouse);
                                 _attachEffectScriptables.Add(currentScript);
