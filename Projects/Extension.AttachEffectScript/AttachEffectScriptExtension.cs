@@ -88,7 +88,7 @@ namespace Scripts
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-            INI.INISection = pWH.Ref.Base.ID;
+            INI.Section = pWH.Ref.Base.ID;
 
             foreach (var ae in _attachEffectScriptables)
             {
