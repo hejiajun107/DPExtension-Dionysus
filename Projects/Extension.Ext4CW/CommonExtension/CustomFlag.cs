@@ -1,4 +1,5 @@
-﻿using Extension.Utilities;
+﻿using Extension.INI;
+using Extension.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,20 @@ namespace Extension.CW
     {
         public bool isCustomFlagLoaded = false;
 
+        [INIField(Key = "IsHero")]
         public bool IsHero = false;
 
+        [INIField(Key = "IsEpicUnit")]
         public bool IsEpicUnit = false;
 
+        [INIField(Key = "Harvester")]
         public bool IsHarvester = false;
 
+        [INIField(Key = "CanMk2Update")]
         public bool CanMk2Update = false;
+
+        [INIField(Key = "Script.Args")]
+        public string ScriptArgs = "";
 
         ///// <summary>
         ///// 

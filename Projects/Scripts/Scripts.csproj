@@ -31,8 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DynamicPatcher">
+      <HintPath>..\..\..\DynamicPatcher.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,12 +45,148 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AAHeatSeeker2Script.cs" />
+    <Compile Include="AdditionWeaponBulletScript.cs" />
+    <Compile Include="AE\DamageDeepenAttachEffectScript.cs" />
+    <Compile Include="AE\FreezingSnapAttachEffectScript.cs" />
+    <Compile Include="AE\HonorRetiredAttachEffect.cs" />
+    <Compile Include="AE\InsuranceAttachEffectScript.cs" />
+    <Compile Include="AE\IronCoreAttchEffectScript.cs" />
+    <Compile Include="AE\KmqAnimAttachEffectScript.cs" />
+    <Compile Include="AE\MotherShipAttachEffectScript.cs" />
+    <Compile Include="AE\NCannonQuakeAttachEffectScript.cs" />
+    <Compile Include="AE\TimeRevertAttachEffectScript.cs" />
+    <Compile Include="AircraftScript.cs" />
+    <Compile Include="AirportScript.cs" />
+    <Compile Include="AI\AntiAirGuidBuildingScript.cs" />
+    <Compile Include="American\AoeChronoScript.cs" />
+    <Compile Include="American\AuroraScript.cs" />
+    <Compile Include="American\CryoCopterScript.cs" />
+    <Compile Include="American\FixChronoMinerSBScript.cs" />
+    <Compile Include="American\FutureTankLaserBulletScript.cs" />
+    <Compile Include="American\KmqScript.cs" />
+    <Compile Include="American\MirageTankScript.cs" />
+    <Compile Include="American\ZuesTankScript.cs" />
+    <Compile Include="ArmyFlagScript.cs" />
+    <Compile Include="CampFireScript.cs" />
+    <Compile Include="China\AttackPlaneBulletScript.cs" />
+    <Compile Include="China\CannonBulletScript.cs" />
+    <Compile Include="China\DamageAsFireScript.cs" />
+    <Compile Include="China\DragonBoatScript.cs" />
+    <Compile Include="China\DragonTankScript.cs" />
+    <Compile Include="China\DragonTowerScript.cs" />
+    <Compile Include="China\DTowercript.cs" />
+    <Compile Include="China\DTowerLaserBullet.cs" />
+    <Compile Include="China\IonCannonBulletScript.cs" />
+    <Compile Include="China\IonCannonScript.cs" />
+    <Compile Include="China\J20Script.cs" />
+    <Compile Include="China\JingWeiHeliScript.cs" />
+    <Compile Include="China\Mk2UpdateSpecialScript.cs" />
+    <Compile Include="China\NCannonScript.cs" />
+    <Compile Include="China\NCannonTargetScript.cs" />
+    <Compile Include="China\OverlordScript.cs" />
+    <Compile Include="China\ParticleCannonBulletScript.cs" />
+    <Compile Include="China\PLAScript.cs" />
+    <Compile Include="China\PowerDownVirtualBuilding.cs" />
+    <Compile Include="China\SupportCenterScript.cs" />
+    <Compile Include="China\XHFragmentBulletScirpt.cs" />
+    <Compile Include="China\XHLaserTrailerBulletScript.cs" />
+    <Compile Include="China\XHSpreadFireBulletScript.cs" />
+    <Compile Include="China\XHSunStrikeTrailerBulletScript.cs" />
+    <Compile Include="China\XHSunStrikeUnitScript.cs" />
+    <Compile Include="China\XTMechScript.cs" />
+    <Compile Include="ConvertWhenBornScript.cs" />
+    <Compile Include="CopyUnitScript.cs" />
+    <Compile Include="DelayToAttachScript.cs" />
+    <Compile Include="DeptScript.cs" />
+    <Compile Include="DISKScript.cs" />
+    <Compile Include="DrainPassengerScript.cs" />
+    <Compile Include="FighterCmdBulletScript.cs" />
+    <Compile Include="ForceSaleScript.cs" />
+    <Compile Include="GGIScript.cs" />
+    <Compile Include="GiantNukeUpScript.cs" />
+    <Compile Include="Heros\BadunScript.cs" />
+    <Compile Include="Heros\BlackLotusScript.cs" />
+    <Compile Include="Heros\BorisScript.cs" />
+    <Compile Include="Heros\CComandScript.cs" />
+    <Compile Include="Heros\ColdBladeScript.cs" />
+    <Compile Include="Heros\CounterStrikeScript.cs" />
+    <Compile Include="Heros\IvanKingScript.cs" />
+    <Compile Include="Heros\JSniperScript.cs" />
+    <Compile Include="Heros\NinjaScript.cs" />
+    <Compile Include="Heros\ScMandoScript.cs" />
+    <Compile Include="Heros\ScrinEggScript.cs" />
+    <Compile Include="Heros\ScSniperScript.cs" />
+    <Compile Include="Heros\SFZSScript.cs" />
+    <Compile Include="Heros\TanyScript.cs" />
+    <Compile Include="Heros\WellkaScript.cs" />
+    <Compile Include="Heros\YuriGaiScript.cs" />
+    <Compile Include="Heros\YuriGuardScript.cs" />
+    <Compile Include="Heros\YuriPrimeScript.cs" />
+    <Compile Include="Japan\BlackHoleTrackBulletScript.cs" />
+    <Compile Include="Japan\EKingScript.cs" />
+    <Compile Include="Japan\EmpireTrooperScript.cs" />
+    <Compile Include="Japan\EpicVirusScript.cs" />
+    <Compile Include="Japan\JEpicScript.cs" />
+    <Compile Include="Japan\NanoLinkScript.cs" />
+    <Compile Include="Japan\SakuraScript.cs" />
+    <Compile Include="Japan\SuperBlackHoleBulletScript.cs" />
+    <Compile Include="Japan\SuperBlackHoleUnitScript.cs" />
+    <Compile Include="JumpetCarrierScript.cs" />
+    <Compile Include="JumpWithBulletScript.cs" />
+    <Compile Include="LinkSWScript.cs" />
+    <Compile Include="MovingPlacementScript.cs" />
+    <Compile Include="MTNKScript.cs" />
+    <Compile Include="NanoSwarmUnitScript.cs" />
+    <Compile Include="PassengerChangeHouseScript.cs" />
+    <Compile Include="PreventSbMCVScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scrin\BuzzerShieldableScript.cs" />
+    <Compile Include="Scrin\CorruptorScript.cs" />
+    <Compile Include="Scrin\ExileBulletScript.cs" />
+    <Compile Include="Scrin\ExileLauncherScript.cs" />
+    <Compile Include="Scrin\IllusionCreatorScript.cs" />
+    <Compile Include="Scrin\LaserFenceScript.cs" />
+    <Compile Include="Scrin\MeotorLauncherScript.cs" />
+    <Compile Include="Scrin\MirrorScript.cs" />
+    <Compile Include="Scrin\ScarabTargetScript.cs" />
+    <Compile Include="Scrin\ScrabScript.cs" />
+    <Compile Include="Scrin\ScrinMotherShipScript.cs" />
+    <Compile Include="Scrin\ScrinSpyScript.cs" />
+    <Compile Include="Scrin\StormTowerScript.cs" />
+    <Compile Include="Scrin\TiberiumInfestScript.cs" />
+    <Compile Include="Scrin\TiberiumScannerScript.cs" />
+    <Compile Include="Scrin\WornHoleBuildingScript.cs" />
+    <Compile Include="Scrin\WornHoleBulletScript.cs" />
+    <Compile Include="SelfUninitScript.cs" />
+    <Compile Include="Shared\ManaCounter.cs" />
+    <Compile Include="Soviet\IronCoreScript.cs" />
+    <Compile Include="Soviet\IronProtectedScript.cs" />
+    <Compile Include="Soviet\SickleJumpBullet.cs" />
+    <Compile Include="Soviet\SickleScript.cs" />
+    <Compile Include="Soviet\SovietParaDropPlaneScript.cs" />
+    <Compile Include="Soviet\SuperArouseScript.cs" />
+    <Compile Include="Soviet\TeslaTankScript.cs" />
+    <Compile Include="Soviet\Tu160Script.cs" />
+    <Compile Include="Soviet\ZepScript.cs" />
+    <Compile Include="StrongholdScript.cs" />
+    <Compile Include="TestScript.cs" />
+    <Compile Include="TrackingRocketScript.cs" />
+    <Compile Include="UnOnMapaleScript.cs" />
+    <Compile Include="Yuri\MagnetronScript.cs" />
+    <Compile Include="Yuri\RegeneratorBulletScript.cs" />
+    <Compile Include="Yuri\RegeneratorScript.cs" />
+    <Compile Include="Yuri\YuriHeadLaserBullet.cs" />
+    <Compile Include="Yuri\YuriHeadScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extension.AttachEffectScript\Extension.AttachEffectScript.csproj">
       <Project>{81332597-88fd-4d4d-96ba-79ec1f848aef}</Project>
       <Name>Extension.AttachEffectScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Extension.Ext4CW\Extension.Ext4CW.csproj">
+      <Project>{becf7998-2155-4e41-b545-1f491b5490f3}</Project>
+      <Name>Extension.Ext4CW</Name>
     </ProjectReference>
     <ProjectReference Include="..\Extension.Ext\Extension.Ext.csproj">
       <Project>{d0c97578-1f0d-419c-a3db-31946cf25cc6}</Project>
@@ -59,6 +199,10 @@
     <ProjectReference Include="..\Extension\Extension.csproj">
       <Project>{957e3c34-e736-4145-8b05-2dc1bcfa79e1}</Project>
       <Name>Extension</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PatcherYRpp.Utilities\PatcherYRpp.Utilities.csproj">
+      <Project>{AE6121FF-74CF-472A-BF7D-4543A78E7D50}</Project>
+      <Name>PatcherYRpp.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\YRpp\PatcherYRpp.csproj">
       <Project>{4c392077-a5ed-46cc-bc94-e1449610105c}</Project>
