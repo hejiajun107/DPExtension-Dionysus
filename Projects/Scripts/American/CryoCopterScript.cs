@@ -17,16 +17,16 @@ namespace DpLib.Scripts.American
 
         public CryoCopterScript(TechnoExt owner) : base(owner) { }
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            pTargetRef.Set(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
-            if (pTargetRef.TryGet(out TechnoExt target))
+            pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
+            if (!pTargetRef.Expired)
             {
-                if (target.GameObject.GetComponent(FreezingDecorator.ID) == null)
+                if (pTargetRef.GameObject.GetComponent(FreezingDecorator.ID) == null)
                 {
-                    target.GameObject.CreateScriptComponent(nameof(FreezingDecorator),FreezingDecorator.ID, "FreezingDecorator Decorator", target);
+                    pTargetRef.GameObject.CreateScriptComponent(nameof(FreezingDecorator),FreezingDecorator.ID, "FreezingDecorator Decorator", pTargetRef);
                 }
 
             }
@@ -55,7 +55,7 @@ namespace DpLib.Scripts.American
         static Pointer<WarheadTypeClass> warhead4 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH4");
 
 
-        ExtensionReference<TechnoExt> Owner;
+        TechnoExt Owner;
 
         int temperature = 300;
 
@@ -64,7 +64,7 @@ namespace DpLib.Scripts.American
 
         public override void OnUpdate()
         {
-            if (Owner.Get() == null || temperature >= initTemperature + 200)
+            if (Owner.Expired || temperature >= initTemperature + 200)
             {
                 DetachFromParent();
                 return;
@@ -79,7 +79,12 @@ namespace DpLib.Scripts.American
                 return;
             }
 
-            var technoExt = Owner.Get();
+            if(Owner.Expired)
+            { 
+                return;
+            }
+
+            var technoExt = Owner;
 
             if (technoExt == null)
             {

@@ -42,7 +42,7 @@ namespace Scripts
 
         static Pointer<SuperWeaponTypeClass> swTower => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("UnitDeliveryYuriGaiTower");
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         static Pointer<WarheadTypeClass> makeBruteWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GRUNTWH");
         static Pointer<WarheadTypeClass> showBruteWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GRUNTWHNone");
@@ -84,7 +84,7 @@ namespace Scripts
             var currentCell = CellClass.Coord2Cell(location);
             CellSpreadEnumerator enumerator = new CellSpreadEnumerator(4);
 
-            List<ExtensionReference<TechnoExt>> targets = new List<ExtensionReference<TechnoExt>>();
+            List<TechnoExt> targets = new List<TechnoExt>();
             List<int> codes = new List<int>();
 
             //检索狂兽人
@@ -113,23 +113,23 @@ namespace Scripts
                         continue;
                     }
 
-                    ExtensionReference<TechnoExt> tref = default;
+                    TechnoExt tref = default;
 
-                    tref.Set(TechnoExt.ExtMap.Find(target));
+                    tref=(TechnoExt.ExtMap.Find(target));
 
-                    if (tref.TryGet(out TechnoExt ptechno))
+                    if (!tref.Expired)
                     {
-                        if (ptechno.OwnerObject.Ref.Owner.IsNull)
+                        if (tref.OwnerObject.Ref.Owner.IsNull)
                         {
                             continue;
                         }
-                        if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != ptechno.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                        if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                         {
                             continue;
                         }
                    
-                        var hashCode = ptechno.OwnerObject.GetHashCode();
-                        var id = ptechno.Type.OwnerObject.Ref.Base.Base.ID.ToString();
+                        var hashCode = tref.OwnerObject.GetHashCode();
+                        var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
 
                         if (!BruteNameList.Contains(id))
                         {
@@ -158,9 +158,9 @@ namespace Scripts
                     for (index = 0; index < makeCount; index++)
                     {
                         var currentBrute = targets[index];
-                        if(currentBrute.TryGet(out var technoBrute))
+                        if(!currentBrute.Expired)
                         {
-                            var targetCoord = technoBrute.OwnerObject.Ref.Base.Base.GetCoords();
+                            var targetCoord = currentBrute.OwnerObject.Ref.Base.Base.GetCoords();
                             Pointer<BulletClass> pbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1000, makeBruteWarhead, 100, false);
                             pbullet.Ref.DetonateAndUnInit(targetCoord);
                         }
@@ -169,9 +169,9 @@ namespace Scripts
                     for (index = makeCount; index < makeCount + makeCount * 2; index++)
                     {
                         var currentBrute = targets[index];
-                        if (currentBrute.TryGet(out var technoBrute))
+                        if (!currentBrute.Expired)
                         {
-                            var targetCoord = technoBrute.OwnerObject.Ref.Base.Base.GetCoords();
+                            var targetCoord = currentBrute.OwnerObject.Ref.Base.Base.GetCoords();
                             Pointer<BulletClass> pbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1000, showBruteWarhead, 100, false);
                             pbullet.Ref.DetonateAndUnInit(targetCoord);
                         }

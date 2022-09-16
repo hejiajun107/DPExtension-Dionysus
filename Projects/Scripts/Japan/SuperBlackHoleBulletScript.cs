@@ -20,9 +20,9 @@ namespace DpLib.Scripts.China
 
         public bool isActived = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
-        ExtensionReference<TechnoExt> pOwnerRef;
+        TechnoExt pOwnerRef;
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisibleAll");
 
         static Pointer<WarheadTypeClass> animWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SBHAnimWh");
@@ -40,7 +40,8 @@ namespace DpLib.Scripts.China
                 var launcher = Owner.OwnerObject.Ref.Owner;
 
 
-                pOwnerRef.Set(launcher);
+                pOwnerRef = TechnoExt.ExtMap.Find(launcher);
+           
 
                 Pointer<BulletClass> spBullet = bulletType.Ref.CreateBullet(launcher.Convert<AbstractClass>(), launcher, 1, animWarhead, 100, false);
                 spBullet.Ref.DetonateAndUnInit(location + new CoordStruct(0,0,1500));
@@ -53,11 +54,11 @@ namespace DpLib.Scripts.China
                 pSuper.Ref.IsCharged = false;
 
 
-                if (pOwnerRef.TryGet(out TechnoExt pTargetExt))
+                if (!pOwnerRef.Expired)
                 {
-                    if (pTargetExt.GameObject.GetComponent(BlackHoleLauncherDecorator.ID) == null)
+                    if (pOwnerRef.GameObject.GetComponent(BlackHoleLauncherDecorator.ID) == null)
                     {
-                        pTargetExt.GameObject.CreateScriptComponent(nameof(BlackHoleLauncherDecorator),BlackHoleLauncherDecorator.ID, "BlackHoleLauncherDecorator Decorator", pTargetExt, location);
+                        pOwnerRef.GameObject.CreateScriptComponent(nameof(BlackHoleLauncherDecorator),BlackHoleLauncherDecorator.ID, "BlackHoleLauncherDecorator Decorator", pOwnerRef, location);
                     }
                 }
             }
@@ -77,8 +78,8 @@ namespace DpLib.Scripts.China
         public static int ID = 514001;
         public BlackHoleTargetDecorator(TechnoExt owner, TechnoExt self, CoordStruct center):base(owner)
         {
-            Owner.Set(owner);
-            Self.Set(self);
+            Owner = owner;
+            Self = self;
             this.center = center;
         }
 
@@ -91,8 +92,8 @@ namespace DpLib.Scripts.China
 
 
 
-        ExtensionReference<TechnoExt> Owner;
-        ExtensionReference<TechnoExt> Self;
+        TechnoExt Owner;
+        TechnoExt Self;
         CoordStruct center;
 
         int lifetime = 200;
@@ -100,7 +101,7 @@ namespace DpLib.Scripts.China
 
         public override void OnUpdate()
         {
-            if (Owner.Get() == null || Self.Get() == null || lifetime <= 0)
+            if (Owner.Expired || Self.Expired || lifetime <= 0)
             {
                 DetachFromParent();
                 return;
@@ -109,11 +110,11 @@ namespace DpLib.Scripts.China
             lifetime--;
 
 
-            var current = Self.Get().OwnerObject.Ref.Base.Base.GetCoords();
+            var current = Self.OwnerObject.Ref.Base.Base.GetCoords();
 
 
 
-            Pointer<BulletClass> spBullet = bulletType.Ref.CreateBullet(Owner.Get().OwnerObject.Convert<AbstractClass>(), Owner.Get().OwnerObject, 1, stopWarhead, 100, false);
+            Pointer<BulletClass> spBullet = bulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, stopWarhead, 100, false);
             spBullet.Ref.DetonateAndUnInit(current);
 
             var centerBlackHole = new CoordStruct(center.X, center.Y, center.Z + 5000);
@@ -121,10 +122,10 @@ namespace DpLib.Scripts.China
             if (current.Z > center.Z + 1000)
             {
                 var damage = 1;
-                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(Owner.Get().OwnerObject.Convert<AbstractClass>(), Owner.Get().OwnerObject, damage, killWarhead, 100, false);
+                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, killWarhead, 100, false);
                 pBullet.Ref.DetonateAndUnInit(current);
-                Self.Get().OwnerObject.Ref.Base.Remove();
-                Self.Get().OwnerObject.Ref.Base.UnInit();
+                Self.OwnerObject.Ref.Base.Remove();
+                Self.OwnerObject.Ref.Base.UnInit();
                 return;
             }
 
@@ -171,8 +172,8 @@ namespace DpLib.Scripts.China
                 deltaY = Math.Abs(deltaY);
             }
 
-            Self.Get().OwnerObject.Ref.Base.Remove();
-            if (!Self.Get().OwnerObject.Ref.Base.Put(new CoordStruct((int)(current.X + deltaX), (int)(current.Y + deltaY), (int)(current.Z + deltaZ)), Direction.N))
+            Self.OwnerObject.Ref.Base.Remove();
+            if (!Self.OwnerObject.Ref.Base.Put(new CoordStruct((int)(current.X + deltaX), (int)(current.Y + deltaY), (int)(current.Z + deltaZ)), Direction.N))
             {
                 //放回原位也失败的话附近找一个位置放置防止吞单位
                 CellSpreadEnumerator enumerator = new CellSpreadEnumerator(2);
@@ -186,7 +187,7 @@ namespace DpLib.Scripts.China
                     {
                         var newPos = CellClass.Cell2Coord(pCell.Ref.MapCoords);
                         newPos.Z = (int)(current.Z + deltaZ);
-                        if (Self.Get().OwnerObject.Ref.Base.Put(newPos, Direction.N))
+                        if (Self.OwnerObject.Ref.Base.Put(newPos, Direction.N))
                         {
                             break;
                         }
@@ -210,21 +211,21 @@ namespace DpLib.Scripts.China
         public static int ID = 514002;
         public BlackHoleLauncherDecorator(TechnoExt self, CoordStruct center) : base(self)
         {
-            Self.Set(self);
+            Self = self;
             this.center = center;
         }
 
 
-        ExtensionReference<TechnoExt> Self;
+        TechnoExt Self;
         CoordStruct center;
 
         int lifetime = 300;
 
         int rof = 0;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
-        ExtensionReference<TechnoExt> pOwnerRef;
+        TechnoExt pOwnerRef;
 
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisibleAll");
         static Pointer<WarheadTypeClass> damageWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SBHDamageWh");
@@ -234,7 +235,7 @@ namespace DpLib.Scripts.China
 
         public override void OnUpdate()
         {
-            if (Self.Get() == null || lifetime <= 0)
+            if (Self.Expired || lifetime <= 0)
             {
                 DetachFromParent();
                 return;
@@ -248,12 +249,12 @@ namespace DpLib.Scripts.China
 
             var location = center;
             var currentCell = CellClass.Coord2Cell(location);
-            var owner = Self.Get();
+            var owner = Self;
             if (owner != null)
             {
                 var launcher = owner.OwnerObject;
 
-                pOwnerRef.Set(launcher);
+              
 
                 CellSpreadEnumerator enumerator = new CellSpreadEnumerator(6);
 
@@ -266,18 +267,18 @@ namespace DpLib.Scripts.China
                         Point2D p2d = new Point2D(60, 60);
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, launcher);
 
-                        pTargetRef.Set(TechnoExt.ExtMap.Find(target));
-                        if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                        pTargetRef = TechnoExt.ExtMap.Find(target);
+                        if (!pTargetRef.Expired)
                         {
-                            if (pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
+                            if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                             {
-                                if(SuperBlackHoleBulletScript.immnueToBlackHoles.Contains(pTargetExt.OwnerObject.Ref.Type.Ref.Base.Base.ID))
+                                if (SuperBlackHoleBulletScript.immnueToBlackHoles.Contains(pTargetRef.OwnerObject.Ref.Type.Ref.Base.Base.ID))
                                 {
                                     continue;
                                 }
-                                if (pTargetExt.GameObject.GetComponent(BlackHoleTargetDecorator.ID) == null)
+                                if (pTargetRef.GameObject.GetComponent(BlackHoleTargetDecorator.ID) == null)
                                 {
-                                    pTargetExt.GameObject.CreateScriptComponent(nameof(BlackHoleTargetDecorator),BlackHoleTargetDecorator.ID, "BlackHoleTargetDecorator Decorator", pOwnerRef.Get(), pTargetExt, location);
+                                    pTargetRef.GameObject.CreateScriptComponent(nameof(BlackHoleTargetDecorator), BlackHoleTargetDecorator.ID, "BlackHoleTargetDecorator Decorator", owner, pTargetRef, location);
                                 }
                             }
                         }

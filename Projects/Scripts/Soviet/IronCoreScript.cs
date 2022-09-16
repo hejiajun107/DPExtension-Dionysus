@@ -35,7 +35,7 @@ namespace DpLib.Scripts.Soviet
 
 
 
-        //ExtensionReference<TechnoExt> protectedTechno;
+        //TechnoExt protectedTechno;
 
 
 
@@ -168,8 +168,8 @@ namespace DpLib.Scripts.Soviet
         public static int ID = 214001;
         public IonCoreProtection(IronCoreScript owner, TechnoExt self) : base(self)
         {
-            Owner.Set(owner.Owner);
-            Self.Set(self);
+            Owner=(owner.Owner);
+            Self=(self);
         }
 
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
@@ -178,8 +178,8 @@ namespace DpLib.Scripts.Soviet
         static Pointer<WarheadTypeClass> breakMindWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BreakMindControlWh");
 
 
-        ExtensionReference<TechnoExt> Owner;
-        ExtensionReference<TechnoExt> Self;
+        TechnoExt Owner;
+        TechnoExt Self;
 
         private int immnueCoolDown = 0;
 
@@ -198,7 +198,7 @@ namespace DpLib.Scripts.Soviet
             {
                 immnueCoolDown--;
             }
-            if (Owner.Get() == null || Self.Get() == null)
+            if (Owner.Expired || Self.Expired)
             {
                 DetachFromParent();
                 return;
@@ -206,7 +206,7 @@ namespace DpLib.Scripts.Soviet
 
             if (initHouse != 0)
             {
-                Pointer<TechnoClass> pTechno = Self.Get().OwnerObject;
+                Pointer<TechnoClass> pTechno = Self.OwnerObject;
                 if (!pTechno.Ref.Owner.IsNull)
                 {
                     initHouse = pTechno.Ref.Owner.Ref.ArrayIndex;
@@ -227,9 +227,9 @@ namespace DpLib.Scripts.Soviet
                 return;
             }
 
-            if (Self.Get()!=null)
+            if (!Self.Expired)
             {
-                Pointer<TechnoClass> pTechno = Self.Get().OwnerObject;
+                Pointer<TechnoClass> pTechno = Self.OwnerObject;
                 if (pAttackingHouse.Ref.ArrayIndex == pTechno.Ref.Owner.Ref.ArrayIndex || pTechno.Ref.Owner.Ref.IsAlliedWith(pAttackingHouse))
                     return;
 
@@ -243,12 +243,12 @@ namespace DpLib.Scripts.Soviet
                     {
                         if (pTechno.Ref.Owner.Ref.ArrayIndex != initHouse)
                         {
-                            Pointer<BulletClass> pBullet2 = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Self.Get().OwnerObject, 1, breakMindWarhead, 100, false);
+                            Pointer<BulletClass> pBullet2 = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Self.OwnerObject, 1, breakMindWarhead, 100, false);
                             pBullet2.Ref.DetonateAndUnInit(currentLocation);
                         }   
                     }
                     immnueCoolDown = 1200;
-                    Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Self.Get().OwnerObject, 1, ironWarhead, 100, false);
+                    Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Self.OwnerObject, 1, ironWarhead, 100, false);
                     pBullet.Ref.DetonateAndUnInit(currentLocation);
                 }
             }

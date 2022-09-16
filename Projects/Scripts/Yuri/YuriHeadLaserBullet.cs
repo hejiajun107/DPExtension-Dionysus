@@ -17,7 +17,7 @@ namespace DpLib.Scripts.Yuri
 
         private bool IsActive = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         static ColorStruct innerColor = new ColorStruct(255, 0, 0);
         static ColorStruct outerColor = new ColorStruct(255, 0, 0);

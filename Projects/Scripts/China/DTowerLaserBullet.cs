@@ -17,7 +17,7 @@ namespace DpLib.Scripts.Yuri
 
         private bool IsActive = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         static ColorStruct color = new ColorStruct(255, 0, 255);
 
@@ -43,18 +43,18 @@ namespace DpLib.Scripts.Yuri
             if (IsActive == false)
             {
                 IsActive = true;
-                pTargetRef.Set(Owner.OwnerObject.Ref.Owner);
+                pTargetRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                 return;
             }
 
             var height = Owner.OwnerObject.Ref.Base.GetHeight();
             var target = Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -height);
 
-            if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+            if (!pTargetRef.Expired)
             {
                 var start = Owner.OwnerObject.Ref.Owner.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,810);
 
-                var pTechno = pTargetExt.OwnerObject;
+                var pTechno = pTargetRef.OwnerObject;
 
                 var usedColor = GetColor(Owner.OwnerObject.Ref.Speed);
 

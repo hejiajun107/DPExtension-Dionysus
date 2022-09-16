@@ -31,9 +31,9 @@ namespace DpLib.Scripts.China
 
         private bool IsElite = false;
 
-        ExtensionReference<TechnoExt> pOwnerRef;
+        TechnoExt pOwnerRef;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         static List<ColorStruct> LaserLevels = new List<ColorStruct>()
         {
@@ -107,7 +107,7 @@ namespace DpLib.Scripts.China
 
         public bool reverse = false;
 
-        List<ExtensionReference<TechnoExt>> targets = new List<ExtensionReference<TechnoExt>>();
+        List<TechnoExt> targets = new List<TechnoExt>();
         List<int> codes = new List<int>();
         List<int> levels = new List<int>();
 
@@ -137,7 +137,7 @@ namespace DpLib.Scripts.China
                 InitLevelDic();
 
                 //检索目标
-                pOwnerRef.Set(Owner.OwnerObject.Ref.Owner);
+                pOwnerRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                 int height = Owner.OwnerObject.Ref.Base.GetHeight();
 
               
@@ -146,10 +146,10 @@ namespace DpLib.Scripts.China
                 startLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
                 //从附近获取建筑
-                if (pOwnerRef.TryGet(out TechnoExt pOwner))
+                if (!pOwnerRef.Expired)
                 {
 
-                    var location = pOwner.OwnerObject.Ref.Base.Base.GetCoords();
+                    var location = pOwnerRef.OwnerObject.Ref.Base.Base.GetCoords();
 
                     var currentCell = CellClass.Coord2Cell(location);
 
@@ -173,7 +173,7 @@ namespace DpLib.Scripts.China
                             }
 
                             Point2D p2d = new Point2D(60, 60);
-                            Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, pOwner.OwnerObject);
+                            Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, pOwnerRef.OwnerObject);
 
 
                             if (TechnoExt.ExtMap.Find(target) == null)
@@ -181,28 +181,28 @@ namespace DpLib.Scripts.China
                                 continue;
                             }
 
-                            ExtensionReference<TechnoExt> tref = default;
+                            TechnoExt tref = default;
 
-                            tref.Set(TechnoExt.ExtMap.Find(target));
+                            tref=(TechnoExt.ExtMap.Find(target));
 
-                            if (tref.TryGet(out TechnoExt ptechno))
+                            if (!tref.Expired)
                             {
-                                if (ptechno.OwnerObject.Ref.Owner.IsNull)
+                                if (tref.OwnerObject.Ref.Owner.IsNull)
                                 {
                                     continue;
                                 }
-                                if (pOwner.OwnerObject.Ref.Owner.Ref.ArrayIndex != ptechno.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                                if (pOwnerRef.OwnerObject.Ref.Owner.Ref.ArrayIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                                 {
                                     continue;
                                 }
-                                if (ptechno.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building)
+                                if (tref.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building)
                                 {
                                     continue;
                                 }
                                 
 
-                                var hashCode = ptechno.OwnerObject.GetHashCode();
-                                var id = ptechno.Type.OwnerObject.Ref.Base.Base.ID.ToString();
+                                var hashCode = tref.OwnerObject.GetHashCode();
+                                var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
 
                                 if (ExcludeBuildings.Contains(id))
                                 {
@@ -239,12 +239,12 @@ namespace DpLib.Scripts.China
                         //对每个建筑进行操作
                         foreach (var item in targets)
                         {
-                            if (item.TryGet(out TechnoExt pTargetExt))
+                            if (!item.Expired)
                             {
                                 var level = levels[index];
 
                                 //绘制激光
-                                var targetPos = pTargetExt.OwnerObject.Ref.Base.Base.GetCoords();
+                                var targetPos = item.OwnerObject.Ref.Base.Base.GetCoords();
                                 var pos1 = new CoordStruct(targetPos.X, targetPos.Y, location.Z);
 
                                 var laserColor = LaserLevels[level-1];
@@ -259,13 +259,13 @@ namespace DpLib.Scripts.China
 
 
                                 //关闭当前建筑
-                                Pointer<BulletClass> pEmpBullet = pBulletType.Ref.CreateBullet(pOwner.OwnerObject.Convert<AbstractClass>(), pOwner.OwnerObject, 1, empWarhead, 100, false);
+                                Pointer<BulletClass> pEmpBullet = pBulletType.Ref.CreateBullet(pOwnerRef.OwnerObject.Convert<AbstractClass>(), pOwnerRef.OwnerObject, 1, empWarhead, 100, false);
                                 pEmpBullet.Ref.DetonateAndUnInit(targetPos);
 
 
                                 for(var i = 0; i < level; i++)
                                 {
-                                    Pointer<BulletClass> pPowerBullet = pBulletType.Ref.CreateBullet(pOwner.OwnerObject.Convert<AbstractClass>(), pOwner.OwnerObject, 1, powerWarhead, 100, false);
+                                    Pointer<BulletClass> pPowerBullet = pBulletType.Ref.CreateBullet(pOwnerRef.OwnerObject.Convert<AbstractClass>(), pOwnerRef.OwnerObject, 1, powerWarhead, 100, false);
                                     pPowerBullet.Ref.DetonateAndUnInit(location + new CoordStruct(random.Next(-600,600), random.Next(-600, 600),100));
                                 }
                                 //var damage = 100;
@@ -281,19 +281,19 @@ namespace DpLib.Scripts.China
                         //消耗电力
                         if (targets.Count() >=1  && targets.Count()<=3)
                         {
-                            PowerDown(pwd200,pOwner);
+                            PowerDown(pwd200, pOwnerRef);
                         }
                         else if(targets.Count()>3 && targets.Count() <= 6)
                         {
-                            PowerDown(pwd400, pOwner);
+                            PowerDown(pwd400, pOwnerRef);
                         }
                         else if(targets.Count()>6 && targets.Count()<=8)
                         {
-                            PowerDown(pwd600, pOwner);
+                            PowerDown(pwd600, pOwnerRef);
                         }
                         else
                         {
-                            PowerDown(pwd800, pOwner);
+                            PowerDown(pwd800, pOwnerRef);
                         }
 
                     }
@@ -319,10 +319,10 @@ namespace DpLib.Scripts.China
             }
 
             attacked = true;
-            pOwnerRef.Set(Owner.OwnerObject.Ref.Owner);
-            if (pOwnerRef.TryGet(out TechnoExt pAtOwner))
+            pOwnerRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+            if (!pOwnerRef.Expired)
             {
-                DoAttack(pAtOwner);
+                DoAttack(pOwnerRef);
             }
         }
 
@@ -562,7 +562,7 @@ namespace DpLib.Scripts.China
         //                        continue;
         //                    }
 
-        //                    ExtensionReference<TechnoExt> tref = default;
+        //                    TechnoExt tref = default;
 
         //                    tref.Set(TechnoExt.ExtMap.Find(target));
 
@@ -645,14 +645,14 @@ namespace DpLib.Scripts.China
         public static int ID = 414008;
         public XhWeaponExplodeDecorator(TechnoExt self, CoordStruct center, int height, int range) : base(self)
         {
-            Self.Set(self);
+            Self = self;
             this.center = center;
             isActived = true;
             this.range = range;
             this.height = height;
         }
 
-        ExtensionReference<TechnoExt> Self;
+        TechnoExt Self;
 
 
         private bool isActived = false;
@@ -680,7 +680,7 @@ namespace DpLib.Scripts.China
         public override void OnUpdate()
         {
 
-            if (Self.Get() == null)
+            if (Self.Expired)
             {
                 DetachFromParent();
                 //Decorative.Remove(this);
@@ -694,7 +694,7 @@ namespace DpLib.Scripts.China
 
             //rof = 3;
 
-            var Owner = Self.Get();
+            var Owner = Self;
 
 
             if (isActived)

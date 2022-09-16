@@ -16,7 +16,7 @@ namespace DpLib.Scripts.China
     {
         public XTMechScript(TechnoExt owner) : base(owner) { }
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         static Pointer<WarheadTypeClass> selfWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkipWhSelf");
         static Pointer<WarheadTypeClass> targeWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkipWhTarget");
@@ -91,11 +91,11 @@ namespace DpLib.Scripts.China
 
                 if (transCoolDown == 0)
                 {
-                    pTargetRef.Set(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
-                    if (pTargetRef.TryGet(out TechnoExt target))
+                    pTargetRef = (TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
+                    if (!pTargetRef.Expired)
                     {
                         var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                        var targetLocation = target.OwnerObject.Ref.Base.Base.GetCoords();
+                        var targetLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();
                         var distance = currentLocation.DistanceFrom(targetLocation);
                         if (distance >= 4 * 256 && distance <= 14 * 256)
                         {

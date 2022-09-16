@@ -32,7 +32,7 @@ namespace DpLib.Scripts
         
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
-        ExtensionReference<TechnoExt> tref;
+        TechnoExt tref;
 
 
         public override void OnUpdate()
@@ -64,11 +64,11 @@ namespace DpLib.Scripts
                                 continue;
                             }
 
-                            tref.Set(TechnoExt.ExtMap.Find(ptargetTechno));
+                            tref = (TechnoExt.ExtMap.Find(ptargetTechno));
 
-                            if(tref.TryGet(out var technoExt))
+                            if (!tref.Expired)
                             {
-                                var ptechno = technoExt.OwnerObject;
+                                var ptechno = tref.OwnerObject;
 
                                 if (ptechno.IsNull)
                                     continue;

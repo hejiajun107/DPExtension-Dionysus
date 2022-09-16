@@ -68,7 +68,7 @@ namespace DpLib.Scripts.Yuri
                             continue;
                         }
 
-                        ExtensionReference<TechnoExt> tref = default;
+                        TechnoExt tref = default;
 
                         tref.Set(TechnoExt.ExtMap.Find(target));
 

@@ -17,7 +17,7 @@ namespace DpLib.Scripts.American
 
         private int checkRof = 0;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         private int duration = 0;
 
@@ -37,11 +37,11 @@ namespace DpLib.Scripts.American
 
                 if (Owner.OwnerObject.Ref.Ammo > 0 && duration <= 1000)
                 {
-                    pTargetRef.Set(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
-                    if (pTargetRef.TryGet(out TechnoExt target))
+                    pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
+                    if (!pTargetRef.Expired)
                     {
                         var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                        var targetLocation = target.OwnerObject.Ref.Base.Base.GetCoords();
+                        var targetLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();
                         var distance = currentLocation.DistanceFrom(targetLocation);
                         if (distance <= 30 * 256)
                         {

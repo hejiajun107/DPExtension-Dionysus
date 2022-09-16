@@ -86,32 +86,32 @@ namespace DpLib.Scripts.Japan
                         continue;
                     }
 
-                    ExtensionReference<TechnoExt> tref = default;
+                    TechnoExt tref = default;
 
-                    tref.Set(TechnoExt.ExtMap.Find(target));
+                    tref=(TechnoExt.ExtMap.Find(target));
 
-                    if (tref.TryGet(out TechnoExt ptechno))
+                    if (!tref.Expired)
                     {
-                        if (ptechno.OwnerObject.Ref.Owner.IsNull)
+                        if (tref.OwnerObject.Ref.Owner.IsNull)
                         {
                             continue;
                         }
 
-                        if (ptechno.OwnerObject.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex))
+                        if (tref.OwnerObject.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex))
                         {
                             continue;
                         }
 
-                        if(ptechno.OwnerObject.Ref.Base.IsVisible == false || ptechno.OwnerObject.Ref.Base.InLimbo==true || ptechno.OwnerObject.Ref.Base.IsAlive == false)
+                        if(tref.OwnerObject.Ref.Base.IsVisible == false || tref.OwnerObject.Ref.Base.InLimbo==true || tref.OwnerObject.Ref.Base.IsAlive == false)
                         {
                             continue;
                         }
 
                         Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, damageWarhead, 30, true);
-                        dbullet.Ref.DetonateAndUnInit(ptechno.OwnerObject.Ref.Base.Base.GetCoords());
+                        dbullet.Ref.DetonateAndUnInit(tref.OwnerObject.Ref.Base.Base.GetCoords());
 
                         Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, shootWarhead, 30, true);
-                        bullet.Ref.MoveTo(ptechno.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,150), new BulletVelocity(0, 0, 0));
+                        bullet.Ref.MoveTo(tref.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,150), new BulletVelocity(0, 0, 0));
                         bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
                         count++;
                     }

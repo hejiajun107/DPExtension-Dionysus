@@ -70,36 +70,36 @@ namespace DpLib.Scripts.Heros
                                 continue;
                             }
 
-                            ExtensionReference<TechnoExt> tref = default;
+                            TechnoExt tref = default;
 
-                            tref.Set(TechnoExt.ExtMap.Find(target));
+                            tref=(TechnoExt.ExtMap.Find(target));
 
-                            if (tref.TryGet(out TechnoExt ptechno))
+                            if (!tref.Expired)
                             {
-                                if (ptechno.OwnerObject.Ref.Owner.IsNull)
+                                if (tref.OwnerObject.Ref.Owner.IsNull)
                                     continue;
                                 //if (!Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(ptechno.OwnerObject.Ref.Owner))
                                 //    continue;
-                                if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != ptechno.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                                if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                                     continue;
                                 if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit && Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Infantry)
                                     continue;
-                                var hashCode = ptechno.OwnerObject.GetHashCode().ToString();
+                                var hashCode = tref.OwnerObject.GetHashCode().ToString();
 
 
-                                var gext = ptechno.GameObject.GetComponent<TechnoGlobalExtension>();
+                                var gext = tref.GameObject.GetComponent<TechnoGlobalExtension>();
                                 if (gext == null)
                                     continue;
 
                                 if (gext.Data.IsHero || gext.Data.IsEpicUnit)
                                     continue;
 
-                                var id = ptechno.Type.OwnerObject.Ref.Base.Base.ID.ToString();
+                                var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
 
                                 if (unitRecords.ContainsKey(hashCode))
                                 {
                                     unitRecords[hashCode].LifeTime = lifeTime;
-                                    unitRecords[hashCode].Location = ptechno.OwnerObject.Ref.Base.Base.GetCoords();
+                                    unitRecords[hashCode].Location = tref.OwnerObject.Ref.Base.Base.GetCoords();
                                     continue;
                                 }
                                 else
@@ -109,8 +109,8 @@ namespace DpLib.Scripts.Heros
                                         Techno = tref,
                                         Key = hashCode,
                                         LifeTime = lifeTime,
-                                        Location = ptechno.OwnerObject.Ref.Base.Base.GetCoords(),
-                                        Type = ptechno.OwnerObject.Ref.Type.Ref.Base.Base.ID,
+                                        Location = tref.OwnerObject.Ref.Base.Base.GetCoords(),
+                                        Type = tref.OwnerObject.Ref.Type.Ref.Base.Base.ID,
                                         IsDead = false
                                     };
 
@@ -144,9 +144,9 @@ namespace DpLib.Scripts.Heros
 
                     if (unit.IsDead == false)
                     {
-                        if (unit.Techno.TryGet(out var techno))
+                        if (!unit.Techno.Expired)
                         {
-                            unit.Location = techno.OwnerObject.Ref.Base.Base.GetCoords();
+                            unit.Location = unit.Techno.OwnerObject.Ref.Base.Base.GetCoords();
                         }
                         else
                         {
@@ -210,7 +210,7 @@ namespace DpLib.Scripts.Heros
                     var unit = kvp.Value;
                     if (unit.IsDead == false)
                     {
-                        if (!unit.Techno.TryGet(out var techno))
+                        if (unit.Techno.Expired)
                         {
                             unit.IsDead = true;
                         }
@@ -246,7 +246,7 @@ namespace DpLib.Scripts.Heros
     {
         public string Key { get; set; }
 
-        public ExtensionReference<TechnoExt> Techno;
+        public TechnoExt Techno;
 
         public string Type { get; set; }
 

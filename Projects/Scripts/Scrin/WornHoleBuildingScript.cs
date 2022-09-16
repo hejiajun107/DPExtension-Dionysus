@@ -20,7 +20,7 @@ namespace DpLib.Scripts.Scrin
 
         //private bool inited = false;
 
-        //ExtensionReference<TechnoExt> center;
+        //TechnoExt center;
         private int delay = 100;
 
 

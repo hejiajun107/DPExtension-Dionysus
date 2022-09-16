@@ -18,22 +18,22 @@ namespace DpLib.Scripts.China
 
         public bool isActived = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
 
 
         public override void OnUpdate()
         {
-            if(isActived==false)
+            if (isActived == false)
             {
-                pTargetRef.Set(Owner.OwnerObject.Ref.Owner);
+                pTargetRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                 int height = Owner.OwnerObject.Ref.Base.GetHeight();
-                if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                if (!pTargetRef.Expired)
                 {
-                    if (pTargetExt.GameObject.GetComponent(IonCannonLauncherDecorator.ID) == null)
+                    if (pTargetRef.GameObject.GetComponent(IonCannonLauncherDecorator.ID) == null)
                     {
                         var pos = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
-                        pTargetExt.GameObject.CreateScriptComponent(nameof(IonCannonLauncherDecorator),IonCannonLauncherDecorator.ID, "IonCannonLauncherDecorator Decorator", pTargetExt, pos,height);
+                        pTargetRef.GameObject.CreateScriptComponent(nameof(IonCannonLauncherDecorator),IonCannonLauncherDecorator.ID, "IonCannonLauncherDecorator Decorator", pTargetRef, pos,height);
                     }
                 }
             }
@@ -47,12 +47,12 @@ namespace DpLib.Scripts.China
             public static int ID = 414001;
             public IonCannonLauncherDecorator(TechnoExt self, CoordStruct center, int height) : base(self)
             {
-                Self.Set(self);
+                Self=(self);
                 this.center = center;
                 this.height = height;
             }
 
-            ExtensionReference<TechnoExt> Self;
+            TechnoExt Self;
 
             //static ColorStruct innerColor = new ColorStruct(255, 0, 0);
             //static ColorStruct outerColor = new ColorStruct(255, 0, 0);
@@ -102,13 +102,13 @@ namespace DpLib.Scripts.China
 
             public override void OnUpdate()
             {
-                if (Self.Get() == null)
+                if (Self.Expired)
                 {
                     DetachFromParent();
                     return;
                 }
 
-                var Owner = Self.Get();
+                var Owner = Self;
 
                 if (isActived == false)
                 {

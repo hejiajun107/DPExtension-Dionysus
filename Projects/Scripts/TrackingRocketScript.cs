@@ -17,7 +17,7 @@ namespace DpLib.Scripts
 
         private bool targetSetted = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
 
         public override void OnUpdate()

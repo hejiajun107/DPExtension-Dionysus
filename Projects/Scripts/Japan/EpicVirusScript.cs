@@ -39,7 +39,7 @@ namespace DpLib.Scripts.Japan
             if (delay-- <= 0)
             {
 
-                List<ExtensionReference<TechnoExt>> targets = new List<ExtensionReference<TechnoExt>>();
+                List<TechnoExt> targets = new List<TechnoExt>();
 
                 delay = 30;
                 //检测单位
@@ -71,25 +71,25 @@ namespace DpLib.Scripts.Japan
                             continue;
                         }
 
-                        ExtensionReference<TechnoExt> tref = default;
+                        TechnoExt tref = default;
 
-                        tref.Set(TechnoExt.ExtMap.Find(target));
+                        tref=(TechnoExt.ExtMap.Find(target));
 
 
 
-                        if (tref.TryGet(out TechnoExt ptechno))
+                        if (!tref.Expired)
                         {
-                            if (ptechno.OwnerObject.Ref.Owner.IsNull)
+                            if (tref.OwnerObject.Ref.Owner.IsNull)
                             {
                                 continue;
                             }
-                            if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != ptechno.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                            if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                             {
                                 continue;
                             }
                          
                          
-                            var id = ptechno.Type.OwnerObject.Ref.Base.Base.ID.ToString();
+                            var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
 
                             if(id != "EPVIRUS")
                             {
@@ -109,10 +109,10 @@ namespace DpLib.Scripts.Japan
                         //对每个建筑进行操作
                         foreach (var item in targets)
                         {
-                            if (item.TryGet(out TechnoExt pTargetExt))
+                            if (!item.Expired)
                             {
-                                Explode(pTargetExt.OwnerObject.Ref.Base.Base.GetCoords(), i);
-                                pTargetExt.OwnerObject.Ref.Base.UnInit();
+                                Explode(item.OwnerObject.Ref.Base.Base.GetCoords(), i);
+                                item.OwnerObject.Ref.Base.UnInit();
                                 i++;
                             }
                         }

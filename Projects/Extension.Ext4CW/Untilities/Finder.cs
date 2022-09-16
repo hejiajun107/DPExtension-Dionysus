@@ -11,28 +11,26 @@ namespace Extension.Utilities
 {
     public class Finder
     {
-        public static List<ExtensionReference<TechnoExt>> FindTechno(Pointer<HouseClass> pHouse, Func<Pointer<TechnoClass>, bool> expression, FindRange findRange)
+        public static List<TechnoExt> FindTechno(Pointer<HouseClass> pHouse, Func<Pointer<TechnoClass>, bool> expression, FindRange findRange)
         {
             ref DynamicVectorClass<Pointer<TechnoClass>> technos = ref TechnoClass.Array;
-            List<ExtensionReference<TechnoExt>> targets = new List<ExtensionReference<TechnoExt>>();
+            List<TechnoExt> targets = new List<TechnoExt>();
             for (int i = technos.Count - 1; i >= 0; i--)
             {
                 Pointer<TechnoClass> pTechno = technos.Get(i);
          
                 if(IsValidTechno(pTechno,pHouse,expression,findRange))
                 {
-                    ExtensionReference<TechnoExt> tref = default;
-                    tref.Set(TechnoExt.ExtMap.Find(pTechno));
-                    targets.Add(tref);
+                    targets.Add(TechnoExt.ExtMap.Find(pTechno));
                 }
             }
             return targets;
         }
 
-        public static ExtensionReference<TechnoExt> FineOneTechno(Pointer<HouseClass> pHouse, Func<Pointer<TechnoClass>, bool> expression, FindRange findRange)
+        public static TechnoExt FineOneTechno(Pointer<HouseClass> pHouse, Func<Pointer<TechnoClass>, bool> expression, FindRange findRange)
         {
             ref DynamicVectorClass<Pointer<TechnoClass>> technos = ref TechnoClass.Array;
-            ExtensionReference<TechnoExt> tref = default;
+            TechnoExt tref = null;
 
             for (int i = technos.Count - 1; i >= 0; i--)
             {
@@ -40,8 +38,7 @@ namespace Extension.Utilities
 
                 if (IsValidTechno(pTechno, pHouse, expression, findRange))
                 {
-                    tref.Set(TechnoExt.ExtMap.Find(pTechno));
-                    return tref;
+                    return TechnoExt.ExtMap.Find(pTechno);
                 }
             }
             return tref;

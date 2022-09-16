@@ -17,7 +17,7 @@ namespace DpLib.Scripts.Yuri
 
         private bool IsActive = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         static ColorStruct innerColor = new ColorStruct(0, 180, 255);
         static ColorStruct outerColor = new ColorStruct(0, 128, 255);
@@ -36,7 +36,7 @@ namespace DpLib.Scripts.Yuri
             {
                 IsActive = true;
                 start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                pTargetRef.Set(Owner.OwnerObject.Ref.Owner);
+                pTargetRef=TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                 end = Owner.OwnerObject.Ref.TargetCoords;
                 return;
             }
@@ -50,9 +50,9 @@ namespace DpLib.Scripts.Yuri
             }
 
 
-            if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+            if (!pTargetRef.Expired)
             {
-                var pTechno = pTargetExt.OwnerObject;
+                var pTechno = pTargetRef.OwnerObject;
                 Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, innerColor, outerColor, outerSpread, 20);
                 pLaser.Ref.IsHouseColor = true;
                 pLaser.Ref.Thickness = 1;

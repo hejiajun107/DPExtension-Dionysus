@@ -30,7 +30,7 @@ namespace DpLib.Scripts.AE
         private int delay = 200;
         private bool inited = false;
 
-        private ExtensionReference<TechnoExt> attacker;
+        private TechnoExt attacker;
 
         private CoordStruct lastCoord = default;
 
@@ -70,9 +70,9 @@ namespace DpLib.Scripts.AE
 
             //引爆
             //设定发射者
-            if (attacker.TryGet(out var ptechno))
+            if (!attacker.IsNullOrExpired())
             {
-                launcher = ptechno.OwnerObject;
+                launcher = attacker.OwnerObject;
             }
             else
             {
@@ -125,7 +125,10 @@ namespace DpLib.Scripts.AE
             //获取发射者
             if (!pAttacker.IsNull)
             {
-                attacker.Set(pAttacker);
+                if(pAttacker.CastToTechno(out var ptAttcker))
+                {
+                    attacker = TechnoExt.ExtMap.Find(ptAttcker);
+                }
             }
 
             if(!pWH.IsNull)

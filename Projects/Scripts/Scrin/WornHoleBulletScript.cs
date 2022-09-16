@@ -31,7 +31,7 @@ namespace DpLib.Scripts.Scrin
         static Pointer<WarheadTypeClass> aWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("WornActiveWH");
         static Pointer<WarheadTypeClass> eWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("WornEffectWH");
 
-        List<ExtensionReference<TechnoExt>> targets = new List<ExtensionReference<TechnoExt>>();
+        List<TechnoExt> targets = new List<TechnoExt>();
 
         public override void OnUpdate()
         {

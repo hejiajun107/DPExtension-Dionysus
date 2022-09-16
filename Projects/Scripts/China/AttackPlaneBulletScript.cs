@@ -17,7 +17,7 @@ namespace DpLib.Scripts.China
 
         public bool isActived = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         private static ColorStruct innerColor = new ColorStruct(200, 200, 160);
         private static ColorStruct outerColor = new ColorStruct(0, 0, 0);
@@ -37,12 +37,12 @@ namespace DpLib.Scripts.China
         {
             if (isActived == false)
             {
-                pTargetRef.Set(Owner.OwnerObject.Ref.Owner);
+                pTargetRef=TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
 
-                if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                if (!pTargetRef.Expired)
                 {
                     //单位起始位置
-                    StartOwner = pTargetExt.OwnerObject.Ref.Base.Base.GetCoords();
+                    StartOwner = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();
                     //起始开火点
                     StartFire = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                     isActived = true;
@@ -51,18 +51,18 @@ namespace DpLib.Scripts.China
 
             if(isActived)
             {
-                if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                if (!pTargetRef.Expired)
                 {
-                    var moveLocation = pTargetExt.OwnerObject.Ref.Base.Base.GetCoords() - StartOwner;
+                    var moveLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords() - StartOwner;
                     var fireStart = StartFire + moveLocation;
                     var height = Owner.OwnerObject.Ref.Base.GetHeight();
                     var fireEnd = Owner.OwnerObject.Ref.Base.Base.GetCoords() - new CoordStruct(0, 0, height);
                     Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(fireStart, fireEnd, innerColor, outerColor, outerSpread, 2);
 
-                    Pointer<BulletClass> pBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetExt.OwnerObject, damage, scanWarhead, 100, true);
+                    Pointer<BulletClass> pBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetRef.OwnerObject, damage, scanWarhead, 100, true);
                     pBullet.Ref.DetonateAndUnInit(fireEnd);
 
-                    Pointer<BulletClass> pBulletAnim = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetExt.OwnerObject, 1, animWarhead, 100, false);
+                    Pointer<BulletClass> pBulletAnim = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetRef.OwnerObject, 1, animWarhead, 100, false);
                     pBulletAnim.Ref.DetonateAndUnInit(fireStart);
 
                     if(damage<18)

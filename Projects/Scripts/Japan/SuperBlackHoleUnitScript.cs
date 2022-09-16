@@ -20,7 +20,7 @@ namespace DpLib.Scripts.Japan
         {
         }
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         //起爆点位置调整（相当于投放点坐标X，Y，Z的变化）
         static CoordStruct XYZAdujust = new CoordStruct(0,0,1500);
@@ -199,14 +199,14 @@ namespace DpLib.Scripts.Japan
         }
 
 
-        ExtensionReference<TechnoExt> Self;
+        TechnoExt Self;
 
         int lifetime = 200;
 
 
         public override void OnUpdate()
         {
-            if (Self.Get() == null || lifetime <= 0)
+            if (Self.Expired || lifetime <= 0)
             {
                 DetachFromParent();
                 return;

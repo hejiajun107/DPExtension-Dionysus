@@ -28,7 +28,7 @@ namespace DpLib.Scripts.China
 
         private int height = 150;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
 
         static Pointer<BulletTypeClass> bullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
@@ -101,7 +101,7 @@ namespace DpLib.Scripts.China
                     //            continue;
                     //        }
 
-                    //        ExtensionReference<TechnoExt> tref = default;
+                    //        TechnoExt tref = default;
 
                     //        tref.Set(TechnoExt.ExtMap.Find(target));
 

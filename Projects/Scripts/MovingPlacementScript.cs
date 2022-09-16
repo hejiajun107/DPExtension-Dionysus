@@ -20,20 +20,20 @@ namespace DpLib.Scripts
 
         static Pointer<TechnoTypeClass> placementType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("VirtualPlacement");
 
-        ExtensionReference<TechnoExt> buildingReference;
+        TechnoExt buildingReference;
 
         //CellStruct lastCell;
 
         public override void OnUpdate()
         {
-            if (!buildingReference.TryGet(out var technoExt))
+            if (buildingReference == null || buildingReference.Expired)
             {
                 var building = placementType.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
 
                 var tExt = TechnoExt.ExtMap.Find(building);
                 if (tExt != null)
                 {
-                    buildingReference.Set(tExt);
+                    buildingReference=(tExt);
                 }
             }
 
@@ -55,9 +55,9 @@ namespace DpLib.Scripts
             //}
 
 
-            if (buildingReference.TryGet(out var technoExt2))
+            if (!buildingReference.Expired)
             {
-                technoExt2.OwnerObject.Ref.Base.Remove();
+                buildingReference.OwnerObject.Ref.Base.Remove();
 
                 if (Owner.OwnerObject.Ref.Base.IsOnMap && !Owner.OwnerObject.Ref.Base.InLimbo)
                 {
@@ -66,7 +66,7 @@ namespace DpLib.Scripts
                         var building = pcell.Ref.GetBuilding();
                         if (building.IsNull)
                         {
-                            technoExt2.OwnerObject.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Direction.N);
+                            buildingReference.OwnerObject.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Direction.N);
                         }
                     }
                 }
@@ -77,10 +77,10 @@ namespace DpLib.Scripts
 
         public override void OnRemove()
         {
-            if (buildingReference.TryGet(out var technoExt))
+            if (buildingReference!=null && !buildingReference.Expired)
             {
-                technoExt.OwnerObject.Ref.Base.Remove();
-                technoExt.OwnerObject.Ref.Base.UnInit();
+                buildingReference.OwnerObject.Ref.Base.Remove();
+                buildingReference.OwnerObject.Ref.Base.UnInit();
             }
             base.OnRemove();
         }

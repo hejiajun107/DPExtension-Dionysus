@@ -24,9 +24,9 @@ namespace DpLib.Scripts.Scrin
 
         private int delay = 1200;
 
-        List<ExtensionReference<TechnoExt>> targets = new List<ExtensionReference<TechnoExt>>();
+        List<TechnoExt> targets = new List<TechnoExt>();
 
-        List<ExtensionReference<TechnoExt>> illusions = new List<ExtensionReference<TechnoExt>>();
+        List<TechnoExt> illusions = new List<TechnoExt>();
 
 
         private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
@@ -74,7 +74,7 @@ namespace DpLib.Scripts.Scrin
                             continue;
                         }
 
-                        ExtensionReference<TechnoExt> tref = default;
+                        TechnoExt tref = default;
 
                         tref.Set(TechnoExt.ExtMap.Find(techno));
 
@@ -155,7 +155,7 @@ namespace DpLib.Scripts.Scrin
                                     if (techno.Ref.Base.Put(targetLocation, Direction.N))
                                     {
                                         putted = true;
-                                        ExtensionReference<TechnoExt> illusion = default;
+                                        TechnoExt illusion = default;
                                         illusion.Set(TechnoExt.ExtMap.Find(techno));
                                         illusions.Add(illusion);
 

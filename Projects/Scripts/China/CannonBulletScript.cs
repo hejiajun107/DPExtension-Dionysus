@@ -18,7 +18,7 @@ namespace DpLib.Scripts.China
 
         private bool Inited = false;
 
-        private List<ExtensionReference<TechnoExt>> Technos;
+        private List<TechnoExt> Technos;
 
 
         public override void OnUpdate()

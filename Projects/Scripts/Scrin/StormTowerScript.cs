@@ -24,7 +24,7 @@ namespace DpLib.Scripts.Scrin
 
         static Pointer<TechnoTypeClass> pType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("STROMBALL");
 
-        List<ExtensionReference<TechnoExt>> technos = new List<ExtensionReference<TechnoExt>>();
+        List<TechnoExt> technos = new List<TechnoExt>();
 
         private int radius = 420;
 
@@ -51,8 +51,7 @@ namespace DpLib.Scripts.Scrin
                 
                     var putResult = techno.Ref.Base.Put(position, Direction.N);
 
-                    var ext = new ExtensionReference<TechnoExt>();
-                    ext.Set(techno);
+                    var ext = TechnoExt.ExtMap.Find(techno);
                     technos.Add(ext);
                 }
 
@@ -96,9 +95,9 @@ namespace DpLib.Scripts.Scrin
             base.OnFire(pTarget, weaponIndex);
             foreach(var item in technos)
             {
-                if (item.TryGet(out var technoExt))
+                if (!item.Expired)
                 {
-                    technoExt.OwnerObject.Ref.SetTarget(pTarget);
+                    item.OwnerObject.Ref.SetTarget(pTarget);
                 }
             }
         }
@@ -107,9 +106,9 @@ namespace DpLib.Scripts.Scrin
         {
             foreach (var item in technos)
             {
-                if (item.TryGet(out var technoExt))
+                if (!item.Expired)
                 {
-                    technoExt.OwnerObject.Ref.Base.UnInit();
+                    item.OwnerObject.Ref.Base.UnInit();
                 }
             }
             base.OnRemove();

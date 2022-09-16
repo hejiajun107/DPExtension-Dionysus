@@ -28,7 +28,7 @@ namespace DpLib.Scripts.Japan
         static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChaosUnitKillWh");
 
         
-        private ExtensionReference<TechnoExt> pTargetRef;
+        private TechnoExt pTargetRef;
 
         public override void OnUpdate()
         {
@@ -62,20 +62,20 @@ namespace DpLib.Scripts.Japan
                         Point2D p2d = new Point2D(60, 60);
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
 
-                        pTargetRef.Set(TechnoExt.ExtMap.Find(target));
-                        if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                        pTargetRef = TechnoExt.ExtMap.Find(target);
+                        if (pTargetRef!=null && !pTargetRef.Expired)
                         {
-                            if (pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
+                            if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
                                 continue;
 
-                            if (pTargetExt.OwnerObject.Ref.Owner.Ref.ArrayIndex != Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex && !Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(pTargetExt.OwnerObject.Ref.Owner.Ref.ArrayIndex))
+                            if (pTargetRef.OwnerObject.Ref.Owner.Ref.ArrayIndex != Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex && !Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(pTargetRef.OwnerObject.Ref.Owner.Ref.ArrayIndex))
                                 continue;
-                            var id = pTargetExt.Type.OwnerObject.Ref.Base.Base.ID.ToString();
+                            var id = pTargetRef.Type.OwnerObject.Ref.Base.Base.ID.ToString();
                             if (id == "NANOLK")
                                 continue;
-                            if (pTargetExt.GameObject.GetComponent(LinkedTechnoDecorator.ID) == null)
+                            if (pTargetRef.GameObject.GetComponent(LinkedTechnoDecorator.ID) == null)
                             {
-                                pTargetExt.GameObject.CreateScriptComponent(nameof(LinkedTechnoDecorator),LinkedTechnoDecorator.ID, "LinkedTechnoDecorator Decorator", pTargetExt, Owner);
+                                pTargetRef.GameObject.CreateScriptComponent(nameof(LinkedTechnoDecorator),LinkedTechnoDecorator.ID, "LinkedTechnoDecorator Decorator", pTargetRef, Owner);
                             }
                         }
                     }
@@ -93,13 +93,13 @@ namespace DpLib.Scripts.Japan
         public static int ID = 514003;
         public LinkedTechnoDecorator(TechnoExt self, TechnoExt target) : base(self)
         {
-            Self.Set(self);
-            Target.Set(target);
+            Self = self;
+            Target = target;
         }
 
 
-        ExtensionReference<TechnoExt> Self;
-        ExtensionReference<TechnoExt> Target;
+        TechnoExt Self;
+        TechnoExt Target;
 
         private static ColorStruct innerColor = new ColorStruct(255, 0, 128);
         private static ColorStruct outerColor = new ColorStruct(255, 0, 128);
@@ -114,20 +114,20 @@ namespace DpLib.Scripts.Japan
 
         public override void OnUpdate()
         {
-            if (Self.Get() == null)
+            if (Self.Expired)
             {
                 DetachFromParent();
                 return;
             }
 
-            if (Target.Get() == null)
+            if (Target.Expired)
             {
                 DetachFromParent();
                 return;
             }
 
-            var selfLocation = Self.Get().OwnerObject.Ref.Base.Base.GetCoords(); 
-            var targetLocaton = Target.Get().OwnerObject.Ref.Base.Base.GetCoords();
+            var selfLocation = Self.OwnerObject.Ref.Base.Base.GetCoords(); 
+            var targetLocaton = Target.OwnerObject.Ref.Base.Base.GetCoords();
             //超过一定距离中断连接
             if (selfLocation.DistanceFrom(targetLocaton) > 2560)
             {
@@ -138,11 +138,11 @@ namespace DpLib.Scripts.Japan
             if (rof-- < 0)
             {
                 rof = 20;
-                if (Self.TryGet(out TechnoExt pself))
+                if (!Self.Expired)
                 {
                     var damage = 1;
-                    Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pself.OwnerObject.Convert<AbstractClass>(), pself.OwnerObject, damage, immnueWarhead, 100, false);
-                    pBullet.Ref.DetonateAndUnInit(pself.OwnerObject.Ref.Base.Base.GetCoords());
+                    Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(Self.OwnerObject.Convert<AbstractClass>(), Self.OwnerObject, damage, immnueWarhead, 100, false);
+                    pBullet.Ref.DetonateAndUnInit(Self.OwnerObject.Ref.Base.Base.GetCoords());
 
                 }
 
@@ -151,9 +151,9 @@ namespace DpLib.Scripts.Japan
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-            if(Self.TryGet(out TechnoExt pself))
+            if(!Self.Expired)
             {
-                if(Target.TryGet(out TechnoExt ptarget))
+                if(!Target.Expired)
                 {
                     if (pAttackingHouse.IsNull)
                     {
@@ -170,15 +170,15 @@ namespace DpLib.Scripts.Japan
                     }
 
 
-                    var realDamage = MapClass.GetTotalDamage(pDamage.Ref, pWH, pself.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) / 2;
+                    var realDamage = MapClass.GetTotalDamage(pDamage.Ref, pWH, Self.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) / 2;
 
-                    Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pself.OwnerObject.Convert<AbstractClass>(), pself.OwnerObject, realDamage, warhead, 100, true);
-                    pBullet.Ref.DetonateAndUnInit(ptarget.OwnerObject.Ref.Base.Base.GetCoords());
+                    Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(Self.OwnerObject.Convert<AbstractClass>(), Self.OwnerObject, realDamage, warhead, 100, true);
+                    pBullet.Ref.DetonateAndUnInit(Target.OwnerObject.Ref.Base.Base.GetCoords());
 
-                    var skyCoord = pself.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 200);
+                    var skyCoord = Self.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 200);
 
-                    Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pself.OwnerObject.Ref.Base.Base.GetCoords(), skyCoord, innerColor, outerColor, outerSpread, 2);
-                    Pointer<LaserDrawClass> pLaser2 = YRMemory.Create<LaserDrawClass>(ptarget.OwnerObject.Ref.Base.Base.GetCoords(), skyCoord, innerColor, outerColor, outerSpread, 2);
+                    Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(Self.OwnerObject.Ref.Base.Base.GetCoords(), skyCoord, innerColor, outerColor, outerSpread, 2);
+                    Pointer<LaserDrawClass> pLaser2 = YRMemory.Create<LaserDrawClass>(Target.OwnerObject.Ref.Base.Base.GetCoords(), skyCoord, innerColor, outerColor, outerSpread, 2);
 
 
                 }

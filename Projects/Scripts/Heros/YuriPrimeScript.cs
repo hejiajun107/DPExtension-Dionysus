@@ -30,7 +30,7 @@ namespace Scripts
 
         Random random = new Random(133142);
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
 
 
@@ -68,15 +68,15 @@ namespace Scripts
                         Point2D p2d = new Point2D(60, 60);
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
 
-                        pTargetRef.Set(TechnoExt.ExtMap.Find(target));
-                        if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                        pTargetRef = TechnoExt.ExtMap.Find(target);
+                        if (!pTargetRef.Expired)
                         {
-                            if (pTargetRef.Get().OwnerObject.Ref.Owner.Ref.ArrayIndex == Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                            if (pTargetRef.OwnerObject.Ref.Owner.Ref.ArrayIndex == Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                             {
-                                if (pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
+                                if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                                 {
                                     Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 150, warhead, 100, false);
-                                    pBullet.Ref.DetonateAndUnInit(pTargetExt.OwnerObject.Ref.Base.Base.GetCoords());
+                                    pBullet.Ref.DetonateAndUnInit(pTargetRef.OwnerObject.Ref.Base.Base.GetCoords());
                                     break;
                                 }
                             }

@@ -64,8 +64,8 @@ namespace Scripts
         public static int ID = 514022;
         public VirusSpreadDecorator(TechnoExt owner, TechnoExt self, int lifetime):base(self)
         {
-            Owner.Set(owner);
-            Self.Set(self);
+            Owner = (owner);
+            Self = (self);
             _lifetime = lifetime;
             _startTime = lifetime - 100;
         }
@@ -73,8 +73,8 @@ namespace Scripts
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> pWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JVirusSpreadWH");
 
-        ExtensionReference<TechnoExt> Owner;
-        ExtensionReference<TechnoExt> Self;
+        TechnoExt Owner;
+        TechnoExt Self;
 
         int _lifetime = 1000;
 
@@ -85,7 +85,7 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            if (Owner.Get() == null || Self.Get() == null || _lifetime <= 0)
+            if (Owner.Expired || Self.Expired || _lifetime <= 0)
             {
                 DetachFromParent();
                 return;
@@ -97,12 +97,12 @@ namespace Scripts
             }
             rof = 5;
 
-            var owner = Owner.Get();
+            var owner = Owner;
 
 
             if(_lifetime< _startTime)
             {
-                var current = Self.Get().OwnerObject.Ref.Base.Base.GetCoords();
+                var current = Self.OwnerObject.Ref.Base.Base.GetCoords();
                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(owner.OwnerObject.Convert<AbstractClass>(), owner.OwnerObject, 1, pWarhead, 100, false);
                 pBullet.Ref.DetonateAndUnInit(current);
             }    

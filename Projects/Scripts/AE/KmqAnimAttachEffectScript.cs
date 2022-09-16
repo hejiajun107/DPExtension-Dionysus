@@ -20,7 +20,7 @@ namespace DpLib.Scripts.AE
 
         private int count = 0;
 
-        private ExtensionReference<TechnoExt> attacker;
+        private TechnoExt attacker;
 
         public override void OnUpdate()
         {
@@ -31,9 +31,9 @@ namespace DpLib.Scripts.AE
                     count = 0;
                     burst--;
 
-                    if(attacker.TryGet(out var technoExt))
+                    if (attacker != null && !attacker.Expired)
                     {
-                        technoExt.OwnerObject.Ref.Fire_NotVirtual(Owner.OwnerObject.Convert<AbstractClass>(), 1);
+                        attacker.OwnerObject.Ref.Fire_NotVirtual(Owner.OwnerObject.Convert<AbstractClass>(), 1);
                     }
                 }
             }

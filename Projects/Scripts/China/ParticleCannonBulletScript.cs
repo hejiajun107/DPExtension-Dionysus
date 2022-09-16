@@ -19,7 +19,7 @@ namespace DpLib.Scripts.China
 
         public bool isActived = false;
 
-        ExtensionReference<TechnoExt> pTargetRef;
+        TechnoExt pTargetRef;
 
         //750
 
@@ -73,10 +73,10 @@ namespace DpLib.Scripts.China
             public static int ID = 414002;
             public ParticleCannonUnitDecorator(TechnoExt self) : base(self)
             {
-                Self.Set(self);
+                Self = self;
             }
 
-            ExtensionReference<TechnoExt> Self;
+            TechnoExt Self;
 
             private int lifeTime = 800;
 
@@ -96,12 +96,10 @@ namespace DpLib.Scripts.China
 
             static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
-            private ExtensionReference<TechnoExt> epTarget;
-            private ExtensionReference<TechnoExt> epAttacker;
 
             public override void OnUpdate()
             {
-                if (Self.Get() == null || --lifeTime <= 0)
+                if (Self.Expired || --lifeTime <= 0)
                 {
                     DetachFromParent();
                     return;
@@ -134,15 +132,20 @@ namespace DpLib.Scripts.China
                 {
                     return;
                 }
-                if (pAttackingHouse.Ref.ArrayIndex == Self.Get().OwnerObject.Ref.Owner.Ref.ArrayIndex)
+
+                if(Self.Expired)
+                {
+                    return;
+                }
+
+                if (pAttackingHouse.Ref.ArrayIndex == Self.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                 {
                     return;
                 }
                 if (attackedRof <= 0)
                 {
                     attackedRof = coolDown;
-                    epAttacker.Set(pAttacker);
-                    if (epAttacker.Get() != null)
+                    if(pAttacker.CastToTechno(out var pAttackerTechno))
                     {
                         FireTo(pAttacker.Ref.Base.GetCoords());
                     }
@@ -152,7 +155,7 @@ namespace DpLib.Scripts.China
 
             private void FireTo(CoordStruct target)
             {
-                var owner = Self.Get();
+                var owner = Self;
                 if(owner!=null)
                 {
                     var ntarget = new CoordStruct(target.X , target.Y, target.Z);

@@ -25,7 +25,7 @@ namespace DpLib.Scripts.China
 
         private int rof = 10;
 
-        ExtensionReference<TechnoExt> pOwnerRef;
+        TechnoExt pOwnerRef;
 
         CoordStruct lastLocation;
 
@@ -96,12 +96,12 @@ namespace DpLib.Scripts.China
             }
             rof = 10;
 
-            pOwnerRef.Set(Owner.OwnerObject.Ref.Owner);
+            pOwnerRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
             int height = Owner.OwnerObject.Ref.Base.GetHeight();
 
             targetLocation = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
 
-            if (pOwnerRef.TryGet(out TechnoExt pOwner))
+            if (!pOwnerRef.Expired)
             {
 
                 var location = targetLocation;
@@ -115,7 +115,7 @@ namespace DpLib.Scripts.China
 
 
                 var damage = 20;
-                Pointer<BulletClass> pBullet = plaserBullet.Ref.CreateBullet(pOwner.OwnerObject.Convert<AbstractClass>(), pOwner.OwnerObject, damage, fireWarhead, 50, false);
+                Pointer<BulletClass> pBullet = plaserBullet.Ref.CreateBullet(pOwnerRef.OwnerObject.Convert<AbstractClass>(), pOwnerRef.OwnerObject, damage, fireWarhead, 50, false);
 
                 var rdlocaton = targetLocation + new CoordStruct(random.Next(-1000, 1000), random.Next(-1000, 1000), 0);
 
