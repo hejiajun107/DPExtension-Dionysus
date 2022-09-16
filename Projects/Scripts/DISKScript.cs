@@ -41,7 +41,7 @@ namespace Scripts
 
         private void KillUpdate()
         {
-            if(!Target.Expired)
+            if(!Target.IsNullOrExpired())
             {
                 Pointer<TechnoClass> pTechno = Target.OwnerObject;
                 TechnoTypeExt extType = Target.Type;
@@ -91,7 +91,7 @@ namespace Scripts
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if (Target.Expired)
+            if (Target.IsNullOrExpired())
             {
                 if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
                 {

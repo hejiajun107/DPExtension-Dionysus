@@ -111,15 +111,15 @@ namespace DpLib.Scripts.Scrin
                 foreach (var refertTechno in targets)
                 {
                     if (index + 1 >= emptyCells.Count()) break;
-                    if (refertTechno.TryGet(out var ptech))
+                    if (!refertTechno.IsNullOrExpired())
                     {
-                        ptech.OwnerObject.Ref.Base.Remove();
-                        var lastLocation = ptech.OwnerObject.Ref.Base.Base.GetCoords();
+                        refertTechno.OwnerObject.Ref.Base.Remove();
+                        var lastLocation = refertTechno.OwnerObject.Ref.Base.Base.GetCoords();
                         var targetLocation = CellClass.Cell2Coord(emptyCells[index].Ref.MapCoords);
-                        if (!ptech.OwnerObject.Ref.Base.Put(targetLocation, Direction.N))
+                        if (!refertTechno.OwnerObject.Ref.Base.Put(targetLocation, Direction.N))
                         {
-                            if (!ptech.OwnerObject.Ref.Base.Put(lastLocation, Direction.N))
-                                ptech.OwnerObject.Ref.Base.UnInit();
+                            if (!refertTechno.OwnerObject.Ref.Base.Put(lastLocation, Direction.N))
+                                refertTechno.OwnerObject.Ref.Base.UnInit();
                         }
                         index++;
                     }
@@ -134,9 +134,9 @@ namespace DpLib.Scripts.Scrin
                 stoped = true;
                 foreach(var tref in targets)
                 {
-                    if(tref.TryGet(out var t))
+                    if(!tref.IsNullOrExpired())
                     {
-                        var pTechno = t.OwnerObject;
+                        var pTechno = tref.OwnerObject;
                         var lastLocation = pTechno.Ref.Base.Base.GetCoords();
 
                         if (pTechno.Ref.Base.IsOnMap)

@@ -22,7 +22,7 @@ namespace DpLib.Scripts.American
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
-            if (!pTargetRef.Expired)
+            if (!pTargetRef.IsNullOrExpired())
             {
                 if (pTargetRef.GameObject.GetComponent(FreezingDecorator.ID) == null)
                 {
@@ -40,7 +40,7 @@ namespace DpLib.Scripts.American
         public static int ID = 114001;
         public FreezingDecorator(TechnoExt self):base(self)
         {
-            Owner.Set(self);
+            Owner=(self);
 
             initTemperature = 300 + (int)(self.OwnerObject.Ref.Base.Health * 5 / 100);
         }
@@ -64,7 +64,7 @@ namespace DpLib.Scripts.American
 
         public override void OnUpdate()
         {
-            if (Owner.Expired || temperature >= initTemperature + 200)
+            if (Owner.IsNullOrExpired() || temperature >= initTemperature + 200)
             {
                 DetachFromParent();
                 return;
@@ -79,7 +79,7 @@ namespace DpLib.Scripts.American
                 return;
             }
 
-            if(Owner.Expired)
+            if(Owner.IsNullOrExpired())
             { 
                 return;
             }

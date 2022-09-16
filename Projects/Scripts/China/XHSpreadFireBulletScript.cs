@@ -146,7 +146,7 @@ namespace DpLib.Scripts.China
                 startLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
                 //从附近获取建筑
-                if (!pOwnerRef.Expired)
+                if (!pOwnerRef.IsNullOrExpired())
                 {
 
                     var location = pOwnerRef.OwnerObject.Ref.Base.Base.GetCoords();
@@ -185,7 +185,7 @@ namespace DpLib.Scripts.China
 
                             tref=(TechnoExt.ExtMap.Find(target));
 
-                            if (!tref.Expired)
+                            if (!tref.IsNullOrExpired())
                             {
                                 if (tref.OwnerObject.Ref.Owner.IsNull)
                                 {
@@ -239,7 +239,7 @@ namespace DpLib.Scripts.China
                         //对每个建筑进行操作
                         foreach (var item in targets)
                         {
-                            if (!item.Expired)
+                            if (!item.IsNullOrExpired())
                             {
                                 var level = levels[index];
 
@@ -320,7 +320,7 @@ namespace DpLib.Scripts.China
 
             attacked = true;
             pOwnerRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
-            if (!pOwnerRef.Expired)
+            if (!pOwnerRef.IsNullOrExpired())
             {
                 DoAttack(pOwnerRef);
             }
@@ -444,14 +444,14 @@ namespace DpLib.Scripts.China
 
         private void DoBlast(int range)
         {
-            pTargetRef.Set(Owner.OwnerObject.Ref.Owner);
+            pTargetRef=TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
             int height = Owner.OwnerObject.Ref.Base.GetHeight();
-            if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+            if (!pTargetRef.IsNullOrExpired())
             {
-                if (pTargetExt.GameObject.GetComponent(XhWeaponExplodeDecorator.ID) == null)
+                if (pTargetRef.GameObject.GetComponent(XhWeaponExplodeDecorator.ID) == null)
                 {
                     var pos = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
-                    pTargetExt.GameObject.CreateScriptComponent(nameof(XhWeaponExplodeDecorator),XhWeaponExplodeDecorator.ID, "XhWeaponExplodeDecorator Decorator", pTargetExt, pos, 0, range);
+                    pTargetRef.GameObject.CreateScriptComponent(nameof(XhWeaponExplodeDecorator),XhWeaponExplodeDecorator.ID, "XhWeaponExplodeDecorator Decorator", pTargetRef, pos, 0, range);
                 }
             }
         }
@@ -680,7 +680,7 @@ namespace DpLib.Scripts.China
         public override void OnUpdate()
         {
 
-            if (Self.Expired)
+            if (Self.IsNullOrExpired())
             {
                 DetachFromParent();
                 //Decorative.Remove(this);

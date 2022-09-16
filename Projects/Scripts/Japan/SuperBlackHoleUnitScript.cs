@@ -158,24 +158,24 @@ namespace DpLib.Scripts.Japan
                             Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, launcher);
 
 
-                            pTargetRef.Set(TechnoExt.ExtMap.Find(target));
-                            if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                            pTargetRef = (TechnoExt.ExtMap.Find(target));
+                            if (!pTargetRef.IsNullOrExpired())
                             {
-                                if (pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
+                                if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                                 {
-                                    if (immnueToBlackHoles.Contains(pTargetExt.OwnerObject.Ref.Type.Ref.Base.Base.ID))
+                                    if (immnueToBlackHoles.Contains(pTargetRef.OwnerObject.Ref.Type.Ref.Base.Base.ID))
                                     {
                                         continue;
                                     }
 
                                     //仅仅用于标记该单位已经在黑洞作用中了
-                                    if (pTargetExt.GameObject.GetComponent(BlackHoleEffectedDecorator.ID) == null)
+                                    if (pTargetRef.GameObject.GetComponent(BlackHoleEffectedDecorator.ID) == null)
                                     {
-                                        Pointer<BulletClass> bullet = trackBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetExt.OwnerObject, 1, trackWarhead, 100, true);
-                                        bullet.Ref.MoveTo(pTargetExt.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 50), new BulletVelocity(0, 0, 800));
+                                        Pointer<BulletClass> bullet = trackBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetRef.OwnerObject, 1, trackWarhead, 100, true);
+                                        bullet.Ref.MoveTo(pTargetRef.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 50), new BulletVelocity(0, 0, 800));
                                         bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
 
-                                        pTargetExt.GameObject.CreateScriptComponent(nameof(BlackHoleEffectedDecorator),BlackHoleEffectedDecorator.ID, "BlackHoleEffectedDecorator Decorator", pTargetExt);
+                                        pTargetRef.GameObject.CreateScriptComponent(nameof(BlackHoleEffectedDecorator),BlackHoleEffectedDecorator.ID, "BlackHoleEffectedDecorator Decorator", pTargetRef);
                                     }
                                 }
                             }
@@ -206,7 +206,7 @@ namespace DpLib.Scripts.Japan
 
         public override void OnUpdate()
         {
-            if (Self.Expired || lifetime <= 0)
+            if (Self.IsNullOrExpired() || lifetime <= 0)
             {
                 DetachFromParent();
                 return;

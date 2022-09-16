@@ -28,7 +28,7 @@ namespace DpLib.Scripts.China
             {
                 pTargetRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                 int height = Owner.OwnerObject.Ref.Base.GetHeight();
-                if (!pTargetRef.Expired)
+                if (!pTargetRef.IsNullOrExpired())
                 {
                     if (pTargetRef.GameObject.GetComponent(IonCannonLauncherDecorator.ID) == null)
                     {
@@ -102,7 +102,7 @@ namespace DpLib.Scripts.China
 
             public override void OnUpdate()
             {
-                if (Self.Expired)
+                if (Self.IsNullOrExpired())
                 {
                     DetachFromParent();
                     return;

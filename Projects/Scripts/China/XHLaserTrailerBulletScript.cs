@@ -48,7 +48,7 @@ namespace DpLib.Scripts
             {
                 IsActive = true;
                 start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                pTargetRef.Set(Owner.OwnerObject.Ref.Owner);
+                pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner));
                 counter = 0;
                 return;
             }
@@ -56,9 +56,9 @@ namespace DpLib.Scripts
             var height = Owner.OwnerObject.Ref.Base.GetHeight();
             var target = Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -height);
 
-            if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+            if (!pTargetRef.IsNullOrExpired())
             {
-                var pTechno = pTargetExt.OwnerObject;
+                var pTechno = pTargetRef.OwnerObject;
                 Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, innerColor, outerColor, outerSpread, 20);
                 pLaser.Ref.IsHouseColor = true;
 

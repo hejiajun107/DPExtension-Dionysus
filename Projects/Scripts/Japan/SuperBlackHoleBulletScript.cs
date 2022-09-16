@@ -54,7 +54,7 @@ namespace DpLib.Scripts.China
                 pSuper.Ref.IsCharged = false;
 
 
-                if (!pOwnerRef.Expired)
+                if (!pOwnerRef.IsNullOrExpired())
                 {
                     if (pOwnerRef.GameObject.GetComponent(BlackHoleLauncherDecorator.ID) == null)
                     {
@@ -101,7 +101,7 @@ namespace DpLib.Scripts.China
 
         public override void OnUpdate()
         {
-            if (Owner.Expired || Self.Expired || lifetime <= 0)
+            if (Owner.IsNullOrExpired() || Self.IsNullOrExpired() || lifetime <= 0)
             {
                 DetachFromParent();
                 return;
@@ -235,7 +235,7 @@ namespace DpLib.Scripts.China
 
         public override void OnUpdate()
         {
-            if (Self.Expired || lifetime <= 0)
+            if (Self.IsNullOrExpired() || lifetime <= 0)
             {
                 DetachFromParent();
                 return;
@@ -268,7 +268,7 @@ namespace DpLib.Scripts.China
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, launcher);
 
                         pTargetRef = TechnoExt.ExtMap.Find(target);
-                        if (!pTargetRef.Expired)
+                        if (!pTargetRef.IsNullOrExpired())
                         {
                             if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                             {

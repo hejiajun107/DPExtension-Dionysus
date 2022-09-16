@@ -117,7 +117,7 @@ namespace Scripts
 
                     tref=(TechnoExt.ExtMap.Find(target));
 
-                    if (!tref.Expired)
+                    if (!tref.IsNullOrExpired())
                     {
                         if (tref.OwnerObject.Ref.Owner.IsNull)
                         {
@@ -158,7 +158,7 @@ namespace Scripts
                     for (index = 0; index < makeCount; index++)
                     {
                         var currentBrute = targets[index];
-                        if(!currentBrute.Expired)
+                        if(!currentBrute.IsNullOrExpired())
                         {
                             var targetCoord = currentBrute.OwnerObject.Ref.Base.Base.GetCoords();
                             Pointer<BulletClass> pbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1000, makeBruteWarhead, 100, false);
@@ -169,7 +169,7 @@ namespace Scripts
                     for (index = makeCount; index < makeCount + makeCount * 2; index++)
                     {
                         var currentBrute = targets[index];
-                        if (!currentBrute.Expired)
+                        if (!currentBrute.IsNullOrExpired())
                         {
                             var targetCoord = currentBrute.OwnerObject.Ref.Base.Base.GetCoords();
                             Pointer<BulletClass> pbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1000, showBruteWarhead, 100, false);

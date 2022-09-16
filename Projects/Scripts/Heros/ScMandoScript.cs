@@ -74,7 +74,7 @@ namespace DpLib.Scripts.Heros
 
                             tref=(TechnoExt.ExtMap.Find(target));
 
-                            if (!tref.Expired)
+                            if (!tref.IsNullOrExpired())
                             {
                                 if (tref.OwnerObject.Ref.Owner.IsNull)
                                     continue;
@@ -144,7 +144,7 @@ namespace DpLib.Scripts.Heros
 
                     if (unit.IsDead == false)
                     {
-                        if (!unit.Techno.Expired)
+                        if (!unit.Techno.IsNullOrExpired())
                         {
                             unit.Location = unit.Techno.OwnerObject.Ref.Base.Base.GetCoords();
                         }
@@ -210,7 +210,7 @@ namespace DpLib.Scripts.Heros
                     var unit = kvp.Value;
                     if (unit.IsDead == false)
                     {
-                        if (unit.Techno.Expired)
+                        if (unit.Techno.IsNullOrExpired())
                         {
                             unit.IsDead = true;
                         }

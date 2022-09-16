@@ -50,7 +50,7 @@ namespace DpLib.Scripts.Yuri
             }
 
 
-            if (!pTargetRef.Expired)
+            if (!pTargetRef.IsNullOrExpired())
             {
                 var pTechno = pTargetRef.OwnerObject;
                 Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, innerColor, outerColor, outerSpread, 20);

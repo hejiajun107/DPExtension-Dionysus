@@ -66,7 +66,7 @@ namespace DpLib.Scripts
 
                             tref = (TechnoExt.ExtMap.Find(ptargetTechno));
 
-                            if (!tref.Expired)
+                            if (!tref.IsNullOrExpired())
                             {
                                 var ptechno = tref.OwnerObject;
 

@@ -38,7 +38,7 @@ namespace DpLib.Scripts.American
                 if (Owner.OwnerObject.Ref.Ammo > 0 && duration <= 1000)
                 {
                     pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
-                    if (!pTargetRef.Expired)
+                    if (!pTargetRef.IsNullOrExpired())
                     {
                         var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                         var targetLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();

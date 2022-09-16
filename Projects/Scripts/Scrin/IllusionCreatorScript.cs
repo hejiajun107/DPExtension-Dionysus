@@ -76,18 +76,18 @@ namespace DpLib.Scripts.Scrin
 
                         TechnoExt tref = default;
 
-                        tref.Set(TechnoExt.ExtMap.Find(techno));
+                        tref=(TechnoExt.ExtMap.Find(techno));
 
-                        if (tref.TryGet(out TechnoExt ptechno))
+                        if (!tref.IsNullOrExpired())
                         {
-                            if (ptechno.OwnerObject.Ref.Owner.IsNull)
+                            if (tref.OwnerObject.Ref.Owner.IsNull)
                                 continue;
-                            if (houseIndex != ptechno.OwnerObject.Ref.Owner.Ref.ArrayIndex && !ptechno.OwnerObject.Ref.Owner.Ref.IsAlliedWith(houseIndex))
+                            if (houseIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex && !tref.OwnerObject.Ref.Owner.Ref.IsAlliedWith(houseIndex))
                                 continue;
-                            if (ptechno.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit)
+                            if (tref.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit)
                                 continue;
 
-                            var gext = ptechno.GameObject.GetComponent<TechnoGlobalExtension>();
+                            var gext = tref.GameObject.GetComponent<TechnoGlobalExtension>();
                             if (gext == null)
                                 continue;
 
@@ -108,15 +108,15 @@ namespace DpLib.Scripts.Scrin
                 {
                     var target = targets[0];
                     targets.RemoveAt(0);
-                    if (target.TryGet(out var pTarget))
+                    if (!target.IsNullOrExpired())
                     {
-                        var health = pTarget.OwnerObject.Ref.Base.Health;
-                        var selected = pTarget.OwnerObject.Ref.Base.IsSelected;
+                        var health = target.OwnerObject.Ref.Base.Health;
+                        var selected = target.OwnerObject.Ref.Base.IsSelected;
 
-                        if (pTarget.OwnerObject.Ref.Owner.IsNull)
+                        if (target.OwnerObject.Ref.Owner.IsNull)
                             return;
 
-                        var techno = pTarget.OwnerObject.Ref.Type.Ref.Base.CreateObject(pTarget.OwnerObject.Ref.Owner).Convert<TechnoClass>();
+                        var techno = target.OwnerObject.Ref.Type.Ref.Base.CreateObject(target.OwnerObject.Ref.Owner).Convert<TechnoClass>();
                         if (techno == null)
                             return;
 
@@ -128,7 +128,7 @@ namespace DpLib.Scripts.Scrin
 
 
                         //寻找空地
-                        var location = pTarget.OwnerObject.Ref.Base.Base.GetCoords();
+                        var location = target.OwnerObject.Ref.Base.Base.GetCoords();
 
                         var cell = CellClass.Coord2Cell(location);
 
@@ -156,7 +156,7 @@ namespace DpLib.Scripts.Scrin
                                     {
                                         putted = true;
                                         TechnoExt illusion = default;
-                                        illusion.Set(TechnoExt.ExtMap.Find(techno));
+                                        illusion = (TechnoExt.ExtMap.Find(techno));
                                         illusions.Add(illusion);
 
                                         var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, inWarhead, 100, false);
@@ -202,13 +202,13 @@ namespace DpLib.Scripts.Scrin
                 {
                     var illusion = illusions[0];
                     illusions.RemoveAt(0);
-                    if (illusion.TryGet(out var pTarget))
+                    if (!illusion.IsNullOrExpired())
                     {
-                        var targetLocation = pTarget.OwnerObject.Ref.Base.Base.GetCoords();
+                        var targetLocation = illusion.OwnerObject.Ref.Base.Base.GetCoords();
                         var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, outWarhead, 100, false);
                         bullet.Ref.DetonateAndUnInit(targetLocation);
-                        pTarget.OwnerObject.Ref.Base.Remove();
-                        pTarget.OwnerObject.Ref.Base.UnInit();
+                        illusion.OwnerObject.Ref.Base.Remove();
+                        illusion.OwnerObject.Ref.Base.UnInit();
                     }
                 }
                 else

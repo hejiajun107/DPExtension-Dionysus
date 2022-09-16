@@ -69,7 +69,7 @@ namespace Scripts
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
 
                         pTargetRef = TechnoExt.ExtMap.Find(target);
-                        if (!pTargetRef.Expired)
+                        if (!pTargetRef.IsNullOrExpired())
                         {
                             if (pTargetRef.OwnerObject.Ref.Owner.Ref.ArrayIndex == Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                             {

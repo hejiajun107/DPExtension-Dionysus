@@ -39,7 +39,7 @@ namespace DpLib.Scripts.China
             {
                 pTargetRef=TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
 
-                if (!pTargetRef.Expired)
+                if (!pTargetRef.IsNullOrExpired())
                 {
                     //单位起始位置
                     StartOwner = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();
@@ -51,7 +51,7 @@ namespace DpLib.Scripts.China
 
             if(isActived)
             {
-                if (!pTargetRef.Expired)
+                if (!pTargetRef.IsNullOrExpired())
                 {
                     var moveLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords() - StartOwner;
                     var fireStart = StartFire + moveLocation;

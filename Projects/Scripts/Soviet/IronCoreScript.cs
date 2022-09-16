@@ -198,7 +198,7 @@ namespace DpLib.Scripts.Soviet
             {
                 immnueCoolDown--;
             }
-            if (Owner.Expired || Self.Expired)
+            if (Owner.IsNullOrExpired() || Self.IsNullOrExpired())
             {
                 DetachFromParent();
                 return;
@@ -227,7 +227,7 @@ namespace DpLib.Scripts.Soviet
                 return;
             }
 
-            if (!Self.Expired)
+            if (!Self.IsNullOrExpired())
             {
                 Pointer<TechnoClass> pTechno = Self.OwnerObject;
                 if (pAttackingHouse.Ref.ArrayIndex == pTechno.Ref.Owner.Ref.ArrayIndex || pTechno.Ref.Owner.Ref.IsAlliedWith(pAttackingHouse))

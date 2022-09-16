@@ -92,7 +92,7 @@ namespace DpLib.Scripts.China
                 if (transCoolDown == 0)
                 {
                     pTargetRef = (TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
-                    if (!pTargetRef.Expired)
+                    if (!pTargetRef.IsNullOrExpired())
                     {
                         var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                         var targetLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();

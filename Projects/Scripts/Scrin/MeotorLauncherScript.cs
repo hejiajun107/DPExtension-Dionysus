@@ -68,9 +68,9 @@ namespace DpLib.Scripts.Scrin
                     {
                         foreach(var techno in technos)
                         {
-                            if(techno.TryGet(out var pTechno))
+                            if(!techno.IsNullOrExpired())
                             {
-                                pTechno.OwnerObject.Ref.Base.UnInit();
+                                techno.OwnerObject.Ref.Base.UnInit();
                             }
                         }
                     }

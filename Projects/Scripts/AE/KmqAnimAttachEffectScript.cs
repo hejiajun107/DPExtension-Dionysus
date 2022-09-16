@@ -31,7 +31,7 @@ namespace DpLib.Scripts.AE
                     count = 0;
                     burst--;
 
-                    if (attacker != null && !attacker.Expired)
+                    if (attacker != null && !attacker.IsNullOrExpired())
                     {
                         attacker.OwnerObject.Ref.Fire_NotVirtual(Owner.OwnerObject.Convert<AbstractClass>(), 1);
                     }
@@ -46,7 +46,10 @@ namespace DpLib.Scripts.AE
             //获取发射者
             if (!pAttacker.IsNull)
             {
-                attacker.Set(pAttacker);
+                if (pAttacker.CastToTechno(out var ptAttacker))
+                {
+                    attacker = (TechnoExt.ExtMap.Find(ptAttacker));
+                }
             }
             base.OnAttachEffectPut(pDamage, pWH, pAttacker, pAttackingHouse);
         }

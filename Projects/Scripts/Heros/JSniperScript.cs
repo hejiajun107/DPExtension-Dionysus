@@ -85,7 +85,7 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            if (Owner.Expired || Self.Expired || _lifetime <= 0)
+            if (Owner.IsNullOrExpired() || Self.IsNullOrExpired() || _lifetime <= 0)
             {
                 DetachFromParent();
                 return;

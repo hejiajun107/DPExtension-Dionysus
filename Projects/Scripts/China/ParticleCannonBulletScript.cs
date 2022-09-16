@@ -44,16 +44,16 @@ namespace DpLib.Scripts.China
                         Point2D p2d = new Point2D(60, 60);
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, launcher);
 
-                        pTargetRef.Set(TechnoExt.ExtMap.Find(target));
-                        if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                        pTargetRef = (TechnoExt.ExtMap.Find(target));
+                        if (!pTargetRef.IsNullOrExpired())
                         {
-                            if (pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetExt.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
+                            if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                             {
-                                if(pTargetExt.OwnerObject.Ref.Owner.Ref.ArrayIndex == houseIdx || house.IsAlliedWith(pTargetExt.OwnerObject.Ref.Owner))
+                                if(pTargetRef.OwnerObject.Ref.Owner.Ref.ArrayIndex == houseIdx || house.IsAlliedWith(pTargetRef.OwnerObject.Ref.Owner))
                                 {
-                                    if (pTargetExt.GameObject.GetComponent(ParticleCannonUnitDecorator.ID) == null)
+                                    if (pTargetRef.GameObject.GetComponent(ParticleCannonUnitDecorator.ID) == null)
                                     {
-                                        pTargetExt.GameObject.CreateScriptComponent(nameof(ParticleCannonUnitDecorator),ParticleCannonUnitDecorator.ID, "ParticleCannonUnitDecorator Decorator", pTargetExt);
+                                        pTargetRef.GameObject.CreateScriptComponent(nameof(ParticleCannonUnitDecorator),ParticleCannonUnitDecorator.ID, "ParticleCannonUnitDecorator Decorator", pTargetRef);
                                     }
                                 }
                             }
@@ -99,7 +99,7 @@ namespace DpLib.Scripts.China
 
             public override void OnUpdate()
             {
-                if (Self.Expired || --lifeTime <= 0)
+                if (Self.IsNullOrExpired() || --lifeTime <= 0)
                 {
                     DetachFromParent();
                     return;
@@ -133,7 +133,7 @@ namespace DpLib.Scripts.China
                     return;
                 }
 
-                if(Self.Expired)
+                if(Self.IsNullOrExpired())
                 {
                     return;
                 }

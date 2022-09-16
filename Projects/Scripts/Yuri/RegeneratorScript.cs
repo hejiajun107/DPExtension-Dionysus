@@ -70,35 +70,35 @@ namespace DpLib.Scripts.Yuri
 
                         TechnoExt tref = default;
 
-                        tref.Set(TechnoExt.ExtMap.Find(target));
+                        tref=(TechnoExt.ExtMap.Find(target));
 
-                        if (tref.TryGet(out TechnoExt ptechno))
+                        if (!tref.IsNullOrExpired())
                         {
-                            if (ptechno.OwnerObject.Ref.Owner.IsNull)
+                            if (tref.OwnerObject.Ref.Owner.IsNull)
                                 continue;
 
-                            if (ptechno.OwnerObject.Ref.Owner != Owner.OwnerObject.Ref.Owner)
+                            if (tref.OwnerObject.Ref.Owner != Owner.OwnerObject.Ref.Owner)
                                 continue;
 
-                            if (ptechno.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Infantry)
+                            if (tref.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Infantry)
                                 continue;
 
-                            if (ptechno.OwnerObject.Ref.Type.Ref.Size != 1)
+                            if (tref.OwnerObject.Ref.Type.Ref.Size != 1)
                                 continue;
 
-                            if (ptechno.OwnerObject.Ref.Base.IsOnMap == false || ptechno.OwnerObject.Ref.Base.InLimbo == true)
+                            if (tref.OwnerObject.Ref.Base.IsOnMap == false || tref.OwnerObject.Ref.Base.InLimbo == true)
                                 continue;
 
-                            var pmission = ptechno.OwnerObject.Convert<MissionClass>();
+                            var pmission = tref.OwnerObject.Convert<MissionClass>();
 
-                            ptechno.OwnerObject.Ref.Base.Remove();
+                            tref.OwnerObject.Ref.Base.Remove();
 
                             if (pmission.Ref.CurrentMission == Mission.Enter)
                                 continue;
 
                             pmission.Ref.ForceMission(Mission.Stop);
 
-                            Owner.OwnerObject.Ref.Passengers.AddPassenger(ptechno.OwnerObject.Convert<FootClass>());
+                            Owner.OwnerObject.Ref.Passengers.AddPassenger(tref.OwnerObject.Convert<FootClass>());
 
                             Count++;
                         }

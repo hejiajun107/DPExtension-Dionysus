@@ -77,7 +77,7 @@ namespace DpLib.Scripts.Japan
 
 
 
-                        if (!tref.Expired)
+                        if (!tref.IsNullOrExpired())
                         {
                             if (tref.OwnerObject.Ref.Owner.IsNull)
                             {
@@ -109,7 +109,7 @@ namespace DpLib.Scripts.Japan
                         //对每个建筑进行操作
                         foreach (var item in targets)
                         {
-                            if (!item.Expired)
+                            if (!item.IsNullOrExpired())
                             {
                                 Explode(item.OwnerObject.Ref.Base.Base.GetCoords(), i);
                                 item.OwnerObject.Ref.Base.UnInit();

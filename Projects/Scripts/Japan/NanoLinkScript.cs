@@ -63,7 +63,7 @@ namespace DpLib.Scripts.Japan
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
 
                         pTargetRef = TechnoExt.ExtMap.Find(target);
-                        if (pTargetRef!=null && !pTargetRef.Expired)
+                        if (pTargetRef!=null && !pTargetRef.IsNullOrExpired())
                         {
                             if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
                                 continue;
@@ -114,13 +114,13 @@ namespace DpLib.Scripts.Japan
 
         public override void OnUpdate()
         {
-            if (Self.Expired)
+            if (Self.IsNullOrExpired())
             {
                 DetachFromParent();
                 return;
             }
 
-            if (Target.Expired)
+            if (Target.IsNullOrExpired())
             {
                 DetachFromParent();
                 return;
@@ -138,7 +138,7 @@ namespace DpLib.Scripts.Japan
             if (rof-- < 0)
             {
                 rof = 20;
-                if (!Self.Expired)
+                if (!Self.IsNullOrExpired())
                 {
                     var damage = 1;
                     Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(Self.OwnerObject.Convert<AbstractClass>(), Self.OwnerObject, damage, immnueWarhead, 100, false);
@@ -151,9 +151,9 @@ namespace DpLib.Scripts.Japan
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-            if(!Self.Expired)
+            if(!Self.IsNullOrExpired())
             {
-                if(!Target.Expired)
+                if(!Target.IsNullOrExpired())
                 {
                     if (pAttackingHouse.IsNull)
                     {

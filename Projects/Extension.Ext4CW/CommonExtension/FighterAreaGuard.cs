@@ -172,9 +172,9 @@ namespace Extension.CW
                                         return false;
                                     }, FindRange.Enermy);
 
-                                    if (target.TryGet(out TechnoExt targetTechno))
+                                    if (!target.IsNullOrExpired())
                                     {
-                                        Owner.OwnerObject.Ref.SetTarget(targetTechno.OwnerObject.Convert<AbstractClass>());
+                                        Owner.OwnerObject.Ref.SetTarget(target.OwnerObject.Convert<AbstractClass>());
                                         mission.Ref.ForceMission(Mission.Stop);
                                         mission.Ref.ForceMission(Mission.Attack);
                                         return;

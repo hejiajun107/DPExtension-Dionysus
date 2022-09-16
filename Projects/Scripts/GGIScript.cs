@@ -53,7 +53,7 @@ namespace Scripts
         int rof = 5;
         public override void OnUpdate()
         {
-            if (Owner.Expired || lifetime <= 0)
+            if (Owner.IsNullOrExpired() || lifetime <= 0)
             {
                 DetachFromParent();
                 return;

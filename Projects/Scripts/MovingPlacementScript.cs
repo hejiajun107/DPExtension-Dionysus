@@ -26,7 +26,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            if (buildingReference == null || buildingReference.Expired)
+            if (buildingReference == null || buildingReference.IsNullOrExpired())
             {
                 var building = placementType.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
 
@@ -55,7 +55,7 @@ namespace DpLib.Scripts
             //}
 
 
-            if (!buildingReference.Expired)
+            if (!buildingReference.IsNullOrExpired())
             {
                 buildingReference.OwnerObject.Ref.Base.Remove();
 
@@ -77,7 +77,7 @@ namespace DpLib.Scripts
 
         public override void OnRemove()
         {
-            if (buildingReference!=null && !buildingReference.Expired)
+            if (buildingReference!=null && !buildingReference.IsNullOrExpired())
             {
                 buildingReference.OwnerObject.Ref.Base.Remove();
                 buildingReference.OwnerObject.Ref.Base.UnInit();

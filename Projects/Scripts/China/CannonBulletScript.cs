@@ -45,9 +45,9 @@ namespace DpLib.Scripts.China
                 for (var i = Technos.Count - 1; i >= 0; i--)
                 {
                     var techno = Technos[i];
-                    if (techno.TryGet(out var technoExt))
+                    if (!techno.IsNullOrExpired())
                     {
-                        var pTechno = technoExt.OwnerObject;
+                        var pTechno = techno.OwnerObject;
                         if (pTechno.Ref.GetFireErrorWithoutRange(target, 0) == FireError.OK)
                         {
                             FireViaPassenger(pTechno, target);

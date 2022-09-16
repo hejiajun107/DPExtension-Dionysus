@@ -90,7 +90,7 @@ namespace DpLib.Scripts.Japan
 
                     tref=(TechnoExt.ExtMap.Find(target));
 
-                    if (!tref.Expired)
+                    if (!tref.IsNullOrExpired())
                     {
                         if (tref.OwnerObject.Ref.Owner.IsNull)
                         {

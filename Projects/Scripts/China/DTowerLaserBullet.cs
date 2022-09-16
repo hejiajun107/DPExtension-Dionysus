@@ -50,7 +50,7 @@ namespace DpLib.Scripts.Yuri
             var height = Owner.OwnerObject.Ref.Base.GetHeight();
             var target = Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -height);
 
-            if (!pTargetRef.Expired)
+            if (!pTargetRef.IsNullOrExpired())
             {
                 var start = Owner.OwnerObject.Ref.Owner.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,810);
 

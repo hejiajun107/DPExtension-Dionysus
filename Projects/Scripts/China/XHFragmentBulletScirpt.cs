@@ -101,7 +101,7 @@ namespace DpLib.Scripts.China
 
             targetLocation = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
 
-            if (!pOwnerRef.Expired)
+            if (!pOwnerRef.IsNullOrExpired())
             {
 
                 var location = targetLocation;

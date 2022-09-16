@@ -67,10 +67,10 @@ namespace DpLib.Scripts.Scrin
 
                 foreach(var item in technos)
                 {
-                    if(item.TryGet(out var technoExt))
+                    if(!item.IsNullOrExpired())
                     {
                         var position = new CoordStruct(location.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), location.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), location.Z + height);
-                        technoExt.OwnerObject.Ref.Base.SetLocation(position);
+                        item.OwnerObject.Ref.Base.SetLocation(position);
                         angle += 120;
                     }
                 }
@@ -95,7 +95,7 @@ namespace DpLib.Scripts.Scrin
             base.OnFire(pTarget, weaponIndex);
             foreach(var item in technos)
             {
-                if (!item.Expired)
+                if (!item.IsNullOrExpired())
                 {
                     item.OwnerObject.Ref.SetTarget(pTarget);
                 }
@@ -106,7 +106,7 @@ namespace DpLib.Scripts.Scrin
         {
             foreach (var item in technos)
             {
-                if (!item.Expired)
+                if (!item.IsNullOrExpired())
                 {
                     item.OwnerObject.Ref.Base.UnInit();
                 }

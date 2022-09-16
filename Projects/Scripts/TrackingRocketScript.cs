@@ -42,16 +42,16 @@ namespace DpLib.Scripts
 
                 if (targetSetted)
                 {
-                    if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                    if (!pTargetRef.IsNullOrExpired())
                     {
                         Logger.Log("找到Techno了");
-                        Owner.OwnerObject.Ref.Target = pTargetExt.OwnerObject.Convert<AbstractClass>();
+                        Owner.OwnerObject.Ref.Target = pTargetRef.OwnerObject.Convert<AbstractClass>();
                         if (Owner.OwnerObject.CastToFoot(out var pfoot))
                         {
                             Logger.Log("是pfoot");
            
                             var loco = pfoot.Ref.Locomotor.ToLocomotionClass();
-                            var targetLocation = pTargetExt.OwnerObject.Ref.Base.Base.GetCoords();
+                            var targetLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();
 
                             if(MapClass.Instance.TryGetCellAt(targetLocation, out var pCell))
                             {
@@ -68,10 +68,10 @@ namespace DpLib.Scripts
                 if(!cell.IsNull)
                 {
                     var techno = cell.Ref.FindTechnoNearestTo(new Point2D(60, 60), false, Owner.OwnerObject);
-                    pTargetRef.Set(TechnoExt.ExtMap.Find(techno));
-                    if (pTargetRef.TryGet(out TechnoExt pTargetExt))
+                    pTargetRef=(TechnoExt.ExtMap.Find(techno));
+                    if (!pTargetRef.IsNullOrExpired())
                     {
-                        Owner.OwnerObject.Ref.Target = pTargetExt.OwnerObject.Convert<AbstractClass>();
+                        Owner.OwnerObject.Ref.Target = pTargetRef.OwnerObject.Convert<AbstractClass>();
                     }
                 }
                 targetSetted = true;
