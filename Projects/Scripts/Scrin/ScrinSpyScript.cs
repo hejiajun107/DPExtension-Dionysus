@@ -52,10 +52,10 @@ namespace DpLib.Scripts.Scrin
             //寻找基地
             var cnst = Finder.FineOneTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Type.Ref.Base.Base.ID == "RACNST" && x.Ref.Base.IsOnMap,FindRange.Owner);
 
-            if (cnst.TryGet(out var cnstExt))
+            if (!cnst.IsNullOrExpired())
             {
                 //在基地附近寻找空地
-                var cnstLocation = cnstExt.OwnerObject.Ref.Base.Base.GetCoords();
+                var cnstLocation = cnst.OwnerObject.Ref.Base.Base.GetCoords();
                 var currentCell = CellClass.Coord2Cell(cnstLocation);
                 CellSpreadEnumerator enumeratorTarget = new CellSpreadEnumerator(6);
 

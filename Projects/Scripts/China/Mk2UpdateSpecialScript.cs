@@ -59,15 +59,15 @@ namespace DpLib.Scripts.China
                     {
                         var techno = technos4AI.OrderByDescending(t =>
                             {
-                                if (t.TryGet(out var technoExt))
+                                if (!t.IsNullOrExpired())
                                 {
-                                    var location = technoExt.OwnerObject.Ref.Base.Base.GetCoords();
+                                    var location = t.OwnerObject.Ref.Base.Base.GetCoords();
 
                                     var count = technos4AI.Where(tAI =>
                                     {
-                                        if (tAI.TryGet(out var aTechnoExt))
+                                        if (!tAI.IsNullOrExpired())
                                         {
-                                            var tcoord = aTechnoExt.OwnerObject.Ref.Base.Base.GetCoords();
+                                            var tcoord = tAI.OwnerObject.Ref.Base.Base.GetCoords();
                                             var distance = new CoordStruct(tcoord.X, tcoord.Y, location.Z).DistanceFrom(location);
                                             return !double.IsNaN(distance) && distance <= 1000;
                                         }
@@ -80,9 +80,9 @@ namespace DpLib.Scripts.China
                         ).FirstOrDefault();
 
 
-                        if (techno.TryGet(out var ptechno))
+                        if (!techno.IsNullOrExpired())
                         {
-                            var ailocation = ptechno.OwnerObject.Ref.Base.Base.GetCoords();
+                            var ailocation = techno.OwnerObject.Ref.Base.Base.GetCoords();
                             Owner.OwnerObject.Ref.Base.SetLocation(ailocation);
                         }
                     }
@@ -120,9 +120,9 @@ namespace DpLib.Scripts.China
                  ).OrderBy(
                          p =>
                          {
-                             if (p.TryGet(out var ptechno))
+                             if (!p.IsNullOrExpired())
                              {
-                                 var distance = ptechno.OwnerObject.Ref.Base.Base.GetCoords().DistanceFrom(location);
+                                 var distance = p.OwnerObject.Ref.Base.Base.GetCoords().DistanceFrom(location);
                                  if (double.IsNaN(distance))
                                      return 65535;
                                  return distance;
@@ -136,10 +136,10 @@ namespace DpLib.Scripts.China
 
                 foreach (var techno in technos)
                 {
-                    if (techno.TryGet(out var ptechno))
+                    if (!techno.IsNullOrExpired())
                     {
-                        var pBullet = inviso.Ref.CreateBullet(ptechno.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
-                        pBullet.Ref.DetonateAndUnInit(ptechno.OwnerObject.Ref.Base.Base.GetCoords());
+                        var pBullet = inviso.Ref.CreateBullet(techno.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
+                        pBullet.Ref.DetonateAndUnInit(techno.OwnerObject.Ref.Base.Base.GetCoords());
                     }
                 }
             }

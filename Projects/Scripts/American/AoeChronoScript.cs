@@ -56,9 +56,9 @@ namespace DpLib.Scripts.American
 
                 foreach(var target in targets)
                 {
-                    if(target.TryGet(out var technoExt))
+                    if(!target.IsNullOrExpired())
                     {
-                        var ptechno = technoExt.OwnerObject;
+                        var ptechno = target.OwnerObject;
 
                         var attacker = AttackerType.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
                         if (attacker == null)

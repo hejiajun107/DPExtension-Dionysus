@@ -38,9 +38,9 @@ namespace DpLib.Scripts.China
                     for (var i = technos.Count - 1; i >= 0; i--)
                     {
                         var techno = technos[i];
-                        if (techno.TryGet(out var technoExt))
+                        if (!techno.IsNullOrExpired())
                         {
-                            technoExt.OwnerObject.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
+                            techno.OwnerObject.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
                         }
                     }
                 }

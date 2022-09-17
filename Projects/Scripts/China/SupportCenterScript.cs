@@ -33,9 +33,9 @@ namespace DpLib.Scripts.China
 
                 foreach (var ext in exts)
                 {
-                    if (ext.TryGet(out var technoExt))
+                    if (!ext.IsNullOrExpired())
                     {
-                        technoExt.OwnerObject.Convert<InfantryClass>().Ref.Type = targetType.Convert<InfantryTypeClass>();
+                        ext.OwnerObject.Convert<InfantryClass>().Ref.Type = targetType.Convert<InfantryTypeClass>();
                     }
                 }
             }

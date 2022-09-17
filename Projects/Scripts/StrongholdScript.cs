@@ -102,9 +102,9 @@ namespace DpLib.Scripts
                                 );
                                 foreach(var techno in technos)
                                 {
-                                    if(techno.TryGet(out var technoExt))
+                                    if(!techno.IsNullOrExpired())
                                     {
-                                        var ptechno = technoExt.OwnerObject;
+                                        var ptechno = techno.OwnerObject;
                                         ptechno.Ref.Base.TakeDamage(8000, peaceWarhead, true);
                                     }
                                 }

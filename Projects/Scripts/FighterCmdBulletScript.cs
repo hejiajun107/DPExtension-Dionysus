@@ -87,25 +87,25 @@ namespace DpLib.Scripts
                 foreach (var fighter in fighters)
                 {
                     //循环分配攻击
-                    if (fighter.TryGet(out TechnoExt fighterExt))
+                    if (!fighter.IsNullOrExpired())
                     {
                         if (index >= targets.Count())
                         {
                             index = 0;
                         }
 
-                        if (fighterExt.OwnerObject.Ref.Ammo == 0 && fighterExt.OwnerObject.Ref.Base.GetCurrentMission() != Mission.Sleep)
+                        if (fighter.OwnerObject.Ref.Ammo == 0 && fighter.OwnerObject.Ref.Base.GetCurrentMission() != Mission.Sleep)
                         {
-                            var mission = fighterExt.OwnerObject.Convert<MissionClass>();
+                            var mission = fighter.OwnerObject.Convert<MissionClass>();
                             mission.Ref.ForceMission(Mission.Enter);
                             continue;
                         }
 
                         var target = targets[index];
-                        if (target.TryGet(out TechnoExt targetExt))
+                        if (!target.IsNullOrExpired())
                         {
-                            fighterExt.OwnerObject.Ref.SetTarget(targetExt.OwnerObject.Convert<AbstractClass>());
-                            var mission = fighterExt.OwnerObject.Convert<MissionClass>();
+                            fighter.OwnerObject.Ref.SetTarget(target.OwnerObject.Convert<AbstractClass>());
+                            var mission = fighter.OwnerObject.Convert<MissionClass>();
                             //mission.Ref.QueueMission(Mission.Guard, false);
                             //mission.Ref.NextMission();
                             //mission.Ref.QueueMission(Mission.Attack, false);

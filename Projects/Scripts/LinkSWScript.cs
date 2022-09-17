@@ -44,9 +44,9 @@ namespace DpLib.Scripts
                 var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => techno.Ref.Type.Ref.Base.Base.ID == id && techno != Owner.OwnerObject, FindRange.Owner);
                 foreach(var item in li)
                 {
-                    if (item.TryGet(out var technoExt))
+                    if (item.IsNullOrExpired())
                     {
-                        technoExt.OwnerObject.Ref.Base.UnInit();
+                        item.OwnerObject.Ref.Base.UnInit();
                     }
                 }
 
@@ -85,21 +85,21 @@ namespace DpLib.Scripts
 
                             var technos = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => techno.Ref.Type.Ref.Base.Base.ID == technoId1 || techno.Ref.Type.Ref.Base.Base.ID == technoId2, FindRange.Owner);
 
-                            var techno1 = technos.Where(t => t.Get().OwnerObject.Ref.Type.Ref.Base.Base.ID == technoId1).FirstOrDefault();
-                            var techno2 = technos.Where(t => t.Get().OwnerObject.Ref.Type.Ref.Base.Base.ID == technoId2).FirstOrDefault();
+                            var techno1 = technos.Where(t => t.OwnerObject.Ref.Type.Ref.Base.Base.ID == technoId1).FirstOrDefault();
+                            var techno2 = technos.Where(t => t.OwnerObject.Ref.Type.Ref.Base.Base.ID == technoId2).FirstOrDefault();
 
-                            if (techno1.TryGet(out var ptechno1))
+                            if (!techno1.IsNullOrExpired())
                             {
 
-                                var t1location = ptechno1.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,2000);
-                                if (techno2.TryGet(out var ptechno2))
+                                var t1location = techno1.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,2000);
+                                if (!techno2.IsNullOrExpired())
                                 {
-                                    var bullet1 = pbullet.Ref.CreateBullet(ptechno2.OwnerObject.Convert<AbstractClass>(), ptechno1.OwnerObject, 1, warhead, 50, false);
+                                    var bullet1 = pbullet.Ref.CreateBullet(techno2.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 50, false);
                                     bullet1.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
-                                    bullet1.Ref.SetTarget(ptechno2.OwnerObject.Convert<AbstractClass>());
+                                    bullet1.Ref.SetTarget(techno2.OwnerObject.Convert<AbstractClass>());
                                 }
 
-                                var bullet2 = pbullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), ptechno1.OwnerObject, 1, warhead, 50, false);
+                                var bullet2 = pbullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 50, false);
                                 bullet2.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
                                 bullet2.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
 
