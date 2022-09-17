@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Soviet
 {
     [Serializable]
+    [ScriptAlias(nameof(Tu160Script))]
     public class Tu160Script : TechnoScriptable
     {
         public Tu160Script(TechnoExt owner) : base(owner) { }

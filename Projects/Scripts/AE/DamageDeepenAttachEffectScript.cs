@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(DamageDeepenAttachEffectScript))]
     public class DamageDeepenAttachEffectScript : AttachEffectScriptable
     {
         public DamageDeepenAttachEffectScript(TechnoExt owner) : base(owner)

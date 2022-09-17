@@ -6,6 +6,7 @@ using System;
 namespace DpLib.Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(IronCoreAttchEffectScript))]
     public class IronCoreAttchEffectScript : AttachEffectScriptable
     {
         public IronCoreAttchEffectScript(TechnoExt owner) : base(owner)

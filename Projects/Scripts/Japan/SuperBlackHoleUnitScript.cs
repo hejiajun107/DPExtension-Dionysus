@@ -1,4 +1,5 @@
-﻿using DynamicPatcher;
+﻿using DpLib.Scripts.China;
+using DynamicPatcher;
 using Extension.Decorators;
 using Extension.Ext;
 using Extension.Script;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Japan
 {
     [Serializable]
+    [ScriptAlias(nameof(SuperBlackHoleUnitScript))]
     public class SuperBlackHoleUnitScript : TechnoScriptable
     {
         public SuperBlackHoleUnitScript(TechnoExt owner) : base(owner)
@@ -190,6 +192,7 @@ namespace DpLib.Scripts.Japan
 
 
     [Serializable]
+    [ScriptAlias(nameof(BlackHoleEffectedDecorator))]
     public class BlackHoleEffectedDecorator : TechnoScriptable
     {
         public static int ID = 514007;

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Japan
 {
     [Serializable]
+    [ScriptAlias(nameof(EmpireTrooperScript))]
     public class EmpireTrooperScript : TechnoScriptable
     {
         public EmpireTrooperScript(TechnoExt owner) : base(owner) { }

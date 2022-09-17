@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(AircraftScript))]
     public class AircraftScript : TechnoScriptable
     {
         public AircraftScript(TechnoExt owner) : base(owner) { }

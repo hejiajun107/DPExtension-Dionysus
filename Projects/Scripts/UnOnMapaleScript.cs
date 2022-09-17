@@ -10,6 +10,7 @@ namespace DpLib.Scripts
 {
 
     [Serializable]
+    [ScriptAlias(nameof(UnOnMapaleScript))]
     public class UnOnMapaleScript : TechnoScriptable
     {
         public UnOnMapaleScript(TechnoExt owner) : base(owner)

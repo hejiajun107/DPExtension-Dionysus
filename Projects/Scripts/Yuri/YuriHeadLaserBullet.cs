@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Yuri
 {
     [Serializable]
+    [ScriptAlias(nameof(YuriHeadLaserBullet))]
     public class YuriHeadLaserBullet : BulletScriptable
     {
         public YuriHeadLaserBullet(BulletExt owner) : base(owner) { }

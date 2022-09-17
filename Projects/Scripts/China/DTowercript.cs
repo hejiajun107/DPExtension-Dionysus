@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(DTowercript))]
     class DTowercript : TechnoScriptable
     {
         public DTowercript(TechnoExt owner) : base(owner) { }

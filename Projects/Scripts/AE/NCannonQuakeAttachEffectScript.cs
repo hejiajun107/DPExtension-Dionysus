@@ -1,6 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using Scripts.AE;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(NCannonQuakeAttachEffectScript))]
+
     public class NCannonQuakeAttachEffectScript : AttachEffectScriptable
     {
         public NCannonQuakeAttachEffectScript(TechnoExt owner) : base(owner)

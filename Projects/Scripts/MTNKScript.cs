@@ -9,6 +9,7 @@ using Extension.Script;
 using System.Threading.Tasks;
 using Extension.Utilities;
 using Extension.INI;
+using DpLib.Scripts;
 
 namespace Scripts
 {
@@ -21,6 +22,7 @@ namespace Scripts
     }
 
     [Serializable]
+    [ScriptAlias(nameof(MTNK))]
     public class MTNK : TechnoScriptable
     {
         public MTNK(TechnoExt owner) : base(owner) { }

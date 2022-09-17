@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(StrongholdScript))]
     public class StrongholdScript : TechnoScriptable
     {
         public StrongholdScript(TechnoExt owner) : base(owner)

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Japan
 {
     [Serializable]
+    [ScriptAlias(nameof(EKingScript))]
     public class EKingScript : TechnoScriptable
     {
         public EKingScript(TechnoExt owner) : base(owner) { }

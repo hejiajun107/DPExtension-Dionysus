@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.American
 {
     [Serializable]
+    [ScriptAlias(nameof(FixChronoMinerSBScript))]
     public class FixChronoMinerSBScript : TechnoScriptable
     {
         public FixChronoMinerSBScript(TechnoExt owner) : base(owner)

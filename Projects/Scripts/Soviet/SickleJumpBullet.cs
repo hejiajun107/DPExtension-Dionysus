@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Soviet
 {
     [Serializable]
+    [ScriptAlias(nameof(SickleJumpBullet))]
     public class SickleJumpBullet : BulletScriptable
     {
         public SickleJumpBullet(BulletExt owner) : base(owner)

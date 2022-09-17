@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DpLib.Scripts.China;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(XHSunStrikeTrailerBulletScript))]
+
     public class XHSunStrikeTrailerBulletScript : BulletScriptable
     {
         public XHSunStrikeTrailerBulletScript(BulletExt owner) : base(owner) 

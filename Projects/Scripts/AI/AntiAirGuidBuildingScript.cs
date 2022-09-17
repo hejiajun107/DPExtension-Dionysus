@@ -1,4 +1,5 @@
-﻿using DynamicPatcher;
+﻿using DpLib.Scripts.AE;
+using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AI
 {
     [Serializable]
+    [ScriptAlias(nameof(AntiAirGuidBuilding))]
     public class AntiAirGuidBuilding : TechnoScriptable
     {
         private int Side = 0;

@@ -14,9 +14,11 @@ namespace Scripts
 {
 
     [Serializable]
-    public class Ninja : TechnoScriptable
+    [ScriptAlias(nameof(NinjaScript))]
+
+    public class NinjaScript : TechnoScriptable
     {
-        public Ninja(TechnoExt owner) : base(owner)
+        public NinjaScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter();
         }

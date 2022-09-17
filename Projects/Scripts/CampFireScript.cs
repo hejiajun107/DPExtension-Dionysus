@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(CampFireScript))]
     public class CampFireScript : TechnoScriptable
     {
         private bool inited = false;

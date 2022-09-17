@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(CorruptorScript))]
     public class CorruptorScript : TechnoScriptable
     {
 

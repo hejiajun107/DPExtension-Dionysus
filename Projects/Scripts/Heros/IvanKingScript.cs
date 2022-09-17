@@ -10,14 +10,16 @@ using Extension.Script;
 using System.Threading.Tasks;
 using System.Linq;
 using Extension.Shared;
+using DpLib.Scripts.Heros;
 
 namespace Scripts
 {
 
     [Serializable]
-    public class IvanKing : TechnoScriptable
+    [ScriptAlias(nameof(IvanKingScript))]
+    public class IvanKingScript : TechnoScriptable
     {
-        public IvanKing(TechnoExt owner) : base(owner)
+        public IvanKingScript(TechnoExt owner) : base(owner)
         {
 
         }

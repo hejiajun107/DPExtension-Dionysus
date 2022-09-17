@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(WornHoleBulletScript))]
     public class WornHoleBulletScript : BulletScriptable
     {
         public WornHoleBulletScript(BulletExt owner) : base(owner)

@@ -11,6 +11,8 @@ using System.Linq;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(ScarabTargetScript))]
+
     public class ScarabTargetScript:TechnoScriptable
     {
         public ScarabTargetScript(TechnoExt owner) : base(owner)

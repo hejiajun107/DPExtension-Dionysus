@@ -13,9 +13,10 @@ namespace DpLib.Scripts.Heros
 {
 
     [Serializable]
-    public class ColdBlade : TechnoScriptable
+    [ScriptAlias(nameof(ColdBladeScript))]
+    public class ColdBladeScript : TechnoScriptable
     {
-        public ColdBlade(TechnoExt owner) : base(owner)
+        public ColdBladeScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(10);
         }

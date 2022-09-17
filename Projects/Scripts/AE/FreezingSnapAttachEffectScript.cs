@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(FreezingSnapAttachEffectScript))]
     public class FreezingSnapAttachEffectScript : AttachEffectScriptable
     {
         public FreezingSnapAttachEffectScript(TechnoExt owner) : base(owner)

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(ConvertWhenBornScript))]
     public class ConvertWhenBornScript : TechnoScriptable
     {
         public ConvertWhenBornScript(TechnoExt owner) : base(owner)

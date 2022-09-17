@@ -9,10 +9,12 @@ using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using System.Threading.Tasks;
+using DpLib.Scripts;
 
 namespace Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(Disk))]
     public class Disk : TechnoScriptable
     {
         public Disk(TechnoExt owner) : base(owner) {}

@@ -10,20 +10,22 @@ using Extension.Script;
 using System.Threading.Tasks;
 using System.Linq;
 using Extension.Shared;
+using DpLib.Scripts.China;
 
 namespace Scripts
 {
 
     [Serializable]
-    public class Badun : TechnoScriptable
+    [ScriptAlias(nameof(BadunScript))]
+    public class BadunScript : TechnoScriptable
     {
-        public Badun(TechnoExt owner) : base(owner) {
+        public BadunScript(TechnoExt owner) : base(owner) {
             _manaCounter = new ManaCounter();
         }
 
         private ManaCounter _manaCounter;
 
-        static Badun()
+        static BadunScript()
         {
             // Task.Run(() =>
             // {

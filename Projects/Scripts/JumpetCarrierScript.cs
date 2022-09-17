@@ -2,6 +2,7 @@
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(JumpetCarrierScript))]
     public class JumpetCarrierScript : TechnoScriptable
     {
         

@@ -1,4 +1,5 @@
-﻿using Extension.Decorators;
+﻿using DpLib.Scripts.Yuri;
+using Extension.Decorators;
 using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(IonCannonBulletScript))]
     public class IonCannonBulletScript : BulletScriptable
     {
         public IonCannonBulletScript(BulletExt owner) : base(owner) { }
@@ -42,6 +44,7 @@ namespace DpLib.Scripts.China
 
 
         [Serializable]
+        [ScriptAlias(nameof(IonCannonLauncherDecorator))]
         public class IonCannonLauncherDecorator : TechnoScriptable
         {
             public static int ID = 414001;

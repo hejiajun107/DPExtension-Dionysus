@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(CannonBulletScript))]
     public class CannonBulletScript : BulletScriptable
     {
         public CannonBulletScript(BulletExt owner) : base(owner) { }

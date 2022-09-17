@@ -10,14 +10,17 @@ using Extension.Script;
 using System.Threading.Tasks;
 using System.Linq;
 using Extension.Shared;
+using DpLib.Scripts.Heros;
 
 namespace Scripts
 {
 
     [Serializable]
-    public class Boris : TechnoScriptable
+    [ScriptAlias(nameof(BorisScript))]
+
+    public class BorisScript : TechnoScriptable
     {
-        public Boris(TechnoExt owner) : base(owner)
+        public BorisScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter();
         }

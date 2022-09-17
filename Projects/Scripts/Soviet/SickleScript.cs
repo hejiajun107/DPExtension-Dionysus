@@ -12,6 +12,7 @@ namespace DpLib.Scripts.Soviet
 {
 
     [Serializable]
+    [ScriptAlias(nameof(SickleScript))]
     public class SickleScript : TechnoScriptable
     {
         public SickleScript(TechnoExt owner) : base(owner) 

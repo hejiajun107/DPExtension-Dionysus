@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Yuri
 {
     [Serializable]
+    [ScriptAlias(nameof(RegeneratorScript))]
     public class RegeneratorScript : TechnoScriptable
     {
         public RegeneratorScript(TechnoExt owner) : base(owner)

@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DpLib.Scripts.China;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Yuri
 {
     [Serializable]
+    [ScriptAlias(nameof(DTowerLaserBullet))]
     public class DTowerLaserBullet : BulletScriptable
     {
         public DTowerLaserBullet(BulletExt owner) : base(owner) { }

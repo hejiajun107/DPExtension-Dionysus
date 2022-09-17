@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(CopyUnitScript))]
     public class CopyUnitScript : TechnoScriptable
     {
         public CopyUnitScript(TechnoExt owner) : base(owner)

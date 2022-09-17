@@ -14,6 +14,8 @@ using static System.Net.Mime.MediaTypeNames;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(IllusionCreatorScript))]
+
     public class IllusionCreatorScript : TechnoScriptable
     {
         public IllusionCreatorScript(TechnoExt owner) : base(owner)

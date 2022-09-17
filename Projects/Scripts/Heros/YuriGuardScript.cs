@@ -15,9 +15,11 @@ namespace Scripts
 {
 
     [Serializable]
-    public class YuriGuard : TechnoScriptable
+    [ScriptAlias(nameof(YuriGuardScript))]
+
+    public class YuriGuardScript : TechnoScriptable
     {
-        public YuriGuard(TechnoExt owner) : base(owner)
+        public YuriGuardScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter();
         }

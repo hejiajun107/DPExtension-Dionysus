@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DpLib.Scripts.American;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Yuri
 {
     [Serializable]
+    [ScriptAlias(nameof(FutureTankLaserBullet))]
     public class FutureTankLaserBullet : BulletScriptable
     {
         public FutureTankLaserBullet(BulletExt owner) : base(owner) { }

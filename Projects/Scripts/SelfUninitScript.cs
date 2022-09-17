@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(SelfUninitScript))]
     public class SelfUninitScript : TechnoScriptable
     {
         public SelfUninitScript(TechnoExt owner) : base(owner)

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.American
 {
     [Serializable]
+    [ScriptAlias(nameof(MirageTankScript))]
     public class MirageTankScript : TechnoScriptable
     {
         public MirageTankScript(TechnoExt owner) : base(owner) { }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(HonorRetiredAttachEffect))]
     public class HonorRetiredAttachEffect : AttachEffectScriptable
     {
         public HonorRetiredAttachEffect(TechnoExt owner) : base(owner)

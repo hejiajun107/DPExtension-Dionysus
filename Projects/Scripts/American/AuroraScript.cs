@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.American
 {
     [Serializable]
+    [ScriptAlias(nameof(AuroraScript))]
     public class AuroraScript : TechnoScriptable
     {
         public AuroraScript(TechnoExt owner) : base(owner) { }

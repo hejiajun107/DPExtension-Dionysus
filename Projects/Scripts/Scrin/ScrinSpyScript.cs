@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(ScrinSpyScript))]
     public class ScrinSpyScript : TechnoScriptable
     {
         public ScrinSpyScript(TechnoExt owner) : base(owner)

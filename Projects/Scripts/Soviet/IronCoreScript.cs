@@ -1,4 +1,5 @@
-﻿using DynamicPatcher;
+﻿using DpLib.Scripts.Scrin;
+using DynamicPatcher;
 using Extension.Decorators;
 using Extension.Ext;
 using Extension.Script;
@@ -15,6 +16,8 @@ namespace DpLib.Scripts.Soviet
    
 
     [Serializable]
+    [ScriptAlias(nameof(IronCoreScript))]
+
     public class IronCoreScript : TechnoScriptable
     {
         public IronCoreScript(TechnoExt owner) : base(owner) { }
@@ -163,6 +166,8 @@ namespace DpLib.Scripts.Soviet
 
 
     [Serializable]
+    [ScriptAlias(nameof(IonCoreProtection))]
+
     public class IonCoreProtection : TechnoScriptable
     {
         public static int ID = 214001;

@@ -9,13 +9,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DpLib.Scripts.Heros;
 
 namespace DpLib.Scripts
 {
     [Serializable]
-    public class CComand : TechnoScriptable
+    [ScriptAlias(nameof(CComandScript))]
+    public class CComandScript : TechnoScriptable
     {
-        public CComand(TechnoExt owner) : base(owner) {
+        public CComandScript(TechnoExt owner) : base(owner) {
             _manaCounter = new ManaCounter();
         }
 

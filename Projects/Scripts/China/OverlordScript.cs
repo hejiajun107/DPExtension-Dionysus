@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(OverlordScript))]
     public class OverlordScript : TechnoScriptable
     {
         //贴上mk2的buff

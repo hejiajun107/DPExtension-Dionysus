@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
-
+    [ScriptAlias(nameof(J20Script))]
     public class J20Script : TechnoScriptable
     {
         public J20Script(TechnoExt owner) : base(owner) { }

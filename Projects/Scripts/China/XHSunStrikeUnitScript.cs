@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(XHSunStrikeUnitScript))]
     public class XHSunStrikeUnitScript : TechnoScriptable
     {
         //移动的直线距离

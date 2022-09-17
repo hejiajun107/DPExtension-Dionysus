@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(MirrorScript))]
     public class MirrorScript : TechnoScriptable
     {
         public MirrorScript(TechnoExt owner) : base(owner)

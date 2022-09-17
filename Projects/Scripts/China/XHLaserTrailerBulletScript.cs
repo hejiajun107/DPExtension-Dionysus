@@ -1,4 +1,5 @@
-﻿using DynamicPatcher;
+﻿using DpLib.Scripts.China;
+using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
@@ -13,6 +14,8 @@ namespace DpLib.Scripts
 {
 
     [Serializable]
+    [ScriptAlias(nameof(XHLaserTrailerBulletScript))]
+
     public class XHLaserTrailerBulletScript : BulletScriptable
     {
         public XHLaserTrailerBulletScript(BulletExt owner) : base(owner) 

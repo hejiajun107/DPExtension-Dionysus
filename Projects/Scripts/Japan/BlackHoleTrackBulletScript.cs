@@ -3,6 +3,7 @@ using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Japan
 {
     [Serializable]
+    [ScriptAlias(nameof(BlackHoleTrackBulletScript))]
     public class BlackHoleTrackBulletScript : BulletScriptable
     {
         public BlackHoleTrackBulletScript(BulletExt owner) : base(owner)

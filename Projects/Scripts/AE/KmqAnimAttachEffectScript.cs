@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
+    [Serializable]
+    [ScriptAlias(nameof(KmqAnimAttachEffectScript))]
     public class KmqAnimAttachEffectScript : AttachEffectScriptable
     {
         public KmqAnimAttachEffectScript(TechnoExt owner) : base(owner)

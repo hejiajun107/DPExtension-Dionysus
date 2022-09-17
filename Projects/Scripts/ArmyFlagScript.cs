@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(ArmyFlagScript))]
     public class ArmyFlagScript : TechnoScriptable
     {
         public ArmyFlagScript(TechnoExt owner) : base(owner)

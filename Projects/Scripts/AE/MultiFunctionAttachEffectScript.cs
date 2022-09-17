@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(MultiFunctionAttachEffectData))]
     public class MultiFunctionAttachEffectData : INIAutoConfig
     {
         /// <summary>

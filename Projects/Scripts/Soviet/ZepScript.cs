@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Soviet
 {
     [Serializable]
+    [ScriptAlias(nameof(ZepScript))]
     public class ZepScript : TechnoScriptable
     {
         public ZepScript(TechnoExt owner) : base(owner)

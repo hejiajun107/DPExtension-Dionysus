@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DpLib.Scripts.Heros;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
@@ -11,6 +12,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(ScSniperScript))]
+
     public class ScSniperScript : TechnoScriptable
     {
         public ScSniperScript(TechnoExt owner) : base(owner)

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(DamageAsFireScript))]
     public class DamageAsFireScript : TechnoScriptable
     {
 

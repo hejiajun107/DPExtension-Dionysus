@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.American
 {
     [Serializable]
+    [ScriptAlias(nameof(CryoCopterScript))]
     public class CryoCopterScript : TechnoScriptable
     {
 
@@ -35,6 +36,7 @@ namespace DpLib.Scripts.American
 
 
     [Serializable]
+    [ScriptAlias(nameof(FreezingDecorator))]
     public class FreezingDecorator : TechnoScriptable
     {
         public static int ID = 114001;

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(JingWeiHeliScript))]
     public class JingWeiHeliScript:TechnoScriptable
     {
         public JingWeiHeliScript(TechnoExt owner) : base(owner) { }

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(PowerDownVirtualBuilding))]
+
     public class PowerDownVirtualBuilding : TechnoScriptable
     {
         public PowerDownVirtualBuilding(TechnoExt owner) : base(owner) { }

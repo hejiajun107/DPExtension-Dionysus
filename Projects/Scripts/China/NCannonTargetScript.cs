@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(NCannonTargetScript))]
     public class NCannonTargetScript : TechnoScriptable
     {
         public NCannonTargetScript(TechnoExt owner) : base(owner) { }

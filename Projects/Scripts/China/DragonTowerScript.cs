@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(DragonTowerScript))]
     class DragonTowerScript : TechnoScriptable
     {
         public DragonTowerScript(TechnoExt owner) : base(owner) { }

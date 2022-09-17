@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(DelayToAttachScript))]
     public class DelayToAttachScript : TechnoScriptable
     {
         public DelayToAttachScript(TechnoExt owner) : base(owner)

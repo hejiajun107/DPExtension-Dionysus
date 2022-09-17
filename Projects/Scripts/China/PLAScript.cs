@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(PLAScript))]
     public class PLAScript : TechnoScriptable
     {
         public PLAScript(TechnoExt owner) : base(owner)

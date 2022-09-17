@@ -61,18 +61,18 @@ namespace Extension.CWUtilities
     public static class PartialHelper
     {
 
-        public static Action<TechnoExt,CoordStruct, Direction> TechnoPutAction = (owner,coord,faceDir) => { };
+        public static Action<TechnoGlobalExtension, CoordStruct, Direction> TechnoPutAction = (owner,coord,faceDir) => { };
 
-        public static Action<TechnoExt> TechnoAwakeAction = (owner) => { };
+        public static Action<TechnoGlobalExtension> TechnoAwakeAction = (owner) => { };
 
 
-        public static Action<TechnoExt> TechnoUpdateAction = (owner) => { };
+        public static Action<TechnoGlobalExtension> TechnoUpdateAction = (owner) => { };
 
-        public static Action<TechnoExt> TechnoRemoveAction = (owner) => { };
+        public static Action<TechnoGlobalExtension> TechnoRemoveAction = (owner) => { };
 
-        public static Action<TechnoExt,Pointer<AbstractClass>, int> TechnoFireAction = (owner,pTarget, weaponIndex) => { };
+        public static Action<TechnoGlobalExtension, Pointer<AbstractClass>, int> TechnoFireAction = (owner,pTarget, weaponIndex) => { };
 
-        public static Action<TechnoExt,Pointer<int>,int ,Pointer<WarheadTypeClass>,Pointer<ObjectClass>,bool,bool,Pointer<HouseClass>> TechnoReceiveDamageAction = (owner,pDamage,distanceFromEpicenter,pWH,pAttacker,IgnoreDefenses,PreventPassengerEscape,pAttackingHouse) => { };
+        public static Action<TechnoGlobalExtension, Pointer<int>,int ,Pointer<WarheadTypeClass>,Pointer<ObjectClass>,bool,bool,Pointer<HouseClass>> TechnoReceiveDamageAction = (owner,pDamage,distanceFromEpicenter,pWH,pAttacker,IgnoreDefenses,PreventPassengerEscape,pAttackingHouse) => { };
 
 
         static PartialHelper()
@@ -88,14 +88,14 @@ namespace Extension.CWUtilities
                     List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
                     { };
 
-                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoExt), "owner");
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
                     MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
 
                     var parameterExpressionAll = new List<ParameterExpression>()
                     { };
                     parameterExpressionAll.Add(parameterExpression);
                     parameterExpressionAll.AddRange(parameterExpressions);
-                    Expression<Action<TechnoExt>> expression = Expression.Lambda<Action<TechnoExt>>
+                    Expression<Action<TechnoGlobalExtension>> expression = Expression.Lambda<Action<TechnoGlobalExtension>>
                        (methodCall, parameterExpressionAll);
                     var lambda = expression.Compile();
                     TechnoAwakeAction += lambda;
@@ -106,14 +106,14 @@ namespace Extension.CWUtilities
                     List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
                     { Expression.Parameter(typeof(CoordStruct), "coord"), Expression.Parameter(typeof(Direction), "faceDir") };
 
-                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoExt), "owner");
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
                     MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
 
                     var parameterExpressionAll = new List<ParameterExpression>()
                     { };
                     parameterExpressionAll.Add(parameterExpression);
                     parameterExpressionAll.AddRange(parameterExpressions);
-                    Expression<Action<TechnoExt, CoordStruct, Direction>> expression = Expression.Lambda<Action<TechnoExt, CoordStruct, Direction>>
+                    Expression<Action<TechnoGlobalExtension, CoordStruct, Direction>> expression = Expression.Lambda<Action<TechnoGlobalExtension, CoordStruct, Direction>>
                        (methodCall, parameterExpressionAll);
                     var lambda = expression.Compile();
 
@@ -125,14 +125,14 @@ namespace Extension.CWUtilities
                     List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
                     { };
 
-                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoExt), "owner");
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
                     MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
 
                     var parameterExpressionAll = new List<ParameterExpression>()
                     { };
                     parameterExpressionAll.Add(parameterExpression);
                     parameterExpressionAll.AddRange(parameterExpressions);
-                    Expression<Action<TechnoExt>> expression = Expression.Lambda<Action<TechnoExt>>
+                    Expression<Action<TechnoGlobalExtension>> expression = Expression.Lambda<Action<TechnoGlobalExtension>>
                        (methodCall, parameterExpressionAll);
                     var lambda = expression.Compile();
                     TechnoUpdateAction += lambda;
@@ -144,14 +144,14 @@ namespace Extension.CWUtilities
                     List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
                     { };
 
-                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoExt), "owner");
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
                     MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
 
                     var parameterExpressionAll = new List<ParameterExpression>()
                     { };
                     parameterExpressionAll.Add(parameterExpression);
                     parameterExpressionAll.AddRange(parameterExpressions);
-                    Expression<Action<TechnoExt>> expression = Expression.Lambda<Action<TechnoExt>>
+                    Expression<Action<TechnoGlobalExtension>> expression = Expression.Lambda<Action<TechnoGlobalExtension>>
                        (methodCall, parameterExpressionAll);
                     var lambda = expression.Compile();
                     TechnoRemoveAction += lambda;
@@ -162,14 +162,14 @@ namespace Extension.CWUtilities
                     List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
                     { Expression.Parameter(typeof(Pointer<AbstractClass>), "pTarget"), Expression.Parameter(typeof(int), "weaponIndex") };
 
-                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoExt), "owner");
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
                     MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
 
                     var parameterExpressionAll = new List<ParameterExpression>()
                     { };
                     parameterExpressionAll.Add(parameterExpression);
                     parameterExpressionAll.AddRange(parameterExpressions);
-                    Expression<Action<TechnoExt, Pointer<AbstractClass>, int>> expression = Expression.Lambda<Action<TechnoExt, Pointer<AbstractClass>, int>>
+                    Expression<Action<TechnoGlobalExtension, Pointer<AbstractClass>, int>> expression = Expression.Lambda<Action<TechnoGlobalExtension, Pointer<AbstractClass>, int>>
                        (methodCall, parameterExpressionAll);
                     var lambda = expression.Compile();
 
@@ -189,14 +189,14 @@ namespace Extension.CWUtilities
                         Expression.Parameter(typeof(Pointer<HouseClass>), "pAttackingHouse")
                     };
 
-                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoExt), "owner");
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
                     MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
 
                     var parameterExpressionAll = new List<ParameterExpression>()
                     { };
                     parameterExpressionAll.Add(parameterExpression);
                     parameterExpressionAll.AddRange(parameterExpressions);
-                    Expression<Action<TechnoExt, Pointer<int>, int, Pointer<WarheadTypeClass>, Pointer<ObjectClass>, bool, bool, Pointer<HouseClass>>> expression = Expression.Lambda<Action<TechnoExt, Pointer<int>, int, Pointer<WarheadTypeClass>, Pointer<ObjectClass>, bool, bool, Pointer<HouseClass>>>
+                    Expression<Action<TechnoGlobalExtension, Pointer<int>, int, Pointer<WarheadTypeClass>, Pointer<ObjectClass>, bool, bool, Pointer<HouseClass>>> expression = Expression.Lambda<Action<TechnoGlobalExtension, Pointer<int>, int, Pointer<WarheadTypeClass>, Pointer<ObjectClass>, bool, bool, Pointer<HouseClass>>>
                        (methodCall, parameterExpressionAll);
                     var lambda = expression.Compile();
 

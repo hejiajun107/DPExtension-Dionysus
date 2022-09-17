@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Soviet
 {
     [Serializable]
+    [ScriptAlias(nameof(SuperArouseScript))]
     public class SuperArouseScript : TechnoScriptable
     {
         public SuperArouseScript(TechnoExt owner) : base(owner)

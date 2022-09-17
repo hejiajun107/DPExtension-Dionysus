@@ -13,9 +13,11 @@ namespace DpLib.Scripts.Heros
 {
 
     [Serializable]
-    public class CounterStrike : TechnoScriptable
+    [ScriptAlias(nameof(CounterStrikeScript))]
+
+    public class CounterStrikeScript : TechnoScriptable
     {
-        public CounterStrike(TechnoExt owner) : base(owner)
+        public CounterStrikeScript(TechnoExt owner) : base(owner)
         {
 
         }

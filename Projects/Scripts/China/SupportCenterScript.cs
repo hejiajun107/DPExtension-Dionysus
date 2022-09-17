@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(SupportCenterScript))]
+
     public class SupportCenterScript : TechnoScriptable
     {
         public SupportCenterScript(TechnoExt owner) : base(owner)

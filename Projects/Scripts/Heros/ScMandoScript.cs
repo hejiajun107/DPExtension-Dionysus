@@ -6,6 +6,7 @@ using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
+using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Heros
 {
     [Serializable]
+    [ScriptAlias(nameof(ScMandoScript))]
+
     public class ScMandoScript : TechnoScriptable
     {
         public ScMandoScript(TechnoExt owner) : base(owner)

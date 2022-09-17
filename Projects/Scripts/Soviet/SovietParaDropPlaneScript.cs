@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Soviet
 {
     [Serializable]
+    [ScriptAlias(nameof(SovietParaDropPlaneScript))]
     public class SovietParaDropPlaneScript : TechnoScriptable
     {
         public SovietParaDropPlaneScript(TechnoExt owner) : base(owner)

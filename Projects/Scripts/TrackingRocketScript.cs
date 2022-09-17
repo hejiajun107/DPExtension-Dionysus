@@ -9,6 +9,7 @@ using System;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(TrackingRocketScript))]
     public class TrackingRocketScript : TechnoScriptable
     {
         public TrackingRocketScript(TechnoExt owner) : base(owner)

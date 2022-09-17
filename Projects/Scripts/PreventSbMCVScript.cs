@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(PreventSbMCVScript))]
     public class PreventSbMCVScript : TechnoScriptable
     {
         public PreventSbMCVScript(TechnoExt owner) : base(owner)

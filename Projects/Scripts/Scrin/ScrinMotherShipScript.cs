@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(ScrinMotherShipScript))]
     public class ScrinMotherShipScript : TechnoScriptable
     {
         public ScrinMotherShipScript(TechnoExt owner) : base(owner)

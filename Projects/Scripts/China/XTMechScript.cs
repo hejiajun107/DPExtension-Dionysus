@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(XTMechScript))]
     public class XTMechScript : TechnoScriptable
     {
         public XTMechScript(TechnoExt owner) : base(owner) { }

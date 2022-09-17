@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(AirportScript))]
     public class AirportScript : TechnoScriptable
     {
 

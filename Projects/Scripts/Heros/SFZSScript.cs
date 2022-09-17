@@ -10,14 +10,17 @@ using Extension.Script;
 using System.Threading.Tasks;
 using System.Linq;
 using Extension.Shared;
+using DpLib.Scripts;
 
 namespace Scripts
 {
 
     [Serializable]
-    public class SFZS : TechnoScriptable
+    [ScriptAlias(nameof(SFZSScript))]
+
+    public class SFZSScript : TechnoScriptable
     {
-        public SFZS(TechnoExt owner) : base(owner) {
+        public SFZSScript(TechnoExt owner) : base(owner) {
         }
 
 

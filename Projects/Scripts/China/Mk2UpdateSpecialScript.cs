@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(Mk2UpdateSpecialScript))]
     public class Mk2UpdateSpecialScript : TechnoScriptable
     {
         public Mk2UpdateSpecialScript(TechnoExt owner) : base(owner)

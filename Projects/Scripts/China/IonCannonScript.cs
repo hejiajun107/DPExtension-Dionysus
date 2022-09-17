@@ -1,4 +1,5 @@
-﻿using DynamicPatcher;
+﻿using DpLib.Scripts.China;
+using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
@@ -9,6 +10,7 @@ namespace DpLib.Scripts
 {
   
     [Serializable]
+    [ScriptAlias(nameof(IonCannonScript))]
     public class IonCannonScript : TechnoScriptable
     {
         public IonCannonScript(TechnoExt owner) : base(owner) { }

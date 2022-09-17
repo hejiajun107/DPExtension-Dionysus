@@ -21,11 +21,12 @@ namespace Scripts
     }
 
     [Serializable]
-    public class Tany : TechnoScriptable
+    [ScriptAlias(nameof(TanyScript))]
+    public class TanyScript : TechnoScriptable
     {
-        public Tany(TechnoExt owner) : base(owner) { }
+        public TanyScript(TechnoExt owner) : base(owner) { }
 
-        static Tany()
+        static TanyScript()
         {
             // Task.Run(() =>
             // {

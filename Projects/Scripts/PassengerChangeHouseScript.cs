@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(PassengerChangeHouseScript))]
     public class PassengerChangeHouseScript : TechnoScriptable
     {
        

@@ -1,4 +1,5 @@
-﻿using DynamicPatcher;
+﻿using DpLib.Scripts.Japan;
+using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(BuzzerShieldableScript))]
     public class BuzzerShieldableScript : TechnoScriptable
     {
         public BuzzerShieldableScript(TechnoExt owner) : base(owner)

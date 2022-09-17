@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Heros
 {
     [Serializable]
+    [ScriptAlias(nameof(ScrinEggScript))]
+
     public class ScrinEggScript : TechnoScriptable
     {
         public ScrinEggScript(TechnoExt owner) : base(owner)

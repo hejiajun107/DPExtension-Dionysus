@@ -15,9 +15,10 @@ namespace Scripts
 {
 
     [Serializable]
-    public class Wellka : TechnoScriptable
+    [ScriptAlias(nameof(WellkaScript))]
+    public class WellkaScript : TechnoScriptable
     {
-        public Wellka(TechnoExt owner) : base(owner)
+        public WellkaScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(10);
         }

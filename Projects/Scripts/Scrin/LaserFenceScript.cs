@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(LaserFenceScript))]
     public class LaserFenceScript : TechnoScriptable
     {
         public LaserFenceScript(TechnoExt owner) : base(owner)

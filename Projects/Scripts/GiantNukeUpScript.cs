@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(GiantNukeUpScript))]
     public class GiantNukeUpScript : BulletScriptable
     {
         public GiantNukeUpScript(BulletExt owner) : base(owner) { }

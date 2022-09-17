@@ -1,4 +1,5 @@
-﻿using DynamicPatcher;
+﻿using DpLib.Scripts.Yuri;
+using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.American
 {
     [Serializable]
+    [ScriptAlias(nameof(KmqScript))]
     public class KmqScript : TechnoScriptable
     {
         public KmqScript(TechnoExt owner) : base(owner)

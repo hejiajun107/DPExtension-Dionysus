@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
-
+    [Serializable]
+    [ScriptAlias(nameof(XHSpreadFireBulletScript))]
 
     public class XHSpreadFireBulletScript : BulletScriptable
     {

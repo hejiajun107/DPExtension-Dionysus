@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DpLib.Scripts.AI;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.American
 {
     [Serializable]
+    [ScriptAlias(nameof(AoeChronoScript))]
     public class AoeChronoScript : TechnoScriptable
     {
         public AoeChronoScript(TechnoExt owner) : base(owner)

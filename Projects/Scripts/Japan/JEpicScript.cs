@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Japan
 {
     [Serializable]
+    [ScriptAlias(nameof(JEpicScript))]
     public class JEpicScript : TechnoScriptable
     {
         public JEpicScript(TechnoExt owner) : base(owner) { }

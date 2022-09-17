@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Japan
 {
     [Serializable]
+    [ScriptAlias(nameof(SakuraScript))]
     public class SakuraScript : TechnoScriptable
     {
         public SakuraScript(TechnoExt owner) : base(owner)

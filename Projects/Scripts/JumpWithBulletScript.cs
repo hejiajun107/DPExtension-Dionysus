@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
+    [ScriptAlias(nameof(JumpWithBulletScript))]
     public class JumpWithBulletScript:BulletScriptable
     {
         public JumpWithBulletScript(BulletExt owner) : base(owner)

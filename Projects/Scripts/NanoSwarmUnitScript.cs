@@ -3,6 +3,7 @@ using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
+    [Serializable]
+    [ScriptAlias(nameof(NanoSwarmUnitScript))]
     public class NanoSwarmUnitScript : TechnoScriptable
     {
         public NanoSwarmUnitScript(TechnoExt owner) : base(owner) { }

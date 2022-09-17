@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(NCannonScript))]
     public class NCannonScript : TechnoScriptable
     {
         //贴上mk2的buff

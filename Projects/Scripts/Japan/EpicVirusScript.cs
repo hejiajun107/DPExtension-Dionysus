@@ -14,6 +14,7 @@ namespace DpLib.Scripts.Japan
 {
 
     [Serializable]
+    [ScriptAlias(nameof(EpicVirusScript))]
     public class EpicVirusScript : TechnoScriptable
     {
         public EpicVirusScript(TechnoExt owner) : base(owner) { }

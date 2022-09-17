@@ -10,10 +10,13 @@ using Extension.Decorators;
 using Extension.Utilities;
 using System.Threading.Tasks;
 using PatcherYRpp.Utilities;
+using DpLib.Scripts;
 
 namespace Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(GGI))]
+
     public class GGI : TechnoScriptable
     {
         public GGI(TechnoExt owner) : base(owner) { }

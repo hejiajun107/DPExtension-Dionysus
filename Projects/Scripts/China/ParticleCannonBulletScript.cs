@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(ParticleCannonBulletScript))]
+
     public class ParticleCannonBulletScript : BulletScriptable
     {
         public ParticleCannonBulletScript(BulletExt owner) : base(owner) { }
@@ -68,6 +70,8 @@ namespace DpLib.Scripts.China
 
 
         [Serializable]
+        [ScriptAlias(nameof(ParticleCannonUnitDecorator))]
+
         public class ParticleCannonUnitDecorator : TechnoScriptable
         {
             public static int ID = 414002;

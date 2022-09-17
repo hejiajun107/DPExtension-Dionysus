@@ -8,10 +8,12 @@ using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
 using System.Threading.Tasks;
+using DpLib.Scripts;
 
 namespace Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(AAHeatSeeker2))]
     public class AAHeatSeeker2 : BulletScriptable
     {
         public AAHeatSeeker2(BulletExt owner) : base(owner) {}

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(LinkSWScript))]
     public class LinkSWScript : TechnoScriptable
     {
         public LinkSWScript(TechnoExt owner) : base(owner)

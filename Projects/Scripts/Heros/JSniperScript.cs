@@ -11,14 +11,16 @@ using System.Linq;
 using Extension.Shared;
 using Extension.Decorators;
 using Extension.Utilities;
+using DpLib.Scripts;
 
 namespace Scripts
 {
 
     [Serializable]
-    public class JSniper : TechnoScriptable
+    [ScriptAlias(nameof(JSniperScript))]
+    public class JSniperScript : TechnoScriptable
     {
-        public JSniper(TechnoExt owner) : base(owner)
+        public JSniperScript(TechnoExt owner) : base(owner)
         {
         }
 

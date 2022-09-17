@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Yuri
 {
     [Serializable]
+    [ScriptAlias(nameof(RegeneratorBulletScript))]
     public class RegeneratorBulletScript : BulletScriptable
     {
         public RegeneratorBulletScript(BulletExt owner) : base(owner) { }

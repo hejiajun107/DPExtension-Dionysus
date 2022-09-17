@@ -3,6 +3,7 @@ using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
+using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,11 @@ namespace DpLib.Scripts.Heros
 {
 
     [Serializable]
-    public class BlackLotus : TechnoScriptable
+    [ScriptAlias(nameof(BlackLotusScript))]
+
+    public class BlackLotusScript : TechnoScriptable
     {
-        public BlackLotus(TechnoExt owner) : base(owner)
+        public BlackLotusScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(15);
         }

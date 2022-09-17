@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(TiberiumInfestScript))]
     public class TiberiumInfestScript : TechnoScriptable
     {
         public TiberiumInfestScript(TechnoExt owner) : base(owner)

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(ForceSaleScript))]
     public class ForceSaleScript : TechnoScriptable
     {
         public ForceSaleScript(TechnoExt owner) : base(owner)

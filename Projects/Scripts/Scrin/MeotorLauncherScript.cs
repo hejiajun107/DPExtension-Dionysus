@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(MeotorLauncherScript))]
+
     public class MeotorLauncherScript : TechnoScriptable
     {
         public MeotorLauncherScript(TechnoExt owner) : base(owner)

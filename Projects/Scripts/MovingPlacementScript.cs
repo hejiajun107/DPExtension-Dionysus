@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts
 {
     [Serializable]
+    [ScriptAlias(nameof(MovingPlacementScript))]
     public class MovingPlacementScript : TechnoScriptable
     {
         public MovingPlacementScript(TechnoExt owner) : base(owner)

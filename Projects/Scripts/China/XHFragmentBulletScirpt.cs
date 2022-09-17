@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.China
 {
     [Serializable]
+    [ScriptAlias(nameof(XHFragmentBulletScirpt))]
     public class XHFragmentBulletScirpt : BulletScriptable
     {
 

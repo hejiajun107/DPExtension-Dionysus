@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(WornHoleBuildingScript))]
     public class WornHoleBuildingScript : TechnoScriptable
     {
         public WornHoleBuildingScript(TechnoExt owner) : base(owner)

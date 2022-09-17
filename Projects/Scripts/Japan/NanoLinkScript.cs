@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Japan
 {
     [Serializable]
-
+    [ScriptAlias(nameof(NanoLinkScript))]
     public class NanoLinkScript : TechnoScriptable
     {
         public NanoLinkScript(TechnoExt owner) : base(owner) { }
@@ -88,6 +88,7 @@ namespace DpLib.Scripts.Japan
 
 
     [Serializable]
+    [ScriptAlias(nameof(LinkedTechnoDecorator))]
     public class LinkedTechnoDecorator : TechnoScriptable
     {
         public static int ID = 514003;

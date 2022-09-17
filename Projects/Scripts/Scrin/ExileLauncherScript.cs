@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(ExileLauncherScript))]
     public class ExileLauncherScript : TechnoScriptable
     {
         public ExileLauncherScript(TechnoExt owner) : base(owner)

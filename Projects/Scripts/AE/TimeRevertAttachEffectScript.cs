@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(TimeRevertAttachEffectScript))]
     public class TimeRevertAttachEffectScript : AttachEffectScriptable
     {
         public TimeRevertAttachEffectScript(TechnoExt owner) : base(owner)

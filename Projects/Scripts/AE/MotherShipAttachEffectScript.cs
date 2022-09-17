@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AE
 {
     [Serializable]
+    [ScriptAlias(nameof(MotherShipAttachEffectScript))]
     public class MotherShipAttachEffectScript : AttachEffectScriptable
     {
         public MotherShipAttachEffectScript(TechnoExt owner) : base(owner)

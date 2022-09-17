@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(ScrabScript))]
     public class ScrabScript : TechnoScriptable
     {
         public ScrabScript(TechnoExt owner) : base(owner)

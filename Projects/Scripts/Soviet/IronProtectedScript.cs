@@ -11,6 +11,7 @@ namespace DpLib.Scripts.Soviet
 {
 
     [Serializable]
+    [ScriptAlias(nameof(IronProtectedScript))]
     public class IronProtectedScript : TechnoScriptable
     {
         public IronProtectedScript(TechnoExt owner) : base(owner) { }

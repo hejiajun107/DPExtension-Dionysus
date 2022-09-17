@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
+    [ScriptAlias(nameof(InsuranceAttachEffectScript))]
     public class InsuranceAttachEffectScript : AttachEffectScriptable
     {
         public InsuranceAttachEffectScript(TechnoExt owner) : base(owner)

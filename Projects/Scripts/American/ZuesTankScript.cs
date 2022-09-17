@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace DpLib.Scripts.American
 {
+    [Serializable]
+    [ScriptAlias(nameof(ZuesTankScript))]
     public class ZuesTankScript : TechnoScriptable
     {
         public ZuesTankScript(TechnoExt owner) : base(owner) { }

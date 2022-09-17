@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Scrin
 {
     [Serializable]
+    [ScriptAlias(nameof(ExileBulletScript))]
     public class ExileBulletScript : BulletScriptable
     {
         public ExileBulletScript(BulletExt owner) : base(owner)

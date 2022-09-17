@@ -11,6 +11,9 @@ using DynamicPatcher;
 
 namespace DpLib.Scripts
 {
+    [Serializable]
+    [ScriptAlias(nameof(FighterCmdBulletScript))]
+
     public class FighterCmdBulletScript : BulletScriptable
     {
         public FighterCmdBulletScript(BulletExt owner) : base(owner) { }

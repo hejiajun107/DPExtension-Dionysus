@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Soviet
 {
     [Serializable]
+    [ScriptAlias(nameof(TeslaTankScript))]
     public class TeslaTankScript : TechnoScriptable
     {
         public TeslaTankScript(TechnoExt owner) : base(owner) { }
