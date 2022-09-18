@@ -24,11 +24,6 @@ namespace Scripts
         }
 
 
-        static SFZS()
-        {
-            
-        }
-
 
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");

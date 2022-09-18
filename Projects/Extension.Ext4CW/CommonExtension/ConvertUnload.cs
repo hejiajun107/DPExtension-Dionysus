@@ -59,7 +59,7 @@ namespace Extension.CW
     public partial class TechnoGlobalTypeExt
     {
         [INIField(Key = "Convert.Unload")]
-        public string ConvertUnloadTo;
+        public string ConvertUnloadTo = "";
     }
 
 }

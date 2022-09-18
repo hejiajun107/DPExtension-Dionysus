@@ -10,6 +10,7 @@ namespace Extension.CW
 {
     public partial class TechnoGlobalTypeExt
     {
+        [NotINIField]
         public bool isCustomFlagLoaded = false;
 
         [INIField(Key = "IsHero")]

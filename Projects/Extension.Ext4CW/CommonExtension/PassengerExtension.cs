@@ -177,9 +177,9 @@ namespace Extension.CW
         public bool PassengerAlwaysSync = false;
 
         [INIField(Key = "InitialPayload.Types")]
-        public string[] InitPassengers = null;
+        public string[] InitPassengers = Array.Empty<string>();
 
         [INIField(Key = "InitialPayload.Nums")]
-        public int[] PassengerNums = null;
+        public int[] PassengerNums = Array.Empty<int>();
     }
 }

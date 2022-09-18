@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.AI
 {
     [Serializable]
-    [ScriptAlias(nameof(AntiAirGuidBuilding))]
-    public class AntiAirGuidBuilding : TechnoScriptable
+    [ScriptAlias(nameof(AntiAirGuidBuildingScript))]
+    public class AntiAirGuidBuildingScript : TechnoScriptable
     {
         private int Side = 0;
 

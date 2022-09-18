@@ -28,37 +28,37 @@ namespace Extension.CW
             base.Awake();
             INI = this.CreateRulesIniComponentWith<TechnoGlobalTypeExt>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             Data = INI.Data;
-            PartialHelper.TechnoAwakeAction(Owner);
+            PartialHelper.TechnoAwakeAction(this);
         }
 
         public override void OnUpdate()
         {
             base.OnUpdate();
-            PartialHelper.TechnoUpdateAction(Owner);
+            PartialHelper.TechnoUpdateAction(this);
         }
 
         public override void OnPut(CoordStruct coord, Direction faceDir)
         {
             base.OnPut(coord, faceDir);
-            PartialHelper.TechnoPutAction(Owner, coord, faceDir);
+            PartialHelper.TechnoPutAction(this, coord, faceDir);
         }
 
         public override void OnRemove()
         {
             base.OnRemove();
-            PartialHelper.TechnoRemoveAction(Owner);
+            PartialHelper.TechnoRemoveAction(this);
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             base.OnFire(pTarget, weaponIndex);
-            PartialHelper.TechnoFireAction(Owner, pTarget, weaponIndex);
+            PartialHelper.TechnoFireAction(this, pTarget, weaponIndex);
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
             base.OnReceiveDamage(pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
-            PartialHelper.TechnoReceiveDamageAction(Owner, pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
+            PartialHelper.TechnoReceiveDamageAction(this, pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
         }
     }
 

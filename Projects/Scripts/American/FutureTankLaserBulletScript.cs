@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 namespace DpLib.Scripts.Yuri
 {
     [Serializable]
-    [ScriptAlias(nameof(FutureTankLaserBullet))]
-    public class FutureTankLaserBullet : BulletScriptable
+    [ScriptAlias(nameof(FutureTankLaserBulletScript))]
+    public class FutureTankLaserBulletScript : BulletScriptable
     {
-        public FutureTankLaserBullet(BulletExt owner) : base(owner) { }
+        public FutureTankLaserBulletScript(BulletExt owner) : base(owner) { }
 
         private bool IsActive = false;
 
