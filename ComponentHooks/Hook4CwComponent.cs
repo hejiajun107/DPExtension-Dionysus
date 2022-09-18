@@ -24,16 +24,16 @@ namespace ComponentHooks
                 double giveExpMultiple = 1.0;
                 double gainExpMultiple = 1.0;
 
-                if (pTechno != null)
+                if(pTechno != null)
                 {
                     var technoExt = TechnoExt.ExtMap.Find(pTechno);
                     var globalExt = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
                     giveExpMultiple = globalExt.Data.GiveExperienceMultiple;
                 }
 
-                if (pKiller != null)
+                if(pKiller!=null)
                 {
-                    var killerExt = TechnoExt.ExtMap.Find(pTechno);
+                    var killerExt = TechnoExt.ExtMap.Find(pKiller);
                     var globalExt = killerExt.GameObject.GetComponent<TechnoGlobalExtension>();
                     gainExpMultiple = globalExt.Data.GainExperienceMultiple;
                 }
