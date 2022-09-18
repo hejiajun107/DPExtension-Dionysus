@@ -25,7 +25,7 @@ namespace DpLib.Scripts.AI
             "GACNST","NACNST","YACNST","ZGJZC","JPCNST","RACNST",
         };
 
-        public AntiAirGuidBuilding(TechnoExt owner) : base(owner)
+        public AntiAirGuidBuildingScript(TechnoExt owner) : base(owner)
         {
             var id = owner.Type.OwnerObject.Ref.Base.Base.ID.ToString();
             if (int.TryParse(id.Last().ToString(), out int s))

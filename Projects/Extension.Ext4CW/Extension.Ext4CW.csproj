@@ -49,6 +49,7 @@
     <Compile Include="CommonExtension\CustomFlag.cs" />
     <Compile Include="CommonExtension\FighterAreaGuard.cs" />
     <Compile Include="CommonExtension\PassengerExtension.cs" />
+    <Compile Include="CommonExtension\CustomExperience.cs" />
     <Compile Include="PartialHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TechnoGlobalExtension.cs" />
