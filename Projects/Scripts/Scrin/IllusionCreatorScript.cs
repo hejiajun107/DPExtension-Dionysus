@@ -76,7 +76,7 @@ namespace DpLib.Scripts.Scrin
                             continue;
                         }
 
-                        TechnoExt tref = default;
+                        TechnoExt tref;
 
                         tref=(TechnoExt.ExtMap.Find(techno));
 

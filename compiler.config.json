@@ -16,6 +16,8 @@
     "Extension.FX.dll",
     "Extension.Lua.dll",
     "ScriptUniversal.dll",
+    "Extension.Ext4CW.dll",
+    "Extension.AttachEffectScript.dll",
 
     "Microsoft.VisualStudio.Interop.dll",
     "XLua.Mini"
@@ -24,9 +26,9 @@
     "_USE_ANIM_EXT",
     "_USE_CELL_EXT",
 
-    "REALTIME_INI",
+    "_REALTIME_INI",
 
-    "FX_ENABLE",
+    "_FX_ENABLE",
     "_FX_USED3D",
     "_FX_TOFIX",
     "_FX_CNCDDRAW"
