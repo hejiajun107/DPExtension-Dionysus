@@ -16,7 +16,12 @@ namespace DpLib.Scripts
     {
         public ConvertWhenBornScript(TechnoExt owner) : base(owner)
         {
-            var gext = owner.GameObject.GetComponent<TechnoGlobalExtension>();
+         
+        }
+
+        public override void Awake()
+        {
+            var gext = Owner.GameObject.GetComponent<TechnoGlobalExtension>();
             if (gext != null)
             {
                 targetType = gext.Data.ScriptArgs;

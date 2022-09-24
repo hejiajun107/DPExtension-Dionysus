@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
@@ -60,12 +61,19 @@ namespace Extension.Shared
                     //}
                 }
             }
-            if(manaCheckRof-->0)
+      
+            if (manaCheckRof-->0)
             {
                 return;
             }
             manaCheckRof = 15;
             RefreshBar(owner);
+        }
+
+        public void OnRender(TechnoExt owner)
+        {
+            var location = owner.OwnerObject.Ref.Base.Base.GetCoords();
+            DrawManadBar(8, new Point2D(location.X, location.Y));
         }
 
         private void RefreshBar(TechnoExt owner)
@@ -118,6 +126,56 @@ namespace Extension.Shared
             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(owner.OwnerObject.Convert<AbstractClass>(), owner.OwnerObject, 1, pWH, 100, false);
 
             pBullet.Ref.DetonateAndUnInit(ptarget.Base.Base.GetCoords());
+        }
+
+        //, RectangleStruct pBound
+        public void DrawManadBar(int iLength, Point2D pLocation)
+        {
+            Point2D vPos = new Point2D(0,0);
+            Point2D vLoc = pLocation;
+            int frame, XOffset, YOffset;
+            YOffset = 0;//this->Techno->GetTechnoType()->PixelSelectionBracketDelta + this->Type->BracketDelta;
+            vLoc.Y -= 5;
+
+            var pipBoard = FileSystem.PIPBRD_SHP;
+
+            if (iLength == 8)
+            {
+                vPos.X = vLoc.X + 11;
+                vPos.Y = vLoc.Y - 25 + YOffset;
+                frame = pipBoard.Ref.Frames > 2 ? 3 : 1;
+                XOffset = -5;
+                YOffset -= 24;
+            }
+            else
+            {
+                vPos.X = vLoc.X + 1;
+                vPos.Y = vLoc.Y - 26 + YOffset;
+                frame = pipBoard.Ref.Frames > 2 ? 2 : 0;
+                XOffset = -15;
+                YOffset -= 25;
+            }
+
+            Logger.Log("格子数：" + (int)(Math.Round((currentMana / 100d)) * iLength));
+
+            for (int i = 0; i < (int)(Math.Round((currentMana / 100d)) * iLength); ++i)
+            {
+                vPos.X = vLoc.X + XOffset + 2 * i;
+                vPos.Y = vLoc.Y + YOffset;
+
+                //Surface.Current.Ref.Blit(Surface.ViewBound, drawRect
+                //   , surface.Pointer.Convert<Surface>(), srcSurface.GetRect(), srcSurface.GetRect(), true, true);
+                //Surface.Current.Ref.DrawSHP(pipBoard, frame, FileSystem.PALETTE_PAL, vPos,new RectangleStruct(1,1,1,1),BlitterFlags.None,ZGradient.Ground, 1000, 0, IntPtr.Zero, 0, 0, 0);
+                //Surface.Current.Ref.DrawSHP(FileSystem.PALETTE_PAL, pipBoard, frame, vPos, new RectangleStruct(1, 1, 1, 1), BlitterFlags.None, ZGradient.Ground, 1000, 0, 0, 0, IntPtr.Zero, 0, 0, 0);
+
+            }
+            //surface.Ref.DrawSHP(FileSystem.PALETTE_PAL, pipBoard, frame, vPos, pBound, );
+            //DSurface::Temp->DrawSHP(FileSystem::PALETTE_PAL, pipBoard,
+            //frame, &vPos, pBound, BlitterFlags(0xE00), 0, 0, ZGradient::Ground, 1000, 0, 0, 0, 0, 0);
+
+            //Pointer<ConvertClass> Palette, Pointer< SHPStruct > SHP, int frameIdx,
+            //Pointer< Point2D > pos, Pointer<RectangleStruct> boundingRect, BlitterFlags flags, ZGradient arg7,
+            //int zAdjust, int arg9, int bright, int TintColor, Pointer< SHPStruct > BUILDINGZ_SHA, uint argD, int ZS_X, int ZS_Y
         }
 
         public bool Cost(int num)

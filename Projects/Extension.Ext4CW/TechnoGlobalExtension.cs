@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace Extension.CW
 {
 
+    [Serializable]
     [GlobalScriptable(typeof(TechnoExt))]
     public partial class TechnoGlobalExtension : TechnoScriptable
     {
@@ -62,7 +63,7 @@ namespace Extension.CW
         }
     }
 
-
+    [Serializable]
     public partial class TechnoGlobalTypeExt : INIAutoConfig
     {
       

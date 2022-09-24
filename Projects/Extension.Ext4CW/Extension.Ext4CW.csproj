@@ -48,10 +48,12 @@
     <Compile Include="CommonExtension\Copyable.cs" />
     <Compile Include="CommonExtension\CustomFlag.cs" />
     <Compile Include="CommonExtension\FighterAreaGuard.cs" />
+    <Compile Include="CommonExtension\HeroKeepVeterancy.cs" />
     <Compile Include="CommonExtension\PassengerExtension.cs" />
     <Compile Include="CommonExtension\CustomExperience.cs" />
     <Compile Include="PartialHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="HouseGlobalExtension.cs" />
     <Compile Include="TechnoGlobalExtension.cs" />
     <Compile Include="Untilities\Finder.cs" />
     <Compile Include="Untilities\GameUtil.cs" />

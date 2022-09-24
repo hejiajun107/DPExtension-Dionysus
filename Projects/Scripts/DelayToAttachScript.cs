@@ -16,8 +16,13 @@ namespace DpLib.Scripts
     {
         public DelayToAttachScript(TechnoExt owner) : base(owner)
         {
+           
+        }
+
+        public override void Awake()
+        {
             var scriptArgs = "";
-            var gext = owner.GameObject.GetComponent<TechnoGlobalExtension>();
+            var gext = Owner.GameObject.GetComponent<TechnoGlobalExtension>();
             if (gext != null)
             {
                 scriptArgs = gext.Data.ScriptArgs;

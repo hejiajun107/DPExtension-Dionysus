@@ -126,6 +126,10 @@ namespace Scripts
             }
         }
 
+        //public override void OnRender()
+        //{
+        //    _manaCounter.OnRender(Owner);
+        //}
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             bool controlledByAi = false;
