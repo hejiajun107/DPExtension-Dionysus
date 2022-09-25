@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DynamicPatcher">
@@ -57,7 +59,9 @@
     <Compile Include="HouseGlobalExtension.cs" />
     <Compile Include="TechnoGlobalExtension.cs" />
     <Compile Include="Untilities\Finder.cs" />
+    <Compile Include="Untilities\FLHHelper.cs" />
     <Compile Include="Untilities\GameUtil.cs" />
+    <Compile Include="Untilities\YRObjectHepler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Extension.Ext\Extension.Ext.csproj">
