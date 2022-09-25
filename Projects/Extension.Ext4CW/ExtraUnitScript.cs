@@ -3,6 +3,7 @@ using Extension.CWUtilities;
 using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
@@ -166,8 +167,8 @@ namespace Scripts
                 }
             }
 
-            //todo同步坐标
-
+            var location = ExHelper.GetFLHAbsoluteCoords(Master.OwnerObject, Position, Defination.BindTurret);
+            Owner.OwnerObject.Ref.Base.SetLocation(location);
 
             if(Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
             {
