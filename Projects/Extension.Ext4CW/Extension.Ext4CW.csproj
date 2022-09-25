@@ -51,6 +51,7 @@
     <Compile Include="CommonExtension\HeroKeepVeterancy.cs" />
     <Compile Include="CommonExtension\PassengerExtension.cs" />
     <Compile Include="CommonExtension\CustomExperience.cs" />
+    <Compile Include="ExtraUnitScript.cs" />
     <Compile Include="PartialHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HouseGlobalExtension.cs" />
