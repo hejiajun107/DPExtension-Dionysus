@@ -1,6 +1,7 @@
 ﻿using Extension.CW;
 using Extension.CWUtilities;
 using Extension.Ext;
+using Extension.Ext4CW.Untilities;
 using Extension.INI;
 using Extension.Script;
 using Extension.Utilities;
@@ -10,14 +11,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DynamicPatcher;
+using PatcherYRpp.Utilities;
 
 namespace Scripts
 {
     [ScriptAlias("ExtraUnitScript")]
     [Serializable]
-    public class ExtraUnitMasterScript:TechnoScriptable
+    public class ExtraUnitMasterScript : TechnoScriptable
     {
-        public ExtraUnitMasterScript(TechnoExt owner):base(owner)
+        public ExtraUnitMasterScript(TechnoExt owner) : base(owner)
         {
 
         }
@@ -68,39 +71,100 @@ namespace Scripts
                 if (technoExt.IsNullOrExpired())
                     continue;
 
-                if (techno.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Direction.N))
-                {
-                    salveTechnos.Add(technoExt);
-                    technoExt.GameObject.CreateScriptComponent(nameof(ExtraUnitSalveScript), ExtraUnitSalveScript.UniqueId, "ExtraUnitSalveScript", technoExt, Owner, defination);
-                }
-                else
-                {
-                    techno.Ref.Base.UnInit();
-                }
+                //var dir = defination.BindTurret && Owner.OwnerObject.Ref.HasTurret() ? GameUtil.Facing2Dir(Owner.OwnerObject.Ref.TurretFacing) : GameUtil.Facing2Dir(Owner.OwnerObject.Ref.Facing);
+                salveTechnos.Add(technoExt);
+                technoExt.GameObject.CreateScriptComponent(nameof(ExtraUnitSalveScript), ExtraUnitSalveScript.UniqueId, "ExtraUnitSalveScript", technoExt, Owner, defination);
+
+                //if (techno.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), dir)) 
+                //{
+                //    if(techno.Ref.HasTurret())
+                //    {
+                //        techno.Ref.TurretFacing.set(dir.ToDirStruct());
+                //    }
+                //  }
+                //else
+                //{
+                //    techno.Ref.Base.UnInit();
+                //}
             }
+
+            PutSalves();
         }
 
         public override void OnUpdate()
         {
-           
+            if (NeedPut)
+            {
+                NeedPut = false;
+                PutSalves();
+            }
 
-            base.OnUpdate();
+
+            var masterMission = Owner.OwnerObject.Convert<MissionClass>();
+            if (masterMission.Ref.CurrentMission == Mission.Stop)
+            {
+                foreach (var slave in salveTechnos)
+                {
+                    if (!slave.IsNullOrExpired())
+                    {
+                        var mission = slave.OwnerObject.Convert<MissionClass>();
+                        mission.Ref.ForceMission(Mission.Stop);
+                    }
+                }
+            }
         }
 
-      
+        private bool NeedPut = false;
+
+        private void PutSalves()
+        {
+            foreach (var salve in salveTechnos)
+            {
+                if (!salve.IsNullOrExpired())
+                {
+                    if (!salve.OwnerObject.Ref.Base.IsOnMap)
+                    {
+                        ++Game.IKnowWhatImDoing;
+                        salve.OwnerObject.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), GameUtil.Facing2Dir(Owner.OwnerObject.Ref.Facing));
+                        --Game.IKnowWhatImDoing;
+                        salve.OwnerObject.Ref.Facing.set(Owner.OwnerObject.Ref.Facing.current());
+                        if (salve.OwnerObject.Ref.HasTurret())
+                        {
+                            salve.OwnerObject.Ref.TurretFacing.set(Owner.OwnerObject.Ref.Facing.current());
+                        }
+                    }
+                }
+            }
+
+        }
 
         public override void OnPut(CoordStruct coord, Direction faceDir)
         {
-            base.OnPut(coord, faceDir);
+
+            NeedPut = true;
+
         }
 
         public override void OnDestroy()
         {
-            base.OnDestroy();
+            foreach (var salve in salveTechnos)
+            {
+                if (!salve.IsNullOrExpired())
+                {
+                    salve.OwnerObject.Ref.Base.UnInit();
+                }
+            }
         }
 
         public override void OnRemove()
         {
+            foreach (var salve in salveTechnos)
+            {
+                if (!salve.IsNullOrExpired())
+                {
+                    salve.OwnerObject.Ref.Base.Remove();
+                }
+            }
             base.OnRemove();
         }
 
@@ -108,7 +172,7 @@ namespace Scripts
 
     [ScriptAlias(nameof(ExtraUnitSalveScript))]
     [Serializable]
-    public class ExtraUnitSalveScript:TechnoScriptable
+    public class ExtraUnitSalveScript : TechnoScriptable
     {
         public static int UniqueId = 1145142;
 
@@ -117,7 +181,7 @@ namespace Scripts
 
         public CoordStruct Position;
 
-        public ExtraUnitSalveScript(TechnoExt owner,TechnoExt master, ExtraUnitDefination defination) : base(owner)
+        public ExtraUnitSalveScript(TechnoExt owner, TechnoExt master, ExtraUnitDefination defination) : base(owner)
         {
             Master = master;
             Defination = defination;
@@ -140,7 +204,7 @@ namespace Scripts
             {
                 Position = new CoordStruct(0, 0, 0);
             }
-         
+
         }
 
         public override void OnUpdate()
@@ -150,7 +214,7 @@ namespace Scripts
 
         private void UpdateState()
         {
-            if(Master.IsNullOrExpired())
+            if (Master.IsNullOrExpired())
             {
                 Disable();
                 return;
@@ -162,34 +226,34 @@ namespace Scripts
                 return;
             }
 
-            //同步put remove
-            if(Master.OwnerObject.Ref.Base.InLimbo)
-            {
-                Owner.OwnerObject.Ref.Base.InLimbo = true;
-            }
-            else
-            {
-                if(Owner.OwnerObject.Ref.Base.InLimbo == true)
-                {
-                    Owner.OwnerObject.Ref.Base.InLimbo = false;
-                }
-            }
+            ////同步put remove
+            //if(Master.OwnerObject.Ref.Base.InLimbo)
+            //{
+            //    Owner.OwnerObject.Ref.Base.InLimbo = true;
+            //}
+            //else
+            //{
+            //    if(Owner.OwnerObject.Ref.Base.InLimbo == true)
+            //    {
+            //        Owner.OwnerObject.Ref.Base.InLimbo = false;
+            //    }
+            //}
+
 
             //同步所属
-            if(Defination.SameOwner)
+            if (Defination.SameOwner)
             {
-                if(Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != Master.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != Master.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                 {
                     Owner.OwnerObject.Ref.SetOwningHouse(Master.OwnerObject.Ref.Owner);
                 }
             }
 
-
             //同步位置
             var location = ExHelper.GetFLHAbsoluteCoords(Master.OwnerObject, Position, Defination.BindTurret);
             Owner.OwnerObject.Ref.Base.SetLocation(location);
 
-            if(Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
+            if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
             {
                 Owner.OwnerObject.Ref.Base.MarkForRedraw();
             }
@@ -198,10 +262,10 @@ namespace Scripts
                 Owner.OwnerObject.Convert<FootClass>().Ref.Locomotor.Lock();
             }
 
-            
+
 
             //传递select
-            if(Owner.OwnerObject.Ref.Base.IsSelected == true)
+            if (Owner.OwnerObject.Ref.Base.IsSelected == true)
             {
                 Owner.OwnerObject.Ref.Base.Deselect();
                 if (!Master.OwnerObject.Ref.Base.IsSelected)
@@ -224,10 +288,15 @@ namespace Scripts
                         mission.Ref.ForceMission(Mission.Attack);
                     }
                 }
+                else
+                {
+                    var mission = Owner.OwnerObject.Convert<MissionClass>();
+                    mission.Ref.ForceMission(Mission.Stop);
+                }
             }
             else
             {
-                if(Owner.OwnerObject.Ref.Target.IsNull && target.IsNotNull)
+                if (Owner.OwnerObject.Ref.Target.IsNull && target.IsNotNull)
                 {
                     if (CanAttackTarget(target))
                     {
@@ -238,25 +307,34 @@ namespace Scripts
                 }
             }
 
-            //同步炮塔
-            //if(Owner.OwnerObject.Ref.Target.IsNull)
-            //{
-            //    if(Owner.OwnerObject.Ref.HasTurret())
-            //    {
-            //        if(Master.OwnerObject.Ref.HasTurret())
-            //        {
-            //            Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.TurretFacing);
-            //        }
-            //        else
-            //        {
 
-            //        }
-                    
-            //    }
+            ////同步炮塔，方向
+            if (Owner.OwnerObject.Ref.Target.IsNull)
+            {
+                if(!Defination.BindTurret)
+                {
+                    Owner.OwnerObject.Ref.Facing.set(Owner.OwnerObject.Ref.Facing.current());
+                }
+                else
+                {
+                    Owner.OwnerObject.Ref.Facing.set(Owner.OwnerObject.Ref.TurretFacing.current());
+                }
                 
-            //}
 
-            
+                if (Owner.OwnerObject.Ref.HasTurret())
+                {
+                    if (Master.OwnerObject.Ref.HasTurret())
+                    {
+                        Owner.OwnerObject.Ref.TurretFacing.set(Master.OwnerObject.Ref.TurretFacing.current());
+                    }
+                    else
+                    {
+                        Owner.OwnerObject.Ref.TurretFacing.set(Master.OwnerObject.Ref.Facing.current());
+                    }
+                }
+            }
+
+
         }
 
         private void Disable()
@@ -279,6 +357,8 @@ namespace Scripts
             }
             return true;
         }
+
+
 
         public override void OnDestroy()
         {

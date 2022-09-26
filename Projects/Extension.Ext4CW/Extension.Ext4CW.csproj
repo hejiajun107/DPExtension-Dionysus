@@ -76,6 +76,10 @@
       <Project>{957E3C34-E736-4145-8B05-2DC1BCFA79E1}</Project>
       <Name>Extension</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PatcherYRpp.Utilities\PatcherYRpp.Utilities.csproj">
+      <Project>{AE6121FF-74CF-472A-BF7D-4543A78E7D50}</Project>
+      <Name>PatcherYRpp.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YRpp\PatcherYRpp.csproj">
       <Project>{4C392077-A5ED-46CC-BC94-E1449610105C}</Project>
       <Name>PatcherYRpp</Name>
