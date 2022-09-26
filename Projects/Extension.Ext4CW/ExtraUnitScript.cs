@@ -32,9 +32,10 @@ namespace Scripts
 
         }
 
-        private List<TechnoExt> salveTechnos;
+        private List<TechnoExt> salveTechnos = new List<TechnoExt>();
 
         public ExtraUnitSetting Setting;
+
 
         public override void Awake()
         {
@@ -46,7 +47,10 @@ namespace Scripts
                 Setting = settingINI.Data;
                 configInited = true;
             }
+        }
 
+        public override void Start()
+        {
             var salveIni = this.CreateRulesIniComponentWith<ExtraUnitDefination>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
 
             //获取附加单位的定义
@@ -64,10 +68,10 @@ namespace Scripts
                 if (technoExt.IsNullOrExpired())
                     continue;
 
-                if(techno.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Direction.N))
+                if (techno.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Direction.N))
                 {
                     salveTechnos.Add(technoExt);
-                    technoExt.GameObject.CreateScriptComponent(nameof(ExtraUnitSalveScript), ExtraUnitSalveScript.UniqueId, "ExtraUnitSalveScript", salveTechnos, Owner.OwnerObject, defination);
+                    technoExt.GameObject.CreateScriptComponent(nameof(ExtraUnitSalveScript), ExtraUnitSalveScript.UniqueId, "ExtraUnitSalveScript", technoExt, Owner, defination);
                 }
                 else
                 {
@@ -78,6 +82,8 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+           
+
             base.OnUpdate();
         }
 
@@ -100,6 +106,7 @@ namespace Scripts
 
     }
 
+    [ScriptAlias(nameof(ExtraUnitSalveScript))]
     [Serializable]
     public class ExtraUnitSalveScript:TechnoScriptable
     {
@@ -143,7 +150,7 @@ namespace Scripts
 
         private void UpdateState()
         {
-            if(!Master.IsNullOrExpired())
+            if(Master.IsNullOrExpired())
             {
                 Disable();
                 return;
@@ -155,6 +162,7 @@ namespace Scripts
                 return;
             }
 
+            //同步put remove
             if(Master.OwnerObject.Ref.Base.InLimbo)
             {
                 Owner.OwnerObject.Ref.Base.InLimbo = true;
@@ -167,6 +175,17 @@ namespace Scripts
                 }
             }
 
+            //同步所属
+            if(Defination.SameOwner)
+            {
+                if(Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != Master.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                {
+                    Owner.OwnerObject.Ref.SetOwningHouse(Master.OwnerObject.Ref.Owner);
+                }
+            }
+
+
+            //同步位置
             var location = ExHelper.GetFLHAbsoluteCoords(Master.OwnerObject, Position, Defination.BindTurret);
             Owner.OwnerObject.Ref.Base.SetLocation(location);
 
@@ -179,6 +198,65 @@ namespace Scripts
                 Owner.OwnerObject.Convert<FootClass>().Ref.Locomotor.Lock();
             }
 
+            
+
+            //传递select
+            if(Owner.OwnerObject.Ref.Base.IsSelected == true)
+            {
+                Owner.OwnerObject.Ref.Base.Deselect();
+                if (!Master.OwnerObject.Ref.Base.IsSelected)
+                {
+                    Master.OwnerObject.Ref.Base.Select();
+                }
+            }
+
+            var target = Master.OwnerObject.Ref.Target;
+
+            //同步目标
+            if (Defination.SameTarget)
+            {
+                if (target.IsNotNull)
+                {
+                    if (CanAttackTarget(target))
+                    {
+                        var mission = Owner.OwnerObject.Convert<MissionClass>();
+                        Owner.OwnerObject.Ref.SetTarget(target);
+                        mission.Ref.ForceMission(Mission.Attack);
+                    }
+                }
+            }
+            else
+            {
+                if(Owner.OwnerObject.Ref.Target.IsNull && target.IsNotNull)
+                {
+                    if (CanAttackTarget(target))
+                    {
+                        var mission = Owner.OwnerObject.Convert<MissionClass>();
+                        Owner.OwnerObject.Ref.SetTarget(target);
+                        mission.Ref.ForceMission(Mission.Attack);
+                    }
+                }
+            }
+
+            //同步炮塔
+            //if(Owner.OwnerObject.Ref.Target.IsNull)
+            //{
+            //    if(Owner.OwnerObject.Ref.HasTurret())
+            //    {
+            //        if(Master.OwnerObject.Ref.HasTurret())
+            //        {
+            //            Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.TurretFacing);
+            //        }
+            //        else
+            //        {
+
+            //        }
+                    
+            //    }
+                
+            //}
+
+            
         }
 
         private void Disable()

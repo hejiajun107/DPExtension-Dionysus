@@ -14,7 +14,9 @@ using Extension.Ext4CW.Untilities;
 namespace Extension.Utilities
 {
 
-
+    /// <summary>
+    /// From kratos
+    /// </summary>
     public static partial class ExHelper
     {
 
