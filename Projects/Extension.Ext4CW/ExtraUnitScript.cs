@@ -181,6 +181,8 @@ namespace Scripts
 
         public CoordStruct Position;
 
+        public float VirtualVeterancy = 0f;
+
         public ExtraUnitSalveScript(TechnoExt owner, TechnoExt master, ExtraUnitDefination defination) : base(owner)
         {
             Master = master;
@@ -205,6 +207,12 @@ namespace Scripts
                 Position = new CoordStruct(0, 0, 0);
             }
 
+        }
+
+        public override void Start()
+        {
+            VirtualVeterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
+            base.Start();
         }
 
         public override void OnUpdate()
@@ -335,6 +343,19 @@ namespace Scripts
             }
 
 
+            //同步经验
+            if (Owner.OwnerObject.Ref.Veterancy.Veterancy > 0f)
+            {
+                var veterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
+
+                //转移到主体
+                if (!Master.OwnerObject.Ref.Veterancy.IsElite())
+                {
+                    float trans = (2f - Master.OwnerObject.Ref.Veterancy.Veterancy) >= (veterancy - VirtualVeterancy) ? (veterancy - VirtualVeterancy) : (2f - Master.OwnerObject.Ref.Veterancy.Veterancy);
+                    Master.OwnerObject.Ref.Veterancy.Add(trans);
+                    Owner.OwnerObject.Ref.Veterancy.Add(-trans);
+                }
+            }
         }
 
         private void Disable()
