@@ -69,6 +69,7 @@
     <Compile Include="American\MirageTankScript.cs" />
     <Compile Include="American\ZuesTankScript.cs" />
     <Compile Include="ArmyFlagScript.cs" />
+    <Compile Include="BulletLikeRocketScript.cs" />
     <Compile Include="CampFireScript.cs" />
     <Compile Include="China\AttackPlaneBulletScript.cs" />
     <Compile Include="China\CannonBulletScript.cs" />
