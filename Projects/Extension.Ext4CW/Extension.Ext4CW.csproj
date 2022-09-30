@@ -50,6 +50,7 @@
     <Compile Include="CommonExtension\Copyable.cs" />
     <Compile Include="CommonExtension\CustomFlag.cs" />
     <Compile Include="CommonExtension\FighterAreaGuard.cs" />
+    <Compile Include="CommonExtension\ForceLayer.cs" />
     <Compile Include="CommonExtension\HeroKeepVeterancy.cs" />
     <Compile Include="CommonExtension\PassengerExtension.cs" />
     <Compile Include="CommonExtension\CustomExperience.cs" />
