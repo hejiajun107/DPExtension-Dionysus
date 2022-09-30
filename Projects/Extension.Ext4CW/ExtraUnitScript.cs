@@ -247,6 +247,7 @@ namespace Scripts
             //    }
             //}
 
+            //Owner.OwnerObject.Ref.Base.Mark(MarkType.UP); 
 
             //同步所属
             if (Defination.SameOwner)
@@ -257,9 +258,13 @@ namespace Scripts
                 }
             }
 
+            //Owner.OwnerObject.Ref.Base.Mark(MarkType.UP); 
+
+
             //同步位置
             var location = ExHelper.GetFLHAbsoluteCoords(Master.OwnerObject, Position, Defination.BindTurret);
             Owner.OwnerObject.Ref.Base.SetLocation(location);
+
 
             if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
             {
@@ -298,9 +303,12 @@ namespace Scripts
                 }
                 else
                 {
-                    var mission = Owner.OwnerObject.Convert<MissionClass>();
-                    mission.Ref.ForceMission(Mission.Stop);
-                }
+                    if(Defination.SameLoseTarget)
+                    {
+                        var mission = Owner.OwnerObject.Convert<MissionClass>();
+                        mission.Ref.ForceMission(Mission.Stop);
+                    }
+                  }
             }
             else
             {
@@ -380,11 +388,16 @@ namespace Scripts
         }
 
 
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        {
+            base.OnFire(pTarget, weaponIndex);
+        }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
         }
+
     }
 
     [Serializable]
@@ -427,5 +440,68 @@ namespace Scripts
         /// </summary>
         [INIField(Key = "ExtraUnit.SameTarget")]
         public bool SameTarget = true;
+
+        /// </summary>
+        [INIField(Key = "ExtraUnit.SameLoseTarget")]
+        public bool SameLoseTarget = true;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //    DEFINE_HOOK(0x6FE43B, TechnoClass_FireAt_OpenToppedDmgMult, 0x8)
+    //    {
+
+    //    enum { ApplyDamageMult = 0x6FE45A, ContinueCheck = 0x6FE460 };
+
+    //    GET(TechnoClass* const, pThis, ESI);
+
+    //	//replacing whole check due to `fild`
+    //	if (pThis->InOpenToppedTransport)
+    //	{
+    //		GET_STACK(int, nDamage, STACK_OFFS(0xB0, 0x84));
+    //		float nDamageMult = static_cast<float>(RulesClass::Instance->OpenToppedDamageMultiplier);
+
+    //		if (auto pTransport = pThis->Transporter)
+    //		{
+    //			if (auto pExt = TechnoTypeExt::ExtMap.Find(pTransport->GetTechnoType()))
+    //			{
+    //				//it is float isnt it YRPP ? , check tomson26 YR-IDB !
+    //				nDamageMult = pExt->OpenTopped_DamageMultiplier.Get(nDamageMult);
+    //			}
+    //		}
+
+    //		R->EAX(Game::F2I(nDamage * nDamageMult));
+    //return ApplyDamageMult;
+    //	}
+
+    //	return ContinueCheck;
+    //}
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
