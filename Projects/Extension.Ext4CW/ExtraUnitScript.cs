@@ -176,7 +176,7 @@ namespace Scripts
     {
         public static int UniqueId = 1145142;
 
-        private TechnoExt Master;
+        public TechnoExt Master;
         ExtraUnitDefination Defination;
 
         public CoordStruct Position;
@@ -351,19 +351,29 @@ namespace Scripts
             }
 
 
-            //同步经验
-            if (Owner.OwnerObject.Ref.Veterancy.Veterancy > 0f)
-            {
-                var veterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
+            ////同步经验
+            //if(Defination.ExperienceToMaster)
+            //{
+            //    if (Owner.OwnerObject.Ref.Veterancy.Veterancy > 0f)
+            //    {
+            //        var veterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
 
-                //转移到主体
-                if (!Master.OwnerObject.Ref.Veterancy.IsElite())
-                {
-                    float trans = (2f - Master.OwnerObject.Ref.Veterancy.Veterancy) >= (veterancy - VirtualVeterancy) ? (veterancy - VirtualVeterancy) : (2f - Master.OwnerObject.Ref.Veterancy.Veterancy);
-                    Master.OwnerObject.Ref.Veterancy.Add(trans);
-                    Owner.OwnerObject.Ref.Veterancy.Add(-trans);
-                }
+            //        //转移到主体
+            //        if (!Master.OwnerObject.Ref.Veterancy.IsElite())
+            //        {
+            //            float trans = (2f - Master.OwnerObject.Ref.Veterancy.Veterancy) >= (veterancy - VirtualVeterancy) ? (veterancy - VirtualVeterancy) : (2f - Master.OwnerObject.Ref.Veterancy.Veterancy);
+            //            Master.OwnerObject.Ref.Veterancy.Add(trans);
+            //            Owner.OwnerObject.Ref.Veterancy.Add(-trans);
+            //        }
+            //    }
+            //}
+
+            //同步等级
+            if (Defination.ExperienceToMaster)
+            {
+                Owner.OwnerObject.Ref.Veterancy.Veterancy = Master.OwnerObject.Ref.Veterancy.Veterancy;
             }
+
 
         }
 
@@ -402,6 +412,47 @@ namespace Scripts
     
     }
 
+
+    /// <summary>
+    /// 给附加单位使用，把Bullet所属转移给本体
+    /// </summary>
+    [ScriptAlias(nameof(ExtraUnitBulletScript))]
+    [Serializable]
+    public class ExtraUnitBulletScript : BulletScriptable
+    {
+        public ExtraUnitBulletScript(BulletExt owner) : base(owner)
+        {
+        }
+
+        private bool inited = false;
+
+        public override void OnUpdate()
+        {
+            if(!inited)
+            {
+                inited = true;
+                if (Owner.OwnerObject.Ref.Owner != null)
+                {
+                    var techno = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+                    if(techno!=null)
+                    {
+                        var salveScript = techno.GameObject.GetComponent<ExtraUnitSalveScript>();
+                        if (salveScript!=null)
+                        {
+                            if(!salveScript.Master.IsNullOrExpired())
+                            {
+                                Owner.OwnerObject.Ref.Owner = salveScript.Master.OwnerObject;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
     [Serializable]
     public partial class ExtraUnitSetting : INIAutoConfig
     {
@@ -432,6 +483,12 @@ namespace Scripts
         /// </summary>
         [INIField(Key = "ExtraUnit.ExperienceToMaster")]
         public bool ExperienceToMaster = false;
+
+        /// <summary>
+        /// 附加单位与本体保持相同等级
+        /// </summary>
+        [INIField(Key = "ExtraUnit.SameVeterancy")]
+        public bool SameVeterancy = true;
         /// <summary>
         /// 附件单位是否同步所属方
         /// </summary>
