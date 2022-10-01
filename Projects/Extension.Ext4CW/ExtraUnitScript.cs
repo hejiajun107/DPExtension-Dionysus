@@ -364,6 +364,7 @@ namespace Scripts
                     Owner.OwnerObject.Ref.Veterancy.Add(-trans);
                 }
             }
+
         }
 
         private void Disable()

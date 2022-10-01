@@ -49,7 +49,7 @@ namespace ComponentHooks
         }
 
         [Hook(HookType.AresHook, Address = 0x4DB7F7, Size = 6)]
-        public static unsafe UInt32 FootClass_In_Which_Layer_Stand(REGISTERS* R)
+        public static unsafe UInt32 FootClass_In_Which_Layer(REGISTERS* R)
         {
             Pointer<TechnoClass> pTechno = (IntPtr)R->ESI;
             TechnoExt ext = TechnoExt.ExtMap.Find(pTechno);
@@ -72,9 +72,8 @@ namespace ComponentHooks
                     {
                         R->EAX = (uint)Layer.Ground;
                     }
+                    return 0x4DB803;
                 }
-
-                return 0x4DB803;
             }
             return 0;
         }
