@@ -99,6 +99,7 @@
     <Compile Include="China\XTMechScript.cs" />
     <Compile Include="ConvertWhenBornScript.cs" />
     <Compile Include="CopyUnitScript.cs" />
+    <Compile Include="DebugScriptable.cs" />
     <Compile Include="DelayToAttachScript.cs" />
     <Compile Include="DeptScript.cs" />
     <Compile Include="DISKScript.cs" />
