@@ -23,7 +23,7 @@ namespace Scripts
             Logger.Log($"{Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID}被放置在({coord.X},{coord.Y},{coord.Z}),朝向{faceDir}");
         }
 
-        public void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             string name = string.Empty;
             if (pTarget.CastToTechno(out var ptechno))
