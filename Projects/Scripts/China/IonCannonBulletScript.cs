@@ -103,6 +103,8 @@ namespace DpLib.Scripts.China
 
             private int delay = 15;
 
+            private int readyState = 0;
+
             public override void OnUpdate()
             {
                 if (Self.IsNullOrExpired())
@@ -137,18 +139,31 @@ namespace DpLib.Scripts.China
                     //光束聚集
                     if (radius >= 0)
                     {
+                        if (readyState <= 80)
+                        {
+                            readyState++;
+                        }
+
+                        int i = 0;
+
                         //每xx角度生成一条光束，越小越密集
                         for (var angle = startAngle; angle < startAngle + 360; angle += 45)
                         {
                             var pos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
-                            Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 9000), pos + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, 5);
+                            Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 9000), pos + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, readyState >= 80 ? 5 : 1);
                             pLaser.Ref.Thickness = 10;
                             pLaser.Ref.IsHouseColor = false;
 
                             //每条光束/帧的伤害
-                            int damage = 50;
+                            int damage = readyState > 80 ? 20 : 5; //was50
                             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
                             pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
+
+                            i++;
+                            if (i > (readyState / 10))
+                            {
+                                return;
+                            }
                         }
 
                         //每次半径缩小越大，光束聚集越快

@@ -91,6 +91,7 @@ namespace Scripts
 
                 Owner.OwnerObject.Ref.Base.SetLocation(location);
                 //Owner.OwnerObject.Ref.Facing.set(GameUtil.Point2Dir(location,Master.OwnerObject.Ref.TargetCoords).ToDirStruct());
+
                 Owner.OwnerObject.Ref.Facing.set(GameUtil.Point2Dir(location, new CoordStruct(location.X + (int)velocity.X, location.Y + (int)velocity.Y, location.Z + (int)velocity.Z)).ToDirStruct());
 
                 if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
