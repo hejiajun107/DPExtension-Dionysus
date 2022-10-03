@@ -329,17 +329,17 @@ namespace Scripts
             {
                 if(!Defination.BindTurret)
                 {
-                    Owner.OwnerObject.Ref.Facing.set(Owner.OwnerObject.Ref.Facing.current());
+                    Owner.OwnerObject.Ref.Facing.set(Master.OwnerObject.Ref.Facing.current());
                 }
                 else
                 {
-                    Owner.OwnerObject.Ref.Facing.set(Owner.OwnerObject.Ref.TurretFacing.current());
+                    Owner.OwnerObject.Ref.Facing.set(Master.OwnerObject.Ref.TurretFacing.current());
                 }
                 
 
                 if (Owner.OwnerObject.Ref.HasTurret())
                 {
-                    if (Master.OwnerObject.Ref.HasTurret())
+                    if (Master.OwnerObject.Ref.HasTurret() && Defination.BindTurret)
                     {
                         Owner.OwnerObject.Ref.TurretFacing.set(Master.OwnerObject.Ref.TurretFacing.current());
                     }
