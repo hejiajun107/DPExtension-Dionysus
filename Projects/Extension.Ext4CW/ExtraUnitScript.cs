@@ -113,7 +113,7 @@ namespace Scripts
                 }
             }
         }
-
+       
         private bool NeedPut = false;
 
         private void PutSalves()
@@ -341,11 +341,11 @@ namespace Scripts
                 {
                     if (Master.OwnerObject.Ref.HasTurret() && Defination.BindTurret)
                     {
-                        Owner.OwnerObject.Ref.TurretFacing.set(Master.OwnerObject.Ref.TurretFacing.current());
+                        Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.TurretFacing.current());
                     }
                     else
                     {
-                        Owner.OwnerObject.Ref.TurretFacing.set(Master.OwnerObject.Ref.Facing.current());
+                        Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.Facing.current());
                     }
                 }
             }
@@ -504,52 +504,6 @@ namespace Scripts
         [INIField(Key = "ExtraUnit.SameLoseTarget")]
         public bool SameLoseTarget = true;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //    DEFINE_HOOK(0x6FE43B, TechnoClass_FireAt_OpenToppedDmgMult, 0x8)
-    //    {
-
-    //    enum { ApplyDamageMult = 0x6FE45A, ContinueCheck = 0x6FE460 };
-
-    //    GET(TechnoClass* const, pThis, ESI);
-
-    //	//replacing whole check due to `fild`
-    //	if (pThis->InOpenToppedTransport)
-    //	{
-    //		GET_STACK(int, nDamage, STACK_OFFS(0xB0, 0x84));
-    //		float nDamageMult = static_cast<float>(RulesClass::Instance->OpenToppedDamageMultiplier);
-
-    //		if (auto pTransport = pThis->Transporter)
-    //		{
-    //			if (auto pExt = TechnoTypeExt::ExtMap.Find(pTransport->GetTechnoType()))
-    //			{
-    //				//it is float isnt it YRPP ? , check tomson26 YR-IDB !
-    //				nDamageMult = pExt->OpenTopped_DamageMultiplier.Get(nDamageMult);
-    //			}
-    //		}
-
-    //		R->EAX(Game::F2I(nDamage * nDamageMult));
-    //return ApplyDamageMult;
-    //	}
-
-    //	return ContinueCheck;
-    //}
 
 
 
