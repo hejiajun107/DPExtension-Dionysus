@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicPatcher;
 using PatcherYRpp.Utilities;
+using System.Reflection;
 
 namespace Scripts
 {
@@ -258,8 +259,7 @@ namespace Scripts
                 }
             }
 
-            //Owner.OwnerObject.Ref.Base.Mark(MarkType.UP); 
-
+            //Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
 
             //同步位置
             var location = ExHelper.GetFLHAbsoluteCoords(Master.OwnerObject, Position, Defination.BindTurret);
@@ -268,7 +268,7 @@ namespace Scripts
 
             if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
             {
-                Owner.OwnerObject.Ref.Base.MarkForRedraw();
+                Owner.OwnerObject.Ref.Base.UpdatePlacement(PlacementType.Redraw);
             }
             else
             {
@@ -303,12 +303,24 @@ namespace Scripts
                 }
                 else
                 {
-                    if(Defination.SameLoseTarget)
+                    if (Defination.SameLoseTarget)
                     {
                         var mission = Owner.OwnerObject.Convert<MissionClass>();
                         mission.Ref.ForceMission(Mission.Stop);
                     }
-                  }
+                    else
+                    {
+                        if(Owner.OwnerObject.Ref.Target.IsNotNull)
+                        {
+                            if (!Owner.OwnerObject.Ref.IsCloseEnoughToAttack(Owner.OwnerObject.Ref.Target))
+                            {
+                                var mission = Owner.OwnerObject.Convert<MissionClass>();
+                                mission.Ref.ForceMission(Mission.Stop);
+                                Owner.OwnerObject.Ref.SetTarget(default);
+                            }
+                        }
+                    }
+                }
             }
             else
             {
@@ -396,6 +408,13 @@ namespace Scripts
                     return false;
             }
             return true;
+        }
+
+        private FireError GetFireError(Pointer<AbstractClass> pTarget)
+        {
+            int i = Owner.OwnerObject.Ref.SelectWeapon(pTarget);
+            FireError fireError = Owner.OwnerObject.Ref.GetFireError(pTarget, i, false);
+            return fireError;
         }
 
 
