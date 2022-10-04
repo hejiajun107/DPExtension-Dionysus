@@ -177,6 +177,7 @@
     <Compile Include="TestScript.cs" />
     <Compile Include="TrackingRocketScript.cs" />
     <Compile Include="UnOnMapaleScript.cs" />
+    <Compile Include="VerticalLauncherScriptable.cs" />
     <Compile Include="Yuri\MagnetronScript.cs" />
     <Compile Include="Yuri\RegeneratorBulletScript.cs" />
     <Compile Include="Yuri\RegeneratorScript.cs" />
