@@ -259,7 +259,7 @@ namespace Scripts
                 }
             }
 
-            //Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
+            Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
 
             //同步位置
             var location = ExHelper.GetFLHAbsoluteCoords(Master.OwnerObject, Position, Defination.BindTurret);
