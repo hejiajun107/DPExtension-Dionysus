@@ -20,6 +20,7 @@ namespace Scripts
         private int initeHeight = 0;
         private bool over = false;
 
+
         public override void OnLateUpdate()
         {
             if (inited == false)
@@ -37,8 +38,17 @@ namespace Scripts
 
                     velocity.Z = Owner.OwnerObject.Ref.Speed;
 
-                    velocity.X = 0;
-                    velocity.Y = 0;
+                    if(Owner.OwnerObject.Ref.Base.GetHeight() < initeHeight + 800)
+                    {
+                        velocity.X = 0;
+                        velocity.Y = 0;
+                    }
+                    else
+                    {
+                        var speedMultipler = ((Owner.OwnerObject.Ref.Base.GetHeight() - (initeHeight + 800)) / 400d);
+                        velocity.X = velocity.X * speedMultipler;
+                        velocity.Y = velocity.Y * speedMultipler;
+                    }
 
                     Owner.OwnerObject.Ref.Velocity = velocity;
                 }
@@ -47,6 +57,7 @@ namespace Scripts
                     over = true;
                 }
             }
+       
             
 
             base.OnUpdate();
