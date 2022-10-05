@@ -129,7 +129,7 @@ namespace Scripts
                             if (INI.Data.AttachEffectDuration > 0)
                             {
                                 var script = ScriptManager.GetScript(INI.Data.AttachEffectScript);
-                                currentScript = ScriptManager.CreateScriptableTo(GameObject, script, Owner) as AttachEffectScriptable;
+                                currentScript = ScriptManager.CreateScriptable(script, Owner) as AttachEffectScriptable;
                                 currentScript.Duration = INI.Data.AttachEffectDuration;
                                 currentScript.OnAttachEffectPut(pDamage, pWH, pAttacker, pAttackingHouse);
                                 _attachEffectScriptables.Add(currentScript);
