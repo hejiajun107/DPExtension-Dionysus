@@ -3,12 +3,14 @@ using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
 using PatcherYRpp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Scripts
 {
 
+    [Serializable]
     public class AttachEffectWarheadConfig : INIAutoConfig
     {
 
@@ -32,6 +34,7 @@ namespace Scripts
 
     }
 
+    [Serializable]
     [GlobalScriptable(typeof(TechnoExt))]
     public partial class AttachEffectScriptExtension : TechnoScriptable
     {

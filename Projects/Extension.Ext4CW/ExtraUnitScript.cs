@@ -289,6 +289,16 @@ namespace Scripts
 
             var target = Master.OwnerObject.Ref.Target;
 
+            if (Owner.OwnerObject.Ref.Target.IsNotNull)
+            {
+                if (!Owner.OwnerObject.Ref.IsCloseEnoughToAttack(Owner.OwnerObject.Ref.Target))
+                {
+                    var mission = Owner.OwnerObject.Convert<MissionClass>();
+                    mission.Ref.ForceMission(Mission.Guard);
+                    Owner.OwnerObject.Ref.SetTarget(default);
+                }
+            }
+
             //同步目标
             if (Defination.SameTarget)
             {
@@ -310,15 +320,15 @@ namespace Scripts
                     }
                     else
                     {
-                        if(Owner.OwnerObject.Ref.Target.IsNotNull)
-                        {
-                            if (!Owner.OwnerObject.Ref.IsCloseEnoughToAttack(Owner.OwnerObject.Ref.Target))
-                            {
-                                var mission = Owner.OwnerObject.Convert<MissionClass>();
-                                mission.Ref.ForceMission(Mission.Stop);
-                                Owner.OwnerObject.Ref.SetTarget(default);
-                            }
-                        }
+                        //if(Owner.OwnerObject.Ref.Target.IsNotNull)
+                        //{
+                        //    if (!Owner.OwnerObject.Ref.IsCloseEnoughToAttack(Owner.OwnerObject.Ref.Target))
+                        //    {
+                        //        var mission = Owner.OwnerObject.Convert<MissionClass>();
+                        //        mission.Ref.ForceMission(Mission.Stop);
+                        //        Owner.OwnerObject.Ref.SetTarget(default);
+                        //    }
+                        //}
                     }
                 }
             }

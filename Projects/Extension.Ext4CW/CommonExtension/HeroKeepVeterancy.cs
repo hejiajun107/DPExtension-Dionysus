@@ -17,7 +17,6 @@ namespace Extension.CW
         {
             if (Data.IsHero)
             {
-                Logger.Log("OnRemove");
                 var houseExtension = GetHouseExtension();
                 var type = Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID;
                 if (houseExtension != null)
@@ -34,7 +33,6 @@ namespace Extension.CW
                         houseExtension.TechnoMaxRank[type] = currentRank;
                     }
 
-                    Logger.Log($"最高的等级{maxRank},当前的等级{currentRank}");
                 }
             }
         }
@@ -44,7 +42,6 @@ namespace Extension.CW
         {
             if (Data.IsHero)
             {
-                Logger.Log("OnPut");
                 var houseExtension = GetHouseExtension();
                 var type = Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID;
                 if (houseExtension != null)
@@ -55,7 +52,6 @@ namespace Extension.CW
 
                         var currentRank = VeterancyToInt(Owner.OwnerObject.Ref.Veterancy);
 
-                        Logger.Log($"存储的等级{rank},当前的等级{currentRank}");
                         if (rank > currentRank)
                         {
                             SetVerancy(Owner.OwnerObject, rank);
