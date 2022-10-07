@@ -34,6 +34,27 @@ namespace Extension.CW
 
         private int areaGuardTargetCheckRof = 20;
 
+        [AwakeAction]
+        public void TechnoClass_Awake_Fighter_Area_Guard()
+        {
+            if (!(Data.FighterAreaGuard))
+                return;
+
+            var radius = Data.FighterGuardRadius * 256;
+
+            areaGuardCoords = new List<CoordStruct>()
+            {
+                new CoordStruct(0,radius,0),
+                new CoordStruct((int)(0.85*radius),(int)(0.85*radius),0),
+                new CoordStruct(radius,0,0),
+                new CoordStruct((int)(0.85*radius),(int)(-0.85*radius),0),
+                new CoordStruct(0,-radius,0),
+                new CoordStruct((int)(-0.85*radius),(int)(-0.85*radius),0),
+                new CoordStruct(-radius,0,0),
+                new CoordStruct((int)(-0.85*radius),(int)(0.85*radius),0),
+            };
+        }
+
 
         [UpdateAction]
         public void TechnoClass_Update_Fighter_Area_Guard()
@@ -186,15 +207,18 @@ namespace Extension.CW
                        
 
 
-                        if (areaProtectTo.DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 2000)
-                        {
+                        //if (areaProtectTo.DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 2000)
+                        //{
                             if (currentAreaProtectedIndex > areaGuardCoords.Count() - 1)
                             {
                                 currentAreaProtectedIndex = 0;
                             }
                             dest += areaGuardCoords[currentAreaProtectedIndex];
-                            currentAreaProtectedIndex++;
-                        }
+                            if(FighterIsCloseEngouth(dest))
+                            {
+                                currentAreaProtectedIndex++;
+                            }
+                        //}
 
                         pfoot.Ref.Locomotor.Move_To(dest);
                         var cell = CellClass.Coord2Cell(dest);
@@ -206,6 +230,14 @@ namespace Extension.CW
                 }
             }
 
+        }
+
+        private bool FighterIsCloseEngouth(CoordStruct coordstruct)
+        {
+            var ownerLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+            var sameHeightCoord = new CoordStruct(coordstruct.X, coordstruct.Y, ownerLocation.Z);
+            var disctance = ownerLocation.DistanceFrom(sameHeightCoord);
+            return disctance == double.NaN ? false : disctance < 2000;
         }
 
     }
@@ -221,6 +253,8 @@ namespace Extension.CW
         public bool FighterAutoFire = false;
         [INIField(Key = "Ammo")]
         public int FighterMaxAmmo = 0;
+        [INIField(Key = "Fighter.GuardRadius")]
+        public int FighterGuardRadius = 5;
     }
 
 }

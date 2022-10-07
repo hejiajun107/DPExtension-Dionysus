@@ -82,6 +82,8 @@ namespace DpLib.Scripts.China
 
             static Pointer<SuperWeaponTypeClass> envLight => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("IonEnvSpecial");
 
+            static Pointer<AnimTypeClass> pRain => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IonRain");
+
 
             //光束初始角度
             private int startAngle = -180;
@@ -126,6 +128,18 @@ namespace DpLib.Scripts.China
                     pSuper.Ref.IsCharged = true;
                     pSuper.Ref.Launch(targetCell, true);
                     pSuper.Ref.IsCharged = false;
+
+                    var centerAjust = 3500;
+                    YRMemory.Create<AnimClass>(pRain, center);
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust,-centerAjust,0));
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, -centerAjust, 0));
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, 0, 0));
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, 0, 0));
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, centerAjust, 0));
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
+                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, centerAjust, 0));
+
                     return;
                 }
 
