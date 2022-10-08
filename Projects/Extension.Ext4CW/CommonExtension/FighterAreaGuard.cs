@@ -279,7 +279,7 @@ namespace Extension.CW
         public int FighterGuardRadius = 5;
         [INIField(Key = "Fighter.FindRangeBySelf")]
         public bool FigherFindRangeBySelf = false;
-        [INIField(Key = "Fighter.FighterChaseRange")]
+        [INIField(Key = "Fighter.ChaseRange")]
         public int FighterChaseRange = 30;
     }
 
