@@ -5,6 +5,7 @@ using Extension.Utilities;
 using PatcherYRpp;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace Extension.CW
 {
@@ -134,7 +135,26 @@ namespace Extension.CW
                     }
                     else if (mission.Ref.CurrentMission == Mission.Attack)
                     {
-                        return;
+                        bool skip = true;
+                        if (isAreaProtecting && Data.FighterChaseRange != -1 && areaProtectTo != null)
+                        {
+                            var sourceDest = Data.FigherFindRangeBySelf ? Owner.OwnerObject.Ref.Base.Base.GetCoords() : areaProtectTo;
+                            if(!Owner.OwnerObject.Ref.Target.IsNull)
+                            {
+                                //超出追击距离停止追击
+                                var distance = sourceDest.DistanceFrom(Owner.OwnerObject.Ref.Target.Ref.GetCoords());
+                                if(distance == double.NaN || distance > Data.FighterChaseRange * 2560)
+                                {
+                                    Owner.OwnerObject.Ref.SetTarget(default);
+                                    mission.Ref.ForceMission(Mission.Stop);
+                                }
+                            }
+                        }
+
+                        if(skip)
+                        {
+                            return;
+                        }
                     }
                     else if (mission.Ref.CurrentMission == Mission.Enter)
                     {
@@ -163,7 +183,9 @@ namespace Extension.CW
 
                         if(Data.FighterAutoFire)
                         {
-                            if (areaProtectTo.DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 2000)
+                            //if (areaProtectTo.DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 2000)
+                            var targetDest = Data.FigherFindRangeBySelf ? Owner.OwnerObject.Ref.Base.Base.GetCoords() : dest;
+
                             {
                                 if (areaGuardTargetCheckRof-- <= 0)
                                 {
@@ -186,7 +208,7 @@ namespace Extension.CW
                                             bounsRange = Data.FighterGuardRange;
                                         }
 
-                                        if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(dest) <= (Data.FighterGuardRange * 256 + bounsRange) && type != AbstractType.Building)
+                                        if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(targetDest) <= (Data.FighterGuardRange * 256 + bounsRange) && type != AbstractType.Building)
                                         {
                                             return true;
                                         }
@@ -255,6 +277,10 @@ namespace Extension.CW
         public int FighterMaxAmmo = 0;
         [INIField(Key = "Fighter.GuardRadius")]
         public int FighterGuardRadius = 5;
+        [INIField(Key = "Fighter.FindRangeBySelf")]
+        public bool FigherFindRangeBySelf = false;
+        [INIField(Key = "Fighter.FighterChaseRange")]
+        public int FighterChaseRange = 30;
     }
 
 }
