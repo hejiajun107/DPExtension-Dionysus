@@ -143,7 +143,7 @@ namespace Extension.CW
                             {
                                 //超出追击距离停止追击
                                 var distance = sourceDest.DistanceFrom(Owner.OwnerObject.Ref.Target.Ref.GetCoords());
-                                if(distance == double.NaN || distance > Data.FighterChaseRange * 2560)
+                                if(distance == double.NaN || distance > Data.FighterChaseRange * 256)
                                 {
                                     Owner.OwnerObject.Ref.SetTarget(default);
                                     mission.Ref.ForceMission(Mission.Stop);
