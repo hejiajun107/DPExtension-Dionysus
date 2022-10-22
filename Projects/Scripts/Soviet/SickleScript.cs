@@ -40,7 +40,7 @@ namespace DpLib.Scripts.Soviet
                 return;
             }
 
-            if (target.Ref.WhatAmI() != AbstractType.Building)
+            if (target.Ref.WhatAmI() != AbstractType.Building && target.Ref.IsInAir() == false)
             {
                 var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 var targetLocation = target.Ref.GetCoords();
@@ -50,7 +50,7 @@ namespace DpLib.Scripts.Soviet
                     JumpTo(target);
                     jumpCoodDown = 500;
                 }
-             
+
             }
         }
 

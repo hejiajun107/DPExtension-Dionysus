@@ -138,7 +138,7 @@ namespace Extension.CW
                         bool skip = true;
                         if (isAreaProtecting && Data.FighterChaseRange != -1 && areaProtectTo != null)
                         {
-                            var sourceDest = Data.FigherFindRangeBySelf ? Owner.OwnerObject.Ref.Base.Base.GetCoords() : areaProtectTo;
+                            var sourceDest = Data.FindRangeAroundSelf ? Owner.OwnerObject.Ref.Base.Base.GetCoords() : areaProtectTo;
                             if(!Owner.OwnerObject.Ref.Target.IsNull)
                             {
                                 //超出追击距离停止追击
@@ -184,7 +184,7 @@ namespace Extension.CW
                         if(Data.FighterAutoFire)
                         {
                             //if (areaProtectTo.DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 2000)
-                            var targetDest = Data.FigherFindRangeBySelf ? Owner.OwnerObject.Ref.Base.Base.GetCoords() : dest;
+                            var targetDest = Data.FindRangeAroundSelf ? Owner.OwnerObject.Ref.Base.Base.GetCoords() : dest;
 
                             {
                                 if (areaGuardTargetCheckRof-- <= 0)
@@ -277,8 +277,8 @@ namespace Extension.CW
         public int FighterMaxAmmo = 0;
         [INIField(Key = "Fighter.GuardRadius")]
         public int FighterGuardRadius = 5;
-        [INIField(Key = "Fighter.FindRangeBySelf")]
-        public bool FigherFindRangeBySelf = false;
+        [INIField(Key = "Fighter.FindRangeAroundSelf")]
+        public bool FindRangeAroundSelf = false;
         [INIField(Key = "Fighter.ChaseRange")]
         public int FighterChaseRange = 30;
     }

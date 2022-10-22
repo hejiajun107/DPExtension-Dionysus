@@ -36,6 +36,8 @@ namespace DpLib.Scripts.China
 
         
 
+        static Pointer<WarheadTypeClass> rofWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTRofWH");
+
 
         //贴上mk2的buff
         static Pointer<WarheadTypeClass> mk2Warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIIAttachWh");
@@ -120,6 +122,9 @@ namespace DpLib.Scripts.China
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
+            Pointer<BulletClass> pRof = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Pointer<TechnoClass>.Zero, 0, rofWarhead, 100, false);
+            pRof.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+
             if (isCharged)
             {
                 isCharged = false;

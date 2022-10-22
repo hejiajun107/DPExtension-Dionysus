@@ -1,22 +1,16 @@
-﻿using DpLib.Scripts.Yuri;
-using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
     [Serializable]
-    [ScriptAlias(nameof(IonCannonBulletScript))]
-    public class IonCannonBulletScript : BulletScriptable
+    [ScriptAlias(nameof(IonCannonReshadeBulletScript))]
+    public class IonCannonReshadeBulletScript : BulletScriptable
     {
-        public IonCannonBulletScript(BulletExt owner) : base(owner) { }
+        public IonCannonReshadeBulletScript(BulletExt owner) : base(owner) { }
 
         public bool isActived = false;
 
@@ -32,10 +26,10 @@ namespace DpLib.Scripts.China
                 int height = Owner.OwnerObject.Ref.Base.GetHeight();
                 if (!pTargetRef.IsNullOrExpired())
                 {
-                    if (pTargetRef.GameObject.GetComponent(IonCannonLauncherDecorator.ID) == null)
+                    if (pTargetRef.GameObject.GetComponent(IonCannonReshadeLauncherDecorator.ID) == null)
                     {
                         var pos = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
-                        pTargetRef.GameObject.CreateScriptComponent(nameof(IonCannonLauncherDecorator),IonCannonLauncherDecorator.ID, "IonCannonLauncherDecorator Decorator", pTargetRef, pos,height);
+                        pTargetRef.GameObject.CreateScriptComponent(nameof(IonCannonReshadeLauncherDecorator), IonCannonReshadeLauncherDecorator.ID, "IonCannonReshadeLauncherDecorator Decorator", pTargetRef, pos,height);
                     }
                 }
             }
@@ -44,11 +38,11 @@ namespace DpLib.Scripts.China
 
 
         [Serializable]
-        [ScriptAlias(nameof(IonCannonLauncherDecorator))]
-        public class IonCannonLauncherDecorator : TechnoScriptable
+        [ScriptAlias(nameof(IonCannonReshadeLauncherDecorator))]
+        public class IonCannonReshadeLauncherDecorator : TechnoScriptable
         {
             public static int ID = 414001;
-            public IonCannonLauncherDecorator(TechnoExt self, CoordStruct center, int height) : base(self)
+            public IonCannonReshadeLauncherDecorator(TechnoExt self, CoordStruct center, int height) : base(self)
             {
                 Self=(self);
                 this.center = center;
@@ -84,6 +78,7 @@ namespace DpLib.Scripts.China
 
             static Pointer<AnimTypeClass> pRain => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IonRain");
 
+            static Pointer<WeaponTypeClass> laserWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("IonLaser");
 
             //光束初始角度
             private int startAngle = -180;
@@ -193,19 +188,22 @@ namespace DpLib.Scripts.China
 
                         int i = 0;
 
+
                         //每xx角度生成一条光束，越小越密集
                         for (var angle = startAngle; angle < startAngle + 360; angle += 45)
                         {
                             if (beamDisplay[i])
                             {
                                 var pos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
-                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 9000), pos + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, readyState >= 80 ? 5 : 1);
-                                pLaser.Ref.Thickness = 10;
-                                pLaser.Ref.IsHouseColor = false;
+                                //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 9000), pos + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, readyState >= 80 ? 5 : 1);
+                                //pLaser.Ref.Thickness = 10;
+                                //pLaser.Ref.IsHouseColor = false;
 
                                 //每条光束/帧的伤害
                                 int damage = readyState > 80 ? 20 : 5; //was50
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
+                                pBullet.Ref.Base.SetLocation(pos+new CoordStruct(0,0,-center.Z));
+                                Self.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, pos + new CoordStruct(0, 0, 9000));
                                 pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                             }
 
