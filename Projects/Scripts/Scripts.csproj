@@ -55,6 +55,7 @@
     <Compile Include="AE\KmqAnimAttachEffectScript.cs" />
     <Compile Include="AE\MotherShipAttachEffectScript.cs" />
     <Compile Include="AE\MultiFunctionAttachEffectScript.cs" />
+    <Compile Include="AE\NanoSightAttachEffectScript.cs" />
     <Compile Include="AE\NCannonQuakeAttachEffectScript.cs" />
     <Compile Include="AE\TimeRevertAttachEffectScript.cs" />
     <Compile Include="AircraftScript.cs" />
