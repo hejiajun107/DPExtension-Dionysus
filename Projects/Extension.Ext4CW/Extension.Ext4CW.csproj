@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonExtension\AresFlag.cs" />
     <Compile Include="CommonExtension\ConvertUnload.cs" />
     <Compile Include="CommonExtension\Copyable.cs" />
     <Compile Include="CommonExtension\CustomFlag.cs" />
