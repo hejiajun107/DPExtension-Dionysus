@@ -23,6 +23,10 @@ namespace DpLib.Scripts.Scrin
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
+        static Pointer<WarheadTypeClass> pDebuffWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MirrorDebuffWh");
+
+        static Pointer<AnimTypeClass> pAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("FIELDFX");
+
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
@@ -33,6 +37,8 @@ namespace DpLib.Scripts.Scrin
                 if (pTechno.Ref.Owner.IsNull)
                     return;
                 if (Owner.OwnerObject.Ref.Owner.IsNull)
+                    return;
+                if (Owner.OwnerObject.Ref.Base.OnBridge)
                     return;
                 if (pTechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
                 {
@@ -67,12 +73,15 @@ namespace DpLib.Scripts.Scrin
 
                 Owner.OwnerObject.Ref.Base.Remove();
 
-                if (techno.Ref.Base.Health > health + 300)
+                if (techno.Ref.Base.Health > health + 140)
                 {
-                    techno.Ref.Base.Health = health + 300;
+                    techno.Ref.Base.Health = health + 140;
                 }
 
-                if (techno.Ref.Base.Put(location + new CoordStruct(0, 0, -height), Direction.N))
+
+                var createLocation = location + new CoordStruct(0, 0, -height);
+
+                if (techno.Ref.Base.Put(createLocation, Direction.N))
                 {
                     if (isSelected)
                     {
@@ -97,6 +106,10 @@ namespace DpLib.Scripts.Scrin
                     {
                         techno.Ref.Veterancy.SetElite(); 
                     }
+
+                    var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pDebuffWh, 100, false);
+                    bullet.Ref.DetonateAndUnInit(createLocation);
+                    YRMemory.Create<AnimClass>(pAnim, createLocation);
                         
                 }
 

@@ -139,6 +139,7 @@
     <Compile Include="Japan\JEpicScript.cs" />
     <Compile Include="Japan\NanoLinkScript.cs" />
     <Compile Include="Japan\SakuraScript.cs" />
+    <Compile Include="Japan\SunRiseFortressScript.cs" />
     <Compile Include="Japan\SuperBlackHoleBulletScript.cs" />
     <Compile Include="Japan\SuperBlackHoleUnitScript.cs" />
     <Compile Include="JumpetCarrierScript.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Scrin\WornHoleBuildingScript.cs" />
     <Compile Include="Scrin\WornHoleBulletScript.cs" />
     <Compile Include="SelfUninitScript.cs" />
+    <Compile Include="SharedTimerSWScript.cs" />
     <Compile Include="Shared\ManaCounter.cs" />
     <Compile Include="Soviet\IronCoreScript.cs" />
     <Compile Include="Soviet\IronProtectedScript.cs" />

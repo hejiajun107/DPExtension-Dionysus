@@ -79,21 +79,21 @@ namespace ComponentHooks
             return 0;
         }
 
-        [Hook(HookType.AresHook, Address = 0x6F64CB, Size = 6)]
-        public static unsafe UInt32 TechnoClass_DrawHealthBar_FirestormWall(REGISTERS* R)
-        {
-            Pointer<BuildingClass> pBulding = (IntPtr)R->ESI;
-            var pTechno = pBulding.Cast<TechnoClass>();
-            if(pTechno!=null)
-            {
-                var technoExt = TechnoExt.ExtMap.Find(pTechno);
-                if (!technoExt.IsNullOrExpired())
-                {
-                    var gscript = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
-                    return (gscript.Data.IsFirestormWall == true && string.IsNullOrEmpty(gscript.Data.IsTrench) ? 0x6F6832u: 0u);
-                }
-            }
-            return 0;
-        }
+        // [Hook(HookType.AresHook, Address = 0x6F64CB, Size = 6)]
+        // public static unsafe UInt32 TechnoClass_DrawHealthBar_FirestormWall(REGISTERS* R)
+        // {
+        //     Pointer<BuildingClass> pBulding = (IntPtr)R->ESI;
+        //     var pTechno = pBulding.Cast<TechnoClass>();
+        //     if(pTechno!=null)
+        //     {
+        //         var technoExt = TechnoExt.ExtMap.Find(pTechno);
+        //         if (!technoExt.IsNullOrExpired())
+        //         {
+        //             var gscript = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+        //             return (gscript.Data.IsFirestormWall == true && string.IsNullOrEmpty(gscript.Data.IsTrench) ? 0x6F6832u: 0u);
+        //         }
+        //     }
+        //     return 0;
+        // }
     }
 }
