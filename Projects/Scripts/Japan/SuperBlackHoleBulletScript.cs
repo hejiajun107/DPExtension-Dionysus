@@ -1,5 +1,6 @@
 ﻿using DpLib.Scripts.Japan;
 using DynamicPatcher;
+using Extension.CW;
 using Extension.Decorators;
 using Extension.Ext;
 using Extension.Script;
@@ -277,10 +278,17 @@ namespace DpLib.Scripts.China
                         {
                             if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                             {
-                                if (SuperBlackHoleBulletScript.immnueToBlackHoles.Contains(pTargetRef.OwnerObject.Ref.Type.Ref.Base.Base.ID))
+                                var gcomponent = pTargetRef.GameObject.GetComponent<TechnoGlobalExtension>();
+                                if(gcomponent == null)
                                 {
                                     continue;
                                 }
+
+                                if(gcomponent.Data.IsEpicUnit == true || gcomponent.Data.ImmnueToBlackHole)
+                                {
+                                    continue;
+                                }
+
                                 if (pTargetRef.GameObject.GetComponent(BlackHoleTargetDecorator.ID) == null)
                                 {
                                     pTargetRef.GameObject.CreateScriptComponent(nameof(BlackHoleTargetDecorator), BlackHoleTargetDecorator.ID, "BlackHoleTargetDecorator Decorator", owner, pTargetRef, location);

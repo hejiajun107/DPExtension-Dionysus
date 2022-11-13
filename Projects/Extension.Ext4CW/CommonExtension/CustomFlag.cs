@@ -28,6 +28,9 @@ namespace Extension.CW
         [INIField(Key = "Script.Args")]
         public string ScriptArgs = "";
 
+        [INIField(Key = "ImmnueToBlackHole")]
+        public bool ImmnueToBlackHole = false; 
+
         ///// <summary>
         ///// 
         ///// </summary>
