@@ -141,7 +141,7 @@ namespace Scripts.Japan
 
             Pointer<CellClass> pLast = pCell;
 
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 8; i++)
             {
                 pLast = pLast.Ref.GetNeighbourCell(direction);
                 if (pLast.IsNull)
