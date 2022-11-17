@@ -211,7 +211,7 @@ namespace DpLib.Scripts.China
                                 //pLaser.Ref.IsHouseColor = false;
 
                                 //每条光束/帧的伤害
-                                int damage = readyState > 80 ? 20 : 5; //was50
+                                int damage = readyState > 80 ? 8 : 5; //was50
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
                                 pBullet.Ref.Base.SetLocation(pos + new CoordStruct(0, 0, -center.Z));
                                 Self.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, pos + new CoordStruct(0, 0, 9000));
@@ -259,10 +259,11 @@ namespace DpLib.Scripts.China
                                 //if(MapClass.Instance.TryGetCellAt(center + new CoordStruct(0, 0, -height),out var pCell))
                                 //{
 
+                                var blue = new ColorStruct(0, 255, 255);
 
-                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(center + new CoordStruct(0, 0, 9000), center + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, 10);
-                                pLaser.Ref.IsHouseColor = false;
-                                pLaser.Ref.Thickness = 60;
+                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(center + new CoordStruct(0, 0, 9000), center + new CoordStruct(0, 0, -center.Z), blue, blue, blue, 10);
+                                pLaser.Ref.IsHouseColor = true;
+                                pLaser.Ref.Thickness = 80;
 
                                 int damage = 700;
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, waveWarhead, 100, false);
