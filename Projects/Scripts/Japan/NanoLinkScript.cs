@@ -1,15 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Japan
 {
@@ -27,7 +20,7 @@ namespace DpLib.Scripts.Japan
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChaosUnitKillWh");
 
-        
+
         private TechnoExt pTargetRef;
 
         public override void OnUpdate()
@@ -44,7 +37,7 @@ namespace DpLib.Scripts.Japan
                 return;
             }
 
-            if(!isActived)
+            if (!isActived)
             {
                 //建立连接
 
@@ -63,7 +56,7 @@ namespace DpLib.Scripts.Japan
                         Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
 
                         pTargetRef = TechnoExt.ExtMap.Find(target);
-                        if (pTargetRef!=null && !pTargetRef.IsNullOrExpired())
+                        if (pTargetRef != null && !pTargetRef.IsNullOrExpired())
                         {
                             if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
                                 continue;
@@ -75,7 +68,7 @@ namespace DpLib.Scripts.Japan
                                 continue;
                             if (pTargetRef.GameObject.GetComponent(LinkedTechnoDecorator.ID) == null)
                             {
-                                pTargetRef.GameObject.CreateScriptComponent(nameof(LinkedTechnoDecorator),LinkedTechnoDecorator.ID, "LinkedTechnoDecorator Decorator", pTargetRef, Owner);
+                                pTargetRef.GameObject.CreateScriptComponent(nameof(LinkedTechnoDecorator), LinkedTechnoDecorator.ID, "LinkedTechnoDecorator Decorator", pTargetRef, Owner);
                             }
                         }
                     }
@@ -127,7 +120,7 @@ namespace DpLib.Scripts.Japan
                 return;
             }
 
-            var selfLocation = Self.OwnerObject.Ref.Base.Base.GetCoords(); 
+            var selfLocation = Self.OwnerObject.Ref.Base.Base.GetCoords();
             var targetLocaton = Target.OwnerObject.Ref.Base.Base.GetCoords();
             //超过一定距离中断连接
             if (selfLocation.DistanceFrom(targetLocaton) > 2560)
@@ -152,9 +145,9 @@ namespace DpLib.Scripts.Japan
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-            if(!Self.IsNullOrExpired())
+            if (!Self.IsNullOrExpired())
             {
-                if(!Target.IsNullOrExpired())
+                if (!Target.IsNullOrExpired())
                 {
                     if (pAttackingHouse.IsNull)
                     {
@@ -185,11 +178,11 @@ namespace DpLib.Scripts.Japan
                 }
             }
 
-         
 
 
 
-           
+
+
         }
 
 

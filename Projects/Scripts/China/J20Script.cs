@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -47,7 +43,7 @@ namespace DpLib.Scripts.China
                 }
                 else
                 {
-                    for(var i = 0; i < 3; i++)
+                    for (var i = 0; i < 3; i++)
                     {
                         var damage = 70;
                         Pointer<BulletClass> paa = pAAMissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, aaWarhead, 90 - i * 10, false);

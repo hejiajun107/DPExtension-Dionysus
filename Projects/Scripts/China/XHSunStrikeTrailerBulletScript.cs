@@ -1,12 +1,9 @@
-﻿using DpLib.Scripts.China;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -15,9 +12,9 @@ namespace DpLib.Scripts
 
     public class XHSunStrikeTrailerBulletScript : BulletScriptable
     {
-        public XHSunStrikeTrailerBulletScript(BulletExt owner) : base(owner) 
+        public XHSunStrikeTrailerBulletScript(BulletExt owner) : base(owner)
         {
-            
+
         }
 
         static int colorIndex;
@@ -63,7 +60,7 @@ namespace DpLib.Scripts
             //nextLocation.Z += 50;
             if (lastLocation.DistanceFrom(nextLocation) > 50)
             {
-                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(lastLocation, nextLocation, colorSelected, colorSelected, new ColorStruct(0,0,0), 100);
+                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(lastLocation, nextLocation, colorSelected, colorSelected, new ColorStruct(0, 0, 0), 100);
                 pLaser.Ref.Thickness = 10;
                 pLaser.Ref.IsHouseColor = true;
 

@@ -1,14 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.CW;
+﻿using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
-using Scripts;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Japan
 {
@@ -92,7 +86,7 @@ namespace DpLib.Scripts.Japan
                 }
 
                 if (Owner.OwnerObject.Ref.TargetCoords.DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 256)
-               {
+                {
                     if (!pTechno.Ref.Base.IsOnMap || pTechno.Ref.Base.InLimbo)
                     {
                         pTechno.Ref.Base.UnInit();
@@ -104,7 +98,7 @@ namespace DpLib.Scripts.Japan
 
                         var ext = TechnoExt.ExtMap.Find(pTechno);
                         bool destroyed = false;
-                        if (ext!=null)
+                        if (ext != null)
                         {
                             var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
                             if (gext != null)
@@ -117,7 +111,7 @@ namespace DpLib.Scripts.Japan
                             }
                         }
 
-                        if(!destroyed)
+                        if (!destroyed)
                         {
                             pTechno.Ref.Base.UnInit();
                         }
@@ -143,7 +137,7 @@ namespace DpLib.Scripts.Japan
                 }
             }
 
-            
+
         }
     }
 }

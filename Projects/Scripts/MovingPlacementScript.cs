@@ -1,12 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -34,7 +29,7 @@ namespace DpLib.Scripts
                 var tExt = TechnoExt.ExtMap.Find(building);
                 if (tExt != null)
                 {
-                    buildingReference=(tExt);
+                    buildingReference = (tExt);
                 }
             }
 
@@ -78,7 +73,7 @@ namespace DpLib.Scripts
 
         public override void OnRemove()
         {
-            if (buildingReference!=null && !buildingReference.IsNullOrExpired())
+            if (buildingReference != null && !buildingReference.IsNullOrExpired())
             {
                 buildingReference.OwnerObject.Ref.Base.Remove();
                 buildingReference.OwnerObject.Ref.Base.UnInit();

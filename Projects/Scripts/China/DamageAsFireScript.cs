@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -18,7 +13,7 @@ namespace DpLib.Scripts.China
         private int delay = 200;
         public DamageAsFireScript(TechnoExt owner) : base(owner)
         {
-           
+
         }
 
         private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
@@ -32,14 +27,14 @@ namespace DpLib.Scripts.China
         private bool inited = false;
 
         public override void OnUpdate()
-        { 
-            if(!inited)
+        {
+            if (!inited)
             {
                 inited = true;
                 var anim = YRMemory.Create<AnimClass>(pAnimType, Owner.OwnerObject.Ref.Base.Base.GetCoords());
             }
 
-            if(delay % 10 == 0)
+            if (delay % 10 == 0)
             {
                 Pointer<BulletClass> pbuff = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, buffWarhead, 100, false);
                 pbuff.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
@@ -48,7 +43,7 @@ namespace DpLib.Scripts.China
                 pbreak.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
             }
 
-            if(delay--<=0)
+            if (delay-- <= 0)
             {
                 Owner.OwnerObject.Ref.Base.Remove();
                 Owner.OwnerObject.Ref.Base.UnInit();

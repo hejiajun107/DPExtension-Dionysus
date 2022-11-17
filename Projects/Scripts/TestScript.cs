@@ -4,12 +4,8 @@ using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -20,7 +16,8 @@ namespace DpLib.Scripts
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
 
-        public TestScript(TechnoExt owner) : base(owner) {
+        public TestScript(TechnoExt owner) : base(owner)
+        {
 
         }
 
@@ -122,7 +119,7 @@ namespace DpLib.Scripts
 
                 }
             }
-           
+
             //if (delay-- > 0)
             //    return;
             //delay = 200;

@@ -1,13 +1,10 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -78,10 +75,10 @@ namespace DpLib.Scripts.China
         //}
 
 
-        private void FireViaPassenger(Pointer<TechnoClass> pTechno,Pointer<AbstractClass> target)
+        private void FireViaPassenger(Pointer<TechnoClass> pTechno, Pointer<AbstractClass> target)
         {
             var passenger = pTechno.Ref.Passengers.GetFirstPassenger();
-            if (passenger.IsNull)  return; 
+            if (passenger.IsNull) return;
             if (passenger.Convert<AbstractClass>().CastToTechno(out Pointer<TechnoClass> pPassenger))
             {
                 pPassenger.Ref.Fire(target, 0);

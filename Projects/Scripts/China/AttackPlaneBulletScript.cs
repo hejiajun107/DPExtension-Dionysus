@@ -1,13 +1,7 @@
-﻿using DpLib.Scripts.American;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -39,7 +33,7 @@ namespace DpLib.Scripts.China
         {
             if (isActived == false)
             {
-                pTargetRef=TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+                pTargetRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
 
                 if (!pTargetRef.IsNullOrExpired())
                 {
@@ -51,7 +45,7 @@ namespace DpLib.Scripts.China
                 }
             }
 
-            if(isActived)
+            if (isActived)
             {
                 if (!pTargetRef.IsNullOrExpired())
                 {
@@ -67,7 +61,7 @@ namespace DpLib.Scripts.China
                     Pointer<BulletClass> pBulletAnim = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetRef.OwnerObject, 1, animWarhead, 100, false);
                     pBulletAnim.Ref.DetonateAndUnInit(fireStart);
 
-                    if(damage<18)
+                    if (damage < 18)
                     {
                         damage++;
                     }

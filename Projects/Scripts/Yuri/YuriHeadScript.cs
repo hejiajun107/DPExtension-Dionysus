@@ -1,13 +1,7 @@
-﻿using DpLib.Scripts.Yuri;
-using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -42,7 +36,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            if(IsBursting && currentBurst <= burstCount)
+            if (IsBursting && currentBurst <= burstCount)
             {
                 if (currentFrame < burstDelay)
                 {
@@ -72,13 +66,13 @@ namespace DpLib.Scripts
                 burstCount = 0;
                 currentBurst = 0;
             }
-           
+
 
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if(IsBursting == false)
+            if (IsBursting == false)
             {
                 var target = pTarget.Ref.GetCoords();
                 var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();

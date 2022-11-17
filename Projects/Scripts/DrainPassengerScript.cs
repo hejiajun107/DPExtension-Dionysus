@@ -1,12 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
-using Scripts;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -15,8 +10,8 @@ namespace DpLib.Scripts
 
     public class DrainPassenger : TechnoScriptable
     {
-        public DrainPassenger(TechnoExt owner) : base(owner) 
-        { 
+        public DrainPassenger(TechnoExt owner) : base(owner)
+        {
 
         }
 
@@ -34,7 +29,7 @@ namespace DpLib.Scripts
                 //}
                 my.Passengers.AddPassenger(new Pointer<FootClass>(pTechno));
             }
-            
+
         }
 
     }

@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -20,7 +15,7 @@ namespace DpLib.Scripts.China
         //static Pointer<WarheadTypeClass> healthWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("YhExigencyRepairWh");
 
         static Pointer<WarheadTypeClass> buffWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("YhExigencyBuffWh");
-        
+
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
         private bool IsMkIIUpdated = false;
@@ -31,7 +26,7 @@ namespace DpLib.Scripts.China
 
         public override void OnUpdate()
         {
-            if(IsMkIIUpdated && delay > 0)
+            if (IsMkIIUpdated && delay > 0)
             {
                 delay--;
             }
@@ -58,11 +53,11 @@ namespace DpLib.Scripts.China
             {
                 if (!pAttackingHouse.IsNull)
                 {
-                    
+
                     var ownerHouse = Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex;
                     if (!pAttackingHouse.Ref.IsAlliedWith(ownerHouse) && pAttackingHouse.Ref.ArrayIndex != ownerHouse)
                     {
-                        if(delay<=0)
+                        if (delay <= 0)
                         {
                             if (Owner.OwnerObject.Ref.Base.Health < 500)
                             {

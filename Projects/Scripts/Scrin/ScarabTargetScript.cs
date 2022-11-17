@@ -1,5 +1,4 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -13,7 +12,7 @@ namespace DpLib.Scripts.Scrin
     [Serializable]
     [ScriptAlias(nameof(ScarabTargetScript))]
 
-    public class ScarabTargetScript:TechnoScriptable
+    public class ScarabTargetScript : TechnoScriptable
     {
         public ScarabTargetScript(TechnoExt owner) : base(owner)
         {
@@ -42,7 +41,7 @@ namespace DpLib.Scripts.Scrin
                 //跳跃的目标点
                 var target = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-                if(Owner.OwnerObject.Ref.Owner == null)
+                if (Owner.OwnerObject.Ref.Owner == null)
                 {
                     return;
                 }
@@ -108,9 +107,9 @@ namespace DpLib.Scripts.Scrin
                                 continue;
                             }
 
-                            if(technoExt.OwnerObject.Ref.Owner.Ref.ArrayIndex == houseIndex && (technoExt.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SCARAB" || technoExt.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SCARAB4AI"))
+                            if (technoExt.OwnerObject.Ref.Owner.Ref.ArrayIndex == houseIndex && (technoExt.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SCARAB" || technoExt.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SCARAB4AI"))
                             {
-                                if(indexTarget+1>=emptyCells.Count())
+                                if (indexTarget + 1 >= emptyCells.Count())
                                 {
                                     indexTarget = 0;
                                 }
@@ -125,7 +124,7 @@ namespace DpLib.Scripts.Scrin
             }
 
 
-            if (delay--<0)
+            if (delay-- < 0)
             {
                 Owner.OwnerObject.Ref.Base.UnInit();
                 return;
@@ -154,7 +153,7 @@ namespace DpLib.Scripts.Scrin
             if (techno.CastToFoot(out Pointer<FootClass> pfoot))
             {
                 var dir = GameUtil.Point2Dir(techno.Ref.Base.Base.GetCoords(), target.Ref.GetCoords());
-                var tdir = new DirStruct(16,(short)DirStruct.TranslateFixedPoint(3, 16, (uint)dir));
+                var tdir = new DirStruct(16, (short)DirStruct.TranslateFixedPoint(3, 16, (uint)dir));
                 techno.Ref.Facing.set(tdir);
                 //pfoot.Ref.Locomotor.Push(tdir);
                 //pfoot.Ref.Locomotor.Push(tdir);
@@ -169,7 +168,7 @@ namespace DpLib.Scripts.Scrin
 
             Pointer<BulletClass> pDebuffBullet = pInviso.Ref.CreateBullet(techno.Convert<AbstractClass>(), techno, 1, pDebuffWh, 100, true);
             pDebuffBullet.Ref.DetonateAndUnInit(techno.Ref.Base.Base.GetCoords());
-            
+
 
             Pointer<BulletClass> bullet = jumpWeapon.Ref.Projectile.Ref.CreateBullet(target, techno, jumpWeapon.Ref.Damage, jumpWeapon.Ref.Warhead, 60, true);
             bullet.Ref.MoveTo(techno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 50), new BulletVelocity(0, 0, 800));

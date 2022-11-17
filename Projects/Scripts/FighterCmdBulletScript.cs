@@ -1,13 +1,10 @@
-﻿using Extension.Utilities;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DynamicPatcher;
 
 namespace DpLib.Scripts
 {
@@ -40,14 +37,14 @@ namespace DpLib.Scripts
                 Finder.FindTechno(house, x =>
                  {
                      var id = x.Ref.Type.Ref.Base.Base.ID.ToString();
-                     if (registeredFighters.Contains(id) &&  (x.Ref.Target.IsNull || x.Ref.Base.GetCurrentMission() != Mission.Attack)) //&& x.Ref.Base.GetCurrentMission() == (Mission.Guard | Mission.Sleep) ；was x.Ref.Ammo > 0 &&
+                     if (registeredFighters.Contains(id) && (x.Ref.Target.IsNull || x.Ref.Base.GetCurrentMission() != Mission.Attack)) //&& x.Ref.Base.GetCurrentMission() == (Mission.Guard | Mission.Sleep) ；was x.Ref.Ammo > 0 &&
                      {
                          return true;
                      }
                      return false;
                  }, FindRange.Owner);
 
-                if(fighters.Count()==0)
+                if (fighters.Count() == 0)
                 {
                     return;
                 }
@@ -64,16 +61,16 @@ namespace DpLib.Scripts
                     }
 
                     var bounsRange = 0;
-                    if(coords.Z > location.Z)
+                    if (coords.Z > location.Z)
                     {
-                        if(coords.Z - location.Z > 300)
+                        if (coords.Z - location.Z > 300)
                         {
                             //空中目标奖励距离
                             bounsRange = 1024;
                         }
                     }
 
-                    if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(location)  <= (1536 + bounsRange) && type != AbstractType.Building)
+                    if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(location) <= (1536 + bounsRange) && type != AbstractType.Building)
                     {
                         return true;
                     }

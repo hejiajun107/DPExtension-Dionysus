@@ -2,10 +2,6 @@
 using Extension.Ext;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Extension.Shared
 {
@@ -61,8 +57,8 @@ namespace Extension.Shared
                     //}
                 }
             }
-      
-            if (manaCheckRof-->0)
+
+            if (manaCheckRof-- > 0)
             {
                 return;
             }
@@ -78,7 +74,7 @@ namespace Extension.Shared
 
         private void RefreshBar(TechnoExt owner)
         {
-            if(currentMana>=50)
+            if (currentMana >= 50)
             {
                 var ptarget = owner.OwnerObject.Ref;
                 Pointer<WarheadTypeClass> warhead;
@@ -93,7 +89,7 @@ namespace Extension.Shared
                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(owner.OwnerObject.Convert<AbstractClass>(), owner.OwnerObject, 1, warhead, 100, false);
                 pBullet.Ref.DetonateAndUnInit(ptarget.Base.Base.GetCoords());
             }
-      
+
         }
 
         private void ShowBar(TechnoExt owner)
@@ -131,7 +127,7 @@ namespace Extension.Shared
         //, RectangleStruct pBound
         public void DrawManadBar(int iLength, Point2D pLocation)
         {
-            Point2D vPos = new Point2D(0,0);
+            Point2D vPos = new Point2D(0, 0);
             Point2D vLoc = pLocation;
             int frame, XOffset, YOffset;
             YOffset = 0;//this->Techno->GetTechnoType()->PixelSelectionBracketDelta + this->Type->BracketDelta;

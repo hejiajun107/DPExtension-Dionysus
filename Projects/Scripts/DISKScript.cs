@@ -1,15 +1,8 @@
 
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
-using System.Threading.Tasks;
-using DpLib.Scripts;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {
@@ -17,10 +10,10 @@ namespace Scripts
     [ScriptAlias(nameof(Disk))]
     public class Disk : TechnoScriptable
     {
-        public Disk(TechnoExt owner) : base(owner) {}
-        
+        public Disk(TechnoExt owner) : base(owner) { }
+
         Random random = new Random();
-        static ColorStruct innerColor = new ColorStruct(11,45,14);
+        static ColorStruct innerColor = new ColorStruct(11, 45, 14);
         static ColorStruct outerColor = new ColorStruct(19, 19, 810);
         static ColorStruct outerSpread = new ColorStruct(10, 10, 10);
 
@@ -38,40 +31,44 @@ namespace Scripts
             frames = 0;
             radius = 1024;
 
-            Target=(ext);
+            Target = (ext);
         }
 
         private void KillUpdate()
         {
-            if(!Target.IsNullOrExpired())
+            if (!Target.IsNullOrExpired())
             {
                 Pointer<TechnoClass> pTechno = Target.OwnerObject;
                 TechnoTypeExt extType = Target.Type;
 
                 CoordStruct curLocation = pTechno.Ref.Base.Base.GetCoords();
-                
+
                 int height = pTechno.Ref.Base.GetHeight();
 
-                Action<int, int> Attack = (int start, int count) => {
+                Action<int, int> Attack = (int start, int count) =>
+                {
                     int increasement = 360 / count;
                     CoordStruct from = curLocation;
-                        from.Z+=5000;
-                    for (int i = 0; i < count; i++) {
+                    from.Z += 5000;
+                    for (int i = 0; i < count; i++)
+                    {
                         double x = radius * Math.Cos((start + i * increasement) * Math.PI / 180);
                         double y = radius * Math.Sin((start + i * increasement) * Math.PI / 180);
                         CoordStruct to = curLocation + new CoordStruct((int)x, (int)y, -height);
                         Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(from, to, innerColor, outerColor, outerSpread, 8);
                         pLaser.Ref.Thickness = 10;
                         pLaser.Ref.IsHouseColor = true;
-                        
-                        if(frames > 300) {
+
+                        if (frames > 300)
+                        {
                             int damage = 11;
                             // MapClass.DamageArea(to, damage, Owner.OwnerObject, pWH, false, Owner.OwnerObject.Ref.Owner);
                             // MapClass.FlashbangWarheadAt(damage, pWH, to);
                             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, damage, pWH, 100, true);
                             pBullet.Ref.DetonateAndUnInit(to);
                         }
-                        else {
+                        else
+                        {
                             frames++;
                         }
                     }
@@ -80,9 +77,10 @@ namespace Scripts
                 Attack(angle, 5);
                 angle = (angle + 4) % 360;
                 radius -= 11;
-                if (radius < 0) {
+                if (radius < 0)
+                {
                     KillStart(Target);
-                } 
+                }
             }
         }
 

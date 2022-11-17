@@ -1,13 +1,10 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -105,12 +102,12 @@ namespace DpLib.Scripts.Scrin
             }
 
 
-            if (delay--<=0)
+            if (delay-- <= 0)
             {
                 Owner.OwnerObject.Ref.Base.UnInit();
                 return;
             }
-           
+
         }
 
 
@@ -118,7 +115,7 @@ namespace DpLib.Scripts.Scrin
         private void RevealLocation(CoordStruct location)
         {
             Pointer<HouseClass> pOwner = Owner.OwnerObject.Ref.Owner;
-            if(pOwner.IsNull)
+            if (pOwner.IsNull)
             {
                 return;
             }

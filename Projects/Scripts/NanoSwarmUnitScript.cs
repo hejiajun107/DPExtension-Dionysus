@@ -1,14 +1,9 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
-using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -117,7 +112,7 @@ namespace DpLib.Scripts
 
             }
 
-            if(checkDelay-->0)
+            if (checkDelay-- > 0)
             {
                 return;
             }

@@ -1,19 +1,11 @@
-﻿using DpLib.Scripts.Scrin;
-using DynamicPatcher;
-using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Soviet
 {
-   
+
 
     [Serializable]
     [ScriptAlias(nameof(IronCoreScript))]
@@ -21,7 +13,7 @@ namespace DpLib.Scripts.Soviet
     public class IronCoreScript : TechnoScriptable
     {
         public IronCoreScript(TechnoExt owner) : base(owner) { }
-     
+
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ICTKCoreEffectWh");
         static Pointer<WarheadTypeClass> ironEffectWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ICTKGiveIronWh");
@@ -34,7 +26,7 @@ namespace DpLib.Scripts.Soviet
         //static Pointer<WarheadTypeClass> warheadPoint => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ICTKCorePointWh");
 
 
-        
+
 
 
 
@@ -76,7 +68,7 @@ namespace DpLib.Scripts.Soviet
                 Owner.OwnerObject.Ref.Ammo = 1;
             }
 
-          
+
             //if (checkTargetRof <= 0)
             //{
             //    if (protectedTechno.Get() != null)
@@ -107,7 +99,7 @@ namespace DpLib.Scripts.Soviet
         {
             if (weaponIndex == 0)
             {
-               
+
                 //if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
                 //{
                 //    TechnoExt pTargetExt = TechnoExt.ExtMap.Find(pTechno);
@@ -132,8 +124,8 @@ namespace DpLib.Scripts.Soviet
                 //    }
                 //}
             }
-           
-            
+
+
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
@@ -159,7 +151,7 @@ namespace DpLib.Scripts.Soviet
 
         }
 
-         
+
 
     }
 
@@ -173,8 +165,8 @@ namespace DpLib.Scripts.Soviet
         public static int ID = 214001;
         public IonCoreProtection(IronCoreScript owner, TechnoExt self) : base(self)
         {
-            Owner=(owner.Owner);
-            Self=(self);
+            Owner = (owner.Owner);
+            Self = (self);
         }
 
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
@@ -217,8 +209,8 @@ namespace DpLib.Scripts.Soviet
                     initHouse = pTechno.Ref.Owner.Ref.ArrayIndex;
                 }
             }
-           
-            
+
+
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
@@ -227,7 +219,7 @@ namespace DpLib.Scripts.Soviet
             if (startTime > 0)
                 return;
 
-           if(pAttackingHouse.IsNull)
+            if (pAttackingHouse.IsNull)
             {
                 return;
             }
@@ -238,7 +230,7 @@ namespace DpLib.Scripts.Soviet
                 if (pAttackingHouse.Ref.ArrayIndex == pTechno.Ref.Owner.Ref.ArrayIndex || pTechno.Ref.Owner.Ref.IsAlliedWith(pAttackingHouse))
                     return;
 
-                
+
 
                 if ((immnueCoolDown <= 0 && pDamage.Ref > 20))
                 {
@@ -250,14 +242,14 @@ namespace DpLib.Scripts.Soviet
                         {
                             Pointer<BulletClass> pBullet2 = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Self.OwnerObject, 1, breakMindWarhead, 100, false);
                             pBullet2.Ref.DetonateAndUnInit(currentLocation);
-                        }   
+                        }
                     }
                     immnueCoolDown = 1200;
                     Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Self.OwnerObject, 1, ironWarhead, 100, false);
                     pBullet.Ref.DetonateAndUnInit(currentLocation);
                 }
             }
-          
+
         }
 
     }

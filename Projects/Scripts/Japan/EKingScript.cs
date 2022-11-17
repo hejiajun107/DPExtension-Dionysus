@@ -1,14 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Japan
 {
@@ -26,7 +20,7 @@ namespace DpLib.Scripts.Japan
         static Pointer<WarheadTypeClass> damageWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("EkingDamageAP");
 
         static Pointer<WarheadTypeClass> healthWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("KOGHEALWarhead");
-        
+
 
         private bool IsMkIIUpdated = false;
 
@@ -89,7 +83,7 @@ namespace DpLib.Scripts.Japan
 
                     TechnoExt tref = default;
 
-                    tref=(TechnoExt.ExtMap.Find(target));
+                    tref = (TechnoExt.ExtMap.Find(target));
 
                     if (!tref.IsNullOrExpired())
                     {
@@ -103,7 +97,7 @@ namespace DpLib.Scripts.Japan
                             continue;
                         }
 
-                        if(tref.OwnerObject.Ref.Base.IsVisible == false || tref.OwnerObject.Ref.Base.InLimbo==true || tref.OwnerObject.Ref.Base.IsAlive == false)
+                        if (tref.OwnerObject.Ref.Base.IsVisible == false || tref.OwnerObject.Ref.Base.InLimbo == true || tref.OwnerObject.Ref.Base.IsAlive == false)
                         {
                             continue;
                         }
@@ -112,7 +106,7 @@ namespace DpLib.Scripts.Japan
                         dbullet.Ref.DetonateAndUnInit(tref.OwnerObject.Ref.Base.Base.GetCoords());
 
                         Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, shootWarhead, 30, true);
-                        bullet.Ref.MoveTo(tref.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,150), new BulletVelocity(0, 0, 0));
+                        bullet.Ref.MoveTo(tref.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(0, 0, 0));
                         bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
                         count++;
                     }
@@ -122,7 +116,7 @@ namespace DpLib.Scripts.Japan
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if(weaponIndex==0 && (pTarget.Ref.WhatAmI() == AbstractType.Unit || pTarget.Ref.WhatAmI() == AbstractType.Infantry || pTarget.Ref.WhatAmI() == AbstractType.Building))
+            if (weaponIndex == 0 && (pTarget.Ref.WhatAmI() == AbstractType.Unit || pTarget.Ref.WhatAmI() == AbstractType.Infantry || pTarget.Ref.WhatAmI() == AbstractType.Building))
             {
                 if (pTarget.CastToTechno(out var ptech))
                 {

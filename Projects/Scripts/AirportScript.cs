@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -23,7 +19,7 @@ namespace DpLib.Scripts
         private int rof = 0;
         public override void OnUpdate()
         {
-            if (rof-- >  0)
+            if (rof-- > 0)
             {
                 return;
             }

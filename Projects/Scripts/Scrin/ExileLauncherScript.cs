@@ -4,10 +4,6 @@ using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -98,11 +94,11 @@ namespace DpLib.Scripts.Scrin
                                             }
                                         }
                                     }
-                                        
 
-                                
 
-                                   
+
+
+
                                 }
                             }
 
@@ -121,7 +117,7 @@ namespace DpLib.Scripts.Scrin
                                 }
 
                             }
-                            if(!destoryed)
+                            if (!destoryed)
                             {
                                 pPassenger.Ref.Base.UnInit();
                             }

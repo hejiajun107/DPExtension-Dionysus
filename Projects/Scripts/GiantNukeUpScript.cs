@@ -1,13 +1,8 @@
 
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {

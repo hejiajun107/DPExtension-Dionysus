@@ -1,13 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
-using Scripts;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -15,8 +9,9 @@ namespace DpLib.Scripts
     [ScriptAlias(nameof(JumpetCarrierScript))]
     public class JumpetCarrierScript : TechnoScriptable
     {
-        
-        public JumpetCarrierScript(TechnoExt owner) : base(owner) {
+
+        public JumpetCarrierScript(TechnoExt owner) : base(owner)
+        {
             floatType = Owner.OwnerObject.Ref.Type;
             landType = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID + "2");
         }

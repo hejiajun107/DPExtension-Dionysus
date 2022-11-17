@@ -3,10 +3,6 @@ using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -16,7 +12,7 @@ namespace DpLib.Scripts
     {
         public ConvertWhenBornScript(TechnoExt owner) : base(owner)
         {
-         
+
         }
 
         public override void Awake()
@@ -50,7 +46,7 @@ namespace DpLib.Scripts
 
             var destnation = Owner.OwnerObject.Ref.Base.Base.GetDestination();
 
-            if(Owner.OwnerObject.CastToFoot(out var pofoot))
+            if (Owner.OwnerObject.CastToFoot(out var pofoot))
             {
                 var pdest = pofoot.Ref.Destination;
 
@@ -68,20 +64,20 @@ namespace DpLib.Scripts
 
                     if (techno.Ref.Base.Put(location, Direction.S))
                     {
-                       
-                            if (techno.CastToFoot(out var pFoot))
+
+                        if (techno.CastToFoot(out var pFoot))
+                        {
+                            var tmission = techno.Convert<MissionClass>();
+                            if (!pdest.IsNull)
                             {
-                                var tmission = techno.Convert<MissionClass>();
-                                if(!pdest.IsNull)
-                                {
-                                    pFoot.Ref.MoveTo(pdest.Ref.GetCoords());
-                                }
-                                else
-                                {
-                                    pFoot.Ref.MoveTo(location);
-                                }
-                                tmission.Ref.QueueMission(Mission.Move,false);
+                                pFoot.Ref.MoveTo(pdest.Ref.GetCoords());
                             }
+                            else
+                            {
+                                pFoot.Ref.MoveTo(location);
+                            }
+                            tmission.Ref.QueueMission(Mission.Move, false);
+                        }
 
                         //var tmission = techno.Convert<MissionClass>();
                         //if(!tmission.IsNull)
@@ -100,7 +96,7 @@ namespace DpLib.Scripts
                 Owner.OwnerObject.Ref.Base.UnInit();
             }
 
-          
+
 
             base.OnUpdate();
         }

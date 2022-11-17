@@ -2,16 +2,12 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
     [Serializable]
     [ScriptAlias(nameof(JingWeiHeliScript))]
-    public class JingWeiHeliScript:TechnoScriptable
+    public class JingWeiHeliScript : TechnoScriptable
     {
         public JingWeiHeliScript(TechnoExt owner) : base(owner) { }
 
@@ -29,7 +25,7 @@ namespace DpLib.Scripts.China
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if(IsMkIIUpdated)
+            if (IsMkIIUpdated)
             {
                 var target = pTarget.Ref.GetCoords();
                 var pHeal = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 30, healWarhead, 100, false);

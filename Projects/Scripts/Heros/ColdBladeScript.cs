@@ -1,13 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Heros
 {
@@ -26,7 +21,7 @@ namespace DpLib.Scripts.Heros
 
         private bool isActived = false;
 
-    
+
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("DFMissleSeeker");
 
@@ -46,7 +41,7 @@ namespace DpLib.Scripts.Heros
         private int delay = 8;
 
         private int currentFrame = 0;
-   
+
 
         public override void OnUpdate()
         {
@@ -55,9 +50,9 @@ namespace DpLib.Scripts.Heros
             {
                 if (currentFrame >= delay)
                 {
-                    if(currentAttackCount < maxAttackCount)
+                    if (currentAttackCount < maxAttackCount)
                     {
-                        for(int i = 0; i < 2; i++)
+                        for (int i = 0; i < 2; i++)
                         {
                             //导弹轰炸
                             var ntarget = new CoordStruct(center.X + random.Next(-1000, 1000), center.Y + random.Next(-1000, 1000), 2000);
@@ -87,7 +82,7 @@ namespace DpLib.Scripts.Heros
                 {
                     currentFrame++;
                 }
-          
+
 
             }
         }
@@ -98,7 +93,7 @@ namespace DpLib.Scripts.Heros
         {
             if (weaponIndex == 0)
             {
-                if(_manaCounter.Cost(100))
+                if (_manaCounter.Cost(100))
                 {
                     center = pTarget.Ref.GetCoords();
                     isActived = true;
@@ -106,8 +101,8 @@ namespace DpLib.Scripts.Heros
                     currentFrame = 0;
                 }
             }
-    
-        
-        } 
+
+
+        }
     }
 }

@@ -1,13 +1,7 @@
-﻿using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.American
 {
@@ -22,12 +16,12 @@ namespace DpLib.Scripts.American
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
+            pTargetRef = (TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
             if (!pTargetRef.IsNullOrExpired())
             {
                 if (pTargetRef.GameObject.GetComponent(FreezingDecorator.ID) == null)
                 {
-                    pTargetRef.GameObject.CreateScriptComponent(nameof(FreezingDecorator),FreezingDecorator.ID, "FreezingDecorator Decorator", pTargetRef);
+                    pTargetRef.GameObject.CreateScriptComponent(nameof(FreezingDecorator), FreezingDecorator.ID, "FreezingDecorator Decorator", pTargetRef);
                 }
 
             }
@@ -40,9 +34,9 @@ namespace DpLib.Scripts.American
     public class FreezingDecorator : TechnoScriptable
     {
         public static int ID = 114001;
-        public FreezingDecorator(TechnoExt self):base(self)
+        public FreezingDecorator(TechnoExt self) : base(self)
         {
-            Owner=(self);
+            Owner = (self);
 
             initTemperature = 300 + (int)(self.OwnerObject.Ref.Base.Health * 5 / 100);
         }
@@ -50,7 +44,7 @@ namespace DpLib.Scripts.American
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisibleAll");
 
         static Pointer<WarheadTypeClass> warhead0 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH0");
-        
+
         static Pointer<WarheadTypeClass> warhead1 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH1");
         static Pointer<WarheadTypeClass> warhead2 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH2");
         static Pointer<WarheadTypeClass> warhead3 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH3");
@@ -81,8 +75,8 @@ namespace DpLib.Scripts.American
                 return;
             }
 
-            if(Owner.IsNullOrExpired())
-            { 
+            if (Owner.IsNullOrExpired())
+            {
                 return;
             }
 
@@ -109,12 +103,12 @@ namespace DpLib.Scripts.American
             {
                 warhead = warhead0;
             }
-            else if (temperature>= 150 && temperature <= 180)
+            else if (temperature >= 150 && temperature <= 180)
             {
                 //第一阶段的冰冻
                 warhead = warhead1;
             }
-            else if(temperature > 100 && temperature < 150)
+            else if (temperature > 100 && temperature < 150)
             {
                 //第二阶段的冰冻
                 warhead = warhead2;

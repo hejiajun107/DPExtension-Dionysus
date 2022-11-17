@@ -1,12 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -25,7 +20,7 @@ namespace DpLib.Scripts.China
 
         public override void OnUpdate()
         {
-            if(!inited)
+            if (!inited)
             {
                 inited = true;
 
@@ -44,7 +39,7 @@ namespace DpLib.Scripts.China
                         {
                             Pointer<BuildingClass> pBuilding = buildings.Get(i);
 
-                            if(pBuilding.Ref.Type.Ref.Base.Base.Base.ID == "ZGBGJD" && pBuilding.Ref.Base.Base.IsOnMap == true && !pBuilding.Ref.Base.Base.InLimbo)
+                            if (pBuilding.Ref.Type.Ref.Base.Base.Base.ID == "ZGBGJD" && pBuilding.Ref.Base.Base.IsOnMap == true && !pBuilding.Ref.Base.Base.InLimbo)
                             {
                                 hasBuilding = true;
                                 break;

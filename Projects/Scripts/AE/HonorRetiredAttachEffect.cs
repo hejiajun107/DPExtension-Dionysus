@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
@@ -17,7 +13,7 @@ namespace DpLib.Scripts.AE
         {
         }
 
-        private static Pointer<BulletTypeClass> inviso=> BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+        private static Pointer<BulletTypeClass> inviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         private static Pointer<WarheadTypeClass> wh1 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("HonorExpWh1");
         private static Pointer<WarheadTypeClass> wh2 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("HonorExpWh2");
 
@@ -47,7 +43,7 @@ namespace DpLib.Scripts.AE
             }
         }
 
-        private void ExplodeAt(int damage, Pointer<WarheadTypeClass> warhead,CoordStruct location)
+        private void ExplodeAt(int damage, Pointer<WarheadTypeClass> warhead, CoordStruct location)
         {
             var bullet = inviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 100, true);
             bullet.Ref.DetonateAndUnInit(location);

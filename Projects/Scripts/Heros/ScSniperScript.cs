@@ -1,13 +1,8 @@
-﻿using DpLib.Scripts.Heros;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -38,7 +33,7 @@ namespace DpLib.Scripts
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             base.OnFire(pTarget, weaponIndex);
-            if(weaponIndex == 1)
+            if (weaponIndex == 1)
             {
                 var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, pCrazyWH, 100, true);
                 bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
@@ -51,8 +46,8 @@ namespace DpLib.Scripts
 
             if (Owner.OwnerObject.Ref.Base.Health <= 75)
             {
-                if(!pAttacker.IsNull)
-                    if(pAttacker.CastToTechno(out var pAttTechno))
+                if (!pAttacker.IsNull)
+                    if (pAttacker.CastToTechno(out var pAttTechno))
                     {
                         if (_manaCounter.Cost(100))
                         {

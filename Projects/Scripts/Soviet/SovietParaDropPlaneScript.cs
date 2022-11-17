@@ -1,12 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Soviet
 {
@@ -44,7 +40,8 @@ namespace DpLib.Scripts.Soviet
                             if (passenger.Ref.Base.Veterancy.IsRookie())
                             {
                                 passenger.Ref.Base.Veterancy.SetVeteran();
-                            }else if(passenger.Ref.Base.Veterancy.IsVeteran())
+                            }
+                            else if (passenger.Ref.Base.Veterancy.IsVeteran())
                             {
                                 passenger.Ref.Base.Veterancy.SetElite();
                             }

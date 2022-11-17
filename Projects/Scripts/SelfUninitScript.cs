@@ -2,10 +2,6 @@
 using Extension.Ext;
 using Extension.Script;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -15,7 +11,7 @@ namespace DpLib.Scripts
     {
         public SelfUninitScript(TechnoExt owner) : base(owner)
         {
-           
+
         }
 
         private int duration = 500;

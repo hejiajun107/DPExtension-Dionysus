@@ -1,5 +1,4 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -7,8 +6,6 @@ using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -48,7 +45,7 @@ namespace DpLib.Scripts.Scrin
 
                 var currentLocation = pTechno.Ref.Base.Base.GetCoords();
 
-                if(pTechno.Ref.Owner.IsNull)
+                if (pTechno.Ref.Owner.IsNull)
                     return;
 
                 var target = Owner.OwnerObject.Ref.TargetCoords;
@@ -100,7 +97,7 @@ namespace DpLib.Scripts.Scrin
 
 
 
-                if(emptyCells.Count > 0)
+                if (emptyCells.Count > 0)
                 {
                     //寻找虫洞附近的友方单位
                     targets = Finder.FindTechno(pTechno.Ref.Owner, techno =>
@@ -133,9 +130,9 @@ namespace DpLib.Scripts.Scrin
             if (!stoped)
             {
                 stoped = true;
-                foreach(var tref in targets)
+                foreach (var tref in targets)
                 {
-                    if(!tref.IsNullOrExpired())
+                    if (!tref.IsNullOrExpired())
                     {
                         var pTechno = tref.OwnerObject;
                         var lastLocation = pTechno.Ref.Base.Base.GetCoords();
@@ -147,7 +144,7 @@ namespace DpLib.Scripts.Scrin
                             mission.Ref.ForceMission(Mission.Stop);
 
                             var color = new ColorStruct(64, 0, 128);
-                            Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pTechno.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,2000), pTechno.Ref.Base.Base.GetCoords(), color, color, color, 100);
+                            Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pTechno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 2000), pTechno.Ref.Base.Base.GetCoords(), color, color, color, 100);
                             pLaser.Ref.Thickness = 10;
                             pLaser.Ref.IsHouseColor = true;
 

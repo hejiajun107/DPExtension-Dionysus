@@ -1,13 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -35,9 +30,9 @@ namespace DpLib.Scripts.Scrin
         {
             var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            if(!inited)
+            if (!inited)
             {
-                if(Owner.OwnerObject.Ref.Base.IsOnMap)
+                if (Owner.OwnerObject.Ref.Base.IsOnMap)
                 {
                     inited = true;
                 }
@@ -49,7 +44,7 @@ namespace DpLib.Scripts.Scrin
 
 
                     var position = new CoordStruct(location.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), location.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), location.Z + height);
-                
+
                     var putResult = techno.Ref.Base.Put(position, Direction.N);
 
                     var ext = TechnoExt.ExtMap.Find(techno);
@@ -63,12 +58,12 @@ namespace DpLib.Scripts.Scrin
 
             if (inited)
             {
-                var mission = Owner.OwnerObject.Convert<MissionClass>(); 
+                var mission = Owner.OwnerObject.Convert<MissionClass>();
                 var angle = cAngle;
 
-                foreach(var item in technos)
+                foreach (var item in technos)
                 {
-                    if(!item.IsNullOrExpired())
+                    if (!item.IsNullOrExpired())
                     {
                         var position = new CoordStruct(location.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), location.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), location.Z + height);
                         item.OwnerObject.Ref.Base.SetLocation(position);
@@ -78,11 +73,11 @@ namespace DpLib.Scripts.Scrin
 
                 if (cAngle <= 360)
                     cAngle += 1;
-                else  
+                else
                     cAngle = 0;
 
 
-                
+
             }
 
 
@@ -94,7 +89,7 @@ namespace DpLib.Scripts.Scrin
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             base.OnFire(pTarget, weaponIndex);
-            foreach(var item in technos)
+            foreach (var item in technos)
             {
                 if (!item.IsNullOrExpired())
                 {

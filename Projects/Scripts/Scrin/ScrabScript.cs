@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -36,7 +31,7 @@ namespace DpLib.Scripts.Scrin
                 return;
             if (Owner.OwnerObject.Ref.Target.IsNull)
                 return;
-            if(Owner.OwnerObject.Ref.Target.Ref.GetCoords().DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords())<= 5000)
+            if (Owner.OwnerObject.Ref.Target.Ref.GetCoords().DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 5000)
             {
                 Pointer<TechnoClass> pTechno = Owner.OwnerObject;
                 Pointer<HouseClass> pOwner = pTechno.Ref.Owner;

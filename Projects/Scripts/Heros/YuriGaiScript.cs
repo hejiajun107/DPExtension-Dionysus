@@ -1,18 +1,12 @@
 ﻿
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
-using System.Linq;
 using Extension.Shared;
-using Extension.Decorators;
-using Extension.Utilities;
+using PatcherYRpp;
 using PatcherYRpp.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Scripts
 {
@@ -58,26 +52,26 @@ namespace Scripts
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if(weaponIndex==0)
+            if (weaponIndex == 0)
             {
                 if (_manaCounter.Cost(100))
                 {
                     CreateTower();
                 }
             }
-            else if(weaponIndex==1)
+            else if (weaponIndex == 1)
             {
                 CreateBrute();
             }
-            
+
         }
 
-      
+
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
       Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-           
+
         }
 
         private void CreateBrute()
@@ -117,7 +111,7 @@ namespace Scripts
 
                     TechnoExt tref = default;
 
-                    tref=(TechnoExt.ExtMap.Find(target));
+                    tref = (TechnoExt.ExtMap.Find(target));
 
                     if (!tref.IsNullOrExpired())
                     {
@@ -129,7 +123,7 @@ namespace Scripts
                         {
                             continue;
                         }
-                   
+
                         var hashCode = tref.OwnerObject.GetHashCode();
                         var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
 
@@ -160,7 +154,7 @@ namespace Scripts
                     for (index = 0; index < makeCount; index++)
                     {
                         var currentBrute = targets[index];
-                        if(!currentBrute.IsNullOrExpired())
+                        if (!currentBrute.IsNullOrExpired())
                         {
                             var targetCoord = currentBrute.OwnerObject.Ref.Base.Base.GetCoords();
                             Pointer<BulletClass> pbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1000, makeBruteWarhead, 100, false);
@@ -195,7 +189,7 @@ namespace Scripts
             pSuper.Ref.IsCharged = false;
         }
 
-       
+
     }
 
 

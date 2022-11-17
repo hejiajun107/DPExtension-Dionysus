@@ -1,12 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
-using Scripts.AE;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
@@ -31,7 +26,7 @@ namespace DpLib.Scripts.AE
 
         public override void OnUpdate()
         {
-            if(!exploded)
+            if (!exploded)
             {
                 if (delay-- <= 0)
                 {
@@ -41,7 +36,7 @@ namespace DpLib.Scripts.AE
                     Duration = 0;
                 }
             }
-           
+
             base.OnUpdate();
         }
 

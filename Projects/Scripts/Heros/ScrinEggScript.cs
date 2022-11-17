@@ -1,13 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Heros
 {
@@ -46,7 +41,7 @@ namespace DpLib.Scripts.Heros
             {
                 var mission = Owner.OwnerObject.Convert<MissionClass>();
 
-                if (delay<= 0)
+                if (delay <= 0)
                 {
                     depolyed = false;
                     Owner.OwnerObject.Ref.SetTarget(default);
@@ -55,7 +50,7 @@ namespace DpLib.Scripts.Heros
                 }
                 else
                 {
-                    if(delay%10==0)
+                    if (delay % 10 == 0)
                     {
                         FireMeotor();
                     }
@@ -79,12 +74,12 @@ namespace DpLib.Scripts.Heros
                 var blastDamage = 25;
                 var targetLocation = pTarget.Ref.GetCoords();
                 if (Owner.OwnerObject.Ref.Veterancy.IsElite())
-                { 
+                {
                     blastCount = 10;
                     blastDamage = 40;
                 }
 
-                for(var i = 0; i < blastCount; i++)
+                for (var i = 0; i < blastCount; i++)
                 {
                     var tlocation = targetLocation + new CoordStruct(random.Next(-400, 400), random.Next(-400, 400), 0);
                     if (MapClass.Instance.TryGetCellAt(tlocation, out var pcell))
@@ -95,7 +90,7 @@ namespace DpLib.Scripts.Heros
                     }
                 }
             }
-            if (weaponIndex==1)
+            if (weaponIndex == 1)
             {
                 FireMeotor();
             }
@@ -149,7 +144,7 @@ namespace DpLib.Scripts.Heros
             if (Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
                 return;
 
-            if(pAttacker.CastToTechno(out var pTechno))
+            if (pAttacker.CastToTechno(out var pTechno))
             {
                 if (pTechno.Ref.Owner.IsNull)
                     return;

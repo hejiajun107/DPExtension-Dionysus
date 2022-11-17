@@ -1,16 +1,9 @@
-﻿using DpLib.Scripts.China;
-using DynamicPatcher;
-using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Japan
 {
@@ -25,7 +18,7 @@ namespace DpLib.Scripts.Japan
         TechnoExt pTargetRef;
 
         //起爆点位置调整（相当于投放点坐标X，Y，Z的变化）
-        static CoordStruct XYZAdujust = new CoordStruct(0,0,1500);
+        static CoordStruct XYZAdujust = new CoordStruct(0, 0, 1500);
 
         public bool isActived = false;
 
@@ -98,7 +91,7 @@ namespace DpLib.Scripts.Japan
             }
             else
             {
-                if(bulletCheckRof--<=0)
+                if (bulletCheckRof-- <= 0)
                 {
                     bulletCheckRof = 20;
                     //消除抛射体
@@ -115,7 +108,7 @@ namespace DpLib.Scripts.Japan
                             continue;
                         }
 
-                        if(xBullet.Ref.Type.Ref.Base.Base.ID == trackBullet.Ref.Base.Base.ID)
+                        if (xBullet.Ref.Type.Ref.Base.Base.ID == trackBullet.Ref.Base.Base.ID)
                         {
                             continue;
                         }
@@ -132,7 +125,7 @@ namespace DpLib.Scripts.Japan
                     }
                 }
 
-                if(rof--<=0)
+                if (rof-- <= 0)
                 {
                     rof = 50;
                     //间歇性造成范围伤害
@@ -177,7 +170,7 @@ namespace DpLib.Scripts.Japan
                                         bullet.Ref.MoveTo(pTargetRef.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 50), new BulletVelocity(0, 0, 800));
                                         bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
 
-                                        pTargetRef.GameObject.CreateScriptComponent(nameof(BlackHoleEffectedDecorator),BlackHoleEffectedDecorator.ID, "BlackHoleEffectedDecorator Decorator", pTargetRef);
+                                        pTargetRef.GameObject.CreateScriptComponent(nameof(BlackHoleEffectedDecorator), BlackHoleEffectedDecorator.ID, "BlackHoleEffectedDecorator Decorator", pTargetRef);
                                     }
                                 }
                             }
@@ -196,9 +189,9 @@ namespace DpLib.Scripts.Japan
     public class BlackHoleEffectedDecorator : TechnoScriptable
     {
         public static int ID = 514007;
-        public BlackHoleEffectedDecorator(TechnoExt self):base(self)
+        public BlackHoleEffectedDecorator(TechnoExt self) : base(self)
         {
-          
+
         }
 
 

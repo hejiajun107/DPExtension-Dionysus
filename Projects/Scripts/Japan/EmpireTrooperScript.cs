@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Japan
 {
@@ -23,7 +18,7 @@ namespace DpLib.Scripts.Japan
         private static Pointer<WarheadTypeClass> pWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JPSRDeployWh");
         private static Pointer<BulletTypeClass> pBullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
-        
+
 
         private int type = 0;
 
@@ -35,7 +30,7 @@ namespace DpLib.Scripts.Japan
         {
             if (type == 1)
             {
-                if(guardDelay -- == 0)
+                if (guardDelay-- == 0)
                 {
                     var mission = Owner.OwnerObject.Convert<MissionClass>();
                     mission.Ref.ForceMission(Mission.Hunt);
@@ -61,7 +56,7 @@ namespace DpLib.Scripts.Japan
                 type = 1;
                 duration = 600;
 
-                var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, pWarhead, 100,false);
+                var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, pWarhead, 100, false);
                 bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 
                 Owner.OwnerObject.Ref.SetTarget(default);

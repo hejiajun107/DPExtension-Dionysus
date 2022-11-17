@@ -1,17 +1,12 @@
-﻿using DynamicPatcher;
-using Extension.CW;
+﻿using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
-using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Heros
 {
@@ -27,7 +22,7 @@ namespace DpLib.Scripts.Heros
 
         private ManaCounter _manaCounter;
 
-        private Dictionary<string,MandoUnitRecord> unitRecords = new Dictionary<string,MandoUnitRecord>();
+        private Dictionary<string, MandoUnitRecord> unitRecords = new Dictionary<string, MandoUnitRecord>();
 
         private int checkDelay = 20;
 
@@ -75,7 +70,7 @@ namespace DpLib.Scripts.Heros
 
                             TechnoExt tref = default;
 
-                            tref=(TechnoExt.ExtMap.Find(target));
+                            tref = (TechnoExt.ExtMap.Find(target));
 
                             if (!tref.IsNullOrExpired())
                             {
@@ -117,7 +112,7 @@ namespace DpLib.Scripts.Heros
                                         IsDead = false
                                     };
 
-                                    unitRecords.Add(record.Key,record);
+                                    unitRecords.Add(record.Key, record);
                                 }
                             }
                         }

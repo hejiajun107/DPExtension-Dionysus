@@ -1,10 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts
 {
@@ -29,7 +25,7 @@ namespace Scripts
                 initeHeight = Owner.OwnerObject.Ref.Base.GetHeight();
             }
 
-            if(!over)
+            if (!over)
             {
                 if (Owner.OwnerObject.Ref.Base.GetHeight() < initeHeight + 1200)
                 {
@@ -38,7 +34,7 @@ namespace Scripts
 
                     velocity.Z = Owner.OwnerObject.Ref.Speed;
 
-                    if(Owner.OwnerObject.Ref.Base.GetHeight() < initeHeight + 800)
+                    if (Owner.OwnerObject.Ref.Base.GetHeight() < initeHeight + 800)
                     {
                         velocity.X = 0;
                         velocity.Y = 0;
@@ -57,8 +53,8 @@ namespace Scripts
                     over = true;
                 }
             }
-       
-            
+
+
 
             base.OnUpdate();
         }

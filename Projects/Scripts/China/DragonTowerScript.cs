@@ -1,13 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -46,7 +41,7 @@ namespace DpLib.Scripts.China
             "ZAFKTR","ZAFKTR4AI"
         };
 
-        
+
 
         private int coolDown = 0;
 
@@ -64,7 +59,7 @@ namespace DpLib.Scripts.China
         {
             if (coolDown <= 0)
             {
-              
+
                 DrawLaser(Owner.OwnerObject.Ref.Base.Base.GetCoords(), pTarget.Ref.GetCoords(), innerColor1, outerColor1);
                 Pointer<BulletClass> damageBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 8, warhead, 100, false);
                 damageBullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
@@ -122,13 +117,13 @@ namespace DpLib.Scripts.China
                     //            {
                     //                continue;
                     //            }
-                                
+
                     //            Pointer<BulletClass> supBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTechno, 1, supWarhead, 100, false);
                     //            supBullet.Ref.DetonateAndUnInit(ptower.OwnerObject.Ref.Base.Base.GetCoords());
                     //        }
                     //    }
                     //}
-                  
+
                 }
             }
         }
@@ -137,7 +132,7 @@ namespace DpLib.Scripts.China
         {
             if (coolDown <= 0)
             {
-                if(Owner.OwnerObject.Ref.Target.IsNull)
+                if (Owner.OwnerObject.Ref.Target.IsNull)
                 {
                     if (pWH.Ref.Base.ID == supWarhead.Ref.Base.ID || pWH.Ref.Base.ID == "ZAFKSupAOEWH")
                     {
@@ -155,14 +150,14 @@ namespace DpLib.Scripts.China
         }
 
 
-        private void DrawLaser(CoordStruct from,CoordStruct to, ColorStruct innerColor, ColorStruct outerColor)
+        private void DrawLaser(CoordStruct from, CoordStruct to, ColorStruct innerColor, ColorStruct outerColor)
         {
             CoordStruct center = from + new CoordStruct(0, 0, height);
             CoordStruct focus = center + new CoordStruct(0, 0, 150);
 
             var radius = 100;
 
-            for (var angle = -180-45; angle < 180-45; angle += 90)
+            for (var angle = -180 - 45; angle < 180 - 45; angle += 90)
             {
                 var pos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
                 Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos, focus, innerColor, outerColor, outerSpread, 15);

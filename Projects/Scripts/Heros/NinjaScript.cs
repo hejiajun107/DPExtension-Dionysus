@@ -1,14 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
-using System.Linq;
 using Extension.Shared;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {
@@ -34,7 +28,7 @@ namespace Scripts
         static Pointer<WarheadTypeClass> pWHHealth => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("AcidHealthWh");
 
         static Pointer<SuperWeaponTypeClass> swNano => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("UnitDeliveryNanoLink");
-        
+
         private bool IsRainning = false;
 
         private CoordStruct center;
@@ -96,18 +90,18 @@ namespace Scripts
                     }
                 }
             }
-            if(weaponIndex == 1)
+            if (weaponIndex == 1)
             {
                 //if (!IsRainning)
                 //{
-                    if(_manaCounter.Cost(100))
-                    {
-                        CreateNano();
-                        //IsRainning = true;CreateNano
-                        //rainRof = 0;
-                        //currentRainFrame = 0;
-                        //center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                    }
+                if (_manaCounter.Cost(100))
+                {
+                    CreateNano();
+                    //IsRainning = true;CreateNano
+                    //rainRof = 0;
+                    //currentRainFrame = 0;
+                    //center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                }
                 //}
             }
         }

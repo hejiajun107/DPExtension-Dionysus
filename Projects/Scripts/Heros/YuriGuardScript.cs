@@ -1,15 +1,9 @@
 ﻿
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
-using System.Linq;
 using Extension.Shared;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {
@@ -39,7 +33,7 @@ namespace Scripts
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if(_manaCounter.Cost(45))
+            if (_manaCounter.Cost(45))
             {
                 Pointer<TechnoClass> pTechno = Owner.OwnerObject;
                 Pointer<HouseClass> pOwner = pTechno.Ref.Owner;
@@ -51,10 +45,10 @@ namespace Scripts
             }
         }
 
- 
 
 
-       
+
+
     }
 }
 

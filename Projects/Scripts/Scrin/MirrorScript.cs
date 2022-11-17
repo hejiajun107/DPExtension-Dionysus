@@ -1,13 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.CW;
+﻿using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -42,10 +37,10 @@ namespace DpLib.Scripts.Scrin
                     return;
                 if (pTechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
                 {
-                    if(pTechno.Ref.Type.Ref.Cost >= Owner.OwnerObject.Ref.Type.Ref.Cost)
-                    return;
+                    if (pTechno.Ref.Type.Ref.Cost >= Owner.OwnerObject.Ref.Type.Ref.Cost)
+                        return;
                 }
-                    
+
                 if (pTarget.Ref.WhatAmI() != AbstractType.Unit)
                     return;
                 var technoExt = TechnoExt.ExtMap.Find(pTechno);
@@ -102,15 +97,15 @@ namespace DpLib.Scripts.Scrin
                         mission.Ref.QueueMission(Mission.Hunt, false);
                     }
 
-                    if(IsMkIIUpdated)
+                    if (IsMkIIUpdated)
                     {
-                        techno.Ref.Veterancy.SetElite(); 
+                        techno.Ref.Veterancy.SetElite();
                     }
 
                     var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pDebuffWh, 100, false);
                     bullet.Ref.DetonateAndUnInit(createLocation);
                     YRMemory.Create<AnimClass>(pAnim, createLocation);
-                        
+
                 }
 
                 Owner.OwnerObject.Ref.Base.UnInit();

@@ -3,10 +3,6 @@ using Extension.INI;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.AE
 {
@@ -33,7 +29,7 @@ namespace Scripts.AE
         /// 当接收到新AE时（refresh 刷新持续时间,sum 叠加持续时间,ignore 持续状态中忽略新ae)
         /// </summary>
         [INIField(Key = "AttachEffectScript.DurationOnRecieveNew")]
-        public string DurationOnRecieveNew = "refresh";  
+        public string DurationOnRecieveNew = "refresh";
 
 
     }
@@ -49,7 +45,7 @@ namespace Scripts.AE
 
         TechnoExt Attacher;
 
-        private static Pointer<BulletTypeClass> INVISO => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible"); 
+        private static Pointer<BulletTypeClass> INVISO => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
         public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
@@ -57,7 +53,7 @@ namespace Scripts.AE
             INI = this.CreateRulesIniComponentWith<MultiFunctionAttachEffectData>(pWH.Ref.Base.ID);
             data = INI.Data;
 
-            if(pAttacker.CastToTechno(out var techno))
+            if (pAttacker.CastToTechno(out var techno))
             {
                 //记住施加AE的对象
                 Attacher = TechnoExt.ExtMap.Find(techno);
@@ -67,7 +63,7 @@ namespace Scripts.AE
         public override void OnUpdate()
         {
             //如果是永续的则无限延长时间
-            if(data.Forever)
+            if (data.Forever)
             {
                 Duration = 100;
             }
@@ -76,7 +72,7 @@ namespace Scripts.AE
 
         public override void OnRemove()
         {
-            if(Owner.OwnerObject.Ref.Base.Health<=0)
+            if (Owner.OwnerObject.Ref.Base.Health <= 0)
             {
                 if (!string.IsNullOrEmpty(data.DeathWarhead))
                 {
@@ -86,7 +82,7 @@ namespace Scripts.AE
                     bullet.Ref.Base.UnInit();
                 }
             }
-        
+
             base.OnRemove();
         }
 

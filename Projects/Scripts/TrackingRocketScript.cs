@@ -1,7 +1,6 @@
 ﻿using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
 
@@ -23,7 +22,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-           
+
             base.OnUpdate();
 
             var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
@@ -50,26 +49,26 @@ namespace DpLib.Scripts
                         if (Owner.OwnerObject.CastToFoot(out var pfoot))
                         {
                             Logger.Log("是pfoot");
-           
+
                             var loco = pfoot.Ref.Locomotor.ToLocomotionClass();
                             var targetLocation = pTargetRef.OwnerObject.Ref.Base.Base.GetCoords();
 
-                            if(MapClass.Instance.TryGetCellAt(targetLocation, out var pCell))
+                            if (MapClass.Instance.TryGetCellAt(targetLocation, out var pCell))
                             {
                                 Owner.OwnerObject.Ref.SetDestination(pCell.Convert<AbstractClass>(), false);
                             }
-                   
+
                         }
                     }
                     return;
                 }
 
                 var cell = tar.Convert<CellClass>();
-                
-                if(!cell.IsNull)
+
+                if (!cell.IsNull)
                 {
                     var techno = cell.Ref.FindTechnoNearestTo(new Point2D(60, 60), false, Owner.OwnerObject);
-                    pTargetRef=(TechnoExt.ExtMap.Find(techno));
+                    pTargetRef = (TechnoExt.ExtMap.Find(techno));
                     if (!pTargetRef.IsNullOrExpired())
                     {
                         Owner.OwnerObject.Ref.Target = pTargetRef.OwnerObject.Convert<AbstractClass>();

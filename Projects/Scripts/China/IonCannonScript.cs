@@ -1,14 +1,11 @@
-﻿using DpLib.Scripts.China;
-using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
 
 namespace DpLib.Scripts
 {
-  
+
     [Serializable]
     [ScriptAlias(nameof(IonCannonScript))]
     public class IonCannonScript : TechnoScriptable
@@ -29,7 +26,7 @@ namespace DpLib.Scripts
         static Pointer<WarheadTypeClass> beanWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DPIonBeanRED");
         //冲击波爆炸使用的弹头
         static Pointer<WarheadTypeClass> blastWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DPIonBlastRED");
-        
+
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
         //光束初始角度
@@ -52,16 +49,16 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            if(isActived)
+            if (isActived)
             {
                 //光束聚集
-                if (radius>=0)
+                if (radius >= 0)
                 {
                     //每xx角度生成一条光束，越小越密集
                     for (var angle = startAngle; angle < startAngle + 360; angle += 45)
                     {
                         var pos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
-                        Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0,0, 9000), pos + new CoordStruct(0, 0, -height), innerColor, outerColor, outerSpread, 5);
+                        Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 9000), pos + new CoordStruct(0, 0, -height), innerColor, outerColor, outerSpread, 5);
                         pLaser.Ref.Thickness = 10;
                         pLaser.Ref.IsHouseColor = false;
 
@@ -72,13 +69,13 @@ namespace DpLib.Scripts
                     }
 
                     //每次半径缩小越大，光束聚集越快
-                    radius-=5;
+                    radius -= 5;
                     //每次旋转的角度，角度越大旋转越快
                     startAngle -= 2;
                 }
                 else
                 {
-                    if(currentBlastFrame <= blastDamageRof)
+                    if (currentBlastFrame <= blastDamageRof)
                     {
                         currentBlastFrame++;
                     }
@@ -106,7 +103,7 @@ namespace DpLib.Scripts
 
                         currentBlastFrame = 0;
                     }
-                   
+
                 }
             }
         }
@@ -140,6 +137,6 @@ namespace DpLib.Scripts
 
 
 
- 
+
 }
 

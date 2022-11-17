@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.Japan
 {
@@ -34,7 +29,7 @@ namespace Scripts.Japan
                 var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
                 var distance = tLocation.DistanceFrom(location);
-                if(distance == double.NaN)
+                if (distance == double.NaN)
                 {
                     distance = 2560;
                 }

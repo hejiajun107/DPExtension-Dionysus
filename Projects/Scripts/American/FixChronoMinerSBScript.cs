@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.American
 {
@@ -28,7 +23,7 @@ namespace DpLib.Scripts.American
             var mission = Owner.OwnerObject.Convert<MissionClass>();
 
 
-            if(mission.Ref.CurrentMission == Mission.Sleep)
+            if (mission.Ref.CurrentMission == Mission.Sleep)
             {
                 sleeped = true;
                 return;

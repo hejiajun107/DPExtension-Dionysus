@@ -1,17 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
-using System.Linq;
-using Extension.Shared;
-using Extension.Decorators;
-using Extension.Utilities;
-using DpLib.Scripts;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {
@@ -24,14 +14,14 @@ namespace Scripts
         {
         }
 
- 
+
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
 
         public override void OnUpdate()
         {
-           
+
         }
 
 
@@ -40,14 +30,14 @@ namespace Scripts
         {
             if (weaponIndex == 0)
             {
-               
+
             }
-            if(weaponIndex == 1)
+            if (weaponIndex == 1)
             {
                 if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
                 {
                     TechnoExt pTargetExt = TechnoExt.ExtMap.Find(pTechno);
-                  
+
                     if (pTargetExt.GameObject.GetComponent(VirusSpreadDecorator.ID) == null)
                     {
                         pTargetExt.GameObject.CreateScriptComponent(nameof(VirusSpreadDecorator), VirusSpreadDecorator.ID, "VirusSpread Decorator", Owner, pTargetExt, 1000);
@@ -64,7 +54,7 @@ namespace Scripts
     public class VirusSpreadDecorator : TechnoScriptable
     {
         public static int ID = 514022;
-        public VirusSpreadDecorator(TechnoExt owner, TechnoExt self, int lifetime):base(self)
+        public VirusSpreadDecorator(TechnoExt owner, TechnoExt self, int lifetime) : base(self)
         {
             Owner = (owner);
             Self = (self);
@@ -102,13 +92,13 @@ namespace Scripts
             var owner = Owner;
 
 
-            if(_lifetime< _startTime)
+            if (_lifetime < _startTime)
             {
                 var current = Self.OwnerObject.Ref.Base.Base.GetCoords();
                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(owner.OwnerObject.Convert<AbstractClass>(), owner.OwnerObject, 1, pWarhead, 100, false);
                 pBullet.Ref.DetonateAndUnInit(current);
-            }    
-       
+            }
+
 
         }
 

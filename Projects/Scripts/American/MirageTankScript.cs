@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.American
 {
@@ -28,7 +24,7 @@ namespace DpLib.Scripts.American
 
         private int delay = 0;
 
-        private int rof=0;
+        private int rof = 0;
 
         public override void OnUpdate()
         {
@@ -43,7 +39,7 @@ namespace DpLib.Scripts.American
                 return;
             }
 
-            if(rof>0)
+            if (rof > 0)
             {
                 rof--;
                 return;
@@ -64,10 +60,10 @@ namespace DpLib.Scripts.American
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
              Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-            if(!pAttackingHouse.IsNull)
+            if (!pAttackingHouse.IsNull)
             {
                 var ownerHouse = Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex;
-                if (!pAttackingHouse.Ref.IsAlliedWith(ownerHouse) && pAttackingHouse.Ref.ArrayIndex!= ownerHouse)
+                if (!pAttackingHouse.Ref.IsAlliedWith(ownerHouse) && pAttackingHouse.Ref.ArrayIndex != ownerHouse)
                 {
                     delay = 400;
                 }

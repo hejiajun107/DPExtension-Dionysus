@@ -1,17 +1,10 @@
-﻿using DpLib.Scripts.Japan;
-using DynamicPatcher;
-using Extension.CW;
-using Extension.Decorators;
+﻿using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -32,7 +25,7 @@ namespace DpLib.Scripts.China
 
         static Pointer<SuperWeaponTypeClass> swLight => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("MockLightGreenSpecial");
 
-        internal static List<string> immnueToBlackHoles => new List<string>() {  "ZSTNK", "TU160", "GNTNK", "CNXHWSHIP", "CNXHWSHIP", "EPICTNK" };
+        internal static List<string> immnueToBlackHoles => new List<string>() { "ZSTNK", "TU160", "GNTNK", "CNXHWSHIP", "CNXHWSHIP", "EPICTNK" };
 
         public override void OnUpdate()
         {
@@ -44,10 +37,10 @@ namespace DpLib.Scripts.China
 
 
                 pOwnerRef = TechnoExt.ExtMap.Find(launcher);
-           
+
 
                 Pointer<BulletClass> spBullet = bulletType.Ref.CreateBullet(launcher.Convert<AbstractClass>(), launcher, 1, animWarhead, 100, false);
-                spBullet.Ref.DetonateAndUnInit(location + new CoordStruct(0,0,1500));
+                spBullet.Ref.DetonateAndUnInit(location + new CoordStruct(0, 0, 1500));
 
                 Pointer<HouseClass> pOwner = launcher.Ref.Owner;
                 Pointer<SuperClass> pSuper = pOwner.Ref.FindSuperWeapon(swLight);
@@ -61,7 +54,7 @@ namespace DpLib.Scripts.China
                 {
                     if (pOwnerRef.GameObject.GetComponent(BlackHoleLauncherDecorator.ID) == null)
                     {
-                        pOwnerRef.GameObject.CreateScriptComponent(nameof(BlackHoleLauncherDecorator),BlackHoleLauncherDecorator.ID, "BlackHoleLauncherDecorator Decorator", pOwnerRef, location);
+                        pOwnerRef.GameObject.CreateScriptComponent(nameof(BlackHoleLauncherDecorator), BlackHoleLauncherDecorator.ID, "BlackHoleLauncherDecorator Decorator", pOwnerRef, location);
                     }
                 }
             }
@@ -80,7 +73,7 @@ namespace DpLib.Scripts.China
     public class BlackHoleTargetDecorator : TechnoScriptable
     {
         public static int ID = 514001;
-        public BlackHoleTargetDecorator(TechnoExt owner, TechnoExt self, CoordStruct center):base(owner)
+        public BlackHoleTargetDecorator(TechnoExt owner, TechnoExt self, CoordStruct center) : base(owner)
         {
             Owner = owner;
             Self = self;
@@ -260,7 +253,7 @@ namespace DpLib.Scripts.China
             {
                 var launcher = owner.OwnerObject;
 
-              
+
 
                 CellSpreadEnumerator enumerator = new CellSpreadEnumerator(6);
 
@@ -279,12 +272,12 @@ namespace DpLib.Scripts.China
                             if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                             {
                                 var gcomponent = pTargetRef.GameObject.GetComponent<TechnoGlobalExtension>();
-                                if(gcomponent == null)
+                                if (gcomponent == null)
                                 {
                                     continue;
                                 }
 
-                                if(gcomponent.Data.IsEpicUnit == true || gcomponent.Data.ImmnueToBlackHole)
+                                if (gcomponent.Data.IsEpicUnit == true || gcomponent.Data.ImmnueToBlackHole)
                                 {
                                     continue;
                                 }
@@ -308,7 +301,7 @@ namespace DpLib.Scripts.China
                 for (int i = bullets.Count - 1; i >= 0; i--)
                 {
                     Pointer<BulletClass> xBullet = bullets.Get(i);
-            
+
                     var bulletLocation = xBullet.Ref.Base.Base.GetCoords();
 
                     if (xBullet.Ref.Type.Ref.Inviso == true)
@@ -316,7 +309,7 @@ namespace DpLib.Scripts.China
                         continue;
                     }
 
-                    if(bulletLocation.DistanceFrom(center)<= 2560)
+                    if (bulletLocation.DistanceFrom(center) <= 2560)
                     {
                         Pointer<BulletClass> sBullet = bulletType.Ref.CreateBullet(launcher.Convert<AbstractClass>(), launcher, 1, killWarhead, 100, false);
                         sBullet.Ref.DetonateAndUnInit(bulletLocation);

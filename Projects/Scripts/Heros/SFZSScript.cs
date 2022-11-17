@@ -1,16 +1,8 @@
 ﻿
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
-using System.Linq;
-using Extension.Shared;
-using DpLib.Scripts;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {
@@ -20,7 +12,8 @@ namespace Scripts
 
     public class SFZSScript : TechnoScriptable
     {
-        public SFZSScript(TechnoExt owner) : base(owner) {
+        public SFZSScript(TechnoExt owner) : base(owner)
+        {
         }
 
 
@@ -30,14 +23,14 @@ namespace Scripts
         static Pointer<WarheadTypeClass> pWH => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SFZSSlashWH");
 
 
-        
+
 
 
 
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if(weaponIndex==0)
+            if (weaponIndex == 0)
             {
                 var targetLocation = pTarget.Ref.GetCoords();
                 var selfLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();

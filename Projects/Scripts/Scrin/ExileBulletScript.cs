@@ -1,13 +1,9 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -116,7 +112,7 @@ namespace DpLib.Scripts.Scrin
 
         private int startAngle = 0;
 
-        private ColorStruct color = new ColorStruct(64,0,128);
+        private ColorStruct color = new ColorStruct(64, 0, 128);
 
         private void DrawCircleLaser()
         {

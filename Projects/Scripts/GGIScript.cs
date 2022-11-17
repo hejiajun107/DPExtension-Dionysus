@@ -1,16 +1,8 @@
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using Extension.Decorators;
-using Extension.Utilities;
-using System.Threading.Tasks;
+using PatcherYRpp;
 using PatcherYRpp.Utilities;
-using DpLib.Scripts;
+using System;
 
 namespace Scripts
 {
@@ -75,7 +67,8 @@ namespace Scripts
             Pointer<WeaponTypeClass> pWeapon = Weapon;
             Pointer<WarheadTypeClass> pWarhead = Warhead;
 
-            Func<int, Pointer<BulletClass>> CreateBullet = (int d) => {
+            Func<int, Pointer<BulletClass>> CreateBullet = (int d) =>
+            {
                 Pointer<BulletClass> pBullet = pWeapon.Ref.Projectile.Ref.
                     CreateBullet(target.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject,
                     d, pWarhead, pWeapon.Ref.Speed, pWeapon.Ref.Bright);

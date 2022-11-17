@@ -1,12 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Yuri
 {
@@ -35,7 +30,7 @@ namespace DpLib.Scripts.Yuri
             {
                 IsActive = true;
                 start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                pTargetRef=TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+                pTargetRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                 return;
             }
 
@@ -54,7 +49,7 @@ namespace DpLib.Scripts.Yuri
             }
 
 
-   
+
 
         }
     }

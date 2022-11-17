@@ -1,12 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.American
 {
@@ -38,7 +33,7 @@ namespace DpLib.Scripts.American
 
                 if (Owner.OwnerObject.Ref.Ammo > 0 && duration <= 1000)
                 {
-                    pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
+                    pTargetRef = (TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
                     if (!pTargetRef.IsNullOrExpired())
                     {
                         var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();

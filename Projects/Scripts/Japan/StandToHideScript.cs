@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.Japan
 {
@@ -27,10 +23,10 @@ namespace Scripts.Japan
 
         public override void OnUpdate()
         {
-            if(Owner.OwnerObject.Ref.Base.IsOnMap && !Owner.OwnerObject.Ref.Base.InLimbo)
+            if (Owner.OwnerObject.Ref.Base.IsOnMap && !Owner.OwnerObject.Ref.Base.InLimbo)
             {
                 var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                if(coord == lastCoord)
+                if (coord == lastCoord)
                 {
                     keepStand++;
                 }

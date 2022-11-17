@@ -3,10 +3,6 @@ using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -16,7 +12,7 @@ namespace DpLib.Scripts
     {
         public DelayToAttachScript(TechnoExt owner) : base(owner)
         {
-           
+
         }
 
         public override void Awake()
@@ -51,7 +47,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            if(inited==false)
+            if (inited == false)
             {
                 if (delay-- <= 0)
                 {

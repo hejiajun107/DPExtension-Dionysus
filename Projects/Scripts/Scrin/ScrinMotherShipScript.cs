@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -94,11 +89,12 @@ namespace DpLib.Scripts.Scrin
             {
                 stage += 2.5;
             }
-            else if(Owner.OwnerObject.Ref.Base.Health > MAX_STRENGTH * 0.3)
+            else if (Owner.OwnerObject.Ref.Base.Health > MAX_STRENGTH * 0.3)
             {
                 stage += 2;
             }
-            else {
+            else
+            {
                 stage += 1;
             }
 
@@ -128,7 +124,7 @@ namespace DpLib.Scripts.Scrin
                 }
             }
 
-            if(stage >= 2500)
+            if (stage >= 2500)
             {
                 //开火完成
                 isFiring = false;
@@ -143,7 +139,7 @@ namespace DpLib.Scripts.Scrin
         {
             var start = Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -100);
 
-            if (targetLocation!=null && targetLocation!=default)
+            if (targetLocation != null && targetLocation != default)
             {
                 var bigLaserColor = new ColorStruct(192, 192, 1920);
                 Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, targetLocation, bigLaserColor, bigLaserColor, bigLaserColor, 30);
@@ -162,20 +158,20 @@ namespace DpLib.Scripts.Scrin
                 bullet.Ref.DetonateAndUnInit(targetLocation);
 
                 //在周围造成伤害
-                for(var angle = 0; angle < 360; angle += 60)
+                for (var angle = 0; angle < 360; angle += 60)
                 {
                     var height = Owner.OwnerObject.Ref.Base.GetHeight();
                     var center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
                     var radius = 8 * 256;
-                    var targetPos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z  - height);
+                    var targetPos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z - height);
 
                     var cell = CellClass.Coord2Cell(targetPos);
 
                     if (MapClass.Instance.TryGetCellAt(cell, out var pCell))
                     {
                         var exp2damge = (Owner.OwnerObject.Ref.Base.Health / (MAX_STRENGTH / 5)) * 100;
-                        var inviso = misissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject,  exp2damge, (Owner.OwnerObject.Ref.Base.Health > (MAX_STRENGTH / 4)) ?  exp2Warhead : exp2Warheads, 50, false);
+                        var inviso = misissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, exp2damge, (Owner.OwnerObject.Ref.Base.Health > (MAX_STRENGTH / 4)) ? exp2Warhead : exp2Warheads, 50, false);
                         inviso.Ref.MoveTo(targetPos + new CoordStruct(0, 0, 2000), new BulletVelocity(0, 0, 0));
                         inviso.Ref.SetTarget(pCell.Convert<AbstractClass>());
                     }

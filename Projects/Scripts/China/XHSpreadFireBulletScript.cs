@@ -1,15 +1,10 @@
-﻿using DynamicPatcher;
-using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -46,7 +41,7 @@ namespace DpLib.Scripts.China
         };
 
 
-        ColorStruct bigLaserColor = new ColorStruct(34,177,76);
+        ColorStruct bigLaserColor = new ColorStruct(34, 177, 76);
 
 
 
@@ -89,10 +84,10 @@ namespace DpLib.Scripts.China
 
 
         static Pointer<BulletTypeClass> pSeeker => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisileSeeker");
-        
 
 
-        static Pointer<WarheadTypeClass> exp1 =>  WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XHExpWH1");
+
+        static Pointer<WarheadTypeClass> exp1 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XHExpWH1");
         static Pointer<WarheadTypeClass> exp2 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XHExpWH2");
         static Pointer<WarheadTypeClass> exp3 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XHExpWH3");
         static Pointer<WarheadTypeClass> exp4 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XHExpWH4");
@@ -133,7 +128,7 @@ namespace DpLib.Scripts.China
                 isActived = true;
 
                 IsElite = Owner.Type.OwnerObject.Ref.Base.Base.ID == "XhGrandBulletE";
-             
+
 
                 InitLevelDic();
 
@@ -141,7 +136,7 @@ namespace DpLib.Scripts.China
                 pOwnerRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                 int height = Owner.OwnerObject.Ref.Base.GetHeight();
 
-              
+
                 targetLocation = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
 
                 startLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
@@ -184,7 +179,7 @@ namespace DpLib.Scripts.China
 
                             TechnoExt tref = default;
 
-                            tref=(TechnoExt.ExtMap.Find(target));
+                            tref = (TechnoExt.ExtMap.Find(target));
 
                             if (!tref.IsNullOrExpired())
                             {
@@ -200,7 +195,7 @@ namespace DpLib.Scripts.China
                                 {
                                     continue;
                                 }
-                                
+
 
                                 var hashCode = tref.OwnerObject.GetHashCode();
                                 var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
@@ -248,9 +243,9 @@ namespace DpLib.Scripts.China
                                 var targetPos = item.OwnerObject.Ref.Base.Base.GetCoords();
                                 var pos1 = new CoordStruct(targetPos.X, targetPos.Y, location.Z);
 
-                                var laserColor = LaserLevels[level-1];
+                                var laserColor = LaserLevels[level - 1];
 
-                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(targetPos, pos1, laserColor, laserColor, new ColorStruct(0,0,0), 200);
+                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(targetPos, pos1, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
                                 pLaser.Ref.IsHouseColor = true;
                                 pLaser.Ref.Thickness = 7;
 
@@ -264,10 +259,10 @@ namespace DpLib.Scripts.China
                                 pEmpBullet.Ref.DetonateAndUnInit(targetPos);
 
 
-                                for(var i = 0; i < level; i++)
+                                for (var i = 0; i < level; i++)
                                 {
                                     Pointer<BulletClass> pPowerBullet = pBulletType.Ref.CreateBullet(pOwnerRef.OwnerObject.Convert<AbstractClass>(), pOwnerRef.OwnerObject, 1, powerWarhead, 100, false);
-                                    pPowerBullet.Ref.DetonateAndUnInit(location + new CoordStruct(random.Next(-600,600), random.Next(-600, 600),100));
+                                    pPowerBullet.Ref.DetonateAndUnInit(location + new CoordStruct(random.Next(-600, 600), random.Next(-600, 600), 100));
                                 }
                                 //var damage = 100;
                                 //Pointer<BulletClass> pBullet = plaserBullet.Ref.CreateBullet(pOwner.OwnerObject.Convert<AbstractClass>(), pOwner.OwnerObject, damage, fireWarhead, 100, false);
@@ -280,15 +275,15 @@ namespace DpLib.Scripts.China
 
 
                         //消耗电力
-                        if (targets.Count() >=1  && targets.Count()<=3)
+                        if (targets.Count() >= 1 && targets.Count() <= 3)
                         {
                             PowerDown(pwd200, pOwnerRef);
                         }
-                        else if(targets.Count()>3 && targets.Count() <= 6)
+                        else if (targets.Count() > 3 && targets.Count() <= 6)
                         {
                             PowerDown(pwd400, pOwnerRef);
                         }
-                        else if(targets.Count()>6 && targets.Count()<=8)
+                        else if (targets.Count() > 6 && targets.Count() <= 8)
                         {
                             PowerDown(pwd600, pOwnerRef);
                         }
@@ -303,20 +298,21 @@ namespace DpLib.Scripts.China
                     //总的充能级别
                     totalLevel = levels.Sum();
 
-                    if(IsElite)
+                    if (IsElite)
                     {
                         totalLevel += 3;
-                    }    
+                    }
 
-                    if(totalLevel>20)
+                    if (totalLevel > 20)
                     {
                         totalLevel = 20;
                     }
                 }
             }
 
-            if (delay-- > 0 || attacked) { 
-                return; 
+            if (delay-- > 0 || attacked)
+            {
+                return;
             }
 
             attacked = true;
@@ -331,7 +327,7 @@ namespace DpLib.Scripts.China
         {
             var baseDamage = 280;
 
-            if(IsElite)
+            if (IsElite)
             {
                 baseDamage += 50;
             }
@@ -407,7 +403,7 @@ namespace DpLib.Scripts.China
         }
 
 
-        private void DoNormalDamage(int totalDamage,int explodeCount,Pointer<WarheadTypeClass> warhead,TechnoExt pOwner)
+        private void DoNormalDamage(int totalDamage, int explodeCount, Pointer<WarheadTypeClass> warhead, TechnoExt pOwner)
         {
             var damage = totalDamage / explodeCount;
 
@@ -445,20 +441,20 @@ namespace DpLib.Scripts.China
 
         private void DoBlast(int range)
         {
-            pTargetRef=TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+            pTargetRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
             int height = Owner.OwnerObject.Ref.Base.GetHeight();
             if (!pTargetRef.IsNullOrExpired())
             {
                 if (pTargetRef.GameObject.GetComponent(XhWeaponExplodeDecorator.ID) == null)
                 {
                     var pos = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
-                    pTargetRef.GameObject.CreateScriptComponent(nameof(XhWeaponExplodeDecorator),XhWeaponExplodeDecorator.ID, "XhWeaponExplodeDecorator Decorator", pTargetRef, pos, 0, range);
+                    pTargetRef.GameObject.CreateScriptComponent(nameof(XhWeaponExplodeDecorator), XhWeaponExplodeDecorator.ID, "XhWeaponExplodeDecorator Decorator", pTargetRef, pos, 0, range);
                 }
             }
         }
 
 
-        private void PowerDown(Pointer<SuperWeaponTypeClass> swType,TechnoExt pOwner)
+        private void PowerDown(Pointer<SuperWeaponTypeClass> swType, TechnoExt pOwner)
         {
             Pointer<SuperClass> pSuper = pOwner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(swType);
             CellStruct targetCell = CellClass.Coord2Cell(Owner.OwnerObject.Ref.Base.Base.GetCoords());
@@ -479,9 +475,9 @@ namespace DpLib.Scripts.China
 
         private void InitLevelDic()
         {
-            foreach(var item in Level2Buildings)
+            foreach (var item in Level2Buildings)
             {
-                if(!SpecialLevels.ContainsKey(item))
+                if (!SpecialLevels.ContainsKey(item))
                 {
                     SpecialLevels.Add(item, 2);
                 }
@@ -700,7 +696,7 @@ namespace DpLib.Scripts.China
 
             if (isActived)
             {
-                if (radius <= this.range*256)
+                if (radius <= this.range * 256)
                 {
                     for (var angle = startAngle; angle < startAngle + 360; angle += 30)
                     {

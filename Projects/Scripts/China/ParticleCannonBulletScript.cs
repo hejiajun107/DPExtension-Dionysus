@@ -1,14 +1,8 @@
-﻿using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -51,11 +45,11 @@ namespace DpLib.Scripts.China
                         {
                             if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                             {
-                                if(pTargetRef.OwnerObject.Ref.Owner.Ref.ArrayIndex == houseIdx || house.IsAlliedWith(pTargetRef.OwnerObject.Ref.Owner))
+                                if (pTargetRef.OwnerObject.Ref.Owner.Ref.ArrayIndex == houseIdx || house.IsAlliedWith(pTargetRef.OwnerObject.Ref.Owner))
                                 {
                                     if (pTargetRef.GameObject.GetComponent(ParticleCannonUnitDecorator.ID) == null)
                                     {
-                                        pTargetRef.GameObject.CreateScriptComponent(nameof(ParticleCannonUnitDecorator),ParticleCannonUnitDecorator.ID, "ParticleCannonUnitDecorator Decorator", pTargetRef);
+                                        pTargetRef.GameObject.CreateScriptComponent(nameof(ParticleCannonUnitDecorator), ParticleCannonUnitDecorator.ID, "ParticleCannonUnitDecorator Decorator", pTargetRef);
                                     }
                                 }
                             }
@@ -132,12 +126,12 @@ namespace DpLib.Scripts.China
 
             public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
             {
-                if(pAttackingHouse.IsNull)
+                if (pAttackingHouse.IsNull)
                 {
                     return;
                 }
 
-                if(Self.IsNullOrExpired())
+                if (Self.IsNullOrExpired())
                 {
                     return;
                 }
@@ -149,7 +143,7 @@ namespace DpLib.Scripts.China
                 if (attackedRof <= 0)
                 {
                     attackedRof = coolDown;
-                    if(pAttacker.CastToTechno(out var pAttackerTechno))
+                    if (pAttacker.CastToTechno(out var pAttackerTechno))
                     {
                         FireTo(pAttacker.Ref.Base.GetCoords());
                     }
@@ -160,9 +154,9 @@ namespace DpLib.Scripts.China
             private void FireTo(CoordStruct target)
             {
                 var owner = Self;
-                if(owner!=null)
+                if (owner != null)
                 {
-                    var ntarget = new CoordStruct(target.X , target.Y, target.Z);
+                    var ntarget = new CoordStruct(target.X, target.Y, target.Z);
 
                     //for (var angle = 0; angle < 360; angle += 60)
                     //{

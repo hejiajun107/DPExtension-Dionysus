@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Soviet
 {
@@ -33,7 +29,7 @@ namespace DpLib.Scripts.Soviet
 
         public override void OnUpdate()
         {
-            if(IsMkIIUpdated && SleepDuration < 500)
+            if (IsMkIIUpdated && SleepDuration < 500)
             {
                 SleepDuration++;
             }

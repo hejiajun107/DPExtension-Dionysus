@@ -1,12 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
@@ -26,7 +21,7 @@ namespace DpLib.Scripts.AE
 
         public override void OnUpdate()
         {
-            if(burst>0)
+            if (burst > 0)
             {
                 if (count++ >= 30)
                 {
@@ -39,7 +34,7 @@ namespace DpLib.Scripts.AE
                     }
                 }
             }
-            
+
             base.OnUpdate();
         }
 

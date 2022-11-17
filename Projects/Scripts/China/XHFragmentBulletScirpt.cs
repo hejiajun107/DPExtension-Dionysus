@@ -1,15 +1,10 @@
-﻿using DynamicPatcher;
-using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -52,20 +47,20 @@ namespace DpLib.Scripts.China
             new ColorStruct(163,73,164)
         };
 
-        static ColorStruct GetColor() 
+        static ColorStruct GetColor()
         {
             colorIndex++;
             if (colorIndex >= Colors.Count())
                 colorIndex = 0;
             return Colors[colorIndex];
         }
-      
+
 
 
         public bool reverse = false;
 
         private ColorStruct colorSelect;
-   
+
 
         private CoordStruct targetLocation;
 

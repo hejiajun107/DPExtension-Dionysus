@@ -1,15 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
-using PatcherYRpp;
 using Extension.Shared;
+using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DpLib.Scripts.Heros;
 
 namespace DpLib.Scripts
 {
@@ -17,11 +10,12 @@ namespace DpLib.Scripts
     [ScriptAlias(nameof(CComandScript))]
     public class CComandScript : TechnoScriptable
     {
-        public CComandScript(TechnoExt owner) : base(owner) {
+        public CComandScript(TechnoExt owner) : base(owner)
+        {
             _manaCounter = new ManaCounter();
         }
 
-   
+
         private ManaCounter _manaCounter;
 
         static Pointer<WeaponTypeClass> Weapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("FakeWeaponTimeStop");
@@ -61,11 +55,11 @@ namespace DpLib.Scripts
                     //pBullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
                 }
             }
-           
+
         }
 
 
 
     }
-   
+
 }

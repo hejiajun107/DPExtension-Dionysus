@@ -1,14 +1,9 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -51,7 +46,7 @@ namespace DpLib.Scripts.Scrin
             var myLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
             //寻找基地
-            var cnst = Finder.FineOneTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Type.Ref.Base.Base.ID == "RACNST" && x.Ref.Base.IsOnMap,FindRange.Owner);
+            var cnst = Finder.FineOneTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Type.Ref.Base.Base.ID == "RACNST" && x.Ref.Base.IsOnMap, FindRange.Owner);
 
             if (!cnst.IsNullOrExpired())
             {
@@ -77,12 +72,12 @@ namespace DpLib.Scripts.Scrin
                         if (TechnoExt.ExtMap.Find(ptargetTechno) == null)
                         {
                             var targetLocation = pCell.Ref.Base.GetCoords();
-                            if(Owner.OwnerObject.Ref.Base.IsOnMap)
+                            if (Owner.OwnerObject.Ref.Base.IsOnMap)
                             {
                                 Owner.OwnerObject.Ref.Base.Remove();
                             }
 
-                            if(Owner.OwnerObject.Ref.Base.Put(targetLocation, Direction.N))
+                            if (Owner.OwnerObject.Ref.Base.Put(targetLocation, Direction.N))
                             {
                                 var bullet1 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, transWarhead, 100, false);
                                 var bullet2 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, arriveWarhead, 100, false);
@@ -95,7 +90,7 @@ namespace DpLib.Scripts.Scrin
                             else
                             {
                                 continue;
-                            } 
+                            }
                         }
                     }
                 }
@@ -106,7 +101,7 @@ namespace DpLib.Scripts.Scrin
 
 
             //折越失败直接清理掉该单位
-            if(!Owner.OwnerObject.Ref.Base.IsOnMap)
+            if (!Owner.OwnerObject.Ref.Base.IsOnMap)
             {
                 Owner.OwnerObject.Ref.Base.UnInit();
             }

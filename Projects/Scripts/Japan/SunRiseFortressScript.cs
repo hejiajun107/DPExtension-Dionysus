@@ -1,13 +1,7 @@
-﻿using DpLib.Scripts.Japan;
-using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.Japan
 {
@@ -41,7 +35,7 @@ namespace Scripts.Japan
 
         public override void OnUpdate()
         {
-            if(!Owner.OwnerObject.Ref.IsHumanControlled)
+            if (!Owner.OwnerObject.Ref.IsHumanControlled)
             {
                 if (Owner.OwnerObject.Ref.Base.Health < 800 && !startExplode)
                     startExplode = true;
@@ -56,7 +50,7 @@ namespace Scripts.Japan
                 for (var i = 0; i < 5; i++)
                 {
                     var bullet = pLaserBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 200, chargingWh, 80, true);
-                    bullet.Ref.MoveTo(location + new CoordStruct(random.Next(-1000, 1000), random.Next(-1000, 1000), 0),new BulletVelocity(0,0,0));
+                    bullet.Ref.MoveTo(location + new CoordStruct(random.Next(-1000, 1000), random.Next(-1000, 1000), 0), new BulletVelocity(0, 0, 0));
                     bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
                 }
             }
@@ -94,16 +88,16 @@ namespace Scripts.Japan
             }
         }
 
-        private void FireBombTo(int radius,CoordStruct location,int height)
+        private void FireBombTo(int radius, CoordStruct location, int height)
         {
             var health = Owner.OwnerObject.Ref.Base.Health;
-            var damage = (int)(80 + Math.Round((double)(health / 5200d),2) * 50);
-            
+            var damage = (int)(80 + Math.Round((double)(health / 5200d), 2) * 50);
+
             var targetLocation = location + new CoordStruct(random.Next(-radius, radius), random.Next(-radius, radius), -height);
-            if(MapClass.Instance.TryGetCellAt(targetLocation,out var pCell))
+            if (MapClass.Instance.TryGetCellAt(targetLocation, out var pCell))
             {
                 var bullet = pToGroundBullet.Ref.CreateBullet(pCell.Convert<AbstractClass>(), Owner.OwnerObject, damage, toGroundWh, 30, true);
-                bullet.Ref.MoveTo(location, new BulletVelocity(random.Next(-50,50), random.Next(-50, 50), random.Next(-50, 50)));
+                bullet.Ref.MoveTo(location, new BulletVelocity(random.Next(-50, 50), random.Next(-50, 50), random.Next(-50, 50)));
                 bullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
             }
         }

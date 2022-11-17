@@ -1,14 +1,8 @@
-﻿using DpLib.Scripts.Yuri;
-using Extension.Decorators;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -35,7 +29,7 @@ namespace DpLib.Scripts.China
                     if (pTargetRef.GameObject.GetComponent(IonCannonLauncherDecorator.ID) == null)
                     {
                         var pos = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
-                        pTargetRef.GameObject.CreateScriptComponent(nameof(IonCannonLauncherDecorator),IonCannonLauncherDecorator.ID, "IonCannonLauncherDecorator Decorator", pTargetRef, pos,height);
+                        pTargetRef.GameObject.CreateScriptComponent(nameof(IonCannonLauncherDecorator), IonCannonLauncherDecorator.ID, "IonCannonLauncherDecorator Decorator", pTargetRef, pos, height);
                     }
                 }
             }
@@ -50,7 +44,7 @@ namespace DpLib.Scripts.China
             public static int ID = 414001;
             public IonCannonLauncherDecorator(TechnoExt self, CoordStruct center, int height) : base(self)
             {
-                Self=(self);
+                Self = (self);
                 this.center = center;
                 this.height = height;
             }
@@ -107,7 +101,7 @@ namespace DpLib.Scripts.China
 
             private int readyState = 0;
 
-            private List<bool> beamDisplay = new List<bool>() { false,false,false,false,false,false,false,false };
+            private List<bool> beamDisplay = new List<bool>() { false, false, false, false, false, false, false, false };
 
             public override void OnUpdate()
             {
@@ -132,15 +126,15 @@ namespace DpLib.Scripts.China
                     pSuper.Ref.IsCharged = false;
 
                     var centerAjust = 3500;
-                    YRMemory.Create<AnimClass>(pRain, center);
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust,-centerAjust,0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, -centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, 0, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, 0, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, centerAjust, 0));
+                    //YRMemory.Create<AnimClass>(pRain, center);
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust,-centerAjust,0));
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, -centerAjust, 0));
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, 0, 0));
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, 0, 0));
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, centerAjust, 0));
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
+                    //YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, centerAjust, 0));
 
                     return;
                 }
@@ -238,7 +232,7 @@ namespace DpLib.Scripts.China
 
                             int damage = 700;
                             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, waveWarhead, 100, false);
-                            pBullet.Ref.DetonateAndUnInit(center+new CoordStruct(0,0,-height));
+                            pBullet.Ref.DetonateAndUnInit(center + new CoordStruct(0, 0, -height));
                             isWaveRelased = true;
                         }
                         //if (currentBlastFrame <= blastDamageRof)
@@ -247,7 +241,7 @@ namespace DpLib.Scripts.China
                         //}
                         //else
                         //{
-                            //冲击波的扩散半径
+                        //冲击波的扩散半径
                         if (blastRadius <= 2400)
                         {
                             //每xx角度生成一个动画，越小越密集

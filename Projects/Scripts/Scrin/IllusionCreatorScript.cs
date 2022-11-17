@@ -1,15 +1,10 @@
 ﻿using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -78,7 +73,7 @@ namespace DpLib.Scripts.Scrin
 
                         TechnoExt tref;
 
-                        tref=(TechnoExt.ExtMap.Find(techno));
+                        tref = (TechnoExt.ExtMap.Find(techno));
 
                         if (!tref.IsNullOrExpired())
                         {
@@ -183,7 +178,7 @@ namespace DpLib.Scripts.Scrin
                                             mission.Ref.ForceMission(Mission.Hunt);
                                         }
                                     }
-                                   
+
                                     break;
                                 }
                             }

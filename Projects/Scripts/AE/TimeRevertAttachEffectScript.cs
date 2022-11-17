@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
@@ -20,7 +16,7 @@ namespace DpLib.Scripts.AE
         private int heath = 0;
         private CoordStruct coord;
 
-        
+
 
         public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
@@ -30,10 +26,10 @@ namespace DpLib.Scripts.AE
             base.OnAttachEffectPut(pDamage, pWH, pAttacker, pAttackingHouse);
         }
 
-        
+
         public override void OnAttachEffectRemove()
         {
-            if(Owner.OwnerObject.Ref.Base.Health<=0)
+            if (Owner.OwnerObject.Ref.Base.Health <= 0)
             {
                 base.OnAttachEffectRemove();
                 return;
@@ -42,12 +38,12 @@ namespace DpLib.Scripts.AE
             var pTechno = Owner.OwnerObject;
 
             var animType = AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("CHRONOEXPMINI");
-            
+
             var pAnim1 = YRMemory.Create<AnimClass>(animType, pTechno.Ref.Base.Base.GetCoords());
 
             if (pTechno.CastToFoot(out var pfoot))
             {
-                if(MapClass.Instance.TryGetCellAt(coord,out var pCell))
+                if (MapClass.Instance.TryGetCellAt(coord, out var pCell))
                 {
                     var source = pTechno.Ref.Base.Base.GetCoords();
                     pfoot.Ref.Locomotor.Mark_All_Occupation_Bits(0);

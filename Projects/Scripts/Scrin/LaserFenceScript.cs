@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -38,7 +34,8 @@ namespace DpLib.Scripts.Scrin
                 }
                 opened = !opened;
 
-            }else if(mission.Ref.CurrentMission == Mission.Selling)
+            }
+            else if (mission.Ref.CurrentMission == Mission.Selling)
             {
                 var passenger = Owner.OwnerObject.Ref.Passengers.GetFirstPassenger();
                 if (!passenger.IsNull)

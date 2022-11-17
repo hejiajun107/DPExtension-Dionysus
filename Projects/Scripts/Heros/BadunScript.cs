@@ -1,16 +1,9 @@
 ﻿
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
-using System.Linq;
 using Extension.Shared;
-using DpLib.Scripts.China;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {
@@ -19,7 +12,8 @@ namespace Scripts
     [ScriptAlias(nameof(BadunScript))]
     public class BadunScript : TechnoScriptable
     {
-        public BadunScript(TechnoExt owner) : base(owner) {
+        public BadunScript(TechnoExt owner) : base(owner)
+        {
             _manaCounter = new ManaCounter();
         }
 
@@ -50,7 +44,7 @@ namespace Scripts
 
         static Pointer<WarheadTypeClass> showWH => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BaidunAnimEffectWh");
 
-        
+
 
         private int burstCount = 12;
 
@@ -140,7 +134,7 @@ namespace Scripts
                     controlledByAi = true;
             }
 
-            if (weaponIndex==0 && !controlledByAi)
+            if (weaponIndex == 0 && !controlledByAi)
             {
                 if (isBurst == false)
                 {

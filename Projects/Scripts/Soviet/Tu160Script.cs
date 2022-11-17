@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Soviet
 {
@@ -36,15 +32,15 @@ namespace DpLib.Scripts.Soviet
                 immnueCoolDown--;
             }
 
-            if(bombing > 0)
+            if (bombing > 0)
             {
-                if(delay<=0)
+                if (delay <= 0)
                 {
                     delay = 20;
 
                     var ptechno = Owner.OwnerObject;
 
-                 
+
                     var targetLocation = ptechno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -ptechno.Ref.Base.GetHeight());
 
                     var cell = CellClass.Coord2Cell(targetLocation);

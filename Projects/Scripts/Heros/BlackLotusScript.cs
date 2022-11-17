@@ -1,14 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
-using Scripts;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Heros
 {
@@ -27,7 +21,7 @@ namespace DpLib.Scripts.Heros
 
 
         //光束颜色
-        static ColorStruct innerColor = new ColorStruct(0, 64,128);
+        static ColorStruct innerColor = new ColorStruct(0, 64, 128);
         static ColorStruct outerColor = new ColorStruct(0, 64, 128);
         static ColorStruct outerSpread = new ColorStruct(0, 64, 128);
 
@@ -107,7 +101,7 @@ namespace DpLib.Scripts.Heros
 
                         if (!isWaveRelased)
                         {
-                            int damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ?  100 : 50;
+                            int damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 100 : 50;
                             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, waveWarhead, 100, false);
                             pBullet.Ref.DetonateAndUnInit(center + new CoordStruct(0, 0, -height));
                             isWaveRelased = true;
@@ -186,7 +180,7 @@ namespace DpLib.Scripts.Heros
                     }
                 }
             }
-        
-        } 
+
+        }
     }
 }

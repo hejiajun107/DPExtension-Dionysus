@@ -4,9 +4,6 @@ using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -26,7 +23,7 @@ namespace DpLib.Scripts.Scrin
 
         private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
-        private static Pointer<WarheadTypeClass>expWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("TiberInfestWh");
+        private static Pointer<WarheadTypeClass> expWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("TiberInfestWh");
 
         public override void OnUpdate()
         {

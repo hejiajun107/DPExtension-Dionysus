@@ -1,13 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
@@ -44,7 +38,7 @@ namespace DpLib.Scripts.AE
 
             if (lastCoord != default)
             {
-                if(double.IsNaN(currentCoord.DistanceFrom(lastCoord)) || currentCoord.DistanceFrom(lastCoord) >= 2560)
+                if (double.IsNaN(currentCoord.DistanceFrom(lastCoord)) || currentCoord.DistanceFrom(lastCoord) >= 2560)
                 {
                     inited = true;
                     //瞬间移动范围过大，立刻在上次的位置引爆
@@ -82,7 +76,7 @@ namespace DpLib.Scripts.AE
             return launcher;
         }
 
-        private void TakeDamageAt(Pointer<TechnoClass> launcher,CoordStruct coord)
+        private void TakeDamageAt(Pointer<TechnoClass> launcher, CoordStruct coord)
         {
             var damage = level == 1 ? 2000 : 1000;
             //if(launcher == Owner.OwnerObject && !Owner.Type.IsEpicUnit)
@@ -122,19 +116,19 @@ namespace DpLib.Scripts.AE
         //当AE被贴上时获取发射者
         public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
-           
+
             //获取发射者
             if (!pAttacker.IsNull)
             {
-                if(pAttacker.CastToTechno(out var ptAttcker))
+                if (pAttacker.CastToTechno(out var ptAttcker))
                 {
                     attacker = TechnoExt.ExtMap.Find(ptAttcker);
                 }
             }
 
-            if(!pWH.IsNull)
+            if (!pWH.IsNull)
             {
-                if(pWH.Ref.Base.ID == "MoShipExtendWh" || pWH.Ref.Base.ID == "MoShipBlastWh" || pWH.Ref.Base.ID == "MoShipBlastWh2")
+                if (pWH.Ref.Base.ID == "MoShipExtendWh" || pWH.Ref.Base.ID == "MoShipBlastWh" || pWH.Ref.Base.ID == "MoShipBlastWh2")
                 {
                     level = 1;
                 }

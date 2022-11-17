@@ -1,13 +1,9 @@
 
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
+using PatcherYRpp;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Scripts
@@ -52,7 +48,7 @@ namespace Scripts
 
 
         //��¼��ʷ��Ϣ������ֵ��λ�ã�
-        private List<HealthAndPostion> healthAndPostionHistories= new List<HealthAndPostion>();
+        private List<HealthAndPostion> healthAndPostionHistories = new List<HealthAndPostion>();
 
         //����¼��
         private int historyMaxCount = 100;
@@ -68,7 +64,7 @@ namespace Scripts
         {
             currentInterval++;
 
-            if(currentInterval >= historyInterval)
+            if (currentInterval >= historyInterval)
             {
                 currentInterval = 0;
                 Pointer<TechnoClass> pTechno = Owner.OwnerObject;
@@ -121,15 +117,15 @@ namespace Scripts
             // }
         }
 
-       public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
-            Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
+             Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
             int rate = random.Next(100);
             if (rate < 40)
             {
                 if (healthAndPostionHistories.Count == historyMaxCount)
                 {
-                    var hal = healthAndPostionHistories.OrderByDescending(x=>x.Health).FirstOrDefault();
+                    var hal = healthAndPostionHistories.OrderByDescending(x => x.Health).FirstOrDefault();
                     Pointer<TechnoClass> pTechno = Owner.OwnerObject;
                     if (pTechno.Ref.Base.Health < hal.Health)
                     {
@@ -155,7 +151,7 @@ namespace Scripts
         }
 
 
-        private bool TrySetLocation(Pointer<TechnoClass> techno,CoordStruct location)
+        private bool TrySetLocation(Pointer<TechnoClass> techno, CoordStruct location)
         {
             if (!Owner.OwnerObject.Ref.Owner.IsNull)
             {

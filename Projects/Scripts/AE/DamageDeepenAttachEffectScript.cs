@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AE
 {
@@ -28,7 +23,8 @@ namespace DpLib.Scripts.AE
 
         public override void OnUpdate()
         {
-            if (delay > 0) {
+            if (delay > 0)
+            {
                 delay--;
             }
             base.OnUpdate();
@@ -47,7 +43,7 @@ namespace DpLib.Scripts.AE
 
             if (!pWH.IsNull)
             {
-                if(pAttacker.CastToTechno(out var pAttackTechno))
+                if (pAttacker.CastToTechno(out var pAttackTechno))
                 {
                     if (pWH.Ref.Base.ID == "MirageWH")
                     {
@@ -66,7 +62,7 @@ namespace DpLib.Scripts.AE
                     }
                 }
             }
-            
+
             base.OnReceiveDamage(pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
         }
 

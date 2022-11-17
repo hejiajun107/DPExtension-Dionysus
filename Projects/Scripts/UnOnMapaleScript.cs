@@ -1,12 +1,8 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DpLib.Scripts 
+namespace DpLib.Scripts
 {
 
     [Serializable]
@@ -20,7 +16,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            if (Owner.OwnerObject.Ref.Base.IsOnMap == true  || Owner.OwnerObject.Ref.Base.InLimbo == true)
+            if (Owner.OwnerObject.Ref.Base.IsOnMap == true || Owner.OwnerObject.Ref.Base.InLimbo == true)
             {
                 Owner.OwnerObject.Ref.Base.UnInit();
             }

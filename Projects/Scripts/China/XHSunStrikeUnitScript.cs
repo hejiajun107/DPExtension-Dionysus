@@ -1,13 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -92,7 +86,7 @@ namespace DpLib.Scripts.China
             {
                 isActived = true;
                 int height = Owner.OwnerObject.Ref.Base.GetHeight();
-                var location = pTarget.Ref.GetCoords() + new CoordStruct(random.Next(-500,500),random.Next(-500,500),0); //Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,-height);
+                var location = pTarget.Ref.GetCoords() + new CoordStruct(random.Next(-500, 500), random.Next(-500, 500), 0); //Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,-height);
 
                 radius = 700;
 

@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Soviet
 {
@@ -26,7 +22,7 @@ namespace DpLib.Scripts.Soviet
 
         public override void OnUpdate()
         {
-            if(!inited)
+            if (!inited)
             {
                 Pointer<HouseClass> pOwner = Owner.OwnerObject.Ref.Owner;
                 Pointer<SuperClass> pSuper1 = pOwner.Ref.FindSuperWeapon(sw1);

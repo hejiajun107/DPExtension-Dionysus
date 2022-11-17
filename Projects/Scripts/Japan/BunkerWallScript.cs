@@ -6,9 +6,6 @@ using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.Japan
 {
@@ -42,22 +39,22 @@ namespace Scripts.Japan
 
         public override void OnUpdate()
         {
-            if(putted == true && toreplace == false)
+            if (putted == true && toreplace == false)
             {
                 toreplace = true;
                 return;
             }
 
-            if(inited)
+            if (inited)
             {
                 return;
             }
 
             inited = true;
 
-         
 
-            if(MapClass.Instance.TryGetCellAt(placeCoord, out var pCell))
+
+            if (MapClass.Instance.TryGetCellAt(placeCoord, out var pCell))
             {
                 var building = Owner.OwnerObject.Convert<BuildingClass>();
 
@@ -70,7 +67,7 @@ namespace Scripts.Japan
                     var east = FindWallPost(pCell, Direction.S);
                     if (west.Item1 == true && east.Item1 == true)
                     {
-                        if(west.Item2 == east.Item2)
+                        if (west.Item2 == east.Item2)
                         {
                             if (west.Item2 != Data.BunkerWallPost)
                             {
@@ -85,9 +82,9 @@ namespace Scripts.Japan
                             return;
                         }
                     }
-                    else 
+                    else
                     {
-                        return; 
+                        return;
                     }
 
                 }
@@ -128,7 +125,7 @@ namespace Scripts.Japan
 
         }
 
-        private Tuple<bool, string> FindWallPost(Pointer<CellClass> pCell,Direction direction)
+        private Tuple<bool, string> FindWallPost(Pointer<CellClass> pCell, Direction direction)
         {
             List<string> LaserPosts = new List<string>()
             {
@@ -137,7 +134,7 @@ namespace Scripts.Japan
 
             bool finded = false;
             string wallName = "";
-     
+
 
             Pointer<CellClass> pLast = pCell;
 

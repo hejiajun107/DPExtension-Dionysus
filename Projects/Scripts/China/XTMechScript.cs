@@ -1,13 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -34,7 +28,7 @@ namespace DpLib.Scripts.China
         //减速
         static Pointer<WarheadTypeClass> slowWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSlowDownWh");
 
-        
+
 
         static Pointer<WarheadTypeClass> rofWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTRofWH");
 
@@ -104,7 +98,7 @@ namespace DpLib.Scripts.China
                         {
                             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, speedWarhead, 100, false);
                             pBullet.Ref.DetonateAndUnInit(currentLocation);
-                            
+
                             //SkipTo(currentLocation, targetLocation);
                             transCoolDown = 400;
 
@@ -143,7 +137,7 @@ namespace DpLib.Scripts.China
             if (IsMkIIUpdated == false)
             {
                 //判断是否来自升级弹头
-                if(pWH.Ref.Base.ID.ToString()== "MarkIISpWh")
+                if (pWH.Ref.Base.ID.ToString() == "MarkIISpWh")
                 {
                     IsMkIIUpdated = true;
                     Pointer<TechnoClass> pTechno = Owner.OwnerObject;
@@ -170,12 +164,12 @@ namespace DpLib.Scripts.China
                         Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, guardWarhead, 100, false);
                         pBullet.Ref.DetonateAndUnInit(currentLocation);
 
-                   
+
 
                     }
                 }
                 catch (Exception) {; }
-           
+
             }
 
         }
@@ -192,7 +186,7 @@ namespace DpLib.Scripts.China
             //{
             //    //pcell.Ref.
             //}
-            
+
             //Owner.OwnerObject.Ref.Base.Remove();
             //bool putted = false;
             //CoordStruct lastLocation = target;

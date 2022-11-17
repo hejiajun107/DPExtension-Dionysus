@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -31,7 +26,7 @@ namespace DpLib.Scripts.China
 
         public override void OnUpdate()
         {
-            if(IsMkIIUpdated && delay > 0)
+            if (IsMkIIUpdated && delay > 0)
             {
                 delay--;
             }
@@ -63,7 +58,7 @@ namespace DpLib.Scripts.China
 
                     var ownerHouse = Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex;
                     //if (!pAttackingHouse.Ref.IsAlliedWith(ownerHouse) && pAttackingHouse.Ref.ArrayIndex != ownerHouse)
-                    if(!pDamage.IsNull)
+                    if (!pDamage.IsNull)
                     {
                         if (pDamage.Ref > 0)
                         {
@@ -81,7 +76,7 @@ namespace DpLib.Scripts.China
                                 }
                             }
                         }
-                        
+
                     }
                 }
             }

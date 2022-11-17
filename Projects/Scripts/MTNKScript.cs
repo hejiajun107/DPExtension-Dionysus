@@ -1,15 +1,8 @@
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
-using Extension.Script;
-using System.Threading.Tasks;
-using Extension.Utilities;
 using Extension.INI;
-using DpLib.Scripts;
+using Extension.Script;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {

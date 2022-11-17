@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.AE
 {
@@ -28,7 +24,7 @@ namespace Scripts.AE
 
         public override void OnUpdate()
         {
-            if(Duration % 50 == 0)
+            if (Duration % 50 == 0)
             {
                 RevealAt(Owner.OwnerObject.Ref.Base.Base.GetCoords());
             }
@@ -39,12 +35,12 @@ namespace Scripts.AE
 
         private void RevealAt(CoordStruct location)
         {
-            if(house.IsNull)
+            if (house.IsNull)
             {
                 Duration = 0;
                 return;
             }
-         
+
             Pointer<SuperClass> pSuper = house.Ref.FindSuperWeapon(revealSW);
             CellStruct targetCell = CellClass.Coord2Cell(location);
             pSuper.Ref.IsCharged = true;

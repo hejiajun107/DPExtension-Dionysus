@@ -1,12 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Yuri
 {
@@ -38,7 +34,7 @@ namespace DpLib.Scripts.Yuri
 
 
 
-        private static Dictionary<string, int> specialWarheadList = new Dictionary<string, int>() 
+        private static Dictionary<string, int> specialWarheadList = new Dictionary<string, int>()
         {
             { "ENGINEER",2},
             { "CNENGINEER",2},
@@ -93,7 +89,7 @@ namespace DpLib.Scripts.Yuri
         {
 
             Pointer<WarheadTypeClass> warhead;
-            switch(warheadType)
+            switch (warheadType)
             {
                 case 0:
                     {
@@ -137,12 +133,12 @@ namespace DpLib.Scripts.Yuri
                         break;
                     }
             }
-           
+
 
             var cell = CellClass.Coord2Cell(location);
             var bullet = expBulletType.Ref.CreateBullet(ptechno.Convert<AbstractClass>(), ptechno, damage, warhead, 50, true);
 
-            if(delay==0)
+            if (delay == 0)
             {
                 bullet.Ref.DetonateAndUnInit(location);
             }

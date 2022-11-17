@@ -2,10 +2,6 @@
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -72,7 +68,7 @@ namespace DpLib.Scripts.Scrin
             if (enginerred)
             {
                 var bullet = pBullet.Ref.CreateBullet(pTarget, Owner.OwnerObject, 40, damageWarhead, 100, false);
-                bullet.Ref.MoveTo(pTarget.Ref.GetCoords() + new CoordStruct(0, 0, 10),new BulletVelocity(0,0,0));
+                bullet.Ref.MoveTo(pTarget.Ref.GetCoords() + new CoordStruct(0, 0, 10), new BulletVelocity(0, 0, 0));
                 bullet.Ref.SetTarget(pTarget);
             }
         }

@@ -1,13 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.China
 {
@@ -146,17 +141,17 @@ namespace DpLib.Scripts.China
             {
                 //if (Owner.OwnerObject.Ref.Target.IsNull)
                 //{
-                    if (pWH.Ref.Base.ID == supWarhead.Ref.Base.ID)
-                    {
-                        DrawLaser(Owner.OwnerObject.Ref.Base.Base.GetCoords(), pAttacker.Ref.Base.GetCoords(), innerColor2, outerColor2);
-                        Pointer<BulletClass> damageBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 6, warhead, 100, false);
-                        damageBullet.Ref.DetonateAndUnInit(pAttacker.Ref.Base.GetCoords());
+                if (pWH.Ref.Base.ID == supWarhead.Ref.Base.ID)
+                {
+                    DrawLaser(Owner.OwnerObject.Ref.Base.Base.GetCoords(), pAttacker.Ref.Base.GetCoords(), innerColor2, outerColor2);
+                    Pointer<BulletClass> damageBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 6, warhead, 100, false);
+                    damageBullet.Ref.DetonateAndUnInit(pAttacker.Ref.Base.GetCoords());
 
-                        Pointer<BulletClass> animBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, animWarhead, 100, false);
-                        animBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, height));
+                    Pointer<BulletClass> animBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, animWarhead, 100, false);
+                    animBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, height));
 
-                        coolDown = 10;
-                    }
+                    coolDown = 10;
+                }
                 //}
             }
         }

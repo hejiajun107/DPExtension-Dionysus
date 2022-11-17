@@ -1,14 +1,10 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.Japan
 {
@@ -53,7 +49,7 @@ namespace DpLib.Scripts.Japan
 
                 foreach (CellStruct offset in enumerator)
                 {
-                
+
                     CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
 
                     if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
@@ -74,7 +70,7 @@ namespace DpLib.Scripts.Japan
 
                         TechnoExt tref = default;
 
-                        tref=(TechnoExt.ExtMap.Find(target));
+                        tref = (TechnoExt.ExtMap.Find(target));
 
 
 
@@ -88,11 +84,11 @@ namespace DpLib.Scripts.Japan
                             {
                                 continue;
                             }
-                         
-                         
+
+
                             var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
 
-                            if(id != "EPVIRUS")
+                            if (id != "EPVIRUS")
                             {
                                 continue;
                             }
@@ -125,10 +121,10 @@ namespace DpLib.Scripts.Japan
 
                 }
             }
-           
+
         }
 
-        private void Explode(CoordStruct location,int delay)
+        private void Explode(CoordStruct location, int delay)
         {
             var cell = CellClass.Coord2Cell(location);
             var bullet = expBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 200, expWarhead, 30, false);

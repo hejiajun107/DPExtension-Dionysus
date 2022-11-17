@@ -1,14 +1,8 @@
 
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using DynamicPatcher;
-using PatcherYRpp;
 using Extension.Ext;
 using Extension.Script;
-using System.Threading.Tasks;
-using DpLib.Scripts;
+using PatcherYRpp;
+using System;
 
 namespace Scripts
 {
@@ -16,10 +10,10 @@ namespace Scripts
     [ScriptAlias(nameof(AAHeatSeeker2))]
     public class AAHeatSeeker2 : BulletScriptable
     {
-        public AAHeatSeeker2(BulletExt owner) : base(owner) {}
-        
+        public AAHeatSeeker2(BulletExt owner) : base(owner) { }
+
         Random random = new Random();
-        static ColorStruct innerColor = new ColorStruct(208,10,20);
+        static ColorStruct innerColor = new ColorStruct(208, 10, 20);
         static ColorStruct outerColor = new ColorStruct(88, 0, 20);
         static ColorStruct outerSpread = new ColorStruct(10, 10, 10);
 
@@ -33,7 +27,8 @@ namespace Scripts
 
             CoordStruct nextLocation = pBullet.Ref.Base.Base.GetCoords();
             nextLocation.Z += 0;
-            if (lastLocation == default(CoordStruct)) {
+            if (lastLocation == default(CoordStruct))
+            {
                 lastLocation = nextLocation;
             }
             if (lastLocation.DistanceFrom(nextLocation) > 50)

@@ -1,14 +1,8 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -18,7 +12,7 @@ namespace DpLib.Scripts
     {
         private bool inited = false;
 
-      
+
         private int startDelay = 10;
 
         public CampFireScript(TechnoExt owner) : base(owner)
@@ -30,7 +24,7 @@ namespace DpLib.Scripts
         static Pointer<WarheadTypeClass> immnueWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CampFireBuffWh");
 
         static Pointer<WarheadTypeClass> breakWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CampFireBreakWh");
-        
+
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
         TechnoExt tref;
@@ -58,7 +52,7 @@ namespace DpLib.Scripts
                                 continue;
 
                             Point2D p2d = new Point2D(60, 60);
-                            Pointer<TechnoClass> ptargetTechno = pCell.Ref.FindTechnoNearestTo(p2d,false,Owner.OwnerObject);
+                            Pointer<TechnoClass> ptargetTechno = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
 
                             if (TechnoExt.ExtMap.Find(ptargetTechno) == null)
                             {

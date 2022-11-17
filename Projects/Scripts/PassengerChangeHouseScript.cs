@@ -1,12 +1,8 @@
 ﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -14,7 +10,7 @@ namespace DpLib.Scripts
     [ScriptAlias(nameof(PassengerChangeHouseScript))]
     public class PassengerChangeHouseScript : TechnoScriptable
     {
-       
+
 
         private int checkDelay = 20;
 
@@ -26,7 +22,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            if (checkDelay-- > 0) 
+            if (checkDelay-- > 0)
                 return;
 
             checkDelay = 20;
@@ -58,7 +54,7 @@ namespace DpLib.Scripts
                     }
                 }
 
-                foreach(var passenger in passengers)
+                foreach (var passenger in passengers)
                 {
                     Owner.OwnerObject.Ref.Passengers.AddPassenger(passenger);
                 }

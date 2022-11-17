@@ -1,14 +1,7 @@
-﻿using DpLib.Scripts.China;
-using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -18,7 +11,7 @@ namespace DpLib.Scripts
 
     public class XHLaserTrailerBulletScript : BulletScriptable
     {
-        public XHLaserTrailerBulletScript(BulletExt owner) : base(owner) 
+        public XHLaserTrailerBulletScript(BulletExt owner) : base(owner)
         {
         }
 
@@ -51,7 +44,7 @@ namespace DpLib.Scripts
             {
                 IsActive = true;
                 start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                pTargetRef=(TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner));
+                pTargetRef = (TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner));
                 counter = 0;
                 return;
             }

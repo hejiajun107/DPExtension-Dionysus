@@ -1,14 +1,10 @@
-﻿using DpLib.Scripts.AE;
-using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.AI
 {
@@ -49,7 +45,7 @@ namespace DpLib.Scripts.AI
             {
                 Pointer<BuildingClass> pBuilding = buildings.Get(i);
 
-                if (cnsts.Contains(pBuilding.Ref.Type.Ref.Base.Base.Base.ID)   && pBuilding.Ref.Base.Base.IsOnMap == true && !pBuilding.Ref.Base.Base.InLimbo)
+                if (cnsts.Contains(pBuilding.Ref.Type.Ref.Base.Base.Base.ID) && pBuilding.Ref.Base.Base.IsOnMap == true && !pBuilding.Ref.Base.Base.InLimbo)
                 {
                     hasBuilding = true;
                     break;

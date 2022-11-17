@@ -1,12 +1,7 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -57,7 +52,7 @@ namespace DpLib.Scripts
 
                     if (areaProtectTo != null)
                     {
-                       
+
                         var dest = areaProtectTo;
 
                         if (areaProtectTo.DistanceFrom(Owner.OwnerObject.Ref.Base.Base.GetCoords()) <= 2000)

@@ -47,7 +47,7 @@ namespace Scripts
             if (technoExt.IsNullOrExpired())
                 return;
 
-         
+
             var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
             var velocity = Owner.OwnerObject.Ref.Velocity;
             ++Game.IKnowWhatImDoing;
@@ -66,18 +66,18 @@ namespace Scripts
     [ScriptAlias(nameof(BulletRokcetScript))]
     public class BulletRokcetScript : TechnoScriptable
     {
-        public BulletRokcetScript(TechnoExt owner,BulletExt bullet) : base(owner)
+        public BulletRokcetScript(TechnoExt owner, BulletExt bullet) : base(owner)
         {
             Master = bullet;
         }
 
-        public static int UniqueId = 202209071; 
+        public static int UniqueId = 202209071;
 
         public BulletExt Master;
 
         public override void OnUpdate()
         {
-            if(!Master.IsNullOrExpired())
+            if (!Master.IsNullOrExpired())
             {
                 //同步位置
                 var location = Master.OwnerObject.Ref.Base.Base.GetCoords();
@@ -112,9 +112,9 @@ namespace Scripts
 
         public override void OnRemove()
         {
-            if(!Master.IsNullOrExpired())
+            if (!Master.IsNullOrExpired())
             {
-                if(Master.OwnerRef.Base.Health<=0)
+                if (Master.OwnerRef.Base.Health <= 0)
                 {
                     //强制引爆
                     Master.OwnerObject.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());

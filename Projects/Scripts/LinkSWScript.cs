@@ -4,10 +4,7 @@ using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -34,7 +31,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            if(!inited)
+            if (!inited)
             {
                 inited = true;
 
@@ -43,7 +40,7 @@ namespace DpLib.Scripts
 
                 //移除之前投递的目标
                 var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => techno.Ref.Type.Ref.Base.Base.ID == id && techno != Owner.OwnerObject, FindRange.Owner);
-                foreach(var item in li)
+                foreach (var item in li)
                 {
                     if (item.IsNullOrExpired())
                     {
@@ -92,7 +89,7 @@ namespace DpLib.Scripts
                             if (!techno1.IsNullOrExpired())
                             {
 
-                                var t1location = techno1.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,2000);
+                                var t1location = techno1.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 2000);
                                 if (!techno2.IsNullOrExpired())
                                 {
                                     var bullet1 = pbullet.Ref.CreateBullet(techno2.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 50, false);

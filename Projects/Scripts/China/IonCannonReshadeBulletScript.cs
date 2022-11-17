@@ -3,6 +3,7 @@ using Extension.Script;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace DpLib.Scripts.China
 {
@@ -29,7 +30,7 @@ namespace DpLib.Scripts.China
                     if (pTargetRef.GameObject.GetComponent(IonCannonReshadeLauncherDecorator.ID) == null)
                     {
                         var pos = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
-                        pTargetRef.GameObject.CreateScriptComponent(nameof(IonCannonReshadeLauncherDecorator), IonCannonReshadeLauncherDecorator.ID, "IonCannonReshadeLauncherDecorator Decorator", pTargetRef, pos,height);
+                        pTargetRef.GameObject.CreateScriptComponent(nameof(IonCannonReshadeLauncherDecorator), IonCannonReshadeLauncherDecorator.ID, "IonCannonReshadeLauncherDecorator Decorator", pTargetRef, pos, height);
                     }
                 }
             }
@@ -44,9 +45,10 @@ namespace DpLib.Scripts.China
             public static int ID = 414001;
             public IonCannonReshadeLauncherDecorator(TechnoExt self, CoordStruct center, int height) : base(self)
             {
-                Self=(self);
+                Self = (self);
                 this.center = center;
                 this.height = height;
+                sound = VocClass.VoicesEnabled;
             }
 
             TechnoExt Self;
@@ -80,6 +82,16 @@ namespace DpLib.Scripts.China
 
             static Pointer<WeaponTypeClass> laserWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("IonLaser");
 
+            static Pointer<BulletTypeClass> pBulletExplode => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("IonToGBullet");
+
+
+            
+
+
+
+            private Random random = new Random(114514);
+
+
             //光束初始角度
             private int startAngle = -180;
             //光束半径
@@ -102,7 +114,15 @@ namespace DpLib.Scripts.China
 
             private int readyState = 0;
 
-            private List<bool> beamDisplay = new List<bool>() { false,false,false,false,false,false,false,false };
+            private List<bool> beamDisplay = new List<bool>() { false, false, false, false, false, false, false, false };
+
+            private int lineSpeed = 4;
+            private int rotSpeed = 1;
+            private int speedUpDelay = 0;
+
+            private int pausedTime = 0;
+
+            private bool sound = false;
 
             public override void OnUpdate()
             {
@@ -126,16 +146,7 @@ namespace DpLib.Scripts.China
                     pSuper.Ref.Launch(targetCell, true);
                     pSuper.Ref.IsCharged = false;
 
-                    var centerAjust = 3500;
-                    YRMemory.Create<AnimClass>(pRain, center);
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust,-centerAjust,0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, -centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, 0, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, 0, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(-centerAjust, centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(0, -centerAjust, 0));
-                    YRMemory.Create<AnimClass>(pRain, center + new CoordStruct(centerAjust, centerAjust, 0));
+
 
                     return;
                 }
@@ -202,7 +213,7 @@ namespace DpLib.Scripts.China
                                 //每条光束/帧的伤害
                                 int damage = readyState > 80 ? 20 : 5; //was50
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
-                                pBullet.Ref.Base.SetLocation(pos+new CoordStruct(0,0,-center.Z));
+                                pBullet.Ref.Base.SetLocation(pos + new CoordStruct(0, 0, -center.Z));
                                 Self.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, pos + new CoordStruct(0, 0, 9000));
                                 pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                             }
@@ -216,36 +227,66 @@ namespace DpLib.Scripts.China
 
                         if (readyState >= 80)
                         {
+                            if (speedUpDelay++ >= 15)
+                            {
+                                speedUpDelay = 0;
+                                lineSpeed++;
+                                rotSpeed++;
+                            }
+
+
                             //每次半径缩小越大，光束聚集越快
-                            radius -= 5;
+                            radius -= lineSpeed;
                             //每次旋转的角度，角度越大旋转越快
-                            startAngle -= 2;
+                            startAngle -= rotSpeed;
                         }
                     }
                     else
                     {
                         if (!isWaveRelased)
                         {
-                            Pointer<TechnoClass> pTechno = Owner.OwnerObject;
-                            Pointer<HouseClass> pOwner = pTechno.Ref.Owner;
-                            Pointer<SuperClass> pSuper = pOwner.Ref.FindSuperWeapon(swLight);
-                            CellStruct targetCell = CellClass.Coord2Cell(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                            pSuper.Ref.IsCharged = true;
-                            pSuper.Ref.Launch(targetCell, true);
-                            pSuper.Ref.IsCharged = false;
+                            if (pausedTime++ >= 80)
+                            {
+                                VocClass.VoicesEnabled = sound;
+                                Pointer<TechnoClass> pTechno = Owner.OwnerObject;
+                                Pointer<HouseClass> pOwner = pTechno.Ref.Owner;
+                                Pointer<SuperClass> pSuper = pOwner.Ref.FindSuperWeapon(swLight);
+                                CellStruct targetCell = CellClass.Coord2Cell(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                                pSuper.Ref.IsCharged = true;
+                                pSuper.Ref.Launch(targetCell, true);
+                                pSuper.Ref.IsCharged = false;
 
-                            int damage = 700;
-                            Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, waveWarhead, 100, false);
-                            pBullet.Ref.DetonateAndUnInit(center+new CoordStruct(0,0,-height));
-                            isWaveRelased = true;
+                                //if(MapClass.Instance.TryGetCellAt(center + new CoordStruct(0, 0, -height),out var pCell))
+                                //{
+
+
+                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(center + new CoordStruct(0, 0, 9000), center + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, 10);
+                                pLaser.Ref.IsHouseColor = false;
+                                pLaser.Ref.Thickness = 60;
+
+                                int damage = 700;
+                                Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, waveWarhead, 100, false);
+                                //pBullet.Ref.MoveTo(center + new CoordStruct(0, 0, 2000), new BulletVelocity(0, 0, 0));
+                                //pBullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
+                                //}
+
+                                pBullet.Ref.DetonateAndUnInit(center + new CoordStruct(0, 0, -height));
+                                isWaveRelased = true;
+                            }
+                            else
+                            {
+                                VocClass.VoicesEnabled = false;
+                                return;
+                            }
                         }
+
                         //if (currentBlastFrame <= blastDamageRof)
                         //{
                         //    currentBlastFrame++;
                         //}
                         //else
                         //{
-                            //冲击波的扩散半径
+                        //冲击波的扩散半径
                         if (blastRadius <= 2400)
                         {
                             //每xx角度生成一个动画，越小越密集
@@ -258,7 +299,7 @@ namespace DpLib.Scripts.China
                                 pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                             }
                             //每次冲击波扩展的距离，距离越大扩散越快
-                            blastRadius += 25;
+                            blastRadius += 25;//25;
                         }
                         else
                         {

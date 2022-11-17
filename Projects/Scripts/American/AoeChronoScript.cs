@@ -1,13 +1,8 @@
-﻿using DpLib.Scripts.AI;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts.American
 {
@@ -36,7 +31,7 @@ namespace DpLib.Scripts.American
                 Owner.OwnerObject.Ref.Base.UnInit();
             }
 
-            if(inited == false)
+            if (inited == false)
             {
                 inited = true;
 
@@ -47,7 +42,7 @@ namespace DpLib.Scripts.American
                   {
                       var id = x.Ref.Type.Ref.Base.Base.ID.ToString();
                       if (x.Ref.Base.Base.GetCoords().DistanceFrom(location) < 2048 && x.Ref.Base.IsOnMap && !x.Ref.Base.InLimbo) //&& x.Ref.Base.GetCurrentMission() == (Mission.Guard | Mission.Sleep) ；was x.Ref.Ammo > 0 &&
-                    {
+                      {
                           return true;
                       }
                       return false;
@@ -56,9 +51,9 @@ namespace DpLib.Scripts.American
                 base.OnUpdate();
 
 
-                foreach(var target in targets)
+                foreach (var target in targets)
                 {
-                    if(!target.IsNullOrExpired())
+                    if (!target.IsNullOrExpired())
                     {
                         var ptechno = target.OwnerObject;
 
@@ -68,7 +63,7 @@ namespace DpLib.Scripts.American
 
                         attacker.Ref.Base.SetLocation(location);
 
-                        if (attacker.Ref.Base.Put(ptechno.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,200),Direction.N))
+                        if (attacker.Ref.Base.Put(ptechno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 200), Direction.N))
                         {
                             attacker.Ref.Fire(ptechno.Convert<AbstractClass>(), 0);
                             //attacker.Ref.SetTarget(ptechno.Convert<AbstractClass>());
@@ -85,7 +80,7 @@ namespace DpLib.Scripts.American
 
             }
 
-           
+
         }
     }
 }

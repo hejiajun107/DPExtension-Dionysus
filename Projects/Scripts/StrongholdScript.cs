@@ -1,5 +1,4 @@
-﻿using DynamicPatcher;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -7,8 +6,6 @@ using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DpLib.Scripts
 {
@@ -18,7 +15,7 @@ namespace DpLib.Scripts
     {
         public StrongholdScript(TechnoExt owner) : base(owner)
         {
-          
+
         }
 
         private static int MaxScore = 0;
@@ -46,7 +43,7 @@ namespace DpLib.Scripts
             if (Registered == false)
             {
                 Registered = true;
-                if(MaxScore==0)
+                if (MaxScore == 0)
                 {
                     MaxScore = 80;
                 }
@@ -65,7 +62,7 @@ namespace DpLib.Scripts
                     var ownerName = Owner.OwnerObject.Ref.Owner.Ref.Type.Ref.Base.ID.ToString();
                     if (ownerName != "Special" && ownerName != "Neutral")
                     {
-                        if(!HouseScores.ContainsKey(Owner.OwnerObject.Ref.Owner))
+                        if (!HouseScores.ContainsKey(Owner.OwnerObject.Ref.Owner))
                         {
                             HouseScores.Add(Owner.OwnerObject.Ref.Owner, 0);
                         }
@@ -77,33 +74,33 @@ namespace DpLib.Scripts
 
                             List<int> killHouse = new List<int>();
 
-                            for(var i=0;i< HouseClass.Array.Count;i++)
+                            for (var i = 0; i < HouseClass.Array.Count; i++)
                             {
                                 var house = HouseClass.Array.Get(i);
-                                if(!house.IsNull)
+                                if (!house.IsNull)
                                 {
                                     var houseName = house.Ref.Type.Ref.Base.ID.ToString();
                                     if (houseName != "Special" && houseName != "Neutral")
                                     {
                                         if (!house.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner) && house.Ref.ArrayIndex != Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                                         {
-                                           killHouse.Add(house.Ref.ArrayIndex);
+                                            killHouse.Add(house.Ref.ArrayIndex);
                                         }
                                     }
-                                       
+
                                 }
                             }
 
-                            if(killHouse.Count > 0)
+                            if (killHouse.Count > 0)
                             {
                                 var technos = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, t =>
-                                 !t.Ref.Owner.IsNull && killHouse.Contains(t.Ref.Owner.Ref.ArrayIndex) 
-                                 &&t.Ref.Base.IsOnMap
+                                 !t.Ref.Owner.IsNull && killHouse.Contains(t.Ref.Owner.Ref.ArrayIndex)
+                                 && t.Ref.Base.IsOnMap
                                     , FindRange.All
                                 );
-                                foreach(var techno in technos)
+                                foreach (var techno in technos)
                                 {
-                                    if(!techno.IsNullOrExpired())
+                                    if (!techno.IsNullOrExpired())
                                     {
                                         var ptechno = techno.OwnerObject;
                                         ptechno.Ref.Base.TakeDamage(8000, peaceWarhead, true);
@@ -127,14 +124,14 @@ namespace DpLib.Scripts
                     AnnoncerId = myId;
                 }
 
-                if(AnnoncerId == myId)
+                if (AnnoncerId == myId)
                 {
-                    if(HouseScores.Count()>0)
+                    if (HouseScores.Count() > 0)
                     {
-                        foreach(var houseScore in HouseScores)
+                        foreach (var houseScore in HouseScores)
                         {
                             //MessageListClass.Instance.PrintMessage($"玩家：{houseScore.Key.Ref.ArrayIndex + 1},据点分数：{houseScore.Value} / 500", ColorSchemeIndex.White, 300, false);
-                            string label ="玩家:" + (houseScore.Key.Ref.ArrayIndex + 1).ToString();
+                            string label = "玩家:" + (houseScore.Key.Ref.ArrayIndex + 1).ToString();
                             string message = "据点分数：" + houseScore.Value.ToString() + "/" + MaxScore.ToString();
                             MessageListClass.Instance.PrintMessage(label, message, ColorSchemeIndex.White, 600, true);
 
@@ -282,8 +279,8 @@ namespace DpLib.Scripts
 
                 houseCounts.Clear();
             }
-                
-           
+
+
         }
 
 

@@ -1,15 +1,9 @@
-﻿using DpLib.Scripts.China;
-using Extension.Ext;
+﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DpLib.Scripts.Yuri
+namespace DpLib.Scripts.China
 {
     [Serializable]
     [ScriptAlias(nameof(DTowerLaserBullet))]
@@ -39,7 +33,7 @@ namespace DpLib.Scripts.Yuri
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DeathRayTowWH");
 
-    
+
         public override void OnUpdate()
         {
             if (IsActive == false)
@@ -54,7 +48,7 @@ namespace DpLib.Scripts.Yuri
 
             if (!pTargetRef.IsNullOrExpired())
             {
-                var start = Owner.OwnerObject.Ref.Owner.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,810);
+                var start = Owner.OwnerObject.Ref.Owner.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 810);
 
                 var pTechno = pTargetRef.OwnerObject;
 
@@ -68,7 +62,7 @@ namespace DpLib.Scripts.Yuri
             }
 
 
-   
+
 
         }
 
