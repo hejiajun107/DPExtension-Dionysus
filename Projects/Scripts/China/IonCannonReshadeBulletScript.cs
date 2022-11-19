@@ -295,7 +295,7 @@ namespace DpLib.Scripts.China
                             {
                                 var pos = new CoordStruct(center.X + (int)(blastRadius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(blastRadius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
                                 //每个冲击波/帧的伤害
-                                int damage = 5;
+                                int damage = 3;
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, blastWarhead, 100, false);
                                 pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                             }
