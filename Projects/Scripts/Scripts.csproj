@@ -62,6 +62,7 @@
     <Compile Include="AE\TimeRevertAttachEffectScript.cs" />
     <Compile Include="AircraftScript.cs" />
     <Compile Include="AirportScript.cs" />
+    <Compile Include="AirStrikeSetTargetScript.cs" />
     <Compile Include="AI\AntiAirGuidBuildingScript.cs" />
     <Compile Include="American\AoeChronoScript.cs" />
     <Compile Include="American\AuroraScript.cs" />
