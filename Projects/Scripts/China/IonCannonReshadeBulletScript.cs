@@ -1,9 +1,9 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 
 namespace DpLib.Scripts.China
 {
@@ -48,7 +48,7 @@ namespace DpLib.Scripts.China
                 Self = (self);
                 this.center = center;
                 this.height = height;
-                sound = VocClass.VoicesEnabled;
+                //sound = VocClass.VoicesEnabled;
             }
 
             TechnoExt Self;
@@ -84,10 +84,11 @@ namespace DpLib.Scripts.China
 
             static Pointer<BulletTypeClass> pBulletExplode => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("IonToGBullet");
 
+            static Pointer<AnimTypeClass> pPreAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("PreIon");
 
-            
+            static Pointer<AnimTypeClass> ionActiveSound=> AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IonActiveImpact");
 
-
+            static Pointer<AnimTypeClass> ionScanSound => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IonScanImpact");
 
             private Random random = new Random(114514);
 
@@ -122,7 +123,13 @@ namespace DpLib.Scripts.China
 
             private int pausedTime = 0;
 
-            private bool sound = false;
+            //private bool sound = false;
+
+            private bool preAnimReleased = false;
+
+            private SwizzleablePointer<AnimClass> pScan = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
+
+            private bool pScanKilled = false;
 
             public override void OnUpdate()
             {
@@ -146,8 +153,6 @@ namespace DpLib.Scripts.China
                     pSuper.Ref.Launch(targetCell, true);
                     pSuper.Ref.IsCharged = false;
 
-
-
                     return;
                 }
 
@@ -168,21 +173,37 @@ namespace DpLib.Scripts.China
                             if (readyState >= 15)
                             {
                                 beamDisplay[1] = true;
+                                if (readyState == 15)
+                                {
+                                    YRMemory.Create<AnimClass>(ionActiveSound, center + new CoordStruct(0, 0, -height));
+                                }
                             }
 
                             if (readyState >= 30)
                             {
                                 beamDisplay[3] = true;
+                                if (readyState == 30)
+                                {
+                                    YRMemory.Create<AnimClass>(ionActiveSound, center + new CoordStruct(0, 0, -height));
+                                }
                             }
 
                             if (readyState >= 40)
                             {
                                 beamDisplay[2] = true;
+                                if (readyState == 40)
+                                {
+                                    YRMemory.Create<AnimClass>(ionActiveSound, center + new CoordStruct(0, 0, -height));
+                                }
                             }
 
                             if (readyState >= 45)
                             {
                                 beamDisplay[5] = true;
+                                if (readyState == 45)
+                                {
+                                    YRMemory.Create<AnimClass>(ionActiveSound, center + new CoordStruct(0, 0, -height));
+                                }
                             }
 
                             if (readyState >= 55)
@@ -194,6 +215,20 @@ namespace DpLib.Scripts.China
                             {
                                 beamDisplay[6] = true;
                                 beamDisplay[4] = true;
+                                if (readyState == 60)
+                                {
+                                    YRMemory.Create<AnimClass>(ionActiveSound, center + new CoordStruct(0, 0, -height));
+                                }
+                                if (readyState == 61)
+                                {
+                                    YRMemory.Create<AnimClass>(ionActiveSound, center + new CoordStruct(0, 0, -height));
+                                }
+                            }
+
+                            if (readyState == 80)
+                            {
+                                var anim = YRMemory.Create<AnimClass>(ionScanSound, center + new CoordStruct(0, 0, -height));
+                                pScan.Pointer = anim;
                             }
                         }
 
@@ -213,7 +248,7 @@ namespace DpLib.Scripts.China
                                 //每条光束/帧的伤害
                                 int damage = readyState > 80 ? 8 : 5; //was50
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
-                                pBullet.Ref.Base.SetLocation(pos + new CoordStruct(0, 0, -center.Z));
+                                pBullet.Ref.Base.SetLocation(pos + new CoordStruct(0, 0, -height));
                                 Self.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, pos + new CoordStruct(0, 0, 9000));
                                 pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                             }
@@ -245,9 +280,24 @@ namespace DpLib.Scripts.China
                     {
                         if (!isWaveRelased)
                         {
+                            if (pScanKilled == false)
+                            {
+                                pScanKilled = true;
+                                if (!pScan.IsNull)
+                                {
+                                    pScan.Ref.Base.UnInit();
+                                }
+                            }
+
+                            if (preAnimReleased == false && pausedTime>=10)
+                            {
+                                preAnimReleased = true;
+                                YRMemory.Create<AnimClass>(pPreAnim, center + new CoordStruct(0, 0, -height));
+                            }
+
                             if (pausedTime++ >= 80)
                             {
-                                VocClass.VoicesEnabled = sound;
+                                //VocClass.VoicesEnabled = sound;
                                 Pointer<TechnoClass> pTechno = Owner.OwnerObject;
                                 Pointer<HouseClass> pOwner = pTechno.Ref.Owner;
                                 Pointer<SuperClass> pSuper = pOwner.Ref.FindSuperWeapon(swLight);
@@ -276,7 +326,7 @@ namespace DpLib.Scripts.China
                             }
                             else
                             {
-                                VocClass.VoicesEnabled = false;
+                                //VocClass.VoicesEnabled = false;
                                 return;
                             }
                         }
@@ -315,8 +365,18 @@ namespace DpLib.Scripts.China
                 }
             }
 
+            public override void OnDestroy()
+            {
+                if (pScanKilled == false)
+                {
+                    pScanKilled = true;
+                    if (!pScan.IsNull)
+                    {
+                        pScan.Ref.Base.UnInit();
+                    }
+                }
+            }
         }
-
 
     }
 
