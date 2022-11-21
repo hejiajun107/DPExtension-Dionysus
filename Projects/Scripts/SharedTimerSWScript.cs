@@ -14,12 +14,11 @@ namespace Scripts
         {
         }
 
-        private SharedTimerSWData data;
+        private INIComponentWith<SharedTimerSWData> ini;
 
         public override void Awake()
         {
             var ini = this.CreateRulesIniComponentWith<SharedTimerSWData>(Owner.OwnerObject.Ref.Type.Ref.Base.ID);
-            data = ini.Data;
         }
 
         public override void OnLaunch(CellStruct cell, bool isPlayer)

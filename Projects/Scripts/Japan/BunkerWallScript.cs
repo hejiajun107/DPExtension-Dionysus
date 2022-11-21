@@ -17,12 +17,11 @@ namespace Scripts.Japan
         {
         }
 
-        private BunkerWallData Data;
+        private INIComponentWith<BunkerWallData> settingINI;
 
         public override void Awake()
         {
-            var settingINI = this.CreateRulesIniComponentWith<BunkerWallData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
-            Data = settingINI.Data;
+            settingINI = this.CreateRulesIniComponentWith<BunkerWallData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
         }
 
         public override void OnPut(CoordStruct coord, Direction faceDir)
@@ -39,6 +38,9 @@ namespace Scripts.Japan
 
         public override void OnUpdate()
         {
+            var Data = settingINI.Data;
+
+
             if (putted == true && toreplace == false)
             {
                 toreplace = true;

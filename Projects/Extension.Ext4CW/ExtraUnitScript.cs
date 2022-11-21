@@ -32,13 +32,13 @@ namespace Scripts
         public ExtraUnitMasterScript(TechnoExt owner, ExtraUnitSetting setting) : base(owner)
         {
             configInited = true;
-            Setting = setting;
+            Setting = setting.Copy();
 
         }
 
         private List<TechnoExt> salveTechnos = new List<TechnoExt>();
 
-        public ExtraUnitSetting Setting;
+        public ExtraUnitSettingPoco Setting;
 
 
         public override void Awake()
@@ -48,7 +48,7 @@ namespace Scripts
             {
                 //获取本体的INI
                 var settingINI = this.CreateRulesIniComponentWith<ExtraUnitSetting>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
-                Setting = settingINI.Data;
+                Setting = settingINI.Data.Copy();
                 configInited = true;
             }
         }
@@ -178,7 +178,7 @@ namespace Scripts
         public static int UniqueId = 1145142;
 
         public TechnoExt Master;
-        ExtraUnitDefination Defination;
+        ExtraUnitDefinationPoco Defination;
 
         public CoordStruct Position;
 
@@ -187,7 +187,7 @@ namespace Scripts
         public ExtraUnitSalveScript(TechnoExt owner, TechnoExt master, ExtraUnitDefination defination) : base(owner)
         {
             Master = master;
-            Defination = defination;
+            Defination = defination.Copy();
         }
 
         public override void Awake()
@@ -487,6 +487,14 @@ namespace Scripts
     {
         [INIField(Key = "ExtraUnit.Definations")]
         public string[] ExtraUnitDefinations;
+
+        public ExtraUnitSettingPoco Copy()
+        {
+            return new ExtraUnitSettingPoco()
+            {
+                ExtraUnitDefinations = this.ExtraUnitDefinations
+            };
+        }
     }
 
     [Serializable]
@@ -532,18 +540,65 @@ namespace Scripts
         /// </summary>
         [INIField(Key = "ExtraUnit.SameLoseTarget")]
         public bool SameLoseTarget = true;
+
+        public ExtraUnitDefinationPoco Copy()
+        {
+            return new ExtraUnitDefinationPoco()
+            {
+                ExtraUnitType = this.ExtraUnitType,
+                ExtraUnitPostion = this.ExtraUnitPostion,
+                BindTurret = this.BindTurret,
+                ExperienceToMaster = this.ExperienceToMaster,
+                SameVeterancy = this.SameVeterancy,
+                SameOwner = this.SameOwner,
+                SameTarget = this.SameTarget,
+                SameLoseTarget = this.SameLoseTarget
+            };
+        }
     }
 
 
+    [Serializable]
+    public partial class ExtraUnitSettingPoco
+    {
+        public string[] ExtraUnitDefinations;
+    }
 
+    [Serializable]
+    public partial class ExtraUnitDefinationPoco
+    {
+        /// <summary>
+        /// 附加单位对应的TechnoType
+        /// </summary>
+        public string ExtraUnitType;
+        /// <summary>
+        /// 附加单位的相对坐标FLH
+        /// </summary>
+        public int[] ExtraUnitPostion = null;
+        /// <summary>
+        /// 附加单位是否绑定炮塔
+        /// </summary>
+        public bool BindTurret = false;
+        /// <summary>
+        /// 附加单位是否传递经验
+        /// </summary>
+        public bool ExperienceToMaster = false;
 
+        /// <summary>
+        /// 附加单位与本体保持相同等级
+        /// </summary>
+        public bool SameVeterancy = true;
+        /// <summary>
+        /// 附件单位是否同步所属方
+        /// </summary>
+        public bool SameOwner = true;
+        /// <summary>
+        /// 附件单位是否同步攻击目标
+        /// </summary>
+        public bool SameTarget = true;
 
-
-
-
-
-
-
-
+        /// </summary>
+        public bool SameLoseTarget = true;
+    }
 
 }

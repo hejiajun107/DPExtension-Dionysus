@@ -22,13 +22,13 @@ namespace Extension.CW
 
         INIComponentWith<TechnoGlobalTypeExt> INI;
 
-        public TechnoGlobalTypeExt Data;
+        public TechnoGlobalTypeExt Data => INI.Data;
 
         public override void Awake()
         {
             base.Awake();
             INI = this.CreateRulesIniComponentWith<TechnoGlobalTypeExt>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
-            Data = INI.Data;
+            //Data = INI.Data;
             PartialHelper.TechnoAwakeAction(this);
         }
 

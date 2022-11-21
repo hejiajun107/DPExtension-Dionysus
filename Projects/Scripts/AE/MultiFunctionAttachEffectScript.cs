@@ -41,7 +41,7 @@ namespace Scripts.AE
         {
         }
 
-        private MultiFunctionAttachEffectData data;
+        private INIComponentWith<MultiFunctionAttachEffectData> ini;
 
         TechnoExt Attacher;
 
@@ -49,9 +49,9 @@ namespace Scripts.AE
 
         public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
-            INIComponentWith<MultiFunctionAttachEffectData> INI;
-            INI = this.CreateRulesIniComponentWith<MultiFunctionAttachEffectData>(pWH.Ref.Base.ID);
-            data = INI.Data;
+            ini = this.CreateRulesIniComponentWith<MultiFunctionAttachEffectData>(pWH.Ref.Base.ID);
+            //ini.Section = 
+            //Data = INI.Data;
 
             if (pAttacker.CastToTechno(out var techno))
             {
@@ -63,53 +63,53 @@ namespace Scripts.AE
         public override void OnUpdate()
         {
             //如果是永续的则无限延长时间
-            if (data.Forever)
-            {
-                Duration = 100;
-            }
+            //if (data.Forever)
+            //{
+            //    Duration = 100;
+            //}
             base.OnUpdate();
         }
 
         public override void OnRemove()
         {
-            if (Owner.OwnerObject.Ref.Base.Health <= 0)
-            {
-                if (!string.IsNullOrEmpty(data.DeathWarhead))
-                {
-                    var warhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find(data.DeathWarhead);
-                    var bullet = INVISO.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, data.DeathWarheadDamage, warhead, 100, false);
-                    bullet.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                    bullet.Ref.Base.UnInit();
-                }
-            }
+            //if (Owner.OwnerObject.Ref.Base.Health <= 0)
+            //{
+            //    if (!string.IsNullOrEmpty(data.DeathWarhead))
+            //    {
+            //        var warhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find(data.DeathWarhead);
+            //        var bullet = INVISO.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, data.DeathWarheadDamage, warhead, 100, false);
+            //        bullet.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            //        bullet.Ref.Base.UnInit();
+            //    }
+            //}
 
             base.OnRemove();
         }
 
         public override void OnAttachEffectRecieveNew(int duration, Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
-            switch (data.DurationOnRecieveNew)
-            {
-                case "refresh":
-                    {
-                        Duration = duration;
-                        break;
-                    }
-                case "sum":
-                    {
-                        Duration += duration;
-                        break;
-                    }
-                case "ignore":
-                    {
-                        break;
-                    }
-                default:
-                    {
-                        Duration = duration;
-                        break;
-                    }
-            }
+            //switch (data.DurationOnRecieveNew)
+            //{
+            //    case "refresh":
+            //        {
+            //            Duration = duration;
+            //            break;
+            //        }
+            //    case "sum":
+            //        {
+            //            Duration += duration;
+            //            break;
+            //        }
+            //    case "ignore":
+            //        {
+            //            break;
+            //        }
+            //    default:
+            //        {
+            //            Duration = duration;
+            //            break;
+            //        }
+            //}
 
         }
 
