@@ -18,6 +18,7 @@ namespace Extension.CW
     {
         public TechnoGlobalExtension(TechnoExt owner) : base(owner)
         {
+            INI = this.CreateRulesIniComponentWith<TechnoGlobalTypeExt>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
         }
 
         INIComponentWith<TechnoGlobalTypeExt> INI;
@@ -26,8 +27,6 @@ namespace Extension.CW
 
         public override void Awake()
         {
-            base.Awake();
-            INI = this.CreateRulesIniComponentWith<TechnoGlobalTypeExt>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             //Data = INI.Data;
             PartialHelper.TechnoAwakeAction(this);
         }
