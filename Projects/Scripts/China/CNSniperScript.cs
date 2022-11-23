@@ -34,7 +34,7 @@ namespace Scripts.China
 
         public override void OnUpdate()
         {
-            if (toRecover && Owner.OwnerObject.Ref.Ammo > 0)
+            if (toRecover && Owner.OwnerObject.Ref.Ammo == 0)
             {
                 toRecover = false;
                 Owner.OwnerObject.Ref.Ammo = 0;
