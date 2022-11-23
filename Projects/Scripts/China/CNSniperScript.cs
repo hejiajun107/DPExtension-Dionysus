@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using Scripts.Japan;
@@ -34,33 +35,32 @@ namespace Scripts.China
 
         public override void OnUpdate()
         {
-            if (toRecover && Owner.OwnerObject.Ref.Ammo == 0)
+            if (Owner.OwnerObject.Ref.Ammo == 0 && weaponChanged)
             {
-                toRecover = false;
-                Owner.OwnerObject.Ref.Ammo = 0;
-                if (!Owner.OwnerObject.Ref.Veterancy.IsElite())
+                weaponChanged = false;
+                if (Owner.OwnerObject.Ref.Veterancy.IsElite())
                 {
-                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(weaponName);
+                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(eliteWeaponName);
                 }
                 else
                 {
-                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(eliteWeaponName);
+                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(weaponName);
                 }
                 return;
             }
 
             //进入载具后无论如何换回主武器
-            if(!Owner.OwnerObject.Ref.Base.IsOnMap && weaponChanged)
+            if (!Owner.OwnerObject.Ref.Base.IsOnMap && weaponChanged)
             {
                 Owner.OwnerObject.Ref.Ammo = 0;
                 weaponChanged = false;
-                if (!Owner.OwnerObject.Ref.Veterancy.IsElite())
+                if (Owner.OwnerObject.Ref.Veterancy.IsElite())
                 {
-                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(weaponName);
+                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(eliteWeaponName);
                 }
                 else
                 {
-                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(eliteWeaponName);
+                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(weaponName);
                 }
             }
 
@@ -78,34 +78,41 @@ namespace Scripts.China
         {
             if (weaponIndex == 0)
             {
-                if (weaponChanged)
+                if (Owner.OwnerObject.Ref.Ammo == 1)
                 {
-                    weaponChanged = false;
-                    toRecover = true;
+                    if (Owner.OwnerObject.Ref.Veterancy.IsElite())
+                    {
+                        Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE");
+                    }
+                    else
+                    {
+                        Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
+                    }
                 }
+                //if (weaponChanged)
+                //{
+                //    weaponChanged = false;
+                //    toRecover = true;
+                //}
             }
             else
             {
-                if (!weaponChanged)
+                if (rof <= 0)
                 {
-                    if (rof <= 0)
+                    rof = 500;
+                    Owner.OwnerObject.Ref.Ammo = 1;
+                    weaponChanged = true;
+                    toRecover = false;
+                    YRMemory.Create<AnimClass>(pAnim,Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    if (Owner.OwnerObject.Ref.Veterancy.IsElite())
                     {
-                        rof = 500;
-                        Owner.OwnerObject.Ref.Ammo = 1;
-                        weaponChanged = true;
-                        YRMemory.Create<AnimClass>(pAnim,Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                        if (!Owner.OwnerObject.Ref.Veterancy.IsElite())
-                        {
-                            Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
-                        }
-                        else
-                        {
-                            Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE");
-                        }
+                        Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE");
                     }
-                  
+                    else
+                    {
+                        Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
+                    }
                 }
-
             }
         }
     }
