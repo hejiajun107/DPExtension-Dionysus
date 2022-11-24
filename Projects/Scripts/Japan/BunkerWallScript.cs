@@ -69,12 +69,27 @@ namespace Scripts.Japan
                     var east = FindWallPost(pCell, Direction.S);
                     if (west.Item1 == true && east.Item1 == true)
                     {
-                        if (west.Item2 == east.Item2)
+                        if (IsSameGroup(west.Item2, east.Item2))
                         {
-                            if (west.Item2 != Data.BunkerWallPost)
+                            if (!IsBunkerWallPost(west.Item2))
                             {
                                 return;
                             }
+
+                            //if (IsFence(west.Item2) && IsNearBy(Owner.OwnerObject, west.Item3))
+                            //{
+                            //    if (Data.WestEastWall != west.Item2)
+                            //    {
+                            //        type = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(Data.BunkerWallPost);
+                            //    }
+                            //}
+                            //if (IsFence(east.Item2) && IsNearBy(Owner.OwnerObject, east.Item3))
+                            //{
+                            //    if (Data.WestEastWall != east.Item2)
+                            //    {
+                            //        type = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(Data.BunkerWallPost);
+                            //    }
+                            //}
                         }
                         else
                         {
@@ -97,12 +112,28 @@ namespace Scripts.Japan
                     var south = FindWallPost(pCell, Direction.E);
                     if (north.Item1 == true && south.Item1 == true)
                     {
-                        if (north.Item2 == south.Item2)
+                        if (IsSameGroup(north.Item2, south.Item2))
                         {
-                            if (north.Item2 != Data.BunkerWallPost)
+                           
+                            if (!IsBunkerWallPost(north.Item2))
                             {
                                 return;
                             }
+
+                            //if (IsFence(north.Item2) && IsNearBy(Owner.OwnerObject, north.Item3))
+                            //{
+                            //    if (Data.NorthSouthWall != north.Item2)
+                            //    {
+                            //        type = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(Data.BunkerWallPost);
+                            //    }
+                            //}
+                            //if (IsFence(south.Item2) && IsNearBy(Owner.OwnerObject, south.Item3))
+                            //{
+                            //    if (Data.NorthSouthWall != south.Item2)
+                            //    {
+                            //        type = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(Data.BunkerWallPost);
+                            //    }
+                            //}
                         }
                         else
                         {
@@ -127,11 +158,13 @@ namespace Scripts.Japan
 
         }
 
-        private Tuple<bool, string> FindWallPost(Pointer<CellClass> pCell, Direction direction)
+        private Tuple<bool, string,CoordStruct> FindWallPost(Pointer<CellClass> pCell, Direction direction)
         {
+            var Data = settingINI.Data;
+
             List<string> LaserPosts = new List<string>()
             {
-                "RAPPST","RAPPST2","WAWALLCR"
+                "RAPPST","RAPPST2",Data.BunkerWallPost//,Data.WestEastWall,Data.NorthSouthWall
             };
 
             bool finded = false;
@@ -149,18 +182,74 @@ namespace Scripts.Japan
                 if (!build.IsNull)
                 {
                     var id = build.Ref.Base.Type.Ref.Base.Base.ID;
-                    Logger.Log("buildingId:" + id);
                     if (LaserPosts.Contains(id))
                     {
                         finded = true;
                         wallName = id;
-                        return Tuple.Create(finded, wallName);
+                        return Tuple.Create(finded, wallName,pLast.Ref.Base.GetCoords());
                     }
                 }
             }
-            return Tuple.Create(finded, wallName);
+            return Tuple.Create(finded, wallName, new CoordStruct(0, 0, 0));
+        }
+
+        private bool IsSameGroup(string wall1, string wall2)
+        {
+            var Data = settingINI.Data;
+
+            List<string> LaserPosts = new List<string>()
+            {
+                Data.BunkerWallPost//,Data.WestEastWall,Data.NorthSouthWall
+            };
+
+            if (wall1 == wall2)
+            {
+                return true;
+            }
+            else
+            {
+                return LaserPosts.Contains(wall1) && LaserPosts.Contains(wall2);
+            }
+        }
+
+        private bool IsBunkerWallPost(string wall)
+        {
+            var Data = settingINI.Data;
+
+            List<string> LaserPosts = new List<string>()
+            {
+                Data.BunkerWallPost//,Data.WestEastWall,Data.NorthSouthWall
+            };
+
+            return LaserPosts.Contains(wall);
+        }
+
+        private bool IsBothFence(string wall1,string wall2)
+        {
+            return IsFence(wall1) && IsFence(wall2);
+        }
+
+        private bool IsFence(string wall)
+        {
+            var Data = settingINI.Data;
+
+            List<string> LaserPosts = new List<string>()
+            {
+               Data.WestEastWall,Data.NorthSouthWall
+            };
+
+            return LaserPosts.Contains(wall);
+        }
+
+        public bool IsNearBy(Pointer<TechnoClass> one, CoordStruct coord)
+        {
+            var distance = one.Ref.Base.Base.GetCoords().DistanceFrom(coord);
+            return distance != double.NaN ? distance < 300 : false;
         }
     }
+
+
+
 
     [Serializable]
     public class BunkerWallData : INIAutoConfig
