@@ -36,6 +36,9 @@ namespace DpLib.Scripts.Japan
         //持续范围伤害的弹头，其实用动画伤害即可
         static Pointer<WarheadTypeClass> damageWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SBHDamageWh");
 
+        //施加AE的弹头
+        static Pointer<WarheadTypeClass> aeWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SBHAEWh");
+
         //黑洞用于强制秒杀的弹头
         static Pointer<WarheadTypeClass> killWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BhForceKillWh");
 
@@ -132,6 +135,9 @@ namespace DpLib.Scripts.Japan
                     var damage = 150;
                     Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, damageWarhead, 100, false);
                     pBullet.Ref.DetonateAndUnInit(location);
+
+                    Pointer<BulletClass> pBullet2 = bulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, aeWarhead, 100, false);
+                    pBullet2.Ref.DetonateAndUnInit(location);
                 }
 
                 if (unitCheckRof-- <= 0)

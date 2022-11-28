@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="AAHeatSeeker2Script.cs" />
     <Compile Include="AdditionWeaponBulletScript.cs" />
+    <Compile Include="AE\BlackHoleAttachEffectScript.cs" />
     <Compile Include="AE\DamageDeepenAttachEffectScript.cs" />
     <Compile Include="AE\FreezingSnapAttachEffectScript.cs" />
     <Compile Include="AE\HonorRetiredAttachEffect.cs" />
