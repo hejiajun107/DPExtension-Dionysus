@@ -26,7 +26,7 @@ namespace Scripts.Japan
         private static Pointer<BulletTypeClass> pToGroundBullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("SunRiseToGround");
         private static Pointer<WarheadTypeClass> toGroundWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SRBomb4WH");
 
-        private static Pointer<WarheadTypeClass> selfDestructWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChaosDamageWh");
+        private static Pointer<WarheadTypeClass> selfDestructWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super");
 
         private static Pointer<AnimTypeClass> pshock => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ElecBurst");
 

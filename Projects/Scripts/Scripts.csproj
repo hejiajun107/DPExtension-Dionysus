@@ -49,9 +49,11 @@
   <ItemGroup>
     <Compile Include="AAHeatSeeker2Script.cs" />
     <Compile Include="AdditionWeaponBulletScript.cs" />
+    <Compile Include="AE\AngryEmperorScript.cs" />
     <Compile Include="AE\BlackHoleAttachEffectScript.cs" />
     <Compile Include="AE\DamageDeepenAttachEffectScript.cs" />
     <Compile Include="AE\FreezingSnapAttachEffectScript.cs" />
+    <Compile Include="AE\GuardOfHimikoScript.cs" />
     <Compile Include="AE\HonorRetiredAttachEffect.cs" />
     <Compile Include="AE\InsuranceAttachEffectScript.cs" />
     <Compile Include="AE\IronCoreAttchEffectScript.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="Japan\SunRiseFortressScript.cs" />
     <Compile Include="Japan\SuperBlackHoleBulletScript.cs" />
     <Compile Include="Japan\SuperBlackHoleUnitScript.cs" />
+    <Compile Include="Japan\WaveCannonBulletScript.cs" />
     <Compile Include="Japan\WaveEnergyMechScript.cs" />
     <Compile Include="JumpetCarrierScript.cs" />
     <Compile Include="JumpWithBulletScript.cs" />
