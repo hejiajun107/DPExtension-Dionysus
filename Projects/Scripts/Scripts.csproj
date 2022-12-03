@@ -76,6 +76,7 @@
     <Compile Include="American\MirageTankScript.cs" />
     <Compile Include="American\ZuesTankScript.cs" />
     <Compile Include="ArmyFlagScript.cs" />
+    <Compile Include="AutoDeployScript.cs" />
     <Compile Include="BulletLikeRocketScript.cs" />
     <Compile Include="CampFireScript.cs" />
     <Compile Include="China\AttackPlaneBulletScript.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Japan\SunRiseFortressScript.cs" />
     <Compile Include="Japan\SuperBlackHoleBulletScript.cs" />
     <Compile Include="Japan\SuperBlackHoleUnitScript.cs" />
+    <Compile Include="Japan\TimeWarpEffectScript.cs" />
     <Compile Include="Japan\WaveCannonBulletScript.cs" />
     <Compile Include="Japan\WaveEnergyMechScript.cs" />
     <Compile Include="JumpetCarrierScript.cs" />

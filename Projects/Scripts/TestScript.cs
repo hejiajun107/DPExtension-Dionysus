@@ -3,6 +3,7 @@ using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -39,15 +40,20 @@ namespace DpLib.Scripts
             //{
             //    mission.Ref.ForceMission(Mission.Guard);
             //}
+            var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+            if(MapClass.Instance.TryGetCellAt(location,out var pcell))
+            {
+                DebugUtilities.HighlightCell(pcell, new ColorStruct(255, 0, 0), 3, 10);
+            }
 
 
-            if (delay-- > 0)
-                return;
-            delay = 200;
-            ref DynamicVectorClass<Pointer<TechnoClass>> technos = ref TechnoClass.Array;
-            ref DynamicVectorClass<Pointer<BulletClass>> bullets = ref BulletClass.Array;
+            //if (delay-- > 0)
+            //    return;
+            //delay = 200;
+            //ref DynamicVectorClass<Pointer<TechnoClass>> technos = ref TechnoClass.Array;
+            //ref DynamicVectorClass<Pointer<BulletClass>> bullets = ref BulletClass.Array;
 
-            Logger.Log($"单位数：{technos.Count},抛射体数：{bullets.Count}");
+            //Logger.Log($"单位数：{technos.Count},抛射体数：{bullets.Count}");
             //if (delay-- > 0)
             //{
             //    return;
@@ -94,31 +100,31 @@ namespace DpLib.Scripts
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            fireCount++;
-            if (fireCount >= 5)
-            {
-                if (typeChanged == false)
-                {
-                    typeChanged = true;
-                    var type = Owner.OwnerObject.Ref.Type;
-                    SwizzleablePointer<TechnoTypeClass> pointer = new SwizzleablePointer<TechnoTypeClass>(type);
+            //fireCount++;
+            //if (fireCount >= 5)
+            //{
+            //    if (typeChanged == false)
+            //    {
+            //        typeChanged = true;
+            //        var type = Owner.OwnerObject.Ref.Type;
+            //        SwizzleablePointer<TechnoTypeClass> pointer = new SwizzleablePointer<TechnoTypeClass>(type);
 
-                    object retval;
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        BinaryFormatter bf = new BinaryFormatter();
-                        bf.Serialize(ms, type);
-                        ms.Seek(0, SeekOrigin.Begin);
-                        retval = bf.Deserialize(ms);
-                        ms.Close();
-                    }
-                    var targetType = (SwizzleablePointer<TechnoTypeClass>)retval;
-                    targetType.Ref.ROT = 1;
-                    targetType.Ref.Speed = 20;
-                    Owner.OwnerObject.Convert<UnitClass>().Ref.Type = targetType.Pointer.Convert<UnitTypeClass>();
+            //        object retval;
+            //        using (MemoryStream ms = new MemoryStream())
+            //        {
+            //            BinaryFormatter bf = new BinaryFormatter();
+            //            bf.Serialize(ms, type);
+            //            ms.Seek(0, SeekOrigin.Begin);
+            //            retval = bf.Deserialize(ms);
+            //            ms.Close();
+            //        }
+            //        var targetType = (SwizzleablePointer<TechnoTypeClass>)retval;
+            //        targetType.Ref.ROT = 1;
+            //        targetType.Ref.Speed = 20;
+            //        Owner.OwnerObject.Convert<UnitClass>().Ref.Type = targetType.Pointer.Convert<UnitTypeClass>();
 
-                }
-            }
+            //    }
+            //}
 
             //if (delay-- > 0)
             //    return;
