@@ -38,10 +38,10 @@ namespace Scripts.Japan
             if (--rof <= 0)
             {
                 rof = 1;
-                if (radius >= 10)
+                if (radius >= 50)
                 {
                     DrawCircleLaser();
-                    radius -= 5;
+                    radius -= 2;
                 }
             }
      
@@ -84,11 +84,13 @@ namespace Scripts.Japan
 
             for (var angle = sangle + 5; angle < sangle + 360; angle += 60)
             {
-                var currentPos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z + 0);
+                var inRadius = radius - 50;
+                var currentPos = new CoordStruct(center.X + (int)(inRadius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(inRadius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z + 0);
                 CreateSplit(lastpos, currentPos, WidthFirst);
+                // currentPos;
             }
 
-            sangle += 2;
+            sangle += 10;
         }
 
     }
