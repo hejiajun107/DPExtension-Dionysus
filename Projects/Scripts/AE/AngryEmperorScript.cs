@@ -24,8 +24,8 @@ namespace DpLib.Scripts.AE
 
         private int angryTime = 50;//天皇之怒无敌时间
 
-        private Boolean inShield = false;
-        private Boolean inAngry = false;
+        private bool inShield = false;
+        private bool inAngry = false;
 
 
         public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
@@ -39,17 +39,22 @@ namespace DpLib.Scripts.AE
         {
             if (inAngry)
             {
+                if(angryTime<=5 && !inShield)
+                {
+                    inShield = true;
+                    Pointer<TechnoClass> ownerTechno = Owner.OwnerObject;
+
+                    Pointer<BulletClass> shieldBullet = shieldBulletType.Ref.CreateBullet(ownerTechno.Convert<AbstractClass>(), ownerTechno, 1, shieldWarheadType, 100, false);
+                    shieldBullet.Ref.DetonateAndUnInit(ownerTechno.Ref.Base.Base.GetCoords());
+                    inShield = true;
+                }
                 if(angryTime-- <= 0)
                 {
                     inAngry = false;
 
                     //Logger.Log("关闭天皇之怒锁血状态");
 
-                    Pointer<TechnoClass> ownerTechno = Owner.OwnerObject;
-
-                    Pointer<BulletClass> shieldBullet = shieldBulletType.Ref.CreateBullet(ownerTechno.Convert<AbstractClass>(), ownerTechno, 1, shieldWarheadType, 100, false);
-                    shieldBullet.Ref.DetonateAndUnInit(ownerTechno.Ref.Base.Base.GetCoords());
-                    inShield = true;
+               
 
                     //Logger.Log("开启愤怒护盾");
 

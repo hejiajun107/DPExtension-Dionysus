@@ -1,7 +1,11 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Components;
+using Extension.Coroutines;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
+using System.Collections;
 
 namespace DpLib.Scripts.AE
 {
@@ -27,6 +31,16 @@ namespace DpLib.Scripts.AE
         }
 
 
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            int trueDamage = MapClass.GetTotalDamage(pDamage.Ref, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter);
+            if(Owner.OwnerObject.Ref.Base.Health <= trueDamage)
+            {
+                RevertBack();
+            }
+
+        }
+
         public override void OnAttachEffectRemove()
         {
             if (Owner.OwnerObject.Ref.Base.Health <= 0)
@@ -34,6 +48,20 @@ namespace DpLib.Scripts.AE
                 base.OnAttachEffectRemove();
                 return;
             }
+
+            RevertBack();
+
+        }
+
+        private bool reverted = false;
+
+        private void RevertBack()
+        {
+            if(reverted)
+                return;
+
+            reverted = true;
+
             //移除时触发时间倒流
             var pTechno = Owner.OwnerObject;
 
@@ -58,7 +86,18 @@ namespace DpLib.Scripts.AE
             var pAnim2 = YRMemory.Create<AnimClass>(animType, coord);
 
             pTechno.Ref.Base.Health = heath;
+            pTechno.Ref.WarpingOut = true;
+            Owner.GameObject.StartCoroutine(DelayRecover());
 
+
+        }
+
+
+
+        IEnumerator DelayRecover()
+        {
+            yield return new WaitForFrames(100);
+            Owner.OwnerObject.Ref.WarpingOut = false;
         }
 
         public override void OnAttachEffectRecieveNew(int duration, Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
