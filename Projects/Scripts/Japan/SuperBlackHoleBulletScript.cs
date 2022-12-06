@@ -309,6 +309,7 @@ namespace DpLib.Scripts.China
                         continue;
                     }
 
+
                     if (bulletLocation.DistanceFrom(center) <= 2560)
                     {
                         Pointer<BulletClass> sBullet = bulletType.Ref.CreateBullet(launcher.Convert<AbstractClass>(), launcher, 1, killWarhead, 100, false);

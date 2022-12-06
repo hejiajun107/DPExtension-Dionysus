@@ -147,19 +147,16 @@ namespace DpLib.Scripts.Japan
                     //寻找范围内的单位并引导向黑洞
                     var currentCell = CellClass.Coord2Cell(location);
 
-                    CellSpreadEnumerator enumerator = new CellSpreadEnumerator(7);
+                    //CellSpreadEnumerator enumerator = new CellSpreadEnumerator(7);
 
-                    foreach (CellStruct offset in enumerator)
+                    var technos = ObjectFinder.FindTechnosNear(location, 7 * Game.CellSize);
+
+
+                    foreach (var obj in technos)
                     {
-                        CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
-
-                        if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
+                        if(obj.CastToTechno(out var techno))
                         {
-                            Point2D p2d = new Point2D(60, 60);
-                            Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, launcher);
-
-
-                            pTargetRef = (TechnoExt.ExtMap.Find(target));
+                            pTargetRef = (TechnoExt.ExtMap.Find(techno));
                             if (!pTargetRef.IsNullOrExpired())
                             {
                                 if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
@@ -172,7 +169,7 @@ namespace DpLib.Scripts.Japan
                                     //仅仅用于标记该单位已经在黑洞作用中了
                                     if (pTargetRef.GameObject.GetComponent(BlackHoleEffectedDecorator.ID) == null)
                                     {
-                                        Pointer<BulletClass> bullet = trackBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetRef.OwnerObject, 1, trackWarhead, 100, true);
+                                        Pointer<BulletClass> bullet = trackBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetRef.OwnerObject, 1, trackWarhead, 60, true);
                                         bullet.Ref.MoveTo(pTargetRef.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 50), new BulletVelocity(0, 0, 800));
                                         bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
 
@@ -182,6 +179,41 @@ namespace DpLib.Scripts.Japan
                             }
                         }
                     }
+                        
+
+                    //foreach (CellStruct offset in enumerator)
+                    //{
+                    //    CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
+
+                    //    if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
+                    //    {
+                    //        Point2D p2d = new Point2D(60, 60);
+                    //        Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, launcher);
+
+
+                    //        pTargetRef = (TechnoExt.ExtMap.Find(target));
+                    //        if (!pTargetRef.IsNullOrExpired())
+                    //        {
+                    //            if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
+                    //            {
+                    //                if (immnueToBlackHoles.Contains(pTargetRef.OwnerObject.Ref.Type.Ref.Base.Base.ID))
+                    //                {
+                    //                    continue;
+                    //                }
+
+                    //                //仅仅用于标记该单位已经在黑洞作用中了
+                    //                if (pTargetRef.GameObject.GetComponent(BlackHoleEffectedDecorator.ID) == null)
+                    //                {
+                    //                    Pointer<BulletClass> bullet = trackBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTargetRef.OwnerObject, 1, trackWarhead, 60, true);
+                    //                    bullet.Ref.MoveTo(pTargetRef.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 50), new BulletVelocity(0, 0, 800));
+                    //                    bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
+
+                    //                    pTargetRef.GameObject.CreateScriptComponent(nameof(BlackHoleEffectedDecorator), BlackHoleEffectedDecorator.ID, "BlackHoleEffectedDecorator Decorator", pTargetRef);
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
             }
         }

@@ -28,14 +28,20 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID != deloyOnMove)
-            {
-                var mission = Owner.OwnerObject.Convert<MissionClass>();
-                if(mission.Ref.CurrentMission==Mission.Move)
-                {
-                    mission.Ref.ForceMission(Mission.Unload);
-                }
-            }
+            //if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID != deloyOnMove)
+            //{
+            //    if (Owner.OwnerObject.CastToFoot(out var pfoot))
+            //    {
+            //        if(pfoot.Ref.GetCurrentSpeed() > 0)
+            //        {
+            //            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            //            pfoot.Ref.Destination = default ;
+            //            mission.Ref.ForceMission(Mission.Stop);
+            //            mission.Ref.ForceMission(Mission.Unload);
+            //        }
+                    
+            //    }
+            //}
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)

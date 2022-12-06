@@ -131,6 +131,7 @@ namespace DpLib.Scripts.Japan
                     pfoot.Ref.Locomotor.Mark_All_Occupation_Bits(0);
                     pfoot.Ref.Locomotor.Force_Track(-1, source);
                     pTechno.Ref.Base.UnmarkAllOccupationBits(source);
+                    pfoot.Ref.Locomotor.Lock();
                     var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                     pTechno.Ref.Base.SetLocation(location);
                     pTechno.Ref.Base.UnmarkAllOccupationBits(location);
@@ -139,5 +140,7 @@ namespace DpLib.Scripts.Japan
 
 
         }
+
+
     }
 }
