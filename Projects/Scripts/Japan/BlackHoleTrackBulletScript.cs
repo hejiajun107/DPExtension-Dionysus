@@ -78,6 +78,12 @@ namespace DpLib.Scripts.Japan
             {
                 var pTechno = Owner.OwnerObject.Ref.Owner;
 
+                if(Owner.OwnerObject.Ref.Target.IsNull)
+                {
+                    pTechno.Ref.Base.TakeDamage(5000, peaceWarhead, true);
+                    return;
+                }
+
                 if (attachDelay-- <= 0)
                 {
                     attachDelay = 200;

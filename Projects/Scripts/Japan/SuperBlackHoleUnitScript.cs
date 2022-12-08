@@ -60,6 +60,8 @@ namespace DpLib.Scripts.Japan
 
         private CoordStruct location = default;
 
+        private int level = 1;
+
         public override void OnUpdate()
         {
             if (delay-- <= 0)
@@ -143,13 +145,15 @@ namespace DpLib.Scripts.Japan
                 if (unitCheckRof-- <= 0)
                 {
                     unitCheckRof = 25;
+                    level++;
+                    var range = level > 8 ? 8 : level;
 
                     //寻找范围内的单位并引导向黑洞
                     var currentCell = CellClass.Coord2Cell(location);
 
                     //CellSpreadEnumerator enumerator = new CellSpreadEnumerator(7);
 
-                    var technos = ObjectFinder.FindTechnosNear(location, 7 * Game.CellSize);
+                    var technos = ObjectFinder.FindTechnosNear(location, range * Game.CellSize);
 
 
                     foreach (var obj in technos)
