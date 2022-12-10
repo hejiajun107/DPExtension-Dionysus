@@ -36,14 +36,21 @@ namespace DpLib.Scripts.AE
 
             var currentCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            if (lastCoord != default)
+            if (lastCoord != null)
             {
                 if (double.IsNaN(currentCoord.DistanceFrom(lastCoord)) || currentCoord.DistanceFrom(lastCoord) >= 2560)
                 {
                     inited = true;
                     //瞬间移动范围过大，立刻在上次的位置引爆
                     TakeSpreadAt(getAttacker(), lastCoord);
-                    TakeDamageAt(getAttacker(), currentCoord);
+                    if (currentCoord != null)
+                    {
+                        TakeDamageAt(getAttacker(), currentCoord);
+                    }
+                    else
+                    {
+                        TakeDamageAt(getAttacker(), lastCoord);
+                    }
                     return;
                 }
             }

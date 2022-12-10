@@ -1,7 +1,9 @@
-﻿using Extension.Ext;
+﻿using Extension.Coroutines;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
+using System.Collections;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -157,29 +159,41 @@ namespace DpLib.Scripts.Scrin
                 var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, (Owner.OwnerObject.Ref.Base.Health > (MAX_STRENGTH / 4)) ? expWarhead : expWarheads, 100, true);
                 bullet.Ref.DetonateAndUnInit(targetLocation);
 
-                //在周围造成伤害
-                for (var angle = 0; angle < 360; angle += 60)
-                {
-                    var height = Owner.OwnerObject.Ref.Base.GetHeight();
-                    var center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-
-                    var radius = 8 * 256;
-                    var targetPos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z - height);
-
-                    var cell = CellClass.Coord2Cell(targetPos);
-
-                    if (MapClass.Instance.TryGetCellAt(cell, out var pCell))
-                    {
-                        var exp2damge = (Owner.OwnerObject.Ref.Base.Health / (MAX_STRENGTH / 5)) * 100;
-                        var inviso = misissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, exp2damge, (Owner.OwnerObject.Ref.Base.Health > (MAX_STRENGTH / 4)) ? exp2Warhead : exp2Warheads, 50, false);
-                        inviso.Ref.MoveTo(targetPos + new CoordStruct(0, 0, 2000), new BulletVelocity(0, 0, 0));
-                        inviso.Ref.SetTarget(pCell.Convert<AbstractClass>());
-                    }
-                }
+                var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                var exp2damge = (Owner.OwnerObject.Ref.Base.Health / (MAX_STRENGTH / 5)) * 100;
+                GameObject.StartCoroutine(ToBlast(coord, exp2damge));
 
             }
+        }
 
+        IEnumerator ToBlast(CoordStruct coord, int damage)
+        {
+            yield return new WaitForFrames(40);
+            BlastCircleAt(coord, damage);
+        }
 
+        private void BlastCircleAt(CoordStruct coord,int damage)
+        {
+            //在周围造成伤害
+            for (var angle = 0; angle < 360; angle += 60)
+            {
+                var height = Owner.OwnerObject.Ref.Base.GetHeight();
+                var center = coord;
+
+                var radius = 8 * 256;
+                var targetPos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z - height);
+
+                var cell = CellClass.Coord2Cell(targetPos);
+
+                if (MapClass.Instance.TryGetCellAt(cell, out var pCell))
+                {
+                    var exp2damge = damage;
+                    var inviso = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, exp2damge, (Owner.OwnerObject.Ref.Base.Health > (MAX_STRENGTH / 4)) ? exp2Warhead : exp2Warheads, 50, false);
+                    //inviso.Ref.MoveTo(targetPos + new CoordStruct(0, 0, 2000), new BulletVelocity(0, 0, 0));
+                    //inviso.Ref.SetTarget(pCell.Convert<AbstractClass>());
+                    inviso.Ref.DetonateAndUnInit(targetPos);
+                }
+            }
         }
 
         private void DrawCircleLaser()
