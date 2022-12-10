@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
@@ -27,7 +28,7 @@ namespace DpLib.Scripts.AE
 
         private TechnoExt attacker;
 
-        private CoordStruct lastCoord = default;
+        private CoordStruct lastCoord;
 
         public override void OnUpdate()
         {
@@ -36,22 +37,17 @@ namespace DpLib.Scripts.AE
 
             var currentCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            if (lastCoord != null)
+            if (lastCoord != null && lastCoord != default)
             {
                 if (double.IsNaN(currentCoord.DistanceFrom(lastCoord)) || currentCoord.DistanceFrom(lastCoord) >= 2560)
                 {
                     inited = true;
                     //瞬间移动范围过大，立刻在上次的位置引爆
                     TakeSpreadAt(getAttacker(), lastCoord);
-                    if (currentCoord != null)
+                    if (currentCoord != null && currentCoord != default)
                     {
                         TakeDamageAt(getAttacker(), currentCoord);
                     }
-                    else
-                    {
-                        TakeDamageAt(getAttacker(), lastCoord);
-                    }
-                    return;
                 }
             }
             lastCoord = currentCoord;
@@ -106,6 +102,11 @@ namespace DpLib.Scripts.AE
 
         public override void OnRemove()
         {
+            if(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "YAREFN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SMIN")
+            {
+                return;
+            }
+
             //如果从地图上提前移除则直接引爆
             if (inited == false)
             {
