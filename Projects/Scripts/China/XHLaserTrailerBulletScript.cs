@@ -69,10 +69,10 @@ namespace DpLib.Scripts
 
                 counter++;
 
-                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 25, warhead, 100, true);
+                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 38, warhead, 100, true);
                 pBullet.Ref.DetonateAndUnInit(target);
 
-                Pointer<BulletClass> pBulletA = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 10, warhead, 100, false);
+                Pointer<BulletClass> pBulletA = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 19, warhead, 100, false);
                 pBulletA.Ref.DetonateAndUnInit(target);
             }
 

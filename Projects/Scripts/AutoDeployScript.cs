@@ -1,8 +1,10 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
 using PatcherYRpp;
 using System;
+using static DpLib.Scripts.China.IonCannonReshadeBulletScript;
 
 namespace Scripts
 {
@@ -19,6 +21,10 @@ namespace Scripts
 
         private string deloyOnMove;
 
+        static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+        static Pointer<WarheadTypeClass> pWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DpStop100Wh");
+
+
         public override void Awake()
         {
             var ini = this.CreateRulesIniComponentWith<AutoDeployConfigData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
@@ -28,13 +34,14 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+
             if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID != deloyOnMove)
             {
                 if (Owner.OwnerObject.CastToFoot(out var pfoot))
                 {
                     pfoot.Ref.SpeedMultiplier = 0;
 
-                    var mission = Owner.OwnerObject.Convert<MissionClass>();
                     if (mission.Ref.CurrentMission == Mission.Move)
                     {
                         mission.Ref.ForceMission(Mission.Stop);
@@ -43,6 +50,21 @@ namespace Scripts
 
                 }
             }
+
+            if(mission.Ref.CurrentMission == Mission.Unload)
+            {
+                var bullet= pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Pointer<TechnoClass>.Zero, 1, pWh, 100, false);
+                bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                if(!Owner.IsNullOrExpired())
+                {
+                    if (Owner.GameObject.GetComponent(StopFacingScript.UniqueId) == null)
+                    {
+                        Owner.GameObject.CreateScriptComponent(nameof(StopFacingScript), StopFacingScript.UniqueId, "StopFacingScriptDecorator", Owner);
+                    }
+                }
+            }
+
+          
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
@@ -55,6 +77,43 @@ namespace Scripts
         }
     }
 
+    [ScriptAlias(nameof(StopFacingScript))]
+    [Serializable]
+    public class StopFacingScript : TechnoScriptable
+    {
+        public StopFacingScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        public static int UniqueId = 2022120823; 
+
+        private int delay = 100;
+
+        public override void OnUpdate()
+        {
+            if (delay-- <= 0)
+            {
+                DetachFromParent();
+                return;
+            }
+
+            if(Owner.IsNullOrExpired())
+            {
+                return;
+            }
+
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                return;
+            }
+
+            var dir = new DirStruct(3,2);
+            Owner.OwnerObject.Ref.Facing.set(dir);
+        }
+
+
+    }
 
     [Serializable]
     public class AutoDeployConfigData : INIAutoConfig

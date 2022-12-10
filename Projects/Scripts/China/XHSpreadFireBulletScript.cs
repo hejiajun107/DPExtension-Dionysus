@@ -637,6 +637,7 @@ namespace DpLib.Scripts.China
 
 
     [Serializable]
+    [ScriptAlias(nameof(XhWeaponExplodeDecorator))]
     public class XhWeaponExplodeDecorator : TechnoScriptable
     {
         public static int ID = 414008;
@@ -698,7 +699,7 @@ namespace DpLib.Scripts.China
             {
                 if (radius <= this.range * 256)
                 {
-                    for (var angle = startAngle; angle < startAngle + 360; angle += 30)
+                    for (var angle = startAngle; angle < startAngle + 360; angle += 30) //was 30
                     {
                         var pos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
                         int damage = 5;
@@ -706,7 +707,7 @@ namespace DpLib.Scripts.China
                         pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                     }
 
-                    radius += 25;
+                    radius += 25; //was 25
                     startAngle -= 2;
                 }
                 else
