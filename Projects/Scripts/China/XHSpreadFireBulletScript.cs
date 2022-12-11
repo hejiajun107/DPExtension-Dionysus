@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -230,6 +231,14 @@ namespace DpLib.Scripts.China
 
                     int index = 0;
 
+                    //-280,300,25
+                    //280,-300,25
+                    //var left = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject.Ref.Owner, new CoordStruct(260,300,25), false);
+                    //var right = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject.Ref.Owner, new CoordStruct(260,-300, 25), false);
+                    var mylocation = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject.Ref.Owner, new CoordStruct(540, 130, 0), false);
+
+                    //int flag = 0;
+
                     if (targets.Count > 0)
                     {
                         //对每个建筑进行操作
@@ -238,10 +247,13 @@ namespace DpLib.Scripts.China
                             if (!item.IsNullOrExpired())
                             {
                                 var level = levels[index];
-
                                 //绘制激光
                                 var targetPos = item.OwnerObject.Ref.Base.Base.GetCoords();
-                                var pos1 = new CoordStruct(targetPos.X, targetPos.Y, location.Z);
+
+                                //var mylocation = flag == 0 ? left : right;
+                                //flag = flag == 0 ? 1 : 0;
+
+                                var pos1 = new CoordStruct(targetPos.X, targetPos.Y, mylocation.Z);
 
                                 var laserColor = LaserLevels[level - 1];
 
@@ -249,9 +261,14 @@ namespace DpLib.Scripts.China
                                 pLaser.Ref.IsHouseColor = true;
                                 pLaser.Ref.Thickness = 7;
 
-                                Pointer<LaserDrawClass> pLaser2 = YRMemory.Create<LaserDrawClass>(pos1, location, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
+                                Pointer<LaserDrawClass> pLaser2 = YRMemory.Create<LaserDrawClass>(pos1, mylocation, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
                                 pLaser2.Ref.IsHouseColor = true;
                                 pLaser2.Ref.Thickness = 7;
+
+                                //Pointer<LaserDrawClass> pLaser3 = YRMemory.Create<LaserDrawClass>(pos1, right, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
+                                //pLaser3.Ref.IsHouseColor = true;
+                                //pLaser3.Ref.Thickness = 7;
+
 
 
                                 //关闭当前建筑

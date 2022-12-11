@@ -42,6 +42,8 @@ namespace DpLib.Scripts.Scrin
 
         private static Pointer<WarheadTypeClass> expWarheads => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MoShipBlastWhs");
 
+        private static Pointer<SuperWeaponTypeClass> moshipLight => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("MockLightMoShipSpecial");
+
 
 
         //当前阶段的持续时间
@@ -161,6 +163,8 @@ namespace DpLib.Scripts.Scrin
 
                 var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 var exp2damge = (Owner.OwnerObject.Ref.Base.Health / (MAX_STRENGTH / 5)) * 100;
+
+                ShowLight(Owner);
                 GameObject.StartCoroutine(ToBlast(coord, exp2damge));
 
             }
@@ -212,6 +216,15 @@ namespace DpLib.Scripts.Scrin
             }
 
             trailStartAngle += 2;
+        }
+
+        private void ShowLight(TechnoExt pOwner)
+        {
+            Pointer<SuperClass> pSuper = pOwner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(moshipLight);
+            CellStruct targetCell = CellClass.Coord2Cell(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            pSuper.Ref.IsCharged = true;
+            pSuper.Ref.Launch(targetCell, true);
+            pSuper.Ref.IsCharged = false;
         }
 
     }

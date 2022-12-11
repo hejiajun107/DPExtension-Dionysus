@@ -21,6 +21,8 @@ namespace Scripts
 
         private string deloyOnMove;
 
+        private int maxDistance;
+
         static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> pWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DpStop100Wh");
 
@@ -30,7 +32,10 @@ namespace Scripts
             var ini = this.CreateRulesIniComponentWith<AutoDeployConfigData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             deloyOnFire = ini.Data.DeloyOnFire;
             deloyOnMove = ini.Data.DeloyOnMove;
+            maxDistance = ini.Data.PrimaryUnloadMaxRange;
         }
+
+        private int checkTargetRof = 50;
 
         public override void OnUpdate()
         {
@@ -46,6 +51,25 @@ namespace Scripts
                     {
                         mission.Ref.ForceMission(Mission.Stop);
                         mission.Ref.ForceMission(Mission.Unload);
+                    }else if(checkTargetRof--<=0)
+                    {
+                        checkTargetRof = 50;
+                        if (Owner.OwnerObject.Ref.Target != null)
+                        {
+                            if(!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                            {
+                                var weaponIndex = Owner.OwnerObject.Ref.SelectWeapon(Owner.OwnerObject.Ref.Target);
+                                if (weaponIndex == 0)
+                                {
+                                    var distance = Owner.OwnerObject.Ref.Base.Base.GetCoords().DistanceFrom(Owner.OwnerObject.Ref.Target.Ref.GetCoords());
+                                    if (double.IsNaN(distance) || distance > maxDistance * 256)
+                                    {
+                                        mission.Ref.ForceMission(Mission.Stop);
+                                        mission.Ref.ForceMission(Mission.Unload);
+                                    }
+                                }
+                            }
+                        }
                     }
 
                 }
@@ -124,6 +148,10 @@ namespace Scripts
 
         [INIField(Key = "AutoDeploy.DeloyOnMove")]
         public string DeloyOnMove = "";
+
+        [INIField(Key = "AutoDeploy.PrimaryMaxRange")]
+        public int PrimaryUnloadMaxRange;
+
 
     }
 }
