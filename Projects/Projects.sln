@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extension.Ext4CW", "Extensi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scripts", "Scripts\Scripts.csproj", "{04765D43-0086-49C6-B2F3-E25AFD71E159}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extension.Encryption", "Extension.Encryption\Extension.Encryption.csproj", "{EF9006FA-7275-4C09-AAF6-6915FF9BA3A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{04765D43-0086-49C6-B2F3-E25AFD71E159}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04765D43-0086-49C6-B2F3-E25AFD71E159}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04765D43-0086-49C6-B2F3-E25AFD71E159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9006FA-7275-4C09-AAF6-6915FF9BA3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9006FA-7275-4C09-AAF6-6915FF9BA3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9006FA-7275-4C09-AAF6-6915FF9BA3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9006FA-7275-4C09-AAF6-6915FF9BA3A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
