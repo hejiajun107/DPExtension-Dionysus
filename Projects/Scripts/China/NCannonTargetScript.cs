@@ -16,7 +16,7 @@ namespace DpLib.Scripts.China
 
         private bool Inited = false;
 
-        private int delay = 200;
+        private int delay = 320;
 
         private List<TechnoExt> ncannons = new List<TechnoExt>();
 
@@ -71,7 +71,7 @@ namespace DpLib.Scripts.China
                     }
                 }
             }
-            else if (delay <= 50)
+            else if (delay <= 130)
             {
                 if (!deloyFired)
                 {

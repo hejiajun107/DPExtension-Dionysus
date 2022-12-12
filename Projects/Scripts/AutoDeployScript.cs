@@ -111,7 +111,7 @@ namespace Scripts
 
         public static int UniqueId = 2022120823; 
 
-        private int delay = 100;
+        private int delay = 80;
 
         public override void OnUpdate()
         {
@@ -134,6 +134,8 @@ namespace Scripts
 
             var dir = new DirStruct(3,2);
             Owner.OwnerObject.Ref.Facing.set(dir);
+            Owner.OwnerObject.Ref.TurretFacing.set(dir);
+
         }
 
 
