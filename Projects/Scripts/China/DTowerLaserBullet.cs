@@ -48,7 +48,7 @@ namespace DpLib.Scripts.China
 
             if (!pTargetRef.IsNullOrExpired())
             {
-                var start = Owner.OwnerObject.Ref.Owner.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 810);
+                var start = Owner.OwnerObject.Ref.Owner.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 710);
 
                 var pTechno = pTargetRef.OwnerObject;
 
