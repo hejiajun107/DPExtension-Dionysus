@@ -14,7 +14,7 @@ namespace Scripts
     {
         public NinjaScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter();
+            _manaCounter = new ManaCounter(owner);
         }
 
         Random random = new Random(242641);
@@ -41,7 +41,6 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
 
             //if (IsRainning && currentRainFrame<rainDuration)
             //{

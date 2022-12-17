@@ -16,7 +16,7 @@ namespace Scripts
     {
         public SFZSScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(15);
+            _manaCounter = new ManaCounter(owner,15);
         }
 
 
@@ -24,7 +24,6 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
             base.OnUpdate();
         }
 

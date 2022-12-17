@@ -14,7 +14,7 @@ namespace DpLib.Scripts.Heros
     {
         public BlackLotusScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(15);
+            _manaCounter = new ManaCounter(owner, 15);
         }
 
         private ManaCounter _manaCounter;
@@ -65,7 +65,6 @@ namespace DpLib.Scripts.Heros
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
             if (isActived)
             {
                 //光束聚集

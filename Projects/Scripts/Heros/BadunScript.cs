@@ -14,7 +14,7 @@ namespace Scripts
     {
         public BadunScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter();
+            _manaCounter = new ManaCounter(owner);
         }
 
         private ManaCounter _manaCounter;
@@ -69,7 +69,6 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
 
             if (reloaded)
             {

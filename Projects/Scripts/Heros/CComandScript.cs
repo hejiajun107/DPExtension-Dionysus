@@ -12,7 +12,7 @@ namespace DpLib.Scripts
     {
         public CComandScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter();
+            _manaCounter = new ManaCounter(owner);
         }
 
 
@@ -29,7 +29,6 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
             if (delay <= 100)
             {
                 delay++;

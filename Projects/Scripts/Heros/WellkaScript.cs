@@ -14,7 +14,7 @@ namespace Scripts
     {
         public WellkaScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(10);
+            _manaCounter = new ManaCounter(owner, 10);
         }
 
         private ManaCounter _manaCounter;
@@ -34,7 +34,6 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
             //检测是否处于战斗状态
             if (battleFrame > 0)
             {

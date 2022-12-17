@@ -13,7 +13,7 @@ namespace DpLib.Scripts.Heros
     {
         public ColdBladeScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(10);
+            _manaCounter = new ManaCounter(owner,10);
         }
 
         private ManaCounter _manaCounter;
@@ -45,7 +45,6 @@ namespace DpLib.Scripts.Heros
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
             if (isActived)
             {
                 if (currentFrame >= delay)

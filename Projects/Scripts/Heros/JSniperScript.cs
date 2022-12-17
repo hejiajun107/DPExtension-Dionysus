@@ -1,7 +1,12 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Scripts
 {
@@ -12,11 +17,10 @@ namespace Scripts
     {
         public JSniperScript(TechnoExt owner) : base(owner)
         {
+            _manaCounter = new ManaCounter(owner, 12);
         }
 
-
-
-        static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+        private ManaCounter _manaCounter;
 
 
         public override void OnUpdate()
@@ -34,22 +38,118 @@ namespace Scripts
             }
             if (weaponIndex == 1)
             {
-                if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
+                if(_manaCounter.Cost(100))
                 {
-                    TechnoExt pTargetExt = TechnoExt.ExtMap.Find(pTechno);
+                    Owner.OwnerObject.Ref.Ammo = 1;
+                }
+                //if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
+                //{
+                //    TechnoExt pTargetExt = TechnoExt.ExtMap.Find(pTechno);
 
-                    if (pTargetExt.GameObject.GetComponent(VirusSpreadDecorator.ID) == null)
+                //    if (pTargetExt.GameObject.GetComponent(VirusSpreadDecorator.ID) == null)
+                //    {
+                //        pTargetExt.GameObject.CreateScriptComponent(nameof(VirusSpreadDecorator), VirusSpreadDecorator.ID, "VirusSpread Decorator", Owner, pTargetExt, 1000);
+                //    }
+                //}
+            }
+        }
+    }
+
+
+    [ScriptAlias(nameof(ArcherArrowScript))]
+    [Serializable]
+    public class ArcherArrowScript : BulletScriptable
+    {
+        public ArcherArrowScript(BulletExt owner) : base(owner)
+        {
+        }
+
+        private static Pointer<WeaponTypeClass> BowSpitWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("BowSpitWeapon");
+
+        public override void OnDetonate(Pointer<CoordStruct> pCoords)
+        {
+            if (!Owner.OwnerObject.Ref.Owner.IsNull)
+            {
+                if (Owner.OwnerObject.Ref.Owner.Ref.Ammo > 0)
+                {
+                    Owner.OwnerObject.Ref.Owner.Ref.Ammo = 0;
+                    var technos = ObjectFinder.FindTechnosNear(pCoords.Ref, 2 * Game.CellSize);
+
+                    List<BulletVelocity> list = new List<BulletVelocity>()
                     {
-                        pTargetExt.GameObject.CreateScriptComponent(nameof(VirusSpreadDecorator), VirusSpreadDecorator.ID, "VirusSpread Decorator", Owner, pTargetExt, 1000);
+                        new BulletVelocity(0,0,30),
+                        new BulletVelocity(60,0,30),
+                        new BulletVelocity(0,60,30),
+                        new BulletVelocity(-60,0,30),
+                        new BulletVelocity(0,-60,30),
+                        new BulletVelocity(60,60,30),
+                        new BulletVelocity(-60,-60,30),
+                    };
+
+                    int vIndex = 0;
+
+                    foreach (var techno in technos)
+                    {
+                        foreach(var tTarget in technos)
+                        {
+                            var bullet = BowSpitWeapon.Ref.Projectile.Ref.CreateBullet(tTarget.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, BowSpitWeapon.Ref.Damage, BowSpitWeapon.Ref.Warhead, BowSpitWeapon.Ref.Speed, BowSpitWeapon.Ref.Warhead.Ref.Bright);
+                            if (vIndex > list.Count - 1)
+                            {
+                                vIndex = 0;
+                            }
+                            bullet.Ref.MoveTo(techno.Ref.Base.GetCoords() + new CoordStruct(0, 0, 200), list[vIndex]);
+                            bullet.Ref.SetTarget(tTarget.Convert<AbstractClass>());
+                            vIndex++;
+                        }
                     }
+
+                }
+            }
+        }
+    }
+
+    [ScriptAlias(nameof(ArcherSpiltScript))]
+    [Serializable]
+    public class ArcherSpiltScript : BulletScriptable
+    {
+        public ArcherSpiltScript(BulletExt owner) : base(owner)
+        {
+        }
+
+        private bool inited = false;
+        private int initHeight = 0;
+        private bool over = false;
+        private double initX;
+        private double initY;
+
+        public override void OnUpdate()
+        {
+            if (inited == false)
+            {
+                inited = true;
+                initHeight = Owner.OwnerObject.Ref.Base.GetHeight();
+                initX = Owner.OwnerObject.Ref.Velocity.X;
+                initY = Owner.OwnerObject.Ref.Velocity.Y;
+            }
+
+            if(!over)
+            {
+                if (Owner.OwnerObject.Ref.Base.GetHeight() < (initHeight + 1000))
+                {
+                    Owner.OwnerObject.Ref.Velocity.Z = 30;
+                    Owner.OwnerObject.Ref.Velocity.X = initX == 0 ? 0 : (initX > 0 ? 30 : -30);
+                    Owner.OwnerObject.Ref.Velocity.Y = initY == 0 ? 0 : (initY > 0 ? 30 : -30);
+                }
+                else
+                {
+                    over = true;
                 }
             }
         }
     }
 
 
-
-
+    [ScriptAlias(nameof(VirusSpreadDecorator))]
     [Serializable]
     public class VirusSpreadDecorator : TechnoScriptable
     {

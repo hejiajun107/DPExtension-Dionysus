@@ -13,7 +13,7 @@ namespace DpLib.Scripts
     {
         public ScSniperScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(15);
+            _manaCounter = new ManaCounter(owner, 15);
         }
 
         private ManaCounter _manaCounter;
@@ -26,7 +26,6 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
             base.OnUpdate();
         }
 

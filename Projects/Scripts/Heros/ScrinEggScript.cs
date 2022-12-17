@@ -13,7 +13,7 @@ namespace DpLib.Scripts.Heros
     {
         public ScrinEggScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter();
+            _manaCounter = new ManaCounter(owner);
         }
 
         private ManaCounter _manaCounter;
@@ -60,7 +60,6 @@ namespace DpLib.Scripts.Heros
                 delay--;
             }
 
-            _manaCounter.OnUpdate(Owner);
             base.OnUpdate();
         }
 

@@ -17,7 +17,7 @@ namespace DpLib.Scripts.Heros
     {
         public ScMandoScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(10);
+            _manaCounter = new ManaCounter(owner,10);
         }
 
         private ManaCounter _manaCounter;
@@ -32,7 +32,6 @@ namespace DpLib.Scripts.Heros
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
 
             //检索附近单位，记录进数据
             if (checkDelay-- <= 0)

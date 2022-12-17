@@ -18,7 +18,7 @@ namespace Scripts
     {
         public YuriGaiScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(8);
+            _manaCounter = new ManaCounter(owner, 8);
         }
 
         private ManaCounter _manaCounter;
@@ -47,7 +47,6 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            _manaCounter.OnUpdate(Owner);
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
