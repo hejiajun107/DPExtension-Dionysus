@@ -73,7 +73,7 @@ namespace Scripts
                 if (Owner.OwnerObject.Ref.Owner.Ref.Ammo > 0)
                 {
                     Owner.OwnerObject.Ref.Owner.Ref.Ammo = 0;
-                    var technos = ObjectFinder.FindTechnosNear(pCoords.Ref, 2 * Game.CellSize);
+                    var technos = ObjectFinder.FindTechnosNear(pCoords.Ref, (int)(2.5 * Game.CellSize));
 
                     List<BulletVelocity> list = new List<BulletVelocity>()
                     {

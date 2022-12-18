@@ -45,6 +45,11 @@ namespace Scripts
         //static Pointer<WarheadTypeClass> makeBruteWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("AP");
         //static Pointer<WarheadTypeClass> showBruteWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("AP");
 
+        static Pointer<WarheadTypeClass> chaosWarheads => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChaosWaveWh");
+
+        static Pointer<WarheadTypeClass> ChaosFeedbackWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChaosFbWh");
+        
+
         public override void OnUpdate()
         {
         }
@@ -53,13 +58,15 @@ namespace Scripts
         {
             if (weaponIndex == 0)
             {
-                if (_manaCounter.Cost(100))
-                {
-                    CreateTower();
-                }
+                //if (_manaCounter.Cost(100))
+                //{
+                //    CreateTower();
+                //}
             }
             else if (weaponIndex == 1)
             {
+                var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 300, chaosWarheads, 100, false);
+                bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 CreateBrute();
             }
 
@@ -70,7 +77,21 @@ namespace Scripts
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
       Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
+            if(pAttacker.IsNull || pAttackingHouse.IsNull)
+            {
+                return;
+            }
 
+            if(pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+            {
+                return;
+            }
+
+            if (_manaCounter.Cost(8))
+            {
+                var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, ChaosFeedbackWh, 100, false);
+                bullet.Ref.DetonateAndUnInit(pAttacker.Ref.Base.GetCoords());
+            }
         }
 
         private void CreateBrute()
