@@ -18,7 +18,7 @@
     "ScriptUniversal.dll",
     "Extension.Ext4CW.dll",
     "Extension.AttachEffectScript.dll",
-    "Extension.Encryption",
+    "Extension.Encryption.dll",
 
     "Microsoft.VisualStudio.Interop.dll",
     "XLua.Mini"
