@@ -210,6 +210,10 @@
       <Project>{81332597-88fd-4d4d-96ba-79ec1f848aef}</Project>
       <Name>Extension.AttachEffectScript</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Extension.Encryption\Extension.Encryption.csproj">
+      <Project>{EF9006FA-7275-4C09-AAF6-6915FF9BA3A6}</Project>
+      <Name>Extension.Encryption</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Extension.Ext4CW\Extension.Ext4CW.csproj">
       <Project>{becf7998-2155-4e41-b545-1f491b5490f3}</Project>
       <Name>Extension.Ext4CW</Name>

@@ -1,14 +1,10 @@
 ﻿using DynamicPatcher;
 using Extension.Ext;
-using Extension.Script;
 using PatcherYRpp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Extension.CW;
-using static System.Net.Mime.MediaTypeNames;
+using Extension.Encryption;
+using System.Runtime.Remoting.Messaging;
 
 namespace ComponentHooks
 {
@@ -25,14 +21,14 @@ namespace ComponentHooks
                 double giveExpMultiple = 1.0;
                 double gainExpMultiple = 1.0;
 
-                if(pTechno != null)
+                if (pTechno != null)
                 {
                     var technoExt = TechnoExt.ExtMap.Find(pTechno);
                     var globalExt = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
                     giveExpMultiple = globalExt.Data.GiveExperienceMultiple;
                 }
 
-                if(pKiller!=null)
+                if (pKiller != null)
                 {
                     var killerExt = TechnoExt.ExtMap.Find(pKiller);
                     var globalExt = killerExt.GameObject.GetComponent<TechnoGlobalExtension>();
@@ -79,21 +75,41 @@ namespace ComponentHooks
             return 0;
         }
 
-        // [Hook(HookType.AresHook, Address = 0x6F64CB, Size = 6)]
-        // public static unsafe UInt32 TechnoClass_DrawHealthBar_FirestormWall(REGISTERS* R)
-        // {
-        //     Pointer<BuildingClass> pBulding = (IntPtr)R->ESI;
-        //     var pTechno = pBulding.Cast<TechnoClass>();
-        //     if(pTechno!=null)
-        //     {
-        //         var technoExt = TechnoExt.ExtMap.Find(pTechno);
-        //         if (!technoExt.IsNullOrExpired())
-        //         {
-        //             var gscript = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
-        //             return (gscript.Data.IsFirestormWall == true && string.IsNullOrEmpty(gscript.Data.IsTrench) ? 0x6F6832u: 0u);
-        //         }
-        //     }
-        //     return 0;
-        // }
+
+        //[Hook(HookType.AresHook, Address = 0x5B3C28, Size = 6)]
+        //[Hook(HookType.AresHook, Address = 0x5B3D38, Size = 7)]
+        [Hook(HookType.AresHook, Address = 0x5B3E30, Size = 7)]
+        //[Hook(HookType.AresHook, Address = 0x5B3D93, Size = 5)]
+        public static unsafe UInt32 MixFileClass_Load_Completed(REGISTERS* R)
+        {
+            Pointer<MixFileClass> mix = (IntPtr)R->ESI;
+     
+            if (MagicMixProvider.IsEncrypted(mix.Ref.FileName))
+            {
+                var realHeaders = MagicMixProvider.GetHeaders(mix.Ref.FileName);
+                Pointer<MixHeaderData> headers = mix.Ref.Headers;
+                if (!headers.IsNull)
+                {
+                    for (var i = 0; i < mix.Ref.CountFiles; i++)
+                    {
+                        headers[i] = realHeaders[i].CastToHeader();
+                        //Logger.Log($"Offset:{header.Offset},ID:{header.ID},Size:{header.Size}");
+                    }
+                }
+
+                for (var i = 0; i < mix.Ref.CountFiles; i++)
+                {
+                    var header = headers[i];
+                    //Logger.Log($"Offset:{header.Offset},ID:{header.ID},Size:{header.Size}");
+                }
+
+                //Logger.Log($"Count:{mix.Ref.CountFiles},FileStartOffset:{mix.Ref.FileStartOffset},Size:{mix.Ref.FileSize}");
+
+                //mix.Ref.CountFiles = realHeaders.Count;
+                //mix.Ref.FileStartOffset = 4 + 6 + realHeaders.Count * 12;
+            }
+
+            return 0;
+        }
     }
 }

@@ -190,6 +190,7 @@ namespace Scripts
             rof = 5;
 
             var owner = Owner;
+            
 
 
             if (_lifetime < _startTime)

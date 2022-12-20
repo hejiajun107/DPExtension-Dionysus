@@ -102,7 +102,7 @@ namespace DpLib.Scripts.AE
 
         public override void OnRemove()
         {
-            if(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "YAREFN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SMIN")
+            if(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "YAREFN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SMIN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SLAV")
             {
                 return;
             }
