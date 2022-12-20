@@ -8,3 +8,4 @@ patcher.log
 /Projects/**/obj
 /Logs
 /Projects/packages
+/Projects/Extension.Encryption/Config.cs

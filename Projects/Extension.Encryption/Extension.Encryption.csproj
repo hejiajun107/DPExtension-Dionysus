@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BlowFish">
+      <HintPath>..\..\Libraries\BlowFish.dll</HintPath>
+    </Reference>
     <Reference Include="DynamicPatcher, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1a18ce02bf7a1a48, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DynamicPatcher.dll</HintPath>

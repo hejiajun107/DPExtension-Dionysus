@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DynamicPatcher;
+using Elskom.Generic.Libs;
 
 namespace Extension.Encryption
 {
@@ -20,7 +21,9 @@ namespace Extension.Encryption
                 using(StreamReader sr = new StreamReader(keyPath))
                 {
                     var txt = sr.ReadToEnd();
-                    encryptHeaders = JsonConvert.DeserializeObject<Dictionary<string, List<PackageEntry>>>(txt);
+                    var fish = new BlowFish(Config.Key);
+                    var decodeTxt = fish.DecryptCBC(txt);
+                    encryptHeaders = JsonConvert.DeserializeObject<Dictionary<string, List<PackageEntry>>>(decodeTxt);
                 }
             }
         }
