@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicPatcher;
 using Elskom.Generic.Libs;
+using PatcherYRpp;
+using System.Threading;
 
 namespace Extension.Encryption
 {
@@ -26,7 +28,30 @@ namespace Extension.Encryption
                     encryptHeaders = JsonConvert.DeserializeObject<Dictionary<string, List<PackageEntry>>>(decodeTxt);
                 }
             }
+
+            var rootDirFiles = Directory.GetFiles("./");
+            foreach(var file in rootDirFiles)
+            {
+                if(file.EndsWith(".exe")||file.EndsWith(".dll"))
+                {
+                    if(blackLists.Contains(Path.GetFileName(file).ToLower()))
+                    {
+                        var i = 0;
+                        var rd = new Random();
+                        while (true)
+                        {
+                            
+                        }
+                    }
+                }
+            }
         }
+
+        private static List<string> blackLists = new List<string>()
+        {
+            "inject.exe",
+            "truck_ra2.dll"
+        };
 
         private static Dictionary<string, List<PackageEntry>> encryptHeaders = new Dictionary<string, List<PackageEntry>>();
 
