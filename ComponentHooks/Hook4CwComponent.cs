@@ -75,41 +75,5 @@ namespace ComponentHooks
             return 0;
         }
 
-
-        //[Hook(HookType.AresHook, Address = 0x5B3C28, Size = 6)]
-        //[Hook(HookType.AresHook, Address = 0x5B3D38, Size = 7)]
-        [Hook(HookType.AresHook, Address = 0x5B3E30, Size = 7)]
-        //[Hook(HookType.AresHook, Address = 0x5B3D93, Size = 5)]
-        public static unsafe UInt32 MixFileClass_Load_Completed(REGISTERS* R)
-        {
-            Pointer<MixFileClass> mix = (IntPtr)R->ESI;
-     
-            if (MagicMixProvider.IsEncrypted(mix.Ref.FileName))
-            {
-                var realHeaders = MagicMixProvider.GetHeaders(mix.Ref.FileName);
-                Pointer<MixHeaderData> headers = mix.Ref.Headers;
-                if (!headers.IsNull)
-                {
-                    for (var i = 0; i < mix.Ref.CountFiles; i++)
-                    {
-                        headers[i] = realHeaders[i].CastToHeader();
-                        //Logger.Log($"Offset:{header.Offset},ID:{header.ID},Size:{header.Size}");
-                    }
-                }
-
-                for (var i = 0; i < mix.Ref.CountFiles; i++)
-                {
-                    var header = headers[i];
-                    //Logger.Log($"Offset:{header.Offset},ID:{header.ID},Size:{header.Size}");
-                }
-
-                //Logger.Log($"Count:{mix.Ref.CountFiles},FileStartOffset:{mix.Ref.FileStartOffset},Size:{mix.Ref.FileSize}");
-
-                //mix.Ref.CountFiles = realHeaders.Count;
-                //mix.Ref.FileStartOffset = 4 + 6 + realHeaders.Count * 12;
-            }
-
-            return 0;
-        }
     }
 }

@@ -21,6 +21,8 @@ namespace Extension.CW
         }
 
         public Dictionary<string, int> TechnoMaxRank = new Dictionary<string, int>();
+
+        public int NatashaNukeCount = 0;
         
     }
 
