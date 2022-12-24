@@ -83,6 +83,7 @@ namespace Scripts
                 var location = Master.OwnerObject.Ref.Base.Base.GetCoords();
                 var velocity = Master.OwnerObject.Ref.Velocity;
 
+                Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
 
                 if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building)
                 {

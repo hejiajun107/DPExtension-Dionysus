@@ -190,6 +190,7 @@
     <Compile Include="Soviet\SickleScript.cs" />
     <Compile Include="Soviet\SovietParaDropPlaneScript.cs" />
     <Compile Include="Soviet\SuperArouseScript.cs" />
+    <Compile Include="Soviet\SuperMobilizationScript.cs" />
     <Compile Include="Soviet\TeslaTankScript.cs" />
     <Compile Include="Soviet\Tu160Script.cs" />
     <Compile Include="Soviet\ZepScript.cs" />
