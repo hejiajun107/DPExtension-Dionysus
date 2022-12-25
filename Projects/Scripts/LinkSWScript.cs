@@ -1,6 +1,7 @@
 ﻿using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -14,9 +15,14 @@ namespace DpLib.Scripts
     [ScriptAlias(nameof(LinkSWScript))]
     public class LinkSWScript : TechnoScriptable
     {
-        public LinkSWScript(TechnoExt owner) : base(owner) { }
+        private LinkSWScriptBulletCount linkSWScriptBulletCount;
 
-        private Pointer<TechnoTypeClass> inhibitorTechnoType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("SWLinkUnit5");
+        public LinkSWScript(TechnoExt owner) : base(owner)
+        {
+            linkSWScriptBulletCount = new LinkSWScriptBulletCount(Owner);
+        }
+
+        private Pointer<TechnoTypeClass> inhibitorTechnoType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("SSTRSPU5");
 
         private TechnoExt inhibitorTechnoExt;
 
@@ -35,7 +41,10 @@ namespace DpLib.Scripts
 
                 //TechnoPlacer.PlaceTechnoNear(inhibitorTechnoExt.OwnerObject, CellClass.Coord2Cell(coord));
                 ++Game.IKnowWhatImDoing;
-                inhibitorTechnoExt.OwnerObject.Ref.Base.Put(coord, faceDir);
+                if(!inhibitorTechnoExt.OwnerObject.Ref.Base.Put(coord, faceDir))
+                {
+                    inhibitorTechnoExt.OwnerObject.Ref.Base.UnInit();
+                }
                 --Game.IKnowWhatImDoing;
             }
 
@@ -45,34 +54,33 @@ namespace DpLib.Scripts
         private bool inited = false;
         private bool inCurrentSW = false;
 
-        Pointer<SuperClass> nextSuper;
+        private SuperWeaponExt nextSuperExt;
 
-        static Pointer<SuperWeaponTypeClass> sw1 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("MultiTargetSpeical1");
-        static Pointer<SuperWeaponTypeClass> sw2 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("MultiTargetSpeical2");
-        static Pointer<SuperWeaponTypeClass> sw3 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("MultiTargetSpeical3");
-        static Pointer<SuperWeaponTypeClass> sw4 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("MultiTargetSpeical4");
+        static Pointer<SuperWeaponTypeClass> sw1 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeSpeical1");
+        static Pointer<SuperWeaponTypeClass> sw2 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeSpeical2");
+        static Pointer<SuperWeaponTypeClass> sw3 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeSpeical3");
+        static Pointer<SuperWeaponTypeClass> sw4 => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeSpeical4");
 
-        private string technoId1 = "SWLinkUnit1";
-        private string technoId2 = "SWLinkUnit2";
-        private string technoId3 = "SWLinkUnit3";
-        private string technoId4 = "SWLinkUnit4";
+        private string technoId1 = "SSTRSPU1";
+        private string technoId2 = "SSTRSPU2";
+        private string technoId3 = "SSTRSPU3";
+        private string technoId4 = "SSTRSPU4";
 
         private List<string> technoIds = new List<string>() {
-                "SWLinkUnit1",
-                "SWLinkUnit2",
-                "SWLinkUnit3",
-                "SWLinkUnit4"
+                "SSTRSPU1",
+                "SSTRSPU2",
+                "SSTRSPU3",
+                "SSTRSPU4"
         };
 
 
-        private static Pointer<BulletTypeClass> pbullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("HuimieLaserCannon");
-        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("AP");
-
-
-        private LinkSWScriptBulletCount linkSWScriptBulletCount = new LinkSWScriptBulletCount();
+        private static Pointer<BulletTypeClass> pbullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeSWCannon");
+        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special");
 
         public override void OnUpdate()
         {
+            var isAi = !Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman();
+
             if (!inited)
             {
                 inited = true;
@@ -83,7 +91,7 @@ namespace DpLib.Scripts
                 //释放前删除还残存的建筑
                 if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == technoId1)
                 {
-                    var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => technoIds.Contains(techno.Ref.Type.Ref.Base.Base.ID) && techno.Ref.Type.Ref.Base.Base.ID != technoId1, FindRange.Owner);
+                    var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => technoIds.Contains(techno.Ref.Type.Ref.Base.Base.ID) && !techno.Equals(Owner.OwnerObject), FindRange.Owner);
                     foreach (var item in li)
                     {
                         if (!item.IsNullOrExpired())
@@ -103,30 +111,103 @@ namespace DpLib.Scripts
                             Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw1);
                             pSuper.Ref.IsCharged = true;
 
-                            nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw2);
-                            nextSuper.Ref.IsCharged = true;
-                            Game.CurrentSWType = sw2.Ref.ArrayIndex;
+                            Pointer<SuperClass> nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw2);
+                            nextSuperExt = SuperWeaponExt.ExtMap.Find(nextSuper);
+                            nextSuperExt.OwnerObject.Ref.IsCharged = true;
+                            if(Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer && !isAi)
+                            {
+                                Game.CurrentSWType = sw2.Ref.ArrayIndex;
+                            }
                             inCurrentSW = true;
+
+                            if (isAi)
+                            {
+                                Pointer<SuperClass> psw2 = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw2);
+                                Pointer<SuperClass> psw3 = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw3);
+                                Pointer<SuperClass> psw4 = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw4);
+                                psw2.Ref.IsCharged = true;
+                                psw3.Ref.IsCharged = true;
+                                psw4.Ref.IsCharged = true;
+
+                                var crlocal = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+                                var technos = ObjectFinder.FindTechnosNear(crlocal, 4608);
+                                var li = technos.Where(x =>
+                                    {
+
+                                        if (x.CastToTechno(out var pxtech))
+                                        {
+                                            if (pxtech.Ref.Owner.IsNull)
+                                                return false;
+                                            return !Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(pxtech.Ref.Owner);
+                                        }
+                                        return false;
+                                    }).OrderByDescending(x => x.Ref.Base.GetCoords().DistanceFrom(crlocal)).Select(x => x.Ref.Base.GetCoords()).Take(3).ToList();
+
+
+                                if (li.Count() > 0)
+                                {
+                                    psw2.Ref.Launch(CellClass.Coord2Cell(li[0]), false);
+                                }
+                                else
+                                {
+                                    psw2.Ref.Launch(CellClass.Coord2Cell(crlocal), false);
+                                }
+
+                                if (li.Count() > 1)
+                                {
+                                    psw3.Ref.Launch(CellClass.Coord2Cell(li[1]), false);
+                                }
+                                else
+                                {
+                                    psw3.Ref.Launch(CellClass.Coord2Cell(crlocal), false);
+                                }
+
+                                if (li.Count() > 2)
+                                {
+                                    psw4.Ref.Launch(CellClass.Coord2Cell(li[2]), false);
+                                }
+                                else
+                                {
+                                    psw4.Ref.Launch(CellClass.Coord2Cell(crlocal), false);
+                                }
+                            }
+
                             break;
                         }
                     case 2:
                         {
                             //Logger.Log("丢2");
-
-                            nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw3);
-                            nextSuper.Ref.IsCharged = true;
-                            Game.CurrentSWType = sw3.Ref.ArrayIndex;
+                            if(!isAi)
+                            {
+                                Pointer<SuperClass> nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw3);
+                                nextSuperExt = SuperWeaponExt.ExtMap.Find(nextSuper);
+                                nextSuperExt.OwnerObject.Ref.IsCharged = true;
+                                if (Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer && !isAi)
+                                {
+                                    Game.CurrentSWType = sw3.Ref.ArrayIndex;
+                                }
+                            }
+                          
                             inCurrentSW = true;
                             break;
                         }
                     case 3:
                         {
                             //Logger.Log("丢3");
-
-                            nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw4);
-                            nextSuper.Ref.IsCharged = true;
-                            Game.CurrentSWType = sw4.Ref.ArrayIndex;
+                            if(!isAi)
+                            {
+                                Pointer<SuperClass> nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw4);
+                                nextSuperExt = SuperWeaponExt.ExtMap.Find(nextSuper);
+                                nextSuperExt.OwnerObject.Ref.IsCharged = true;
+                                if (Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer && !isAi)
+                                {
+                                    Game.CurrentSWType = sw4.Ref.ArrayIndex;
+                                }
+                            }
+                          
                             inCurrentSW = true;
+
                             break;
                         }
                     case 4:
@@ -136,7 +217,7 @@ namespace DpLib.Scripts
                             //sw1进入冷却
                             Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw1);
                             pSuper.Ref.IsCharged = false;
-                            pSuper.Ref.RechargeTimer.Start(600);
+                            pSuper.Ref.RechargeTimer.Resume();
                             pSuper.Ref.CameoChargeState = 0;
 
                             var technos = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => technoIds.Contains(techno.Ref.Type.Ref.Base.Base.ID), FindRange.Owner);
@@ -150,9 +231,11 @@ namespace DpLib.Scripts
                             {
                                 var t1location = techno1.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 2000);
 
+                                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("RayBurst1b"), t1location);
+
                                 if (!techno2.IsNullOrExpired())
                                 {
-                                    var bullet1 = pbullet.Ref.CreateBullet(techno2.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 50, false);
+                                    var bullet1 = pbullet.Ref.CreateBullet(techno2.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 40, false);
                                     //bullet1.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
                                     //bullet1.Ref.SetTarget(techno2.OwnerObject.Convert<AbstractClass>());
 
@@ -161,7 +244,7 @@ namespace DpLib.Scripts
 
                                 if (!techno3.IsNullOrExpired())
                                 {
-                                    var bullet2 = pbullet.Ref.CreateBullet(techno3.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 50, false);
+                                    var bullet2 = pbullet.Ref.CreateBullet(techno3.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 40, false);
                                     //bullet2.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
                                     //bullet2.Ref.SetTarget(techno3.OwnerObject.Convert<AbstractClass>());
 
@@ -170,7 +253,7 @@ namespace DpLib.Scripts
 
                                 if (!techno4.IsNullOrExpired())
                                 {
-                                    var bullet3 = pbullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 50, false);
+                                    var bullet3 = pbullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), techno1.OwnerObject, 1, warhead, 40, false);
                                     //bullet3.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
                                     //bullet3.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
 
@@ -184,7 +267,7 @@ namespace DpLib.Scripts
                 }
             }
 
-            if (inited && nextSuper.IsNotNull && !nextSuper.Ref.IsCharged)
+            if (inited && !nextSuperExt.IsNullOrExpired() && !nextSuperExt.OwnerObject.Ref.IsCharged)
             {
                 inCurrentSW = false;
             }
@@ -192,47 +275,52 @@ namespace DpLib.Scripts
             //取消超武释放时也移除所有建筑
             if (inited && inCurrentSW)
             {
-                if (Game.CurrentSWType == -1)
+                if (Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer  && !isAi)
                 {
-                    var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => technoIds.Contains(techno.Ref.Type.Ref.Base.Base.ID), FindRange.Owner);
-                    foreach (var item in li)
+                    if (Game.CurrentSWType == -1)
                     {
-                        if (!item.IsNullOrExpired())
+                        var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => technoIds.Contains(techno.Ref.Type.Ref.Base.Base.ID), FindRange.Owner);
+                        foreach (var item in li)
                         {
-                            item.OwnerObject.Ref.Base.Remove();
-                            item.OwnerObject.Ref.Base.UnInit();
+                            if (!item.IsNullOrExpired())
+                            {
+                                item.OwnerObject.Ref.Base.Remove();
+                                item.OwnerObject.Ref.Base.UnInit();
+                            }
                         }
                     }
                 }
             }
 
-            //当后三个建筑都死亡则移除第一个建筑
-            if (inited && linkSWScriptBulletCount.GetCount() >= 3)
-            {
-                linkSWScriptBulletCount.Zero();
-                var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => techno.Ref.Type.Ref.Base.Base.ID == technoId1, FindRange.Owner);
-                foreach (var item in li)
-                {
-                    if (!item.IsNullOrExpired())
-                    {
-                        item.OwnerObject.Ref.Base.Remove();
-                        item.OwnerObject.Ref.Base.UnInit();
-                    }
-                }
-            }
+            ////当后三个建筑都死亡则移除第一个建筑
+            //if (inited && linkSWScriptBulletCount.getCount() >= 3)
+            //{
+            //    linkSWScriptBulletCount.zero();
+
+            //    var li = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, techno => techno.Ref.Type.Ref.Base.Base.ID == technoId1, FindRange.Owner);
+            //    foreach (var item in li)
+            //    {
+            //        if (!item.IsNullOrExpired())
+            //        {
+            //            item.OwnerObject.Ref.Base.Remove();
+            //            item.OwnerObject.Ref.Base.UnInit();
+            //        }
+            //    }
+            //}
 
             base.OnUpdate();
         }
+
 
         private void creatBulletScriptComponent(Pointer<BulletClass> bullet, TechnoExt techno, TechnoExt techno1)
         {
             BulletExt bulletExt = BulletExt.ExtMap.Find(bullet);
 
-            if (!bulletExt.IsNullOrExpired())
+            if (!bulletExt.IsNullOrExpired() && !techno1.IsNullOrExpired())
             {
-                if (bulletExt.GameObject.GetComponent(LinkSWScriptBullet.ID) == null)
+                if (techno1.GameObject.GetComponent(LinkSWScriptBullet.ID) == null)
                 {
-                    bulletExt.GameObject.CreateScriptComponent(nameof(LinkSWScriptBullet), LinkSWScriptBullet.ID, "LinkSWScriptBullet", bulletExt, techno, techno1, linkSWScriptBulletCount);
+                    techno1.GameObject.CreateScriptComponent(nameof(LinkSWScriptBullet), LinkSWScriptBullet.ID, "LinkSWScriptBullet", techno1, techno, bulletExt, linkSWScriptBulletCount);
                 }
             }
         }
@@ -249,52 +337,95 @@ namespace DpLib.Scripts
         }
     }
 
-
     [Serializable]
     [ScriptAlias(nameof(LinkSWScriptBullet))]
-    public class LinkSWScriptBullet : BulletScriptable
+    public class LinkSWScriptBullet : TechnoScriptable
     {
         public static int ID = 85287;
 
         private TechnoExt pTechno;
-        private TechnoExt pTechno1;
+        private BulletExt bulletExt;
 
         private LinkSWScriptBulletCount linkSWScriptBulletCount;
 
-        public LinkSWScriptBullet(BulletExt owner, TechnoExt pTechno, TechnoExt pTechno1, LinkSWScriptBulletCount linkSWScriptBulletCount) : base(owner)
+        public LinkSWScriptBullet(TechnoExt owner, TechnoExt pTechno, BulletExt bulletExt, LinkSWScriptBulletCount linkSWScriptBulletCount) : base(owner)
         {
+
+
             this.pTechno = pTechno;
-            this.pTechno1 = pTechno1;
+            this.bulletExt = bulletExt;
             this.linkSWScriptBulletCount = linkSWScriptBulletCount;
 
-            //Logger.Log($"进入脚本的单位：{pTechno.Ref.Type.Ref.Base.Base.ID}");
+            //Logger.Log($"进入脚本的单位：{pTechno.OwnerObject.Ref.Type.Ref.Base.Base.ID}");
 
-            var t1location = pTechno1.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 2000);
+            var t1location = owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 2000);
+            bulletExt.OwnerObject.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
+            bulletExt.OwnerObject.Ref.SetTarget(pTechno.OwnerObject.Convert<AbstractClass>());
 
-            owner.OwnerObject.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
-            owner.OwnerObject.Ref.SetTarget(pTechno.OwnerObject.Convert<AbstractClass>());
         }
 
-        public override void OnDetonate(Pointer<CoordStruct> pCoords)
+        public override void OnUpdate()
         {
-            pTechno.OwnerObject.Ref.Base.Remove();
-            pTechno.OwnerObject.Ref.Base.UnInit();
+            if (bulletExt.IsNullOrExpired())
+            {
+                //Logger.Log($"单位被销毁：{pTechno.OwnerObject.Ref.Type.Ref.Base.Base.ID}");
+                pTechno.OwnerObject.Ref.Base.Remove();
+                pTechno.OwnerObject.Ref.Base.UnInit();
 
-            linkSWScriptBulletCount.Add();
+                linkSWScriptBulletCount.add();
+                //Logger.Log($"销毁计数{linkSWScriptBulletCount.getCount()}");
+                if (linkSWScriptBulletCount.getCount() >= 3)
+                {
+                    //Logger.Log($"单位被销毁：{pTechno1.OwnerObject.Ref.Type.Ref.Base.Base.ID}")
+                    Owner.OwnerObject.Ref.Base.Remove();
+                    Owner.OwnerObject.Ref.Base.UnInit();
+                }
 
-            DetachFromParent();
-            return;
+                DetachFromParent();
+                return;
+            }
 
-            //base.OnDetonate(pCoords);
+            base.OnUpdate();
         }
     }
 
     [Serializable]
-
     public class LinkSWScriptBulletCount
     {
-        private static int count;
+        private LinkSWScriptCounterScript linkSWScriptCounterScript;
 
+        public LinkSWScriptBulletCount(TechnoExt Owner)
+        {
+            Owner.GameObject.CreateScriptComponent(nameof(LinkSWScriptCounterScript), LinkSWScriptCounterScript.UniqueId, "LinkSWScriptCounterScript", Owner);
+            linkSWScriptCounterScript = Owner.GameObject.GetComponent<LinkSWScriptCounterScript>();
+        }
+
+        public void add()
+        {
+            linkSWScriptCounterScript.Add();
+        }
+
+        public int getCount()
+        {
+            return linkSWScriptCounterScript.GetCount();
+        }
+
+        public void zero()
+        {
+            linkSWScriptCounterScript.Zero();
+        }
+
+    }
+
+    [ScriptAlias(nameof(LinkSWScriptCounterScript))]
+    [Serializable]
+    public class LinkSWScriptCounterScript : TechnoScriptable
+    {
+        public static int UniqueId = 212231858;
+
+        public LinkSWScriptCounterScript(TechnoExt owner) : base(owner) { }
+
+        private int count = 0;
 
         public void Add()
         {
@@ -310,7 +441,65 @@ namespace DpLib.Scripts
         {
             count = 0;
         }
+
+        public override void OnUpdate()
+        {
+            if (Owner.IsNullOrExpired())
+            {
+                DetachFromParent();
+                return;
+            }
+        }
     }
+
+
+
+    [Serializable]
+    [ScriptAlias(nameof(SunStrikeLaserScript))]
+    public class SunStrikeLaserScript : BulletScriptable
+    {
+        public SunStrikeLaserScript(BulletExt owner) : base(owner) { }
+
+        private bool IsActive = false;
+
+        TechnoExt pTargetRef;
+
+        static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+
+        private Pointer<WeaponTypeClass> weapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeSWWP");
+
+        private CoordStruct start;
+
+        
+        
+
+        public override void OnUpdate()
+        {
+            if (IsActive == false)
+            {
+                IsActive = true;
+                start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                pTargetRef = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeStart"), start);
+                return;
+            }
+
+            var height = Owner.OwnerObject.Ref.Base.GetHeight();
+            var target = Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -height);
+
+            if (!pTargetRef.IsNullOrExpired())
+            {
+                var pTechno = pTargetRef.OwnerObject;
+
+                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, weapon.Ref.Damage, weapon.Ref.Warhead, 100, false);
+
+                pBullet.Ref.Base.SetLocation(target);
+                pTechno.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, weapon, start);
+                pBullet.Ref.DetonateAndUnInit(target);
+            }
+        }
+    }
+
 }
 
 
