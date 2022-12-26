@@ -96,6 +96,28 @@ namespace Extension.Utilities
             }
         }
 
+        public static DirStruct DirAdjustAngle(this DirStruct dir,int angle)
+        {
+            if (angle == 0)
+            {
+                return dir;
+            }
+            var currentVal = (int)dir.Value;
+            var adjust = (short.MaxValue - short.MinValue) / 360 * angle;
+
+            var targetVal = currentVal + adjust;
+            if (targetVal > short.MaxValue)
+            {
+                targetVal = short.MinValue + (targetVal - short.MaxValue);
+            }
+            else if (targetVal < short.MinValue)
+            {
+                targetVal = short.MaxValue - (short.MaxValue + (targetVal - short.MinValue));
+            }
+
+            return new DirStruct(targetVal);
+        }
+
         public static Direction Point2Dir(CoordStruct location, CoordStruct targetPos)
         {
             Point2D p1 = new Point2D(location.X, location.Y);
@@ -170,6 +192,8 @@ namespace Extension.Utilities
             }
             return vector;
         }
+
+        
 
 
         //public static CoordStruct GetFLH(this TechnoExt technoExt, CoordStruct flh, DirStruct dir, bool flip = false)

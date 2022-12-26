@@ -31,15 +31,18 @@ namespace Scripts
         //额外的构造函数，为了通过脚本直接附加的时候使用
         public ExtraUnitMasterScript(TechnoExt owner, ExtraUnitSetting setting) : base(owner)
         {
-            configInited = true;
-            Setting = setting.Copy();
-
+            if (!configInited)
+            {
+                configInited = true;
+                Setting = setting.Copy();
+            }
         }
 
         private List<TechnoExt> salveTechnos = new List<TechnoExt>();
 
         public ExtraUnitSettingPoco Setting;
 
+        private bool inited = false;
 
         public override void Awake()
         {
@@ -51,49 +54,42 @@ namespace Scripts
                 Setting = settingINI.Data.Copy();
                 configInited = true;
             }
-        }
 
-        public override void Start()
-        {
-            var salveIni = this.CreateRulesIniComponentWith<ExtraUnitDefination>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
 
-            //获取附加单位的定义
-            foreach (var item in Setting.ExtraUnitDefinations)
-            {
-                salveIni.Section = item;
-                var defination = salveIni.Data;
-                var type = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(defination.ExtraUnitType);
-                if (type == null)
-                    continue;
-                var techno = type.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
-                if (techno == null)
-                    continue;
-                var technoExt = TechnoExt.ExtMap.Find(techno);
-                if (technoExt.IsNullOrExpired())
-                    continue;
 
-                //var dir = defination.BindTurret && Owner.OwnerObject.Ref.HasTurret() ? GameUtil.Facing2Dir(Owner.OwnerObject.Ref.TurretFacing) : GameUtil.Facing2Dir(Owner.OwnerObject.Ref.Facing);
-                salveTechnos.Add(technoExt);
-                technoExt.GameObject.CreateScriptComponent(nameof(ExtraUnitSalveScript), ExtraUnitSalveScript.UniqueId, "ExtraUnitSalveScript", technoExt, Owner, defination);
-
-                //if (techno.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), dir)) 
-                //{
-                //    if(techno.Ref.HasTurret())
-                //    {
-                //        techno.Ref.TurretFacing.set(dir.ToDirStruct());
-                //    }
-                //  }
-                //else
-                //{
-                //    techno.Ref.Base.UnInit();
-                //}
-            }
-
-            PutSalves();
+     
         }
 
         public override void OnUpdate()
         {
+            if(!inited)
+            {
+                inited = true;
+                var salveIni = this.CreateRulesIniComponentWith<ExtraUnitDefination>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
+
+                //获取附加单位的定义
+                foreach (var item in Setting.ExtraUnitDefinations)
+                {
+                    salveIni.Section = item;
+                    var defination = salveIni.Data;
+                    var type = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(defination.ExtraUnitType);
+                    if (type == null)
+                        continue;
+                    var techno = type.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
+                    if (techno == null)
+                        continue;
+                    var technoExt = TechnoExt.ExtMap.Find(techno);
+                    if (technoExt.IsNullOrExpired())
+                        continue;
+
+                    salveTechnos.Add(technoExt);
+                    technoExt.GameObject.CreateScriptComponent(nameof(ExtraUnitSalveScript), ExtraUnitSalveScript.UniqueId, "ExtraUnitSalveScript", technoExt, Owner, defination);
+                }
+
+                PutSalves();
+
+            }
+
             if (NeedPut)
             {
                 NeedPut = false;
@@ -190,6 +186,8 @@ namespace Scripts
             Defination = defination.Copy();
         }
 
+        private bool inited = false;
+
         public override void Awake()
         {
             if (Defination.ExtraUnitPostion != null)
@@ -210,14 +208,15 @@ namespace Scripts
 
         }
 
-        public override void Start()
-        {
-            VirtualVeterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
-            base.Start();
-        }
+    
 
         public override void OnUpdate()
         {
+            if(!inited)
+            {
+                inited = true;
+                VirtualVeterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
+            }
             UpdateState();
         }
 
@@ -351,11 +350,11 @@ namespace Scripts
             {
                 if(!Defination.BindTurret)
                 {
-                    Owner.OwnerObject.Ref.Facing.set(Master.OwnerObject.Ref.Facing.current());
+                    Owner.OwnerObject.Ref.Facing.set(Master.OwnerObject.Ref.Facing.current().DirAdjustAngle(Defination.FacingAngleAdjust));
                 }
                 else
                 {
-                    Owner.OwnerObject.Ref.Facing.set(Master.OwnerObject.Ref.TurretFacing.current());
+                    Owner.OwnerObject.Ref.Facing.set(Master.OwnerObject.Ref.TurretFacing.current().DirAdjustAngle(Defination.FacingAngleAdjust));
                 }
                 
 
@@ -363,11 +362,11 @@ namespace Scripts
                 {
                     if (Master.OwnerObject.Ref.HasTurret() && Defination.BindTurret)
                     {
-                        Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.TurretFacing.current());
+                        Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.TurretFacing.current().DirAdjustAngle(Defination.FacingAngleAdjust));
                     }
                     else
                     {
-                        Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.Facing.current());
+                        Owner.OwnerObject.Ref.TurretFacing.turn(Master.OwnerObject.Ref.Facing.current().DirAdjustAngle(Defination.FacingAngleAdjust));
                     }
                 }
             }
@@ -541,6 +540,9 @@ namespace Scripts
         [INIField(Key = "ExtraUnit.SameLoseTarget")]
         public bool SameLoseTarget = true;
 
+        [INIField(Key = "ExtraUnit.FacingAngleAdjust")]
+        public int FacingAngleAdjust = 0;
+
         public ExtraUnitDefinationPoco Copy()
         {
             return new ExtraUnitDefinationPoco()
@@ -552,7 +554,8 @@ namespace Scripts
                 SameVeterancy = this.SameVeterancy,
                 SameOwner = this.SameOwner,
                 SameTarget = this.SameTarget,
-                SameLoseTarget = this.SameLoseTarget
+                SameLoseTarget = this.SameLoseTarget,
+                FacingAngleAdjust = this.FacingAngleAdjust
             };
         }
     }
@@ -597,8 +600,16 @@ namespace Scripts
         /// </summary>
         public bool SameTarget = true;
 
+        /// <summary>
+        /// 同时失去目标
         /// </summary>
         public bool SameLoseTarget = true;
+
+        /// <summary>
+        /// 朝向调整
+        /// </summary>
+        public int FacingAngleAdjust = 0;
+
     }
 
 }
