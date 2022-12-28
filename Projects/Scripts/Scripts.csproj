@@ -117,6 +117,7 @@
     <Compile Include="DeptScript.cs" />
     <Compile Include="DISKScript.cs" />
     <Compile Include="DrainPassengerScript.cs" />
+    <Compile Include="DrawableBulletScript.cs" />
     <Compile Include="FighterCmdBulletScript.cs" />
     <Compile Include="ForceSaleScript.cs" />
     <Compile Include="GGIScript.cs" />

@@ -32,6 +32,8 @@ namespace DpLib.Scripts.China
 
         static Pointer<WarheadTypeClass> supWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ZAFKSupAOEWH");
 
+        static Pointer<WarheadTypeClass> fireMultWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ZAFKFireMultWH");
+
         static Pointer<WarheadTypeClass> animWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ZAFKMockAnimWH");
 
         static Pointer<WarheadTypeClass> mk2Warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIIAttachWh");
@@ -60,71 +62,80 @@ namespace DpLib.Scripts.China
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if (atkCoolDown <= 0 && (weaponIndex == 1 || weaponIndex == 3 || weaponIndex == 5 || IsMkIIUpdated))
+            if (atkCoolDown <= 0 && (weaponIndex == 1 || weaponIndex == 3 || weaponIndex == 5) || IsMkIIUpdated)
             {
                 atkCoolDown = 10;
 
-                if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
+                Pointer<BulletClass> supBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, supWarhead, 100, false);
+                supBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+
+                if(IsMkIIUpdated)
                 {
-                    var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-
-                    var currentCell = CellClass.Coord2Cell(location);
-
-
-                    Pointer<BulletClass> supBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTechno, 1, supWarhead, 100, false);
-                    supBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-
-                    //CellSpreadEnumerator enumerator = new CellSpreadEnumerator(5);
-
-                    //foreach (CellStruct offset in enumerator)
-                    //{
-                    //    CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
-
-
-                    //    if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
-                    //    {
-                    //        if (pCell.IsNull)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        Point2D p2d = new Point2D(60, 60);
-                    //        Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
-
-
-                    //        if (TechnoExt.ExtMap.Find(target) == null)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        TechnoExt tref = default;
-
-                    //        tref.Set(TechnoExt.ExtMap.Find(target));
-
-                    //        if (tref.TryGet(out TechnoExt ptower))
-                    //        {
-                    //            if (ptower.OwnerObject.Ref.Owner.IsNull)
-                    //            {
-                    //                continue;
-                    //            }
-                    //            if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != ptower.OwnerObject.Ref.Owner.Ref.ArrayIndex && !Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(ptower.OwnerObject.Ref.Owner))
-                    //            {
-                    //                continue;
-                    //            }
-
-                    //            var id = ptower.Type.OwnerObject.Ref.Base.Base.ID.ToString();
-                    //            if (!supportIds.Contains(id))
-                    //            {
-                    //                continue;
-                    //            }
-
-                    //            Pointer<BulletClass> supBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTechno, 1, supWarhead, 100, false);
-                    //            supBullet.Ref.DetonateAndUnInit(ptower.OwnerObject.Ref.Base.Base.GetCoords());
-                    //        }
-                    //    }
-                    //}
+                    Pointer<BulletClass> damageBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, fireMultWh, 100, false);
+                    damageBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 
                 }
+                //if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
+                //{
+                //    var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+                //    var currentCell = CellClass.Coord2Cell(location);
+
+
+                //    Pointer<BulletClass> supBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTechno, 1, supWarhead, 100, false);
+                //    supBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+
+                //    //CellSpreadEnumerator enumerator = new CellSpreadEnumerator(5);
+
+                //    //foreach (CellStruct offset in enumerator)
+                //    //{
+                //    //    CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
+
+
+                //    //    if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
+                //    //    {
+                //    //        if (pCell.IsNull)
+                //    //        {
+                //    //            continue;
+                //    //        }
+
+                //    //        Point2D p2d = new Point2D(60, 60);
+                //    //        Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
+
+
+                //    //        if (TechnoExt.ExtMap.Find(target) == null)
+                //    //        {
+                //    //            continue;
+                //    //        }
+
+                //    //        TechnoExt tref = default;
+
+                //    //        tref.Set(TechnoExt.ExtMap.Find(target));
+
+                //    //        if (tref.TryGet(out TechnoExt ptower))
+                //    //        {
+                //    //            if (ptower.OwnerObject.Ref.Owner.IsNull)
+                //    //            {
+                //    //                continue;
+                //    //            }
+                //    //            if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != ptower.OwnerObject.Ref.Owner.Ref.ArrayIndex && !Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(ptower.OwnerObject.Ref.Owner))
+                //    //            {
+                //    //                continue;
+                //    //            }
+
+                //    //            var id = ptower.Type.OwnerObject.Ref.Base.Base.ID.ToString();
+                //    //            if (!supportIds.Contains(id))
+                //    //            {
+                //    //                continue;
+                //    //            }
+
+                //    //            Pointer<BulletClass> supBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pTechno, 1, supWarhead, 100, false);
+                //    //            supBullet.Ref.DetonateAndUnInit(ptower.OwnerObject.Ref.Base.Base.GetCoords());
+                //    //        }
+                //    //    }
+                //    //}
+
+                //}
             }
         }
 
