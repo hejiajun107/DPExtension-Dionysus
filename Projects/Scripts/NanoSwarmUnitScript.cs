@@ -159,9 +159,14 @@ namespace DpLib.Scripts
                                     sbullet.Ref.Detonate(location);
                                     sbullet.Ref.Base.UnInit();
                                 }
-
-
                             }
+                        }
+                        else
+                        {
+                            //停了就别动了!
+                            var sbullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
+                            sbullet.Ref.Detonate(location);
+                            sbullet.Ref.Base.UnInit();
                         }
                     }
                 }
