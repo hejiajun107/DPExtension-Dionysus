@@ -159,6 +159,7 @@
     <Compile Include="JumpetCarrierScript.cs" />
     <Compile Include="JumpWithBulletScript.cs" />
     <Compile Include="LinkSWScript.cs" />
+    <Compile Include="MMKSeekerScript.cs" />
     <Compile Include="MovingPlacementScript.cs" />
     <Compile Include="MTNKScript.cs" />
     <Compile Include="NanoSwarmUnitScript.cs" />
