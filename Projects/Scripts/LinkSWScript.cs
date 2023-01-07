@@ -77,6 +77,7 @@ namespace DpLib.Scripts
         private static Pointer<BulletTypeClass> pbullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeSWCannon");
         private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special");
 
+
         public override void OnUpdate()
         {
             var isAi = !Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman();
@@ -265,6 +266,7 @@ namespace DpLib.Scripts
                     default:
                         break;
                 }
+
             }
 
             if (inited && !nextSuperExt.IsNullOrExpired() && !nextSuperExt.OwnerObject.Ref.IsCharged)
@@ -499,6 +501,7 @@ namespace DpLib.Scripts
             }
         }
     }
+
 
 }
 

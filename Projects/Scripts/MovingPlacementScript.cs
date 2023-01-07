@@ -1,6 +1,8 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 
 namespace DpLib.Scripts
@@ -14,7 +16,7 @@ namespace DpLib.Scripts
 
         }
 
-        static Pointer<TechnoTypeClass> placementType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("VirtualPlacement");
+        static Pointer<TechnoTypeClass> placementType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("VirtualPlacement"); //TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("VirtualPlacement")
 
         TechnoExt buildingReference;
 
@@ -62,13 +64,12 @@ namespace DpLib.Scripts
                         var building = pcell.Ref.GetBuilding();
                         if (building.IsNull)
                         {
+                            //TechnoPlacer.PlaceTechnoNear(buildingReference.OwnerObject, CellClass.Coord2Cell(coord), true);
                             buildingReference.OwnerObject.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Direction.N);
                         }
                     }
                 }
             }
-
-            base.OnUpdate();
         }
 
         public override void OnRemove()
