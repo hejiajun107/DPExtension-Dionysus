@@ -58,6 +58,7 @@
     <Compile Include="AE\HonorRetiredAttachEffect.cs" />
     <Compile Include="AE\InsuranceAttachEffectScript.cs" />
     <Compile Include="AE\IronCoreAttchEffectScript.cs" />
+    <Compile Include="AE\J20ExplodeAttachEffect.cs" />
     <Compile Include="AE\KmqAnimAttachEffectScript.cs" />
     <Compile Include="AE\MotherShipAttachEffectScript.cs" />
     <Compile Include="AE\MultiFunctionAttachEffectScript.cs" />

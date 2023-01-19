@@ -142,7 +142,7 @@ namespace DPMisc.DynamicPatcher.Scripts.MyScripts.Test
             this.isRightFire = isRightFire;
             this.targetCoord = targetCoord;
 
-            Owner.OwnerObject.Ref.MoveTo(startCoord + new CoordStruct(0,0,1000), Owner.OwnerObject.Ref.Velocity);
+            Owner.OwnerObject.Ref.MoveTo(startCoord + new CoordStruct(0,0,3000), Owner.OwnerObject.Ref.Velocity);
         }
 
         private Pointer<WeaponTypeClass> weaponType => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("GOLTEffectWeapon");//扫射的武器
@@ -234,12 +234,12 @@ namespace DPMisc.DynamicPatcher.Scripts.MyScripts.Test
                 indicatorBullet.Ref.Base.UnInit();
             }
 
-            if (targetCoord.DistanceFrom(ownerTechnoExt.OwnerObject.Ref.Base.Base.GetCoords()) > ownerTechnoExt.OwnerObject.Ref.GetWeapon(weaponIndex).Ref.WeaponType.Ref.Range)
-            {
-                indicatorBullet.Ref.Base.UnInit();
-            }
+            //if (targetCoord.DistanceFrom(ownerTechnoExt.OwnerObject.Ref.Base.Base.GetCoords()) > ownerTechnoExt.OwnerObject.Ref.GetWeapon(weaponIndex).Ref.WeaponType.Ref.Range)
+            //{
+            //    indicatorBullet.Ref.Base.UnInit();
+            //}
 
-            base.OnUpdate();
+            //base.OnUpdate();
         }
     }
 }

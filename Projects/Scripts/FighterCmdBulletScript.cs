@@ -49,6 +49,8 @@ namespace DpLib.Scripts
                     return;
                 }
 
+                var fighter1 = fighters.First();
+
                 var targets = Finder.FindTechno(house, x =>
                 {
                     var coords = x.Ref.Base.Base.GetCoords();
@@ -68,6 +70,11 @@ namespace DpLib.Scripts
                             //空中目标奖励距离
                             bounsRange = 1024;
                         }
+                    }
+
+                    if (!GameUtil.CanAffectTarget(fighter1.OwnerObject, x))
+                    {
+                        return false;
                     }
 
                     if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(location) <= (1536 + bounsRange) && type != AbstractType.Building)

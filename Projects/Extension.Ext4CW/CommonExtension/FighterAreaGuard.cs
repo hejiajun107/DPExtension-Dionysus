@@ -202,6 +202,11 @@ namespace Extension.CW
                                             return false;
                                         }
 
+                                        if(!GameUtil.CanAffectTarget(Owner.OwnerObject, x))
+                                        {
+                                            return false;
+                                        }
+
                                         var bounsRange = 0;
                                         if (x.Ref.Base.GetHeight() > 10)
                                         {
