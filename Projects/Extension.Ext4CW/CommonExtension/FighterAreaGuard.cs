@@ -15,6 +15,8 @@ namespace Extension.CW
 
     public partial class TechnoGlobalExtension
     {
+        public bool HandleAirCommand = false;
+
         private bool isAreaProtecting = false;
 
         private CoordStruct areaProtectTo;
@@ -127,6 +129,10 @@ namespace Extension.CW
                         }
                     }
                    
+                    if(mission.Ref.CurrentMission != Mission.Attack)
+                    {
+                        HandleAirCommand = false;
+                    }
 
                     if (mission.Ref.CurrentMission == Mission.Move)
                     {
@@ -136,7 +142,7 @@ namespace Extension.CW
                     else if (mission.Ref.CurrentMission == Mission.Attack)
                     {
                         bool skip = true;
-                        if (isAreaProtecting && Data.FighterChaseRange != -1 && areaProtectTo != null)
+                        if (isAreaProtecting && Data.FighterChaseRange != -1 && areaProtectTo != null &&!HandleAirCommand)
                         {
                             var sourceDest = Data.FindRangeAroundSelf ? Owner.OwnerObject.Ref.Base.Base.GetCoords() : areaProtectTo;
                             if(!Owner.OwnerObject.Ref.Target.IsNull)

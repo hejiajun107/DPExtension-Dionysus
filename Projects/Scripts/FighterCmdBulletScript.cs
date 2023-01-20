@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using Extension.CW;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -120,6 +121,12 @@ namespace DpLib.Scripts
                             mission.Ref.ForceMission(Mission.Attack);
                             //mission.Ref.NextMission();
                             //mission.Ref.QueueMission(Mission.Stop, false);
+                            
+                            var gext = fighter.GameObject.GetComponent<TechnoGlobalExtension>();
+                            if(gext!=null)
+                            {
+                                gext.HandleAirCommand = true;
+                            }
 
                             index++;
                         }
