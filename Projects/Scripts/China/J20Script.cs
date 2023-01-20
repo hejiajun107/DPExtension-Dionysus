@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 
@@ -28,10 +29,32 @@ namespace DpLib.Scripts.China
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
+        static Pointer<WarheadTypeClass> speedWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XNVSpeedWh");
+
+        static Pointer<AnimTypeClass> missingAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("MissAnim");
+
         private bool IsMkIIUpdated = false;
+
+        private Random rd = new Random(114514);
+
+        private int duration = 50;
+
+        public override void OnUpdate()
+        {
+            if (duration >= 0)
+            {
+                duration--;
+            }
+        }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
+
+            Pointer<BulletClass> pinviso = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, speedWh, 100, false);
+            pinviso.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            duration = 50;
+
+
             if (IsMkIIUpdated)
             {
                 if (weaponIndex == 0)
@@ -43,12 +66,15 @@ namespace DpLib.Scripts.China
                 }
                 else
                 {
+                    var flh1 = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, Owner.OwnerObject.Ref.GetWeapon(1).Ref.FLH, false, 1);
+                    var flh2 = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, Owner.OwnerObject.Ref.GetWeapon(1).Ref.FLH, false, -1);
+
                     for (var i = 0; i < 3; i++)
                     {
                         var damage = 70;
                         Pointer<BulletClass> paa = pAAMissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, aaWarhead, 90 - i * 10, false);
                         paa.Ref.SetTarget(pTarget);
-                        paa.Ref.MoveTo(Owner.OwnerObject.Ref.Base.Base.GetCoords(), new BulletVelocity(0, 0, 0));
+                        paa.Ref.MoveTo(i % 2 == 0 ? flh1 : flh2, new BulletVelocity(rd.Next(-50,50), rd.Next(-50, 50), 0));
                     }
                 }
             }
@@ -74,6 +100,26 @@ namespace DpLib.Scripts.China
                 }
             }
 
+
+            if (duration > 0)
+            {
+                var whId = pWH.Ref.Base.ID;
+                if ("Super" == whId || whId == "MarkIISpWh")
+                {
+                    return;
+                }
+
+                int trueDamage = MapClass.GetTotalDamage(pDamage.Ref, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter);
+
+                if (trueDamage > 2)
+                {
+                    if (rd.Next(100) > 50)
+                    {
+                        pDamage.Ref = 0;
+                        YRMemory.Create<AnimClass>(missingAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    }
+                }
+            }
 
 
         }
