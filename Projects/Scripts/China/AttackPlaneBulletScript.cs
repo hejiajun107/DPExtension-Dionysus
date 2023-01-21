@@ -83,7 +83,7 @@ namespace DpLib.Scripts.China
         {
             if(Duration<=0)
             {
-                Duration = 30;
+                Duration = 35;
                 targetCoord = pTarget.Ref.GetCoords() ;
             }
             //base.OnFire(pTarget, weaponIndex);
