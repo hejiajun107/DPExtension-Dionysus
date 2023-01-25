@@ -82,6 +82,7 @@
     <Compile Include="ArmyFlagScript.cs" />
     <Compile Include="AutoDeployScript.cs" />
     <Compile Include="BulletLikeRocketScript.cs" />
+    <Compile Include="CallingAirStrikeSWScirpt.cs" />
     <Compile Include="CampFireScript.cs" />
     <Compile Include="China\AttackPlaneBulletScript.cs" />
     <Compile Include="China\CannonBulletScript.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="DebugScriptable.cs" />
     <Compile Include="DelayToAttachScript.cs" />
     <Compile Include="DeptScript.cs" />
+    <Compile Include="DetonatePassThrougthBulletScript.cs" />
     <Compile Include="DISKScript.cs" />
     <Compile Include="DrainPassengerScript.cs" />
     <Compile Include="DrawableBulletScript.cs" />

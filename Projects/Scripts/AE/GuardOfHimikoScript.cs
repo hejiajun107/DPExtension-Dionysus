@@ -35,7 +35,7 @@ namespace DpLib.Scripts.AE
             HimikoFallAnim.Ref.SetOwnerObject(ownerTechno.Convert<ObjectClass>());
 
             //Logger.Log("获得了卑弥呼AE");
-       
+
             //Logger.Log("开启护盾");
 
             //base.OnAttachEffectPut(pDamage, pWH, pAttacker, pAttackingHouse);
