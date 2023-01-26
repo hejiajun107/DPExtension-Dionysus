@@ -41,36 +41,15 @@ namespace DpLib.Scripts.Heros
                 {
                     //todo检索单位
                     var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                    var currentCell = CellClass.Coord2Cell(location);
-                    CellSpreadEnumerator enumerator = new CellSpreadEnumerator(6);
+                    //var currentCell = CellClass.Coord2Cell(location);
 
-                    List<int> codes = new List<int>();
+                    var technos = ObjectFinder.FindTechnosNear(location, 6 * Game.CellSize);
 
-                    foreach (CellStruct offset in enumerator)
+                    foreach (var tehcno in technos)
                     {
-
-                        CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
-
-                        if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
+                        if(tehcno.CastToTechno(out var ptechno))
                         {
-                            if (pCell.IsNull)
-                            {
-                                continue;
-                            }
-
-                            Point2D p2d = new Point2D(60, 60);
-                            Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
-
-
-                            if (TechnoExt.ExtMap.Find(target) == null)
-                            {
-                                continue;
-                            }
-
-                            TechnoExt tref = default;
-
-                            tref = (TechnoExt.ExtMap.Find(target));
-
+                            var tref = TechnoExt.ExtMap.Find(ptechno);
                             if (!tref.IsNullOrExpired())
                             {
                                 if (tref.OwnerObject.Ref.Owner.IsNull)
@@ -114,9 +93,89 @@ namespace DpLib.Scripts.Heros
                                     unitRecords.Add(record.Key, record);
                                 }
                             }
-                        }
 
+                        }
                     }
+                 
+
+
+
+
+                    //CellSpreadEnumerator enumerator = new CellSpreadEnumerator(6);
+
+                    //List<int> codes = new List<int>();
+
+                    //foreach (CellStruct offset in enumerator)
+                    //{
+
+                    //    CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
+
+                    //    if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
+                    //    {
+                    //        if (pCell.IsNull)
+                    //        {
+                    //            continue;
+                    //        }
+
+                    //        Point2D p2d = new Point2D(60, 60);
+                    //        Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
+
+
+                    //        if (TechnoExt.ExtMap.Find(target) == null)
+                    //        {
+                    //            continue;
+                    //        }
+
+                    //        TechnoExt tref = default;
+
+                    //        tref = (TechnoExt.ExtMap.Find(target));
+
+                    //        if (!tref.IsNullOrExpired())
+                    //        {
+                    //            if (tref.OwnerObject.Ref.Owner.IsNull)
+                    //                continue;
+                    //            //if (!Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(ptechno.OwnerObject.Ref.Owner))
+                    //            //    continue;
+                    //            if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                    //                continue;
+                    //            if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit && Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Infantry)
+                    //                continue;
+                    //            var hashCode = tref.OwnerObject.GetHashCode().ToString();
+
+
+                    //            var gext = tref.GameObject.GetComponent<TechnoGlobalExtension>();
+                    //            if (gext == null)
+                    //                continue;
+
+                    //            if (gext.Data.IsHero || gext.Data.IsEpicUnit)
+                    //                continue;
+
+                    //            var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
+
+                    //            if (unitRecords.ContainsKey(hashCode))
+                    //            {
+                    //                unitRecords[hashCode].LifeTime = lifeTime;
+                    //                unitRecords[hashCode].Location = tref.OwnerObject.Ref.Base.Base.GetCoords();
+                    //                continue;
+                    //            }
+                    //            else
+                    //            {
+                    //                var record = new MandoUnitRecord()
+                    //                {
+                    //                    Techno = tref,
+                    //                    Key = hashCode,
+                    //                    LifeTime = lifeTime,
+                    //                    Location = tref.OwnerObject.Ref.Base.Base.GetCoords(),
+                    //                    Type = tref.OwnerObject.Ref.Type.Ref.Base.Base.ID,
+                    //                    IsDead = false
+                    //                };
+
+                    //                unitRecords.Add(record.Key, record);
+                    //            }
+                    //        }
+                    //    }
+
+                    //}
 
                 }
             }
