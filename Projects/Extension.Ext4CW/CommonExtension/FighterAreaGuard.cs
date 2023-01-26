@@ -62,8 +62,9 @@ namespace Extension.CW
         [UpdateAction]
         public void TechnoClass_Update_Fighter_Area_Guard()
         {
+            if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                return;
 
-        
             if (!Data.FighterAreaGuard)
             {
                 return;
