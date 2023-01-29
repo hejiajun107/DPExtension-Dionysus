@@ -5,6 +5,8 @@ using System;
 using Extension.CW;
 using Extension.Encryption;
 using System.Runtime.Remoting.Messaging;
+using PatcherYRpp.Utilities;
+using Extension.Utilities;
 
 namespace ComponentHooks
 {
@@ -72,6 +74,51 @@ namespace ComponentHooks
                     return 0x4DB803;
                 }
             }
+            return 0;
+        }
+
+        [Hook(HookType.AresHook, Address = 0x6AB64F, Size = 6)]
+        public static unsafe UInt32 Cameo_Clicked_Action(REGISTERS* R)
+        {
+            Pointer<TechnoTypeClass> pType = (IntPtr)R->EAX;
+
+            var pHouse = HouseClass.Player;
+            if(!pType.IsNull)
+            {
+                if (pType.Ref.BuildLimit == 1)
+                {
+                    if(pHouse.Ref.CanBuild(pType, true, true) == CanBuildResult.TemporarilyUnbuildable)
+                    {
+                        Logger.Log("can build");
+                        var ext = Finder.FineOneTechno(pHouse, x => x.Ref.Type == pType, FindRange.Owner);
+                        if(ext!=null)
+                        {
+                            if(!ext.IsNullOrExpired())
+                            {
+                                var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+                                if (gext != null)
+                                {
+                                    if(gext.Data.IsEpicUnit || gext.Data.IsHero)
+                                    {
+                                        MapClass.UnselectAll();
+                                          Logger.Log("UnselectAll");
+                                        ext.OwnerObject.Ref.Base.Select();
+                                            Logger.Log("Select");
+                                        MapClass.Instance.CenterMap();
+                                            Logger.Log("CenterMap");
+
+                                        MapClass.Instance.MarkNeedsRedraw(1);
+                                            Logger.Log("Redraw");
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+                
+            }
+
             return 0;
         }
 

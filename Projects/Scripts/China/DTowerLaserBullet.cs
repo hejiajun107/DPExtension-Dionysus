@@ -33,6 +33,8 @@ namespace DpLib.Scripts.China
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DeathRayTowWH");
 
+        static Pointer<WeaponTypeClass> rayWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("DrRayFakeWeapon");
+
 
         public override void OnUpdate()
         {
@@ -54,10 +56,12 @@ namespace DpLib.Scripts.China
 
                 var usedColor = GetColor(Owner.OwnerObject.Ref.Speed);
 
-                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, usedColor, usedColor, usedColor, 10);
-                pLaser.Ref.IsHouseColor = false;
+                //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, usedColor, usedColor, usedColor, 10);
+                //pLaser.Ref.IsHouseColor = false;
 
                 Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 15, warhead, 100, true);
+                pBullet.Ref.Base.SetLocation(target);
+                pTargetRef.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, rayWeapon, start);
                 pBullet.Ref.DetonateAndUnInit(target);
             }
 
