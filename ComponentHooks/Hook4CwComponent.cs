@@ -90,30 +90,47 @@ namespace ComponentHooks
                     if(pHouse.Ref.CanBuild(pType, true, true) == CanBuildResult.TemporarilyUnbuildable)
                     {
                         Logger.Log("can build");
-                        var ext = Finder.FineOneTechno(pHouse, x => x.Ref.Type == pType, FindRange.Owner);
-                        if(ext!=null)
+                        var exts = Finder.FindTechno(pHouse, x => x.Ref.Type == pType || (pType.Ref.Base.Base.ID == "SFZS" && x.Ref.Type.Ref.Base.Base.ID == "Executioner"), FindRange.Owner);
+                        if (exts!=null && exts.Count>0)
                         {
-                            if(!ext.IsNullOrExpired())
+                            MapClass.UnselectAll();
+                        }
+                        foreach (var ext in exts)
+                        {
+                            if (ext != null)
                             {
-                                var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
-                                if (gext != null)
+                                if (!ext.IsNullOrExpired())
                                 {
-                                    if(gext.Data.IsEpicUnit || gext.Data.IsHero)
+                                    var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+                                    if (gext != null)
                                     {
-                                        MapClass.UnselectAll();
-                                          Logger.Log("UnselectAll");
-                                        ext.OwnerObject.Ref.Base.Select();
-                                            Logger.Log("Select");
-                                        MapClass.Instance.CenterMap();
-                                            Logger.Log("CenterMap");
-
-                                        MapClass.Instance.MarkNeedsRedraw(1);
-                                            Logger.Log("Redraw");
+                                        if (gext.Data.IsEpicUnit || gext.Data.IsHero)
+                                        {
+                                            if(!gext.Owner.OwnerObject.Ref.Base.InLimbo)
+                                            {
+                                                ext.OwnerObject.Ref.Base.Select();
+                                            }
+                                            else
+                                            {
+                                                if(!gext.Owner.OwnerObject.Ref.Transporter.IsNull)
+                                                {
+                                                    gext.Owner.OwnerObject.Ref.Transporter.Ref.Base.Select();
+                                                }
+                                            }
+                                        }
                                     }
                                 }
-
                             }
+
                         }
+
+                        if (exts != null && exts.Count > 0)
+                        {
+                            MapClass.Instance.CenterMap();
+                            MapClass.Instance.MarkNeedsRedraw(1);
+                        }
+
+                 
                     }
                 }
                 
