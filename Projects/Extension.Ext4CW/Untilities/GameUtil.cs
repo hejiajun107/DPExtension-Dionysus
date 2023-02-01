@@ -207,6 +207,12 @@ namespace Extension.Utilities
             return MapClass.GetTotalDamage(10000, warhead, target.Ref.Type.Ref.Base.Armor, 0) > 0;
         }
 
+        public static double BigDistanceForm(this CoordStruct source, CoordStruct target)
+        {
+            var square = (source.X / 100d - target.X / 100d) * (source.X / 100d - target.X / 100d) + (source.Y / 100d - target.Y / 100d) * (source.Y / 100d - target.Y / 100d) + (source.Z / 100d - target.Z / 100d) * (source.Z / 100d - target.Z / 100d);
+            return Math.Sqrt(square) * 100;
+
+        }
 
         //public static CoordStruct GetFLH(this TechnoExt technoExt, CoordStruct flh, DirStruct dir, bool flip = false)
         //{

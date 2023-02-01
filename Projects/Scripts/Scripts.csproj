@@ -88,6 +88,7 @@
     <Compile Include="China\CannonBulletScript.cs" />
     <Compile Include="China\CNSniperScript.cs" />
     <Compile Include="China\DamageAsFireScript.cs" />
+    <Compile Include="China\DF41BulletScript.cs" />
     <Compile Include="China\DragonBoatScript.cs" />
     <Compile Include="China\DragonTankScript.cs" />
     <Compile Include="China\DragonTowerScript.cs" />
@@ -144,7 +145,6 @@
     <Compile Include="Heros\YuriGaiScript.cs" />
     <Compile Include="Heros\YuriGuardScript.cs" />
     <Compile Include="Heros\YuriPrimeScript.cs" />
-    <Compile Include="Hook4CwComponent.cs" />
     <Compile Include="Japan\BlackHoleTrackBulletScript.cs" />
     <Compile Include="Japan\BunkerWallScript.cs" />
     <Compile Include="Japan\EKingScript.cs" />
