@@ -55,7 +55,7 @@ namespace Scripts.China
 
             if (!step1)
             {
-                if (startingSpeed <= 30)
+                if (startingSpeed <= 5)
                 {
                     startingSpeed++;
                 }
@@ -64,22 +64,23 @@ namespace Scripts.China
                 velocity.Z = startingSpeed;
                 Owner.OwnerObject.Ref.Velocity = velocity;
 
-                if (Owner.OwnerObject.Ref.Base.GetHeight() > initHeight + 1000)
+                if (Owner.OwnerObject.Ref.Base.GetHeight() > initHeight + 300)
                 {
                     var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<AbstractClass>.Zero : Owner.OwnerObject.Ref.Owner.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 1, pLaunch, 100, false);
                     bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -500));
                     step1 = true;
+                    startingSpeed = 50;
                 }
             }
             else if (!step2)
             {
-                if (startingSpeed <= 60)
+                if (startingSpeed <= 100)
                 {
                     startingSpeed++;
                 }
                 velocity.X = 0;
                 velocity.Y = 0;
-                velocity.Z = Owner.OwnerObject.Ref.Speed;
+                velocity.Z = startingSpeed; //Owner.OwnerObject.Ref.Speed;
                 Owner.OwnerObject.Ref.Velocity = velocity;
 
 
@@ -115,7 +116,7 @@ namespace Scripts.China
                 bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 
 
-                var bulletNext = pNext.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 100, pLaunch, 20, false);
+                var bulletNext = pNext.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 100, pLaunch, 40, false);
                 bulletNext.Ref.MoveTo(coord, velocity);
                 bulletNext.Ref.SetTarget(Owner.OwnerObject.Ref.Target);
                 var bulletDrop = pDrop.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 20, pFull, 60, false);
@@ -175,6 +176,9 @@ namespace Scripts.China
 
         private Pointer<WarheadTypeClass> pFull => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DFFallWave");
 
+        private int vZ = 0;
+
+
         public override void OnLateUpdate()
         {
             if (inited == false)
@@ -196,7 +200,7 @@ namespace Scripts.China
             var distance = new CoordStruct(coord.X, coord.Y, Owner.OwnerObject.Ref.TargetCoords.Z).DistanceFrom(Owner.OwnerObject.Ref.TargetCoords);
             if (!double.IsNaN(distance))
             {
-                if (distance < 35 * Game.CellSize)
+                if (distance < 50 * Game.CellSize)
                 {
                     if (flyTime > minFly)
                     {
@@ -209,26 +213,47 @@ namespace Scripts.China
 
             if (!goNext)
             {
-                if (Owner.OwnerObject.Ref.Base.GetHeight() > initHeight + 150)
-                {
-                    up = false;
-                }
-                if (Owner.OwnerObject.Ref.Base.GetHeight() < initHeight - 150)
-                {
-                    up = true;
-                }
-      
-                velocity.Z = up ? 30 : -30;
+                //if (Owner.OwnerObject.Ref.Base.GetHeight() > initHeight + 500)
+                //{
+                //    up = false;
+                //}
+                //if (Owner.OwnerObject.Ref.Base.GetHeight() < initHeight - 500)
+                //{
+                //    up = true;
+                //}
+                //if (up)
+                //{
+                //    vZ += 2;
+                //    if (vZ >= 100)
+                //    {
+                //        vZ = -20;
+                //        up = false;
+                //    }
+                //}
+                //else
+                //{
+                //    vZ -= 2;
+                //    if (vZ <= -100)
+                //    {
+                //        vZ = 20;
+                //        up = true;
+                //    }
+                //}
+
+                //velocity.Z = vZ;//up ? 60 : -60;
+                //velocity.Z = 0;
 
                 var total = Owner.OwnerObject.Ref.TargetCoords.BigDistanceForm(Owner.OwnerObject.Ref.SourceCoords);
                 if (!double.IsNaN(total))
                 {
                     var t = total / Owner.OwnerObject.Ref.Speed;
-                    Owner.OwnerObject.Ref.Velocity.X = (Owner.OwnerObject.Ref.TargetCoords.X - Owner.OwnerObject.Ref.SourceCoords.X) / t;
-                    Owner.OwnerObject.Ref.Velocity.Y = (Owner.OwnerObject.Ref.TargetCoords.Y - Owner.OwnerObject.Ref.SourceCoords.Y) / t;
+                    Owner.OwnerObject.Ref.Velocity.X = (Owner.OwnerObject.Ref.TargetCoords.X - Owner.OwnerObject.Ref.SourceCoords.X) / t * 3;
+                    Owner.OwnerObject.Ref.Velocity.Y = (Owner.OwnerObject.Ref.TargetCoords.Y - Owner.OwnerObject.Ref.SourceCoords.Y) / t * 3;
+
+                    Owner.OwnerObject.Ref.Velocity.Z = 0;
                 }
-                
-                Owner.OwnerObject.Ref.Velocity = velocity;
+
+                //Owner.OwnerObject.Ref.Velocity = velocity;
             }
             else
             {
@@ -238,7 +263,7 @@ namespace Scripts.China
 
 
                 var bulletNext = pNext.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 100, pLaunch, 25, false);
-                bulletNext.Ref.MoveTo(coord, velocity);
+                bulletNext.Ref.MoveTo(coord, Owner.OwnerObject.Ref.Velocity);
                 bulletNext.Ref.SetTarget(Owner.OwnerObject.Ref.Target);
                 var bulletDrop = pDrop.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 20, pFull, 60, false);
                 if (MapClass.Instance.TryGetCellAt(coord - new CoordStruct(0, 0, Owner.OwnerObject.Ref.Base.GetHeight()), out var pcell))
@@ -335,9 +360,9 @@ namespace Scripts.China
             {
                 if (Owner.OwnerObject.Ref.Base.GetHeight() < initHeight + 2000)
                 {
-                    velocity.Z = 40;
+                    velocity.Z = 60;
                 }
-      
+
                 var total = Owner.OwnerObject.Ref.TargetCoords.BigDistanceForm(Owner.OwnerObject.Ref.SourceCoords);
                 if (!double.IsNaN(total))
                 {
@@ -355,13 +380,13 @@ namespace Scripts.China
                 bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 
 
-                var bulletNext = pNext.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 100, pLaunch, 80, false);
+                var bulletNext = pNext.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 100, pLaunch, 100, false);
                 bulletNext.Ref.MoveTo(coord, velocity);
                 bulletNext.Ref.SetTarget(Owner.OwnerObject.Ref.Target);
                 var bulletDrop = pDrop.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 20, pFull, 60, false);
                 if (MapClass.Instance.TryGetCellAt(coord - new CoordStruct(0, 0, Owner.OwnerObject.Ref.Base.GetHeight()), out var pcell))
                 {
-                    bulletDrop.Ref.MoveTo(coord, -velocity);
+                    bulletDrop.Ref.MoveTo(coord, -Owner.OwnerObject.Ref.Velocity);
                     bulletDrop.Ref.SetTarget(pcell.Convert<AbstractClass>());
                 }
                 else
@@ -373,4 +398,33 @@ namespace Scripts.China
             }
         }
     }
+
+
+
+    [ScriptAlias(nameof(DF41BulletSpitScript))]
+    [Serializable]
+    public class DF41BulletSpitScript : BulletScriptable
+    {
+        public DF41BulletSpitScript(BulletExt owner) : base(owner)
+        {
+        }
+
+        private bool inited = false;
+
+        private int delay = 10;
+
+
+        public override void OnLateUpdate()
+        {
+            if (delay-- <= 0)
+            {
+                delay = 10;
+                var velocity = Owner.OwnerObject.Ref.Velocity;
+                var rd = new Random((int)(velocity.X + velocity.Y + velocity.Z));
+                Owner.OwnerRef.Velocity = new BulletVelocity(rd.Next(-200, 200), rd.Next(-200, 200), rd.Next(-200, 200));
+            }
+        }
+    }
+
+
 }
