@@ -89,6 +89,7 @@
     <Compile Include="China\CNSniperScript.cs" />
     <Compile Include="China\DamageAsFireScript.cs" />
     <Compile Include="China\DF41BulletScript.cs" />
+    <Compile Include="China\DonfFengHaoDangScirpt.cs" />
     <Compile Include="China\DragonBoatScript.cs" />
     <Compile Include="China\DragonTankScript.cs" />
     <Compile Include="China\DragonTowerScript.cs" />
