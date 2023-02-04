@@ -83,7 +83,7 @@ namespace Scripts
                 var location = Master.OwnerObject.Ref.Base.Base.GetCoords();
                 var velocity = Master.OwnerObject.Ref.Velocity;
 
-                Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
+                //Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
 
                 if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building)
                 {
@@ -98,10 +98,6 @@ namespace Scripts
                 if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
                 {
                     Owner.OwnerObject.Ref.Base.MarkForRedraw();
-                }
-                else
-                {
-                    Owner.OwnerObject.Convert<FootClass>().Ref.Locomotor.Lock();
                 }
             }
             else

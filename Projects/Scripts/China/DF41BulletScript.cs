@@ -69,7 +69,7 @@ namespace Scripts.China
                 if (Owner.OwnerObject.Ref.Base.GetHeight() > initHeight + 300)
                 {
                     var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<AbstractClass>.Zero : Owner.OwnerObject.Ref.Owner.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 1, pLaunch, 100, false);
-                    bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -500));
+                    bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -300)); //was 500
                     step1 = true;
                     startingSpeed = 50;
                 }
