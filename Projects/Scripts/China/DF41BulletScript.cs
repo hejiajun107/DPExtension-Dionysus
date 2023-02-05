@@ -515,7 +515,7 @@ namespace Scripts.China
                     targetCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 }
 
-                var technos = ObjectFinder.FindTechnosNear(targetCoord, 10);
+                var technos = ObjectFinder.FindTechnosNear(targetCoord, 8 * Game.CellSize);
 
                 var techno10 = technos.Where(x =>
                 {
