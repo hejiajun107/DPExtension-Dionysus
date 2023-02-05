@@ -4,6 +4,7 @@ using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -337,7 +338,7 @@ namespace Scripts.China
 
         private Random rd;
 
-        private int maxDistance = 15;
+        private int maxDistance = 20;
 
 
         public override void OnLateUpdate()
@@ -421,6 +422,151 @@ namespace Scripts.China
 
 
 
+    [ScriptAlias(nameof(DF41Bullet4Script))]
+    [Serializable]
+    public class DF41Bullet4Script : BulletScriptable
+    {
+        public DF41Bullet4Script(BulletExt owner) : base(owner)
+        {
+        }
+
+
+        private bool inited = false;
+
+        private int minFly = 10;
+        private int maxFly = 100;
+
+        private int minRange = 15;
+
+        public int flyTime = 0;
+
+        private bool up = true;
+        private int initHeight = 0;
+
+
+        private Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisble");
+
+
+        private Pointer<WarheadTypeClass> pPush => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DFPushWave");
+
+        private Pointer<WarheadTypeClass> pFull => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DFFallWave");
+
+        private Pointer<WeaponTypeClass> pWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("DF41SpitWeapon");
+
+        private Random rd;
+
+        private int maxDistance = 15;
+
+
+        public override void OnLateUpdate()
+        {
+            if (inited == false)
+            {
+                inited = true;
+                initHeight = Owner.OwnerObject.Ref.Base.GetHeight();
+                var myCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                rd = new Random(myCoord.X + myCoord.Y - myCoord.Z);
+                maxDistance = maxDistance + rd.Next(-2, 2);
+            }
+
+            flyTime++;
+
+            bool goNext = false;
+
+
+
+            var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+            var distance = new CoordStruct(coord.X, coord.Y, Owner.OwnerObject.Ref.TargetCoords.Z).BigDistanceForm(Owner.OwnerObject.Ref.TargetCoords);
+            if (!double.IsNaN(distance))
+            {
+                if (distance < maxDistance * Game.CellSize)
+                {
+                    if (flyTime > minFly)
+                    {
+                        goNext = true;
+                    }
+                }
+            }
+
+            var velocity = Owner.OwnerObject.Ref.Velocity;
+
+            if (!goNext)
+            {
+                if (Owner.OwnerObject.Ref.Base.GetHeight() > initHeight - 1500)
+                {
+                    velocity.Z = -60;
+                }
+
+                Owner.OwnerObject.Ref.Velocity = velocity;
+            }
+            else
+            {
+
+                var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<AbstractClass>.Zero : Owner.OwnerObject.Ref.Owner.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, 1, pPush, 100, false);
+                bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+
+                CoordStruct targetCoord;
+                if (!Owner.OwnerObject.Ref.Target.IsNull)
+                {
+                    targetCoord = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
+                }
+                else
+                {
+                    targetCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                }
+
+                var technos = ObjectFinder.FindTechnosNear(targetCoord, 10);
+
+                var techno10 = technos.Where(x =>
+                {
+                    if (x.CastToTechno(out var px))
+                    {
+                        if (!Owner.OwnerObject.Ref.Owner.IsNull)
+                        {
+                            if (!px.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner.Ref.Owner))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }).OrderBy(x => x.Ref.Base.GetCoords().DistanceFrom(targetCoord)).Take(10).ToList();
+
+                if (techno10.Count() > 0)
+                {
+                    foreach (var pobj in techno10)
+                    {
+                        CreateBulletToTarget(pobj.Convert<AbstractClass>());
+                    }
+                }
+           
+                if(techno10.Count<10)
+                {
+                    var left = 10 - techno10.Count();
+                    for (var i = 0; i < left; i++)
+                    {
+                        
+                        if(MapClass.Instance.TryGetCellAt(targetCoord + new CoordStruct(rd.Next(-Game.CellSize * 6, Game.CellSize * 6), rd.Next(-Game.CellSize * 6, Game.CellSize * 6),0),out var pcell))
+                        {
+                            CreateBulletToTarget(pcell.Convert<AbstractClass>());
+                        }
+                    }
+                }
+
+                Owner.OwnerObject.Ref.Base.UnInit();
+            }
+        }
+
+        private void CreateBulletToTarget(Pointer<AbstractClass> target)
+        {
+            var bullet = pWeapon.Ref.Projectile.Ref.CreateBullet(target, Owner.OwnerObject.Ref.Owner.IsNull ? Pointer<TechnoClass>.Zero : Owner.OwnerObject.Ref.Owner, pWeapon.Ref.Damage, pWeapon.Ref.Warhead, pWeapon.Ref.Speed, pWeapon.Ref.Warhead.Ref.Bright);
+            bullet.Ref.MoveTo(Owner.OwnerObject.Ref.Base.Base.GetCoords(), new BulletVelocity(rd.Next(-200, 200), rd.Next(-200, 200), rd.Next(-200, 200)));
+            bullet.Ref.SetTarget(target);
+        }
+
+    }
+
+
     [ScriptAlias(nameof(DF41BulletSpitScript))]
     [Serializable]
     public class DF41BulletSpitScript : BulletScriptable
@@ -444,6 +590,8 @@ namespace Scripts.China
                 Owner.OwnerRef.Velocity = new BulletVelocity(rd.Next(-200, 200), rd.Next(-200, 200), rd.Next(-200, 200));
             }
         }
+
+
     }
 
 

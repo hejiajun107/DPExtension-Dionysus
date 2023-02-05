@@ -20,6 +20,8 @@
     "Extension.AttachEffectScript.dll",
     "Extension.Encryption.dll",
 
+    "Newtonsoft.Json.dll",
+
     "Microsoft.VisualStudio.Interop.dll",
     "XLua.Mini"
   ],

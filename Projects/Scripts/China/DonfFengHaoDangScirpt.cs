@@ -27,13 +27,13 @@ namespace Scripts.China
         {
             var technos = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, t => ((t.Ref.Type.Ref.Base.Base.ID == "DF41BS") && t.Ref.Base.InLimbo == false), FindRange.Owner);
 
-            foreach(var techno in technos)
+            foreach (var techno in technos)
             {
                 if (!techno.IsNullOrExpired())
                 {
                     techno.OwnerObject.Ref.Ammo = 1;
                     var mission = techno.OwnerObject.Convert<MissionClass>();
-                    if(mission.Ref.CurrentMission!=Mission.Unload)
+                    if (mission.Ref.CurrentMission != Mission.Unload  && mission.Ref.CurrentMission != Mission.Construction)
                     {
                         mission.Ref.ForceMission(Mission.Stop);
 
