@@ -64,8 +64,9 @@ namespace Scripts
 
         public INIComponentWith<DisplayData> ini;
 
+        private static Dictionary<string, YRClassHandle<BSurface>> surfacesCache = new Dictionary<string, YRClassHandle<BSurface>>();
+        private static Dictionary<string, int> offsetYCache = new Dictionary<string, int>();
 
-        private YRClassHandle<BSurface> surface;
         private bool loaded = false;
 
         private const int widgetWidth = 300;
@@ -87,50 +88,65 @@ namespace Scripts
 
         public void CreateTexture()
         {
-            if (surface == null)
+            var key = Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID;
+            if (!surfacesCache.ContainsKey(key))
             {
-                Font font = new Font("Microsoft YaHei", 8, FontStyle.Regular);
-
-                //ini.Data.DrawingText
-                if (dics.ContainsKey(ini.Data.DrawingText))
+                //if (surface == null)
                 {
-                    var text = dics[ini.Data.DrawingText];
+                    Font font = new Font("Microsoft YaHei", 8, FontStyle.Regular);
 
-                    var stext = string.Empty;
+                    //ini.Data.DrawingText
+                    if (dics.ContainsKey(ini.Data.DrawingText))
+                    {
+                        var text = dics[ini.Data.DrawingText];
 
-                    //var sizeF = g1.MeasureString("你好", font, new SizeF(100, 1000), StringFormat.GenericTypographic);
+                        var stext = string.Empty;
 
-                    var sizeF = EstimateSize(text, out stext);
-                    offsetY = (int)sizeF.Height;
+                        //var sizeF = g1.MeasureString("你好", font, new SizeF(100, 1000), StringFormat.GenericTypographic);
 
-                    var bitmap = new Bitmap((int)sizeF.Width + 40, (int)sizeF.Height + 2);
-                    Graphics g = Graphics.FromImage(bitmap);
-                    StringFormat format = new StringFormat(StringFormatFlags.NoClip);
-                    SolidBrush blackBrush = new SolidBrush(Color.FromArgb(255, 30, 30, 30));
-                    SolidBrush whiteBrush = new SolidBrush(Color.White);
-                    Pen whitePen = new Pen(whiteBrush, 2);
-                    var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                        var sizeF = EstimateSize(text, out stext);
+                        offsetY = (int)sizeF.Height;
 
-                    g.FillRectangle(blackBrush, rect);
-                    g.DrawRectangle(whitePen, rect);
-                    g.DrawString(stext, font, whiteBrush, PointF.Empty, format);
-                    g.Save();
+                        var bitmap = new Bitmap((int)sizeF.Width + 40, (int)sizeF.Height + 2);
+                        Graphics g = Graphics.FromImage(bitmap);
+                        StringFormat format = new StringFormat(StringFormatFlags.NoClip);
+                        SolidBrush blackBrush = new SolidBrush(Color.FromArgb(255, 30, 30, 30));
+                        SolidBrush whiteBrush = new SolidBrush(Color.White);
+                        Pen whitePen = new Pen(whiteBrush, 2);
+                        var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                    bitmap = bitmap.Clone(rect, PixelFormat.Format16bppRgb565);
-                    surface = new YRClassHandle<BSurface>(bitmap.Width, bitmap.Height);
+                        g.FillRectangle(blackBrush, rect);
+                        g.DrawRectangle(whitePen, rect);
+                        g.DrawString(stext, font, whiteBrush, PointF.Empty, format);
+                        g.Save();
+
+                        bitmap = bitmap.Clone(rect, PixelFormat.Format16bppRgb565);
+                        var surface = new YRClassHandle<BSurface>(bitmap.Width, bitmap.Height);
 
 
-                    var data = bitmap.LockBits(rect, ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                        var data = bitmap.LockBits(rect, ImageLockMode.ReadOnly, bitmap.PixelFormat);
 
-                    surface.Ref.Allocate(2);
-                    Helpers.Copy(data.Scan0, surface.Ref.BaseSurface.Buffer, data.Stride * data.Height);
+                        surface.Ref.Allocate(2);
+                        Helpers.Copy(data.Scan0, surface.Ref.BaseSurface.Buffer, data.Stride * data.Height);
 
-                    bitmap.UnlockBits(data);
+                        bitmap.UnlockBits(data);
 
+                        offsetYCache.Add(key, offsetY);
+                        surfacesCache.Add(key, surface);
+
+                        loaded = true;
+                    }
+                }
+
+            }
+            else
+            {
+                if(dics.ContainsKey(ini.Data.DrawingText))
+                {
                     loaded = true;
+                    offsetY = offsetYCache.ContainsKey(key) ? offsetYCache[key] : 0;
                 }
             }
-
         }
 
         private SizeF EstimateSize(string text, out string lined)
@@ -177,28 +193,32 @@ namespace Scripts
 
         public override void OnRender()
         {
+            var key = Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID;
+
             if (loaded)
             {
-                if (Owner.OwnerObject.Ref.Base.IsSelected)
+                if (Owner.OwnerObject.Ref.Base.IsSelected && !Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
                 {
-                    if (Owner.OwnerObject.Ref.Base.InLimbo || !Owner.OwnerObject.Ref.Base.IsOnMap)
-                        return;
-                    ref var srcSurface = ref surface.Ref.BaseSurface;
+                    var surface = surfacesCache.ContainsKey(key) ? surfacesCache[key] : null;
+                    if (surface != null)
+                    {
+                        ref var srcSurface = ref surface.Ref.BaseSurface;
 
-                    Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
-                    //point += new Point2D(0, -srcSurface.Height);
+                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
+                        //point += new Point2D(0, -srcSurface.Height);
 
-                    //var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - srcSurface.Height / 2,
-                    //    srcSurface.Width, srcSurface.Height);
-                    var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - offsetY - 50,
-                            srcSurface.Width, srcSurface.Height);
+                        //var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - srcSurface.Height / 2,
+                        //    srcSurface.Width, srcSurface.Height);
+                        var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - offsetY - 50,
+                                srcSurface.Width, srcSurface.Height);
 
-                    rect = Rectangle.Intersect(rect, new Rectangle(0, 0, Surface.Current.Ref.Width, Surface.Current.Ref.Height));
+                        rect = Rectangle.Intersect(rect, new Rectangle(0, 0, Surface.Current.Ref.Width, Surface.Current.Ref.Height));
 
-                    var drawRect = new RectangleStruct(rect.X, rect.Y, rect.Width, rect.Height);
+                        var drawRect = new RectangleStruct(rect.X, rect.Y, rect.Width, rect.Height);
 
-                    Surface.Current.Ref.Blit(Surface.ViewBound, drawRect
-                        , surface.Pointer.Convert<Surface>(), srcSurface.GetRect(), srcSurface.GetRect(), true, true);
+                        Surface.Current.Ref.Blit(Surface.ViewBound, drawRect
+                            , surface.Pointer.Convert<Surface>(), srcSurface.GetRect(), srcSurface.GetRect(), true, true);
+                    }
                 }
             }
         }
