@@ -90,6 +90,18 @@ namespace DpLib.Scripts
                     return;
                 }
 
+                List<FighetCmdTargetInfo> targetsRecords = new List<FighetCmdTargetInfo>();
+               
+                foreach(var target in targets)
+                {
+                    targetsRecords.Add(new FighetCmdTargetInfo()
+                    {
+                        CurrentDamage = 0,
+                        TechnoExt = target,
+                        TotalHealth = Owner.OwnerObject.Ref.Base.Health
+                    });
+                }
+
                 var index = 0;
 
                 foreach (var fighter in fighters)
@@ -110,6 +122,18 @@ namespace DpLib.Scripts
                         }
 
                         var target = targets[index];
+
+                        var record = targetsRecords[index];
+                        if (record.CurrentDamage >= record.TotalHealth)
+                        {
+                            var nextRecord = targetsRecords.Where(x => x.CurrentDamage < x.TotalHealth).FirstOrDefault();
+                            if (nextRecord != null)
+                            {
+                                target = nextRecord.TechnoExt;
+                                record = nextRecord;
+                            }
+                        }
+
                         if (!target.IsNullOrExpired())
                         {
                             fighter.OwnerObject.Ref.SetTarget(target.OwnerObject.Convert<AbstractClass>());
@@ -128,11 +152,31 @@ namespace DpLib.Scripts
                                 gext.HandleAirCommand = true;
                             }
 
+                            //预估伤害
+                            var weaponIndex = fighter.OwnerObject.Ref.SelectWeapon(target.OwnerObject.Convert<AbstractClass>());
+                            var weapon = fighter.OwnerObject.Ref.GetWeapon(weaponIndex);
+                            if (!weapon.IsNull)
+                            {
+                                var singleDamge = MapClass.GetTotalDamage(weapon.Ref.WeaponType.Ref.Damage * weapon.Ref.WeaponType.Ref.Burst, weapon.Ref.WeaponType.Ref.Warhead, target.OwnerObject.Ref.Type.Ref.Base.Armor, 0);
+                                var total = singleDamge * fighter.OwnerObject.Ref.Ammo;
+                                record.CurrentDamage += total;
+                            }
+
                             index++;
                         }
                     }
                 }
             }
         }
+    }
+
+    [Serializable]
+    public class FighetCmdTargetInfo
+    {
+        public int CurrentDamage { get; set; } = 0;
+
+        public int TotalHealth { get; set; } = 0;
+
+        public TechnoExt TechnoExt { get; set; }
     }
 }
