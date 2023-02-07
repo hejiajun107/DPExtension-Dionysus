@@ -78,10 +78,23 @@ namespace DpLib.Scripts
                         return false;
                     }
 
+                    if (x.Ref.Base.IsDisguised())
+                    {
+                        var fakeHouse = x.Ref.Base.GetDisguiseHouse(true);
+                        if (!fakeHouse.IsNull)
+                        {
+                            if (fakeHouse.Ref.IsAlliedWith(house))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
                     if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(location) <= (1536 + bounsRange) && type != AbstractType.Building)
                     {
                         return true;
                     }
+                   
                     return false;
                 }, FindRange.Enermy);
 
@@ -153,14 +166,8 @@ namespace DpLib.Scripts
                             }
 
                             //预估伤害
-                            var weaponIndex = fighter.OwnerObject.Ref.SelectWeapon(target.OwnerObject.Convert<AbstractClass>());
-                            var weapon = fighter.OwnerObject.Ref.GetWeapon(weaponIndex);
-                            if (!weapon.IsNull)
-                            {
-                                var singleDamge = MapClass.GetTotalDamage(weapon.Ref.WeaponType.Ref.Damage * weapon.Ref.WeaponType.Ref.Burst, weapon.Ref.WeaponType.Ref.Warhead, target.OwnerObject.Ref.Type.Ref.Base.Armor, 0);
-                                var total = singleDamge * fighter.OwnerObject.Ref.Ammo;
-                                record.CurrentDamage += total;
-                            }
+                            var estimateDamage = GameUtil.GetEstimateDamage(fighter.OwnerObject, target.OwnerObject, true);
+                            record.CurrentDamage += estimateDamage;
 
                             index++;
                         }

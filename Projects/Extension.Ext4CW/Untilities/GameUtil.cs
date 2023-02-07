@@ -207,6 +207,20 @@ namespace Extension.Utilities
             return MapClass.GetTotalDamage(10000, warhead, target.Ref.Type.Ref.Base.Armor, 0) > 0;
         }
 
+        public static int GetEstimateDamage(Pointer<TechnoClass> techno, Pointer<TechnoClass> target, bool considerAmmo = false)
+        {
+            var weaponIndex = techno.Ref.SelectWeapon(target.Convert<AbstractClass>());
+            var weapon = techno.Ref.GetWeapon(weaponIndex);
+            if (!weapon.IsNull)
+            {
+                var singleDamge = MapClass.GetTotalDamage(weapon.Ref.WeaponType.Ref.Damage * weapon.Ref.WeaponType.Ref.Burst, weapon.Ref.WeaponType.Ref.Warhead, target.Ref.Type.Ref.Base.Armor, 0);
+                var total = singleDamge * (considerAmmo ? techno.Ref.Ammo : 1) * techno.Ref.FirepowerMultiplier / (target.Ref.ArmorMultiplier);
+                return (int)total;
+            }
+
+            return 0;
+        }
+
         public static double BigDistanceForm(this CoordStruct source, CoordStruct target)
         {
             var square = (source.X / 100d - target.X / 100d) * (source.X / 100d - target.X / 100d) + (source.Y / 100d - target.Y / 100d) * (source.Y / 100d - target.Y / 100d) + (source.Z / 100d - target.Z / 100d) * (source.Z / 100d - target.Z / 100d);
