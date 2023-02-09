@@ -30,6 +30,8 @@ namespace Scripts
         public override void Awake()
         {
             ini = Owner.GameObject.CreateRulesIniComponentWith<DisplayData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
+            art = Owner.GameObject.CreateArtIniComponentWith<DisplayDataArt>(string.IsNullOrEmpty(ini.Data.Image)? Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID : ini.Data.Image);
+
             if (!string.IsNullOrEmpty(ini.Data.DrawingText))
             {
                 CreateTexture();
@@ -63,6 +65,8 @@ namespace Scripts
 
 
         public INIComponentWith<DisplayData> ini;
+        public INIComponentWith<DisplayDataArt> art;
+
 
         private static Dictionary<string, YRClassHandle<BSurface>> surfacesCache = new Dictionary<string, YRClassHandle<BSurface>>();
         private static Dictionary<string, int> offsetYCache = new Dictionary<string, int>();
@@ -105,19 +109,40 @@ namespace Scripts
                         //var sizeF = g1.MeasureString("你好", font, new SizeF(100, 1000), StringFormat.GenericTypographic);
 
                         var sizeF = EstimateSize(text, out stext);
-                        offsetY = (int)sizeF.Height;
 
-                        var bitmap = new Bitmap((int)sizeF.Width + 40, (int)sizeF.Height + 2);
+                        int widthRect = (int)sizeF.Width + 40;
+                        int heightRect = (int)sizeF.Height + 2;
+
+                        var bitmap = new Bitmap((int)sizeF.Width + 40, (int)sizeF.Height + 2 + (ini.Data.ShowCameo ? 60 : 0));
+
+                        offsetY = bitmap.Height;
+
                         Graphics g = Graphics.FromImage(bitmap);
                         StringFormat format = new StringFormat(StringFormatFlags.NoClip);
                         SolidBrush blackBrush = new SolidBrush(Color.FromArgb(255, 30, 30, 30));
                         SolidBrush whiteBrush = new SolidBrush(Color.White);
                         Pen whitePen = new Pen(whiteBrush, 2);
+
+                        var fillrect = new Rectangle(0, 0, widthRect, heightRect);
                         var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
 
-                        g.FillRectangle(blackBrush, rect);
-                        g.DrawRectangle(whitePen, rect);
+                        g.FillRectangle(blackBrush, fillrect);
+                        g.DrawRectangle(whitePen, fillrect);
                         g.DrawString(stext, font, whiteBrush, PointF.Empty, format);
+                        if (ini.Data.ShowCameo)
+                        {
+                            var cameoName = !string.IsNullOrEmpty(art.Data.Cameo) ? art.Data.Cameo + ".png" : (!string.IsNullOrEmpty(art.Data.CameoPCX) ? art.Data.CameoPCX.ToLower().Replace(".pcx", ".png") : string.Empty);
+                            if (!string.IsNullOrEmpty(cameoName))
+                            {
+                                string cameoPath = $"./DynamicPatcher/Cameos/{cameoName}";
+                                if (File.Exists(cameoPath))
+                                {
+                                    var cameoImage = new Bitmap(cameoPath);
+                                    g.DrawImage(cameoImage, new Point((widthRect - 60) / 2, (int)sizeF.Height + 12));
+                                }
+                            }
+                        }
+
                         g.Save();
 
                         bitmap = bitmap.Clone(rect, PixelFormat.Format16bppRgb565);
@@ -141,7 +166,7 @@ namespace Scripts
             }
             else
             {
-                if(dics.ContainsKey(ini.Data.DrawingText))
+                if (dics.ContainsKey(ini.Data.DrawingText))
                 {
                     loaded = true;
                     offsetY = offsetYCache.ContainsKey(key) ? offsetYCache[key] : 0;
@@ -195,31 +220,37 @@ namespace Scripts
         {
             var key = Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID;
 
-            if (loaded)
+
+            if (Owner.OwnerObject.Ref.Owner == HouseClass.Player)
             {
                 if (Owner.OwnerObject.Ref.Base.IsSelected && !Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
                 {
-                    var surface = surfacesCache.ContainsKey(key) ? surfacesCache[key] : null;
-                    if (surface != null)
+                    if (loaded)
                     {
-                        ref var srcSurface = ref surface.Ref.BaseSurface;
+                        var surface = surfacesCache.ContainsKey(key) ? surfacesCache[key] : null;
+                        if (surface != null)
+                        {
+                            ref var srcSurface = ref surface.Ref.BaseSurface;
 
-                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
-                        //point += new Point2D(0, -srcSurface.Height);
+                            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
+                            //point += new Point2D(0, -srcSurface.Height);
 
-                        //var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - srcSurface.Height / 2,
-                        //    srcSurface.Width, srcSurface.Height);
-                        var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - offsetY - 50,
-                                srcSurface.Width, srcSurface.Height);
+                            //var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - srcSurface.Height / 2,
+                            //    srcSurface.Width, srcSurface.Height);
+                            var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - offsetY - 50,
+                                    srcSurface.Width, srcSurface.Height);
 
-                        rect = Rectangle.Intersect(rect, new Rectangle(0, 0, Surface.Current.Ref.Width, Surface.Current.Ref.Height));
+                            rect = Rectangle.Intersect(rect, new Rectangle(0, 0, Surface.Current.Ref.Width, Surface.Current.Ref.Height));
 
-                        var drawRect = new RectangleStruct(rect.X, rect.Y, rect.Width, rect.Height);
+                            var drawRect = new RectangleStruct(rect.X, rect.Y, rect.Width, rect.Height);
 
-                        Surface.Current.Ref.Blit(Surface.ViewBound, drawRect
-                            , surface.Pointer.Convert<Surface>(), srcSurface.GetRect(), srcSurface.GetRect(), true, true);
+                            Surface.Current.Ref.Blit(Surface.ViewBound, drawRect
+                                , surface.Pointer.Convert<Surface>(), srcSurface.GetRect(), srcSurface.GetRect(), true, true);
+                        }
                     }
+
                 }
+
             }
         }
     }
@@ -229,5 +260,22 @@ namespace Scripts
     {
         [INIField(Key = "TechnoDisplay.DrawingText")]
         public string DrawingText;
+
+        [INIField(Key = "TechnoDisplay.ShowCameo")]
+        public bool ShowCameo = true;
+
+        [INIField(Key = "Image")]
+        public string Image;
+    }
+
+    [Serializable]
+    public class DisplayDataArt : INIAutoConfig
+    {
+        [INIField(Key = "Cameo")]
+
+        public string Cameo;
+
+        [INIField(Key = "CameoPCX")]
+        public string CameoPCX;
     }
 }
