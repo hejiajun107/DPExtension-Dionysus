@@ -100,6 +100,7 @@
     <Compile Include="China\DragonTowerScript.cs" />
     <Compile Include="China\DTowercript.cs" />
     <Compile Include="China\DTowerLaserBullet.cs" />
+    <Compile Include="China\FloodDragonBulletScript.cs" />
     <Compile Include="China\IonCannonReshadeBulletScript.cs" />
     <Compile Include="China\IonCannonBulletScript.cs" />
     <Compile Include="China\IonCannonScript.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Japan\EpicVirusScript.cs" />
     <Compile Include="Japan\JEpicScript.cs" />
     <Compile Include="Japan\MiniSubScript.cs" />
+    <Compile Include="Japan\NanoCoreBuildingScript.cs" />
     <Compile Include="Japan\NanoLinkScript.cs" />
     <Compile Include="Japan\SakuraScript.cs" />
     <Compile Include="Japan\StandToHideScript.cs" />

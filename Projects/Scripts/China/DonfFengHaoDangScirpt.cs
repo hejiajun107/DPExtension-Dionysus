@@ -27,6 +27,8 @@ namespace Scripts.China
         {
             var technos = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, t => ((t.Ref.Type.Ref.Base.Base.ID == "DF41BS") && t.Ref.Base.InLimbo == false), FindRange.Owner);
 
+            var first = true;
+
             foreach (var techno in technos)
             {
                 if (!techno.IsNullOrExpired())
@@ -37,7 +39,12 @@ namespace Scripts.China
                     {
                         mission.Ref.ForceMission(Mission.Stop);
 
-                        var tcoord = coord + new CoordStruct(rd.Next(-3000, 3000), rd.Next(-3000, 3000), 0);
+                        var tcoord = coord; 
+                        if(!first)
+                        {
+                            tcoord = tcoord + new CoordStruct(rd.Next(-3000, 3000), rd.Next(-3000, 3000), 0);
+                        }
+                        first = false;
 
                         if (MapClass.Instance.TryGetCellAt(tcoord, out var pcell))
                         {
