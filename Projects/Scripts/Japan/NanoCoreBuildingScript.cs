@@ -29,9 +29,9 @@ namespace Scripts.Japan
             base.Awake();
         }
 
-
-        public override void OnPut(CoordStruct coord, Direction faceDir)
+        public override void Start()
         {
+            var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
             if (Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
                 var technos = ObjectFinder.FindTechnosNear(coord, 7 * Game.CellSize);
@@ -86,6 +86,11 @@ namespace Scripts.Japan
             }
 
             DetachFromParent();
+        }
+
+        public override void OnPut(CoordStruct coord, Direction faceDir)
+        {
+         
         }
     }
 
