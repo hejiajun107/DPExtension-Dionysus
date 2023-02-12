@@ -131,7 +131,11 @@ namespace Scripts
                         g.DrawString(stext, font, whiteBrush, PointF.Empty, format);
                         if (ini.Data.ShowCameo)
                         {
-                            var cameoName = !string.IsNullOrEmpty(art.Data.Cameo) ? art.Data.Cameo + ".png" : (!string.IsNullOrEmpty(art.Data.CameoPCX) ? art.Data.CameoPCX.ToLower().Replace(".pcx", ".png") : string.Empty);
+                            var cameoName = ini.Data.CameoBitmap;
+                            if(string.IsNullOrEmpty(cameoName))
+                            {
+                                cameoName = !string.IsNullOrEmpty(art.Data.Cameo) ? art.Data.Cameo + ".png" : (!string.IsNullOrEmpty(art.Data.CameoPCX) ? art.Data.CameoPCX.ToLower().Replace(".pcx", ".png") : string.Empty);
+                            }
                             if (!string.IsNullOrEmpty(cameoName))
                             {
                                 string cameoPath = $"./DynamicPatcher/Cameos/{cameoName}";
@@ -263,6 +267,9 @@ namespace Scripts
 
         [INIField(Key = "TechnoDisplay.ShowCameo")]
         public bool ShowCameo = true;
+
+        [INIField(Key = "TechnoDisplay.CameoBitmap")]
+        public string CameoBitmap = "";
 
         [INIField(Key = "Image")]
         public string Image;

@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.INI;
 using Extension.Script;
@@ -90,7 +91,7 @@ namespace Scripts.Japan
 
         public override void OnPut(CoordStruct coord, Direction faceDir)
         {
-         
+
         }
     }
 
@@ -111,6 +112,8 @@ namespace Scripts.Japan
 
         private string cameo;
 
+        private string cameoPCX;
+
         public override void Awake()
         {
 
@@ -125,12 +128,54 @@ namespace Scripts.Japan
 
                 var art = Owner.GameObject.CreateArtIniComponentWith<NanoCoreDataArt>(image);
 
+                cameoPCX = art.Data.CameoPCX;
                 cameo = !string.IsNullOrEmpty(art.Data.Cameo) ? art.Data.Cameo : (!string.IsNullOrEmpty(art.Data.CameoPCX) ? art.Data.CameoPCX.Replace(".pcx", "") : string.Empty);
             }
         }
 
         public override void OnRender()
         {
+            //Logger.Log(cameoPCX);
+            //if (Owner.OwnerObject.Ref.Base.IsSelected && !Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
+            //{
+            //}
+            //else
+            //{
+            //    return;
+            //}
+            //if (!string.IsNullOrEmpty(cameoPCX))
+            //{
+            //    Logger.Log("before");
+            //    PCX.Instance.Ref.LoadFile(cameoPCX);
+            //    Logger.Log("load");
+            //    var surface = PCX.Instance.Ref.GetSurface(cameoPCX, Pointer<BytePalette>.Zero);
+            //    Logger.Log("surface");
+
+            //    if (surface.IsNull)
+            //    {
+            //        Logger.Log("GG");
+            //        return;
+            //    }
+            //    ref var srcSurface = ref surface.Ref.BaseSurface;
+
+
+            //    Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
+
+
+            //    var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - 48 - 50,
+            //                srcSurface.Width, srcSurface.Height);
+
+            //    rect = Rectangle.Intersect(rect, new Rectangle(0, 0, Surface.Current.Ref.Width, Surface.Current.Ref.Height));
+
+            //    var drawRect = new RectangleStruct(rect.X, rect.Y, rect.Width, rect.Height);
+
+            //    Surface.Current.Ref.Blit(Surface.ViewBound, drawRect
+            //        , surface.Convert<Surface>(), srcSurface.GetRect(), srcSurface.GetRect(), true, true);
+
+
+            //}
+
+
             if (string.IsNullOrEmpty(cameo))
                 return;
 
@@ -146,7 +191,6 @@ namespace Scripts.Japan
                         ref var srcSurface = ref surface.Ref.BaseSurface;
 
                         Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
-                        //point += new Point2D(0, -srcSurface.Height);
 
                         //var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - srcSurface.Height / 2,
                         //    srcSurface.Width, srcSurface.Height);
