@@ -139,5 +139,38 @@ namespace ComponentHooks
             return 0;
         }
 
+
+        [Hook(HookType.AresHook, Address = 0x44A03C, Size = 6)]
+        [Hook(HookType.AresHook, Address = 0x739956, Size = 6)]
+        public static unsafe UInt32 Techno_Deploy_Or_UnDeploy_To_Another(REGISTERS* R)
+        {
+            Pointer<TechnoClass> pFrom = (IntPtr)R->EBP;
+            Pointer<TechnoClass> pTo = (IntPtr)R->EBX;
+
+            if(pFrom.IsNotNull && pTo.IsNotNull)
+            {
+                var extFrom = TechnoExt.ExtMap.Find(pFrom);
+                var extTo = TechnoExt.ExtMap.Find(pTo);
+                if(!extFrom.IsNullOrExpired() && !extTo.IsNullOrExpired())
+                {
+                    var gextFrom = extFrom.GameObject.GetComponent<TechnoGlobalExtension>();
+                    var gextTo = extTo.GameObject.GetComponent<TechnoGlobalExtension>();
+
+                    if (gextFrom != null)
+                    {
+                        gextFrom.ConvertSyncStatus(pFrom, pTo);
+                    }
+
+                    if (gextTo != null)
+                    {
+                        gextTo.IsDeployedFrom = true;
+                    }
+                }
+            }
+
+            
+            return 0;
+        }
+
     }
 }

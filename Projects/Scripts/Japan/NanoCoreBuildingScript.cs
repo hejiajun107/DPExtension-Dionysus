@@ -1,4 +1,5 @@
 ﻿using DynamicPatcher;
+using Extension.CW;
 using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.INI;
@@ -33,6 +34,18 @@ namespace Scripts.Japan
         public override void Start()
         {
             var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+            var gext = Owner.GameObject.GetComponent<TechnoGlobalExtension>();
+            if(gext != null)
+            {
+                if(gext.IsDeployedFrom == true)
+                {
+                    DetachFromParent();
+                    return;
+                }
+
+            }
+
             if (Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
                 var technos = ObjectFinder.FindTechnosNear(coord, 7 * Game.CellSize);
@@ -75,7 +88,7 @@ namespace Scripts.Japan
                             Owner.OwnerObject.Ref.Base.UnInit();
 
 
-                            return;
+                            break ;
                         }
                         else
                         {

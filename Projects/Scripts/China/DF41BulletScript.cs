@@ -295,14 +295,6 @@ namespace Scripts.China
 
 
 
-
-
-
-
-
-
-
-
     [ScriptAlias(nameof(DF41Bullet3Script))]
     [Serializable]
     public class DF41Bullet3Script : BulletScriptable
@@ -594,5 +586,29 @@ namespace Scripts.China
 
     }
 
+
+    [ScriptAlias(nameof(DFLauncherScript))]
+    [Serializable]
+    public class DFLauncherScript : TechnoScriptable
+    {
+        public DFLauncherScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        private int delay = 3000;
+
+        public override void OnUpdate()
+        {
+            if(Owner.OwnerObject.Ref.Ammo==0)
+            {
+                if (delay-- <= 0)
+                {
+                    delay = 3000;
+                    Owner.OwnerObject.Ref.Ammo = 1;
+                }
+            }
+           
+        }
+    }
 
 }
