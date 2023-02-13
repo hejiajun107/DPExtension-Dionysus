@@ -8,8 +8,19 @@ using System.Threading.Tasks;
 
 namespace Extension.CW
 {
+    public partial class TechnoGlobalExtension
+    {
+        /// <summary>
+        /// 忽视BaseNormal语句
+        /// </summary>
+        public bool IgnoreBaseNormal { get; set; } = false;
+
+
+    }
+
     public partial class TechnoGlobalTypeExt
     {
+
         [NotINIField]
         public bool isCustomFlagLoaded = false;
 
@@ -29,7 +40,10 @@ namespace Extension.CW
         public string ScriptArgs = "";
 
         [INIField(Key = "ImmnueToBlackHole")]
-        public bool ImmnueToBlackHole = false; 
+        public bool ImmnueToBlackHole = false;
+
+        [INIField(Key = "UnitBaseNormal")]
+        public bool IsUnitBaseNormal = false;
 
         ///// <summary>
         ///// 

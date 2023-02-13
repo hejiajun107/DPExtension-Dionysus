@@ -13,6 +13,7 @@ namespace Extension.CW
     {
         public bool IsDeployedFrom { get; set; } = false;
 
+
         public void ConvertSyncStatus(Pointer<TechnoClass> from,Pointer<TechnoClass> to)
         {
             if (Data.ConvertShareAmmo == true)

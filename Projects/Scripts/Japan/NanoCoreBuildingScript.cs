@@ -40,6 +40,7 @@ namespace Scripts.Japan
             {
                 if(gext.IsDeployedFrom == true)
                 {
+                    gext.IgnoreBaseNormal = true;
                     DetachFromParent();
                     return;
                 }

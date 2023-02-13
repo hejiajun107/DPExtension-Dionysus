@@ -89,7 +89,6 @@ namespace ComponentHooks
                 {
                     if(pHouse.Ref.CanBuild(pType, true, true) == CanBuildResult.TemporarilyUnbuildable)
                     {
-                        Logger.Log("can build");
                         var exts = Finder.FindTechno(pHouse, x => x.Ref.Type == pType || (pType.Ref.Base.Base.ID == "SFZS" && x.Ref.Type.Ref.Base.Base.ID == "Executioner"), FindRange.Owner);
                         if (exts!=null && exts.Count>0)
                         {
@@ -170,6 +169,35 @@ namespace ComponentHooks
 
             
             return 0;
+        }
+
+        [Hook(HookType.AresHook, Address = 0x4A8FCC, Size = 5)]
+        public static unsafe UInt32 MapClass_Can_Building_Type_Placed_Here(REGISTERS* R)
+        {
+            //uint goon = 0x4A8FD1;
+            //uint canPlaceHere = 0x4A902C;
+
+            Pointer<CellClass> pCell = (IntPtr)R->ECX;
+
+            var building = pCell.Ref.GetBuilding();
+            if(building.IsNotNull)
+            {
+                var techno = building.Convert<TechnoClass>();
+                var technoExt = TechnoExt.ExtMap.Find(techno);
+                if(!technoExt.IsNullOrExpired())
+                {
+                    var gext = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                    if(gext.IgnoreBaseNormal)
+                    {
+                        R->EAX = (uint)Pointer<BuildingClass>.Zero;
+                        return 0x4A8FD1;
+                    }
+                }
+            }
+
+            R->EAX = (uint)building;
+
+            return 0x4A8FD1;
         }
 
     }
