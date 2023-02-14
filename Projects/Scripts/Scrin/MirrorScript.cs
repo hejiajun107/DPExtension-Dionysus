@@ -19,6 +19,9 @@ namespace DpLib.Scripts.Scrin
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
         static Pointer<WarheadTypeClass> pDebuffWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MirrorDebuffWh");
+        static Pointer<WarheadTypeClass> pDebuffWh1 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MirrorDebuffWh1");
+        static Pointer<WarheadTypeClass> pDebuffWh2 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MirrorDebuffWh2");
+
 
         static Pointer<AnimTypeClass> pAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("FIELDFX");
 
@@ -104,6 +107,10 @@ namespace DpLib.Scripts.Scrin
 
                     var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pDebuffWh, 100, false);
                     bullet.Ref.DetonateAndUnInit(createLocation);
+                    var bullet1 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pDebuffWh1, 100, false);
+                    bullet1.Ref.DetonateAndUnInit(createLocation);
+                    var bullet2 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pDebuffWh2, 100, false);
+                    bullet2.Ref.DetonateAndUnInit(createLocation);
                     YRMemory.Create<AnimClass>(pAnim, createLocation);
 
                 }
