@@ -144,7 +144,6 @@ namespace Scripts
         }
 
 
-
         private void ClearExpiredAttachEffect()
         {
             if (_attachEffectScriptables.Any())

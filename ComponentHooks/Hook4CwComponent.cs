@@ -3,9 +3,6 @@ using Extension.Ext;
 using PatcherYRpp;
 using System;
 using Extension.CW;
-using Extension.Encryption;
-using System.Runtime.Remoting.Messaging;
-using PatcherYRpp.Utilities;
 using Extension.Utilities;
 
 namespace ComponentHooks
@@ -199,6 +196,39 @@ namespace ComponentHooks
 
             return 0x4A8FD1;
         }
+
+        [Hook(HookType.AresHook, Address = 0x7019D8, Size = 5)]
+        public static unsafe UInt32 TechnoClass_ReceiveDamage_SkipLowDamageCheck(REGISTERS* R)
+        {
+            Pointer<int> pDamage = (IntPtr)R->lea_Stack(0xC4 - 0x4);
+            if (pDamage.Ref == 0)
+            {
+                return 0x7019E3;
+            }
+            return 0;
+        }
+
+        //[Hook(HookType.AresHook, Address = 0x739450, Size = 5)]
+        //public static unsafe UInt32 Unit_Class_Deploy_LocationFix(REGISTERS* R)
+        //{
+        //    Pointer<UnitClass> pThis = (IntPtr)R->EBP;
+        //    var deploysInto = pThis.Ref.Base.Base.Type.Ref.DeploysInto;
+        //    CellStruct mapCoords = pThis.Ref.Base.Base.Base.GetMapCoords();
+        //    R->Stack(0x28 - 0x10, mapCoords);
+        //    var width = deploysInto.Ref.GetFoundationWidth();
+        //    var height = deploysInto.Ref.GetFoundationHeight(false);
+
+        //    var x = mapCoords.X;
+        //    var y = mapCoords.Y;
+
+        //    if (width > 2)
+        //        x = (short)(mapCoords.X - (short)(Math.Ceiling(width / 2.0) - 1));
+        //    if (height > 2)
+        //        y = (short)(mapCoords.Y - (short)(Math.Ceiling(height / 2.0) - 1));
+
+        //    R->Stack(0x28 - 0x14, new CellStruct(x, y));
+        //    return 0x7394BE;
+        //}
 
     }
 }

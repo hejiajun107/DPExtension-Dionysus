@@ -101,6 +101,8 @@ namespace DpLib.Scripts.AE
                 {
                     ownerTechno.Ref.Base.Health = 1;
                 }
+
+
             }
 
             if (inAngry && angryTime > 0)
@@ -108,6 +110,12 @@ namespace DpLib.Scripts.AE
                //Logger.Log("天皇之怒开启...无敌时间剩余" + angryTime);
 
                 pDamage.Ref = 0;
+
+                //if (trueDamage > 0)
+                //{
+                //    var tempHealth = MapClass.GetTotalDamage(1, pWH, ownerTechno.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter);
+                //    Owner.OwnerObject.Ref.Base.Health = tempHealth + Owner.OwnerObject.Ref.Base.Health > Owner.OwnerObject.Ref.Type.Ref.Base.Strength ? Owner.OwnerObject.Ref.Type.Ref.Base.Strength : tempHealth + Owner.OwnerObject.Ref.Base.Health;
+                //}
 
                 //Logger.Log(pDamage.Ref == 0 ? "致死伤害已清零" : "伤害伤害依旧为：" + pDamage.Ref);
             }

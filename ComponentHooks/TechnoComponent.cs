@@ -2,6 +2,7 @@
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,6 +115,8 @@ namespace ComponentHooks
                 return 0;
             }
         }
+
+
         [Hook(HookType.AresHook, Address = 0x6FDD50, Size = 6)]
         static public unsafe UInt32 TechnoClass_Fire_Components(REGISTERS* R)
         {

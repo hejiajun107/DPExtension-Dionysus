@@ -41,6 +41,7 @@ namespace DpLib.Scripts.AE
             //base.OnAttachEffectPut(pDamage, pWH, pAttacker, pAttackingHouse);
         }
 
+
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
 
@@ -69,6 +70,13 @@ namespace DpLib.Scripts.AE
                     //Logger.Log("受到游戏结算的伤害");
                     return;
                 }
+
+                //if (trueDamage > 0)
+                //{
+                //    var tempHealth = MapClass.GetTotalDamage(1, pWH, ownerTechno.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter);
+                //    Owner.OwnerObject.Ref.Base.Health = tempHealth + Owner.OwnerObject.Ref.Base.Health > Owner.OwnerObject.Ref.Type.Ref.Base.Strength ? Owner.OwnerObject.Ref.Type.Ref.Base.Strength : tempHealth + Owner.OwnerObject.Ref.Base.Health;
+                //}
+
                 pDamage.Ref = 0;
 
                 //Logger.Log(pDamage.Ref == 0 ? "伤害已清零" : "伤害依旧为："+ pDamage.Ref);
