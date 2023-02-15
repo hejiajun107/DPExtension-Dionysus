@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonExtension\AnimTrailer.cs" />
     <Compile Include="CommonExtension\AresFlag.cs" />
     <Compile Include="CommonExtension\ConvertSyncStatus.cs" />
     <Compile Include="CommonExtension\ConvertUnload.cs" />

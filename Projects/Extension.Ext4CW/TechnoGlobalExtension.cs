@@ -1,4 +1,5 @@
-﻿using Extension.CWUtilities;
+﻿using DynamicPatcher;
+using Extension.CWUtilities;
 using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
@@ -19,15 +20,20 @@ namespace Extension.CW
         public TechnoGlobalExtension(TechnoExt owner) : base(owner)
         {
             INI = this.CreateRulesIniComponentWith<TechnoGlobalTypeExt>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
+            ArtINI = this.CreateArtIniComponentWith<TechnoGlobalArtExt>(!string.IsNullOrEmpty(INI.Data.Image) ? INI.Data.Image : Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
         }
 
         INIComponentWith<TechnoGlobalTypeExt> INI;
 
+        INIComponentWith<TechnoGlobalArtExt> ArtINI;
+
+
         public TechnoGlobalTypeExt Data => INI.Data;
+        public TechnoGlobalArtExt Art => ArtINI.Data;
+
 
         public override void Awake()
         {
-            //Data = INI.Data;
             PartialHelper.TechnoAwakeAction(this);
         }
 
@@ -65,6 +71,15 @@ namespace Extension.CW
     [Serializable]
     public partial class TechnoGlobalTypeExt : INIAutoConfig
     {
-      
+        [INIField(Key = "Image")]
+        public string Image = string.Empty;
     }
+
+    [Serializable]
+    public partial class TechnoGlobalArtExt : INIAutoConfig
+    {
+
+    }
+
+
 }
