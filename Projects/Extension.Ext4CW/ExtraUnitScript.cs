@@ -290,11 +290,23 @@ namespace Scripts
 
             if (Owner.OwnerObject.Ref.Target.IsNotNull)
             {
-                if (!Owner.OwnerObject.Ref.IsCloseEnoughToAttack(Owner.OwnerObject.Ref.Target))
+                if (Defination.KeepTargetWithinRange > 0)
                 {
-                    var mission = Owner.OwnerObject.Convert<MissionClass>();
-                    mission.Ref.ForceMission(Mission.Guard);
-                    Owner.OwnerObject.Ref.SetTarget(default);
+                    if ((Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Target.Ref.GetCoords()) / Game.CellSize) > Defination.KeepTargetWithinRange)
+                    {
+                        var mission = Owner.OwnerObject.Convert<MissionClass>();
+                        mission.Ref.ForceMission(Mission.Guard);
+                        Owner.OwnerObject.Ref.SetTarget(default);
+                    }
+                }
+                else
+                {
+                    if (!Owner.OwnerObject.Ref.IsCloseEnoughToAttack(Owner.OwnerObject.Ref.Target))
+                    {
+                        var mission = Owner.OwnerObject.Convert<MissionClass>();
+                        mission.Ref.ForceMission(Mission.Guard);
+                        Owner.OwnerObject.Ref.SetTarget(default);
+                    }
                 }
             }
 
@@ -344,9 +356,33 @@ namespace Scripts
                 }
             }
 
+            bool syncFaceing = false;
+
+            if (Defination.ForceSameFacing)
+            {
+                if (Defination.ForceFacingAllowAngle == 0)
+                {
+                    syncFaceing = true;
+                }
+                else
+                {
+                    var myFacing = Owner.OwnerObject.Ref.Facing.target().GetValue();
+                    short masterFacing = 0;
+                    if (!Defination.BindTurret)
+                    {
+                        masterFacing = Master.OwnerObject.Ref.Facing.current().GetValue();
+                    }
+                    else
+                    {
+                        masterFacing = Master.OwnerObject.Ref.TurretFacing.current().GetValue();
+                    }
+
+                    syncFaceing = Math.Abs((masterFacing - myFacing) / ((short.MaxValue - short.MinValue) / 360)) > Defination.ForceFacingAllowAngle ? true : false;
+                }
+            }
 
             ////同步炮塔，方向
-            if (Owner.OwnerObject.Ref.Target.IsNull)
+            if (Owner.OwnerObject.Ref.Target.IsNull || syncFaceing)
             {
                 if(!Defination.BindTurret)
                 {
@@ -540,8 +576,25 @@ namespace Scripts
         [INIField(Key = "ExtraUnit.SameLoseTarget")]
         public bool SameLoseTarget = true;
 
+        /// <summary>
+        /// 在一定范围内仍然保持原有目标
+        /// </summary>
+        [INIField(Key = "ExtraUnit.KeepTargetWithinRange")]
+        public int KeepTargetWithinRange = -1;
+
         [INIField(Key = "ExtraUnit.FacingAngleAdjust")]
         public int FacingAngleAdjust = 0;
+        /// <summary>
+        /// 强制保持方向
+        /// </summary>
+        [INIField(Key = "ExtraUnit.ForceSameFacing")]
+        public bool ForceSameFacing = false;
+
+        /// <summary>
+        /// 强制保持方向
+        /// </summary>
+        [INIField(Key = "ExtraUnit.ForceFacingAllowAngle")]
+        public int ForceFacingAllowAngle = 0;
 
         public ExtraUnitDefinationPoco Copy()
         {
@@ -555,7 +608,10 @@ namespace Scripts
                 SameOwner = this.SameOwner,
                 SameTarget = this.SameTarget,
                 SameLoseTarget = this.SameLoseTarget,
-                FacingAngleAdjust = this.FacingAngleAdjust
+                KeepTargetWithinRange = this.KeepTargetWithinRange,
+                FacingAngleAdjust = this.FacingAngleAdjust,
+                ForceSameFacing = this.ForceSameFacing,
+                ForceFacingAllowAngle = this.ForceFacingAllowAngle
             };
         }
     }
@@ -606,9 +662,25 @@ namespace Scripts
         public bool SameLoseTarget = true;
 
         /// <summary>
+        /// 超出射程后丢失目标
+        /// </summary>
+        public int KeepTargetWithinRange = -1;
+
+
+        /// <summary>
         /// 朝向调整
         /// </summary>
         public int FacingAngleAdjust = 0;
+
+        /// <summary>
+        /// 强制与Master同向
+        /// </summary>
+        public bool ForceSameFacing = false;
+
+        /// <summary>
+        /// 强制与Master相同朝向的的角度阈值
+        /// </summary>
+        public int ForceFacingAllowAngle = 0;
 
     }
 

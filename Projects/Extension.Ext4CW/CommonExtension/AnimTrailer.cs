@@ -89,7 +89,6 @@ namespace Extension.CW
                     var visible = true;
                     foreach (var trailer in trailerAnims)
                     {
-                        Logger.Log("更新动画");
                         trailer.UpdateLocation(ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, trailer.FLH, false), visible);
                     }
                 }
