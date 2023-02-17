@@ -22,8 +22,6 @@ namespace Extension.CW
         [AwakeAction]
         public void Anim_Trailer_Awake()
         { 
-            Logger.Log(ArtINI.Section);
-            Logger.Log(Art.AnimTrailer0);
             HasAnimTrailer = !string.IsNullOrEmpty(Art.AnimTrailer0);
         }
 

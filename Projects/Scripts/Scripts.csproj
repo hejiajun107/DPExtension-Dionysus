@@ -78,6 +78,7 @@
     <Compile Include="American\AuroraScript.cs" />
     <Compile Include="American\CryoCopterScript.cs" />
     <Compile Include="American\FixChronoMinerSBScript.cs" />
+    <Compile Include="American\FreezingWingBulletScript.cs" />
     <Compile Include="American\FutureStrafeTScript.cs" />
     <Compile Include="American\FutureTankLaserBulletScript.cs" />
     <Compile Include="American\FutureTankScript.cs" />
