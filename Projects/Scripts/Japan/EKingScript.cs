@@ -3,6 +3,7 @@ using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
+using System.Linq;
 
 namespace DpLib.Scripts.Japan
 {
@@ -53,65 +54,38 @@ namespace DpLib.Scripts.Japan
             var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
             var currentCell = CellClass.Coord2Cell(location);
 
-            CellSpreadEnumerator enumerator = new CellSpreadEnumerator(4);
 
-            foreach (CellStruct offset in enumerator)
+            var ptechnos = ObjectFinder.FindTechnosNear(location, 4 * Game.CellSize).ToList();
+
+            foreach(var pobj in ptechnos)
             {
                 if (count >= 2)
-                {
                     break;
-                }
 
-                CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
-
-
-                if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
+                if(pobj.CastToTechno(out var ptechno))
                 {
-                    if (pCell.IsNull)
+                    if (ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex))
+                        continue;
+
+                    if (ptechno.Ref.Base.IsVisible == false || ptechno.Ref.Base.InLimbo == true || ptechno.Ref.Base.IsAlive == false)
                     {
                         continue;
                     }
 
-                    Point2D p2d = new Point2D(60, 60);
-                    Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
+                    Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, damageWarhead, 30, true);
+                    dbullet.Ref.DetonateAndUnInit(ptechno.Ref.Base.Base.GetCoords());
 
+                    Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, shootWarhead, 30, true);
+                    bullet.Ref.MoveTo(ptechno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(0, 0, 0));
+                    bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
+                    count++;
 
-                    if (TechnoExt.ExtMap.Find(target) == null)
-                    {
-                        continue;
-                    }
-
-                    TechnoExt tref = default;
-
-                    tref = (TechnoExt.ExtMap.Find(target));
-
-                    if (!tref.IsNullOrExpired())
-                    {
-                        if (tref.OwnerObject.Ref.Owner.IsNull)
-                        {
-                            continue;
-                        }
-
-                        if (tref.OwnerObject.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex))
-                        {
-                            continue;
-                        }
-
-                        if (tref.OwnerObject.Ref.Base.IsVisible == false || tref.OwnerObject.Ref.Base.InLimbo == true || tref.OwnerObject.Ref.Base.IsAlive == false)
-                        {
-                            continue;
-                        }
-
-                        Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, damageWarhead, 30, true);
-                        dbullet.Ref.DetonateAndUnInit(tref.OwnerObject.Ref.Base.Base.GetCoords());
-
-                        Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, shootWarhead, 30, true);
-                        bullet.Ref.MoveTo(tref.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(0, 0, 0));
-                        bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
-                        count++;
-                    }
                 }
             }
+            
+
+              
+ 
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)

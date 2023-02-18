@@ -22,7 +22,7 @@ namespace DpLib.Scripts.Heros
 
         private ManaCounter _manaCounter;
 
-        private Dictionary<string, MandoUnitRecord> unitRecords = new Dictionary<string, MandoUnitRecord>();
+        private List<MandoUnitRecord> unitRecords = new List<MandoUnitRecord>();
 
         private int checkDelay = 20;
 
@@ -60,8 +60,6 @@ namespace DpLib.Scripts.Heros
                                     continue;
                                 if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit && Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Infantry)
                                     continue;
-                                var hashCode = tref.OwnerObject.GetHashCode().ToString();
-
 
                                 var gext = tref.GameObject.GetComponent<TechnoGlobalExtension>();
                                 if (gext == null)
@@ -70,157 +68,36 @@ namespace DpLib.Scripts.Heros
                                 if (gext.Data.IsHero || gext.Data.IsEpicUnit)
                                     continue;
 
-                                var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
-
-                                if (unitRecords.ContainsKey(hashCode))
+                                var respawnTagScript = tref.GameObject.GetComponent<RespawnRecorderScript>();
+                                if (respawnTagScript == null)
                                 {
-                                    unitRecords[hashCode].LifeTime = lifeTime;
-                                    unitRecords[hashCode].Location = tref.OwnerObject.Ref.Base.Base.GetCoords();
-                                    continue;
+                                    tref.GameObject.CreateScriptComponent(nameof(RespawnRecorderScript), RespawnRecorderScript.UniqueId, "RespawnRecorderScript", tref, Owner);
                                 }
                                 else
                                 {
-                                    var record = new MandoUnitRecord()
-                                    {
-                                        Techno = tref,
-                                        Key = hashCode,
-                                        LifeTime = lifeTime,
-                                        Location = tref.OwnerObject.Ref.Base.Base.GetCoords(),
-                                        Type = tref.OwnerObject.Ref.Type.Ref.Base.Base.ID,
-                                        IsDead = false
-                                    };
-
-                                    unitRecords.Add(record.Key, record);
+                                    respawnTagScript.Duration = 200;
                                 }
                             }
-
                         }
                     }
-                 
-
-
-
-
-                    //CellSpreadEnumerator enumerator = new CellSpreadEnumerator(6);
-
-                    //List<int> codes = new List<int>();
-
-                    //foreach (CellStruct offset in enumerator)
-                    //{
-
-                    //    CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
-
-                    //    if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
-                    //    {
-                    //        if (pCell.IsNull)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        Point2D p2d = new Point2D(60, 60);
-                    //        Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, Owner.OwnerObject);
-
-
-                    //        if (TechnoExt.ExtMap.Find(target) == null)
-                    //        {
-                    //            continue;
-                    //        }
-
-                    //        TechnoExt tref = default;
-
-                    //        tref = (TechnoExt.ExtMap.Find(target));
-
-                    //        if (!tref.IsNullOrExpired())
-                    //        {
-                    //            if (tref.OwnerObject.Ref.Owner.IsNull)
-                    //                continue;
-                    //            //if (!Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(ptechno.OwnerObject.Ref.Owner))
-                    //            //    continue;
-                    //            if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex)
-                    //                continue;
-                    //            if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit && Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Infantry)
-                    //                continue;
-                    //            var hashCode = tref.OwnerObject.GetHashCode().ToString();
-
-
-                    //            var gext = tref.GameObject.GetComponent<TechnoGlobalExtension>();
-                    //            if (gext == null)
-                    //                continue;
-
-                    //            if (gext.Data.IsHero || gext.Data.IsEpicUnit)
-                    //                continue;
-
-                    //            var id = tref.Type.OwnerObject.Ref.Base.Base.ID.ToString();
-
-                    //            if (unitRecords.ContainsKey(hashCode))
-                    //            {
-                    //                unitRecords[hashCode].LifeTime = lifeTime;
-                    //                unitRecords[hashCode].Location = tref.OwnerObject.Ref.Base.Base.GetCoords();
-                    //                continue;
-                    //            }
-                    //            else
-                    //            {
-                    //                var record = new MandoUnitRecord()
-                    //                {
-                    //                    Techno = tref,
-                    //                    Key = hashCode,
-                    //                    LifeTime = lifeTime,
-                    //                    Location = tref.OwnerObject.Ref.Base.Base.GetCoords(),
-                    //                    Type = tref.OwnerObject.Ref.Type.Ref.Base.Base.ID,
-                    //                    IsDead = false
-                    //                };
-
-                    //                unitRecords.Add(record.Key, record);
-                    //            }
-                    //        }
-                    //    }
-
-                    //}
-
                 }
             }
 
             if (listCheckDelay-- <= 0)
             {
-                List<string> toRemove = new List<string>();
                 listCheckDelay = 20;
                 //todo检索单位，挑选活着的单位，并清理死亡的单位
-                foreach (var kvp in unitRecords)
+                foreach (var unit in unitRecords)
                 {
-                    var unit = kvp.Value;
                     unit.LifeTime = unit.LifeTime - 1;
                     if (unit.LifeTime < 0)
                     {
                         //清除
-                        unit.Techno = null;
-                        toRemove.Add(kvp.Key);
-                        unit = null;
                         continue;
                     }
-
-                    if (unit.IsDead == false)
-                    {
-                        if (!unit.Techno.IsNullOrExpired())
-                        {
-                            unit.Location = unit.Techno.OwnerObject.Ref.Base.Base.GetCoords();
-                        }
-                        else
-                        {
-                            //死亡状态重新开始计时
-                            unit.IsDead = true;
-                            unit.LifeTime = lifeTime;
-                        }
-                    }
-
                 }
+                unitRecords.RemoveAll(x => x.LifeTime <= 0);
 
-                foreach (var removeKey in toRemove)
-                {
-                    if (unitRecords.ContainsKey(removeKey))
-                    {
-                        unitRecords.Remove(removeKey);
-                    }
-                }
             }
 
             base.OnUpdate();
@@ -244,7 +121,7 @@ namespace DpLib.Scripts.Heros
             if (Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
                 return;
 
-            if (unitRecords.Where(t => t.Value.IsDead == true).Count() >= 2)
+            if (unitRecords.Count() >= 2)
             {
                 Respawn();
             }
@@ -261,19 +138,10 @@ namespace DpLib.Scripts.Heros
                 YRMemory.Create<AnimClass>(animType, currentLocation);
 
 
-                foreach (var kvp in unitRecords)
+                foreach (var unit in unitRecords)
                 {
-                    var unit = kvp.Value;
-                    if (unit.IsDead == false)
-                    {
-                        if (unit.Techno.IsNullOrExpired())
-                        {
-                            unit.IsDead = true;
-                        }
-                    }
-
-
-                    if (unit.IsDead == true && currentLocation.DistanceFrom(unit.Location) <= 2560)
+                  
+                    if (currentLocation.DistanceFrom(unit.Location) <= 2560)
                     {
                         var pType = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(unit.Type);
                         var techno = pType.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
@@ -294,22 +162,76 @@ namespace DpLib.Scripts.Heros
             }
         }
 
+        public void RegisterDeath(string type,CoordStruct location)
+        {
+            var record = new MandoUnitRecord()
+            {
+                Type = type,
+                Location = location,
+                LifeTime = lifeTime
+            };
 
+            unitRecords.Add(record);
+        }
     }
 
     [Serializable]
     public class MandoUnitRecord
     {
-        public string Key { get; set; }
-
-        public TechnoExt Techno;
 
         public string Type { get; set; }
 
         public CoordStruct Location { get; set; }
 
         public int LifeTime { get; set; }
+    }
 
-        public bool IsDead { get; set; }
+    [Serializable]
+    [ScriptAlias(nameof(RespawnRecorderScript))]
+    public class RespawnRecorderScript : TechnoScriptable
+    {
+        public const int UniqueId = 202302281;
+
+        public int Duration = 200;
+
+        TechnoExt respawner;
+
+        public RespawnRecorderScript(TechnoExt owner,TechnoExt Respawner) : base(owner)
+        {
+            respawner = Respawner;
+        }
+
+
+
+        public override void OnUpdate()
+        {
+            if (Duration-- <= 0)
+            {
+                DetachFromParent();
+            }
+
+            if(respawner.IsNullOrExpired())
+            {
+                DetachFromParent();
+            }
+        }
+
+        public override void OnRemove()
+        {
+            DetachFromParent();
+            if (Owner.OwnerObject.Ref.Base.Health <= 0)
+            {
+                if (!respawner.IsNullOrExpired())
+                {
+                    var script = respawner.GameObject.GetComponent<ScMandoScript>();
+                    if (script != null)
+                    {
+                        script.RegisterDeath(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID,Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    }
+                }
+            }
+           
+        }
+
     }
 }

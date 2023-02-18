@@ -432,6 +432,16 @@ namespace Scripts
             }
 
 
+            if (Defination.WorkingHeight > 0)
+            {
+                if (Owner.OwnerObject.Ref.Base.GetHeight() < Defination.WorkingHeight)
+                {
+                    var mission = Owner.OwnerObject.Convert<MissionClass>();
+                    mission.Ref.ForceMission(Mission.Guard);
+                    Owner.OwnerObject.Ref.SetTarget(default);
+                }
+            }
+
         }
 
         private void Disable()
@@ -596,6 +606,12 @@ namespace Scripts
         [INIField(Key = "ExtraUnit.ForceFacingAllowAngle")]
         public int ForceFacingAllowAngle = 0;
 
+        /// <summary>
+        /// 工作的最小高度
+        /// </summary>
+        [INIField(Key = "ExtraUnit.WorkingHeight")]
+        public int WorkingHeight = 0;
+
         public ExtraUnitDefinationPoco Copy()
         {
             return new ExtraUnitDefinationPoco()
@@ -611,7 +627,8 @@ namespace Scripts
                 KeepTargetWithinRange = this.KeepTargetWithinRange,
                 FacingAngleAdjust = this.FacingAngleAdjust,
                 ForceSameFacing = this.ForceSameFacing,
-                ForceFacingAllowAngle = this.ForceFacingAllowAngle
+                ForceFacingAllowAngle = this.ForceFacingAllowAngle,
+                WorkingHeight = this.WorkingHeight
             };
         }
     }
@@ -681,6 +698,12 @@ namespace Scripts
         /// 强制与Master相同朝向的的角度阈值
         /// </summary>
         public int ForceFacingAllowAngle = 0;
+
+
+        /// <summary>
+        /// 工作的最小高度
+        /// </summary>
+        public int WorkingHeight = 0;
 
     }
 
