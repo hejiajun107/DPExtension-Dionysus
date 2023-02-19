@@ -56,6 +56,7 @@ namespace DpLib.Scripts
 
                     var pbull = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, pWarhead, 100, false);
                     pbull.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    DetachFromParent();
                 }
             }
             base.OnUpdate();
