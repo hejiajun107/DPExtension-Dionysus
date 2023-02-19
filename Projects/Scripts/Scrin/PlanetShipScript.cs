@@ -38,7 +38,7 @@ namespace Scripts.Scrin
 
                 if (Delay % 20 == 0)
                 {
-                    var spread = 6 * Game.CellSize;
+                    var spread = 7 * Game.CellSize;
                     var target = new CoordStruct(location.X + random.Next(-spread, spread), location.Y + random.Next(-spread, spread), location.Z);
                     YRMemory.Create<AnimClass>(pblast, target);
                     var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 120, pWh, 100, true);
