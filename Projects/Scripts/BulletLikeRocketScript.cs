@@ -59,6 +59,12 @@ namespace Scripts
 
         }
 
+        public bool Detonated = false;
+
+        public override void OnDetonate(Pointer<CoordStruct> pCoords)
+        {
+            Detonated = true;
+        }
 
     }
 
@@ -111,10 +117,19 @@ namespace Scripts
         {
             if (!Master.IsNullOrExpired())
             {
-                if (Master.OwnerRef.Base.Health <= 0)
+                var component = Master.GameObject.GetComponent<BulletLikeRocketScript>();
+
+                if (Owner.OwnerRef.Base.Health <= 0)
                 {
-                    //强制引爆
-                    Master.OwnerObject.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    if (component != null)
+                    {
+                        if (component.Detonated == false)
+                        {
+                            Master.OwnerObject.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                            Master.OwnerObject.Ref.Base.UnInit();
+                        }
+                    }
+                    //Master.OwnerObject.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 }
                 else
                 {
@@ -122,5 +137,7 @@ namespace Scripts
                 }
             }
         }
+
+        
     }
 }
