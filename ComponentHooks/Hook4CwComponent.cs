@@ -208,6 +208,29 @@ namespace ComponentHooks
             return 0;
         }
 
+        [Hook(HookType.AresHook, Address = 0x4571E0, Size = 5)]
+        public static unsafe UInt32 BuildingClass_Infiltrate(REGISTERS* R)
+        {
+            Pointer<BuildingClass> pBuilding = (IntPtr)R->ECX;
+            Pointer<HouseClass> pEnter = R->Stack<Pointer<HouseClass>>(0x4);
+
+            if(pBuilding.IsNotNull && pEnter.IsNotNull)
+            {
+                var technoExt = TechnoExt.ExtMap.Find(pBuilding.Convert<TechnoClass>());
+                if(!technoExt.IsNullOrExpired())
+                {
+                    var gext = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                    if(gext!=null)
+                    {
+                        gext.InfiltratedBy(pEnter);
+                    }
+                }
+            }
+            return 0;
+        }
+
+
+
         //[Hook(HookType.AresHook, Address = 0x739450, Size = 5)]
         //public static unsafe UInt32 Unit_Class_Deploy_LocationFix(REGISTERS* R)
         //{

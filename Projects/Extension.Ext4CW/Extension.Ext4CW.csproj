@@ -58,6 +58,7 @@
     <Compile Include="CommonExtension\HeroKeepVeterancy.cs" />
     <Compile Include="CommonExtension\PassengerExtension.cs" />
     <Compile Include="CommonExtension\CustomExperience.cs" />
+    <Compile Include="CommonExtension\SpyEffect.cs" />
     <Compile Include="ExtraUnitScript.cs" />
     <Compile Include="PartialHelper.cs" />
     <Compile Include="PngIconLoader.cs" />
