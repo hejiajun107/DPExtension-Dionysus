@@ -3,6 +3,7 @@ using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,51 +53,64 @@ namespace DpLib.Scripts
 
                 var fighter1 = fighters.First();
 
-                var targets = Finder.FindTechno(house, x =>
+
+                var objects = ObjectFinder.FindTechnosNear(location, (int)(Game.CellSize * 6.5 + Game.CellSize * 4));
+
+                var targets = objects.Where(o =>
                 {
-                    var coords = x.Ref.Base.Base.GetCoords();
-                    var height = x.Ref.Base.GetHeight();
-                    var type = x.Ref.Base.Base.WhatAmI();
-
-                    if (x.Ref.Base.InLimbo)
+                    if (o.CastToTechno(out var x))
                     {
-                        return false;
-                    }
+                        var coords = x.Ref.Base.Base.GetCoords();
+                        var height = x.Ref.Base.GetHeight();
+                        var type = x.Ref.Base.Base.WhatAmI();
 
-                    var bounsRange = 0;
-                    if (coords.Z > location.Z)
-                    {
-                        if (coords.Z - location.Z > 300)
+                        if (x.Ref.Base.InLimbo)
                         {
-                            //空中目标奖励距离
-                            bounsRange = 1024;
+                            return false;
                         }
-                    }
 
-                    if (!GameUtil.CanAffectTarget(fighter1.OwnerObject, x))
-                    {
-                        return false;
-                    }
-
-                    if (x.Ref.Base.IsDisguised())
-                    {
-                        var fakeHouse = x.Ref.Base.GetDisguiseHouse(true);
-                        if (!fakeHouse.IsNull)
+                        if (x.Ref.Owner.Ref.IsAlliedWith(house))
                         {
-                            if (fakeHouse.Ref.IsAlliedWith(house))
+                            return false;
+                        }
+
+                        var bounsRange = 0;
+                        if (coords.Z > location.Z)
+                        {
+                            if (coords.Z - location.Z > 300)
                             {
-                                return false;
+                                //空中目标奖励距离
+                                bounsRange = 1024;
                             }
                         }
-                    }
 
-                    if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(location) <= (1536 + bounsRange) && type != AbstractType.Building)
-                    {
-                        return true;
+                        if (!GameUtil.CanAffectTarget(fighter1.OwnerObject, x))
+                        {
+                            return false;
+                        }
+
+                        //if (x.Ref.Base.IsDisguised())
+                        //{
+                        //    return false;
+                        //    //var fakeHouse = x.Ref.Base.GetDisguiseHouse(true);
+                        //    //if (!fakeHouse.IsNull)
+                        //    //{
+                        //    //    if (fakeHouse.Ref.IsAlliedWith(house))
+                        //    //    {
+                        //    //        return false;
+                        //    //    }
+                        //    //}
+                        //}
+
+                        if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(location) <= (1536 + bounsRange) && type != AbstractType.Building)
+                        {
+                            return true;
+                        }
+
+                        return false;
                     }
-                   
                     return false;
-                }, FindRange.Enermy);
+                }).Select(x=>TechnoExt.ExtMap.Find(x.Convert<TechnoClass>())).ToList();
 
                 if (targets.Count() == 0)
                 {

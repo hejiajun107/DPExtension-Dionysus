@@ -215,17 +215,17 @@ namespace Extension.CW
                                         }
 
 
-                                        if (x.Ref.Base.IsDisguised())
-                                        {
-                                            var fakeHouse = x.Ref.Base.GetDisguiseHouse(true);
-                                            if (!fakeHouse.IsNull)
-                                            {
-                                                if (fakeHouse.Ref.IsAlliedWith(house))
-                                                {
-                                                    return false;
-                                                }
-                                            }
-                                        }
+                                        //if (x.Ref.Base.IsDisguised())
+                                        //{
+                                        //    var fakeHouse = x.Ref.Base.GetDisguiseHouse(true);
+                                        //    if (!fakeHouse.IsNull)
+                                        //    {
+                                        //        if (fakeHouse.Ref.IsAlliedWith(house))
+                                        //        {
+                                        //            return false;
+                                        //        }
+                                        //    }
+                                        //}
 
                                         var bounsRange = 0;
                                         if (x.Ref.Base.GetHeight() > 10)
