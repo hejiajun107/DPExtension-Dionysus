@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -271,7 +272,7 @@ namespace DpLib.Scripts.China
                         {
                             if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                             {
-                                var gcomponent = pTargetRef.GameObject.GetComponent<TechnoGlobalExtension>();
+                                var gcomponent = pTargetRef.GameObject.GetTechnoGlobalComponent();
                                 if (gcomponent == null)
                                 {
                                     continue;

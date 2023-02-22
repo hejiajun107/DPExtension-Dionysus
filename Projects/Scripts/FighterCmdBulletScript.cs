@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -173,7 +174,7 @@ namespace DpLib.Scripts
                             //mission.Ref.NextMission();
                             //mission.Ref.QueueMission(Mission.Stop, false);
                             
-                            var gext = fighter.GameObject.GetComponent<TechnoGlobalExtension>();
+                            var gext = fighter.GameObject.GetTechnoGlobalComponent();
                             if(gext!=null)
                             {
                                 gext.HandleAirCommand = true;

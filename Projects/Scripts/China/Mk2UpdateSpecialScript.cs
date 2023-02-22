@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -42,7 +43,7 @@ namespace DpLib.Scripts.China
                         if (!p.Ref.Base.IsOnMap || p.Ref.Base.InLimbo)
                             return false;
 
-                        var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+                        var gext = ext.GameObject.GetTechnoGlobalComponent();
                         if (gext == null)
                             return false;
 
@@ -100,7 +101,7 @@ namespace DpLib.Scripts.China
                     if (!p.Ref.Base.IsOnMap || p.Ref.Base.InLimbo)
                         return false;
 
-                    var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+                    var gext = ext.GameObject.GetTechnoGlobalComponent();
                     if (gext == null)
                         return false;
 

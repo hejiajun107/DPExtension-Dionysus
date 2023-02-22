@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
 using System;
@@ -17,7 +18,7 @@ namespace DpLib.Scripts
 
         public override void Awake()
         {
-            var gext = Owner.GameObject.GetComponent<TechnoGlobalExtension>();
+            var gext = Owner.GameObject.GetTechnoGlobalComponent();
             if (gext != null)
             {
                 targetType = gext.Data.ScriptArgs;

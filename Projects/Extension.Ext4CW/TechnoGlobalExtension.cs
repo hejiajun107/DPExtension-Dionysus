@@ -34,6 +34,7 @@ namespace Extension.CW
 
         public override void Awake()
         {
+            Owner.GameObject.FastGetScript1 = this;
             PartialHelper.TechnoAwakeAction(this);
         }
 

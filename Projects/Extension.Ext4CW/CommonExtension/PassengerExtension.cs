@@ -1,6 +1,7 @@
 ﻿using DynamicPatcher;
 using Extension.CWUtilities;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.INI;
 using Extension.Script;
 using Extension.Utilities;
@@ -127,7 +128,7 @@ namespace Extension.CW
             if (!pTransporter.IsNull)
             {
                 TechnoExt transporterExt = TechnoExt.ExtMap.Find(pTransporter);
-                var gextenion = transporterExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                var gextenion = transporterExt.GameObject.GetTechnoGlobalComponent();
                
 
                 if (gextenion.Data.OpenTopped == false)

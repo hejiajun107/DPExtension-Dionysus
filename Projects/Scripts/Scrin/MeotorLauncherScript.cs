@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -20,7 +21,7 @@ namespace DpLib.Scripts.Scrin
         public override void Awake()
         {
             var scriptArgs = "";
-            var gext = Owner.GameObject.GetComponent<TechnoGlobalExtension>();
+            var gext = Owner.GameObject.GetTechnoGlobalComponent();
             if (gext != null)
             {
                 scriptArgs = gext.Data.ScriptArgs;

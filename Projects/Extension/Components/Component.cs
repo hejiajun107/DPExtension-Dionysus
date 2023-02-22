@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DynamicPatcher;
 using System.Runtime.CompilerServices;
+using Extension.Script;
 
 namespace Extension.Components
 {
@@ -570,5 +571,13 @@ namespace Extension.Components
 
         [NonSerialized]
         internal ComponentTraitQuery m_TraitQuery;
+    }
+
+    public partial class Component
+    {
+        public IScriptable FastGetScript1 { get; set; }
+        public IScriptable FastGetScript2 { get; set; }
+        public IScriptable FastGetScript3 { get; set; }
+
     }
 }

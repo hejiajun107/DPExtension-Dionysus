@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -84,7 +85,7 @@ namespace DpLib.Scripts.Scrin
                             if (tref.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit)
                                 continue;
 
-                            var gext = tref.GameObject.GetComponent<TechnoGlobalExtension>();
+                            var gext = tref.GameObject.GetTechnoGlobalComponent();
                             if (gext == null)
                                 continue;
 

@@ -4,6 +4,7 @@ using PatcherYRpp;
 using System;
 using Extension.CW;
 using Extension.Utilities;
+using Extension.Ext4CW;
 
 namespace ComponentHooks
 {
@@ -23,14 +24,14 @@ namespace ComponentHooks
                 if (pTechno != null)
                 {
                     var technoExt = TechnoExt.ExtMap.Find(pTechno);
-                    var globalExt = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                    var globalExt = technoExt.GameObject.GetTechnoGlobalComponent();
                     giveExpMultiple = globalExt.Data.GiveExperienceMultiple;
                 }
 
                 if (pKiller != null)
                 {
                     var killerExt = TechnoExt.ExtMap.Find(pKiller);
-                    var globalExt = killerExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                    var globalExt = killerExt.GameObject.GetTechnoGlobalComponent();
                     gainExpMultiple = globalExt.Data.GainExperienceMultiple;
                 }
 
@@ -49,7 +50,7 @@ namespace ComponentHooks
         {
             Pointer<TechnoClass> pTechno = (IntPtr)R->ESI;
             TechnoExt ext = TechnoExt.ExtMap.Find(pTechno);
-            var gscript = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+            var gscript = ext.GameObject.GetTechnoGlobalComponent();
             if (gscript != null)
             {
                 var layer = gscript.Data.RenderLayer;
@@ -97,7 +98,7 @@ namespace ComponentHooks
                             {
                                 if (!ext.IsNullOrExpired())
                                 {
-                                    var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+                                    var gext = ext.GameObject.GetTechnoGlobalComponent();
                                     if (gext != null)
                                     {
                                         if (gext.Data.IsEpicUnit || gext.Data.IsHero)
@@ -149,8 +150,8 @@ namespace ComponentHooks
                 var extTo = TechnoExt.ExtMap.Find(pTo);
                 if(!extFrom.IsNullOrExpired() && !extTo.IsNullOrExpired())
                 {
-                    var gextFrom = extFrom.GameObject.GetComponent<TechnoGlobalExtension>();
-                    var gextTo = extTo.GameObject.GetComponent<TechnoGlobalExtension>();
+                    var gextFrom = extFrom.GameObject.GetTechnoGlobalComponent();
+                    var gextTo = extTo.GameObject.GetTechnoGlobalComponent();
 
                     if (gextFrom != null)
                     {
@@ -183,7 +184,7 @@ namespace ComponentHooks
                 var technoExt = TechnoExt.ExtMap.Find(techno);
                 if(!technoExt.IsNullOrExpired())
                 {
-                    var gext = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                    var gext = technoExt.GameObject.GetTechnoGlobalComponent();
                     if(gext.IgnoreBaseNormal)
                     {
                         R->EAX = (uint)Pointer<BuildingClass>.Zero;
@@ -219,7 +220,7 @@ namespace ComponentHooks
                 var technoExt = TechnoExt.ExtMap.Find(pBuilding.Convert<TechnoClass>());
                 if(!technoExt.IsNullOrExpired())
                 {
-                    var gext = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                    var gext = technoExt.GameObject.GetTechnoGlobalComponent();
                     if(gext!=null)
                     {
                         gext.InfiltratedBy(pEnter);

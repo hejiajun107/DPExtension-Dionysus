@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
 using System;
@@ -106,7 +107,7 @@ namespace DpLib.Scripts.Japan
                         bool destroyed = false;
                         if (ext != null)
                         {
-                            var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+                            var gext = ext.GameObject.GetTechnoGlobalComponent();
                             if (gext != null)
                             {
                                 if (gext.Data.IsHarvester)

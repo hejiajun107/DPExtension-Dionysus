@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
 using System;
@@ -50,7 +51,7 @@ namespace DpLib.Scripts.Scrin
                 if (technoExt == null)
                     return;
 
-                var gext = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                var gext = technoExt.GameObject.GetTechnoGlobalComponent();
                 if (gext == null)
                     return;
 

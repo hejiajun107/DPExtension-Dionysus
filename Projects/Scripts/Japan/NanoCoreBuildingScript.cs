@@ -35,7 +35,7 @@ namespace Scripts.Japan
         {
             var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            var gext = Owner.GameObject.GetComponent<TechnoGlobalExtension>();
+            var gext = Owner.GameObject.GetTechnoGlobalComponent();
             if(gext != null)
             {
                 if(gext.IsDeployedFrom == true)

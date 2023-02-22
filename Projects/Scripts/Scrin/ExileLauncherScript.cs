@@ -1,5 +1,6 @@
 ﻿using Extension.CW;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -49,7 +50,7 @@ namespace DpLib.Scripts.Scrin
                                 var technoExt = TechnoExt.ExtMap.Find(pPassenger);
                                 if (technoExt != null)
                                 {
-                                    var gext = technoExt.GameObject.GetComponent<TechnoGlobalExtension>();
+                                    var gext = technoExt.GameObject.GetTechnoGlobalComponent();
                                     if (gext != null)
                                     {
                                         if (gext.Data.Copyable != false)
@@ -107,7 +108,7 @@ namespace DpLib.Scripts.Scrin
                             bool destoryed = false;
                             if (ext != null)
                             {
-                                var gext = ext.GameObject.GetComponent<TechnoGlobalExtension>();
+                                var gext = ext.GameObject.GetTechnoGlobalComponent();
                                 if (gext != null)
                                 {
                                     if (gext.Data.IsHarvester)
