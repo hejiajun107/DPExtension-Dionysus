@@ -32,6 +32,7 @@ namespace Extension.CW
         public CoordStruct XHSunstrikeTarget1 { get; set; }
         public CoordStruct XHSunstrikeTarget2 { get; set; }
         public CoordStruct XHSunstrikeTarget3 { get; set; }
+        public CoordStruct XHSunstrikeTarget4 { get; set; }
 
 
 
