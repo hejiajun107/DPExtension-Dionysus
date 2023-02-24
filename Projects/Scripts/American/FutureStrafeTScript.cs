@@ -166,6 +166,12 @@ namespace DPMisc.DynamicPatcher.Scripts.MyScripts.Test
 
             double distance = endCoord.DistanceFrom(startCoord);
 
+            if (ownerTechnoExt.IsNullOrExpired())
+            {
+                DetachFromParent();
+                indicatorBullet.Ref.Base.UnInit();
+            }
+
             if (!double.IsNaN(distance))
             {
                 //double time = distance / indicatorBullet.Ref.Speed;
@@ -229,10 +235,7 @@ namespace DPMisc.DynamicPatcher.Scripts.MyScripts.Test
                 indicatorBullet.Ref.Base.UnInit();
             }
 
-            if (ownerTechnoExt.IsNullOrExpired())
-            {
-                indicatorBullet.Ref.Base.UnInit();
-            }
+         
 
             //if (targetCoord.DistanceFrom(ownerTechnoExt.OwnerObject.Ref.Base.Base.GetCoords()) > ownerTechnoExt.OwnerObject.Ref.GetWeapon(weaponIndex).Ref.WeaponType.Ref.Range)
             //{
