@@ -45,8 +45,8 @@ namespace Scripts.Japan
                     }
                     distance = distance > 2560 ? 2560 : distance;
 
-                    var baseDamage = 30;
-                    var extraDamage = ((2560d + 256d - distance) / 2560) * (300 + (distance <= 760 ? 150 : 0));
+                    var baseDamage = 40;
+                    var extraDamage = ((2560d + 256d - distance) / 2560) * (320 + (distance <= 760 ? 160 : 0));
 
                     var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, Owner.OwnerObject.Ref.Owner, (int)(baseDamage + extraDamage), pWarhead, 100, true);
                     pBullet.Ref.DetonateAndUnInit(tLocation);

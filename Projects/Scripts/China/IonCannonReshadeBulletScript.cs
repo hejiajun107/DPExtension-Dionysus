@@ -66,6 +66,11 @@ namespace DpLib.Scripts.China
 
             //光束聚集时使用的弹头
             static Pointer<WarheadTypeClass> beanWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DPIonBeanRED");
+
+            
+            static Pointer<WarheadTypeClass> airWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DPIonBeanAir");
+
+
             //冲击波爆炸使用的弹头
             static Pointer<WarheadTypeClass> blastWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DPIonBlastRED");
 
@@ -248,6 +253,9 @@ namespace DpLib.Scripts.China
                                 //每条光束/帧的伤害
                                 int damage = readyState > 80 ? 8 : 5; //was50
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
+                                //Pointer<BulletClass> pBulletAir = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, airWarhead, 100, false);
+                                //pBulletAir.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height + 700));
+
                                 pBullet.Ref.Base.SetLocation(pos + new CoordStruct(0, 0, -height));
                                 Self.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, pos + new CoordStruct(0, 0, 9000));
                                 pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
