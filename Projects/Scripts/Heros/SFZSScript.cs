@@ -116,6 +116,8 @@ namespace Scripts
 
         private int Delay = 1500;
 
+        private int coolDown = 0;
+
         TechnoExt Caller;
 
         public static int UniqueId = 1668829562;
@@ -145,6 +147,11 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            if (coolDown > 0)
+            {
+                coolDown--;
+            }
+
             if (Delay-- <= 0)
             {
                 Owner.OwnerObject.Ref.Base.UnInit();
@@ -155,18 +162,14 @@ namespace Scripts
         {
             var isElite = Owner.OwnerObject.Ref.Veterancy.IsElite();
 
-            if (weaponIndex == 0)
+            if (coolDown <= 0)
             {
-                var bullet = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, isElite ? 240 : 120, pWH, 100, false);
-                bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-            }
-            else if (weaponIndex == 1)
-            {
+                coolDown = 400;
                 var center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 var blastRadius = 1280;
                 for (var angle = -180; angle < 180; angle += 30)
                 {
-                    var pos = new CoordStruct(center.X + (int)(blastRadius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(blastRadius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
+                    var pos = new CoordStruct(center.X + (int)(blastRadius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(blastRadius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z + 50);
 
 
                     if (MapClass.Instance.TryGetCellAt(pos, out var pCell))
@@ -174,7 +177,7 @@ namespace Scripts
                         if (!Owner.OwnerObject.IsNull)
                         {
                             var bullet = pDeloyBullet.Ref.CreateBullet(pCell.Convert<AbstractClass>(), Owner.OwnerObject, 50, pBlast, 5, false);
-                            bullet.Ref.MoveTo(center + new CoordStruct(0,0,100), new BulletVelocity(0, 0, 0));
+                            bullet.Ref.MoveTo(center + new CoordStruct(0, 0, 100), new BulletVelocity(0, 0, 0));
                             bullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
 
                             var bext = BulletExt.ExtMap.Find(bullet);
@@ -187,6 +190,12 @@ namespace Scripts
                     }
                 }
             }
+            else
+            {
+                var bullet = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, isElite ? 240 : 120, pWH, 100, false);
+                bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            }
+         
         }
     }
 

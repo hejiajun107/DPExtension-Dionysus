@@ -49,7 +49,7 @@ namespace Extension.CW
                     if (!string.IsNullOrEmpty(Art.AnimTrailer0))
                     {
                         var tr = CreateTrailerAnim(Art.AnimTrailer0, Art.AnimTrailer0FLH);
-                        if(tr!=null)
+                        if (tr!=null)
                             trailerAnims.Add(tr);
                     }
                     if (!string.IsNullOrEmpty(Art.AnimTrailer1))
@@ -85,9 +85,17 @@ namespace Extension.CW
                 if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
                 {
                     var visible = true;
+
+                    if(Owner.OwnerObject.CastToFoot(out var pfoot))
+                    {
+                        if (pfoot.Ref.GetCurrentSpeed() <= 0)
+                            visible = false;
+                    }
+
                     foreach (var trailer in trailerAnims)
                     {
-                        trailer.UpdateLocation(ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, trailer.FLH, false), visible);
+                        var facing = Owner.OwnerObject.Ref.Facing.current();
+                        trailer.UpdateLocation(ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, trailer.FLH, false), facing, visible);
                     }
                 }
 
@@ -155,11 +163,13 @@ namespace Extension.CW
 
         public string AnimType { get; private set; }
 
+
+
         public bool Killed { get {
                 return Anim.IsNull;
         } }
 
-        public void UpdateLocation(CoordStruct coordStruct, bool visible = true)
+        public void UpdateLocation(CoordStruct coordStruct, DirStruct dir, bool visible = true)
         {
             if (Killed)
             {
@@ -172,6 +182,24 @@ namespace Extension.CW
                 Anim.Ref.Base.SetLocation(coordStruct);
                 Anim.Ref.Invisible = !visible;
             }
+
+            //if (AnimTrailerDirection > 0)
+            //{
+            //    var max = short.MaxValue - short.MinValue;
+            //    var current =Math.Abs(dir.value()) - short.MinValue;
+            //    var currentDirIndex = (int)Math.Round(AnimTrailerDirection * current / (double)max);
+
+            //    var offssetAnim = Anim.Ref.Animation.Value % AnimTrailerDirection;
+
+            //    var framePerDir = AnimTrailerDuration / AnimTrailerDirection;
+
+            //    var shouldFrame = currentDirIndex * framePerDir + offssetAnim;
+
+            //    if(shouldFrame!= Anim.Ref.Animation.Value)
+            //    {
+            //        Anim.Ref.Animation.Value = currentDirIndex * framePerDir + offssetAnim;
+            //    }
+            //}
         }
 
         public void Kill()
@@ -208,6 +236,5 @@ namespace Extension.CW
         public string AnimTrailer4;
         [INIField(Key = "AnimTrailer4.FLH")]
         public int[] AnimTrailer4FLH;
-
     }
 }

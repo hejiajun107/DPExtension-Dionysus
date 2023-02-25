@@ -215,7 +215,7 @@ namespace Scripts.Japan
 
                         var drawRect = new RectangleStruct(rect.X, rect.Y, rect.Width, rect.Height);
 
-                        Surface.Current.Ref.Blit(Surface.ViewBound, drawRect
+                        Surface.Composite.Ref.Blit(Surface.ViewBound, drawRect
                             , surface.Pointer.Convert<Surface>(), srcSurface.GetRect(), srcSurface.GetRect(), true, true);
                     }
                 }
