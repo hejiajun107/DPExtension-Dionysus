@@ -28,11 +28,14 @@ namespace Scripts.American
 
                     for (var i = 0; i <= 1; i++)
                     {
-                        var bullet = weapon.Ref.Projectile.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, ptechno, weapon.Ref.Damage, weapon.Ref.Warhead, weapon.Ref.Speed, true);
-                        bullet.Ref.MoveTo(Owner.OwnerObject.Ref.SourceCoords,new BulletVelocity(0,0,0));
-                        if (rd.Next(0, 100) >= 20)
+                        if (Owner.OwnerRef.Target.IsNotNull)
                         {
-                            bullet.Ref.TargetCoords = bullet.Ref.TargetCoords + new CoordStruct(rd.Next(-300, 300), rd.Next(-300, 300), 0);
+                            var bullet = weapon.Ref.Projectile.Ref.CreateBullet(Owner.OwnerObject.Ref.Target, ptechno, weapon.Ref.Damage, weapon.Ref.Warhead, weapon.Ref.Speed, true);
+                            bullet.Ref.MoveTo(Owner.OwnerObject.Ref.SourceCoords, new BulletVelocity(0, 0, 0));
+                            if (rd.Next(0, 100) >= 20)
+                            {
+                                bullet.Ref.TargetCoords = bullet.Ref.TargetCoords + new CoordStruct(rd.Next(-300, 300), rd.Next(-300, 300), 0);
+                            }
                         }
                     }
                 }
