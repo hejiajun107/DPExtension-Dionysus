@@ -62,14 +62,17 @@ namespace Scripts.China
                 ghouse.XHSunstrikeTarget4 = CellClass.Cell2Coord(cell);
             }
 
-            if (isPlayer && index != 4)
+            if (index != 4)
             {
                 Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw1);
                 pSuper.Ref.IsCharged = true;
                 var swType = SelectSWType(index);
                 Pointer<SuperClass> nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(swType);
                 nextSuper.Ref.IsCharged = true;
-                Game.CurrentSWType = swType.Ref.ArrayIndex;
+                if(isPlayer)
+                {
+                    Game.CurrentSWType = swType.Ref.ArrayIndex;
+                }
             }
 
             if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
@@ -117,6 +120,89 @@ namespace Scripts.China
                     ghouse.XHSunstrikeTarget4 = ghouse.XHSunstrikeTarget1;
                 }
                 index = 4;
+
+                var t1location = ghouse.XHSunstrikeTarget1 + new CoordStruct(0, 0, 2000);
+
+
+                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("RayBurst1b"), t1location);
+
+                var technoType = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("SSTRSPU2");
+                var techno = technoType.Ref.Base.CreateObject(Owner.OwnerObject.Ref.owner).Convert<TechnoClass>();
+
+                List<CoordStruct> targets = new List<CoordStruct>();
+
+                if (techno.Ref.Base.Put(ghouse.XHSunstrikeTarget1, Direction.N))
+                {
+                    var maxRange = 18 * Game.CellSize;
+                    var minRange = 2 * Game.CellSize;
+
+
+                    int lineCount = 0;
+                    if (ghouse.XHSunstrikeTarget2.BigDistanceForm(ghouse.XHSunstrikeTarget1) > maxRange)
+                    {
+                        ghouse.XHSunstrikeTarget2 = GetLineEnd(ghouse.XHSunstrikeTarget1, ghouse.XHSunstrikeTarget2, maxRange);
+                    }
+
+                    targets.Add(ghouse.XHSunstrikeTarget2);
+
+                    if (MapClass.Instance.TryGetCellAt(ghouse.XHSunstrikeTarget2, out var pcell1))
+                    {
+                        var bullet1 = pbullet.Ref.CreateBullet(pcell1.Convert<AbstractClass>(), techno, 1, warhead, 40, false);
+
+                        bullet1.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
+                        bullet1.Ref.SetTarget(pcell1.Convert<AbstractClass>());
+
+                        lineCount++;
+                    }
+
+
+                    if (ghouse.XHSunstrikeTarget3.BigDistanceForm(ghouse.XHSunstrikeTarget1) > maxRange)
+                    {
+                        ghouse.XHSunstrikeTarget3 = GetLineEnd(ghouse.XHSunstrikeTarget1, ghouse.XHSunstrikeTarget3, maxRange);
+                    }
+
+                    if (targets.Where(x => ghouse.XHSunstrikeTarget3.BigDistanceForm(x) <= minRange).Any())
+                    {
+                        ghouse.XHSunstrikeTarget3 += new CoordStruct((rd.Next(100) > 50 ? -1 : 1) * rd.Next(512, 1000), (rd.Next(100) > 50 ? -1 : 1) * rd.Next(512, 1000), 0);
+                    }
+                    targets.Add(ghouse.XHSunstrikeTarget3);
+
+
+                    if (MapClass.Instance.TryGetCellAt(ghouse.XHSunstrikeTarget3, out var pcell2))
+                    {
+                        var bullet2 = pbullet.Ref.CreateBullet(pcell2.Convert<AbstractClass>(), techno, 1, warhead, 40, false);
+                        bullet2.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
+                        bullet2.Ref.SetTarget(pcell2.Convert<AbstractClass>());
+                        lineCount++;
+                    }
+
+                    if (ghouse.XHSunstrikeTarget4.BigDistanceForm(ghouse.XHSunstrikeTarget1) > maxRange)
+                    {
+                        ghouse.XHSunstrikeTarget4 = GetLineEnd(ghouse.XHSunstrikeTarget1, ghouse.XHSunstrikeTarget4, maxRange);
+                    }
+
+                    if (targets.Where(x => ghouse.XHSunstrikeTarget4.BigDistanceForm(x) <= minRange).Any())
+                    {
+                        ghouse.XHSunstrikeTarget4 += new CoordStruct((rd.Next(100) > 50 ? -1 : 1) * rd.Next(512, 1000), (rd.Next(100) > 50 ? -1 : 1) * rd.Next(512, 1000), 0);
+                    }
+
+                    if (MapClass.Instance.TryGetCellAt(ghouse.XHSunstrikeTarget4, out var pcell3))
+                    {
+                        var bullet3 = pbullet.Ref.CreateBullet(pcell3.Convert<AbstractClass>(), techno, 1, warhead, 40, false);
+                        bullet3.Ref.MoveTo(t1location, new BulletVelocity(0, 0, 0));
+                        bullet3.Ref.SetTarget(pcell3.Convert<AbstractClass>());
+                        lineCount++;
+                    }
+
+                    var ext = TechnoExt.ExtMap.Find(techno);
+                    ext.GameObject.CreateScriptComponent(nameof(XHSunStrikerMaintainerScript), "XHSunStrikerMaintainerScript", ext, lineCount);
+                }
+
+
+                Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw1);
+                pSuper.Ref.IsCharged = false;
+                pSuper.Ref.RechargeTimer.Resume();
+                pSuper.Ref.CameoChargeState = 0;
             }
 
             if (index == 4)
