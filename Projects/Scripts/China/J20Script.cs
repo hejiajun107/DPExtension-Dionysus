@@ -2,6 +2,7 @@
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 
 namespace DpLib.Scripts.China
@@ -37,7 +38,7 @@ namespace DpLib.Scripts.China
 
         private Random rd = new Random(114514);
 
-        private int duration = 50;
+        private int duration = 70;
 
         public override void OnUpdate()
         {
@@ -52,7 +53,7 @@ namespace DpLib.Scripts.China
 
             Pointer<BulletClass> pinviso = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, speedWh, 100, false);
             pinviso.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-            duration = 50;
+            duration = 70;
 
 
             if (IsMkIIUpdated)
@@ -113,7 +114,7 @@ namespace DpLib.Scripts.China
 
                 if (trueDamage > 2)
                 {
-                    if (rd.Next(100) > 50)
+                    if (rd.Next(100) > 40)
                     {
                         pDamage.Ref = 0;
                         YRMemory.Create<AnimClass>(missingAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());

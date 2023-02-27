@@ -165,6 +165,19 @@ namespace Scripts
             base.OnRemove();
         }
 
+        public override void OnStopCommand()
+        {
+            foreach (var salve in salveTechnos)
+            {
+                if (!salve.IsNullOrExpired())
+                {
+                    var smission = salve.OwnerObject.Convert<MissionClass>();
+                    smission.Ref.ForceMission(Mission.Stop);
+                    salve.OwnerObject.Ref.SetTarget(default);
+                }
+            }
+        }
+
     }
 
     [ScriptAlias(nameof(ExtraUnitSalveScript))]
@@ -483,7 +496,7 @@ namespace Scripts
             base.OnDestroy();
         }
 
-    
+
     }
 
 

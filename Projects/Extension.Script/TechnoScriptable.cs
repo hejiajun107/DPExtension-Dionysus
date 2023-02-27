@@ -11,6 +11,10 @@ namespace Extension.Script
     public interface ITechnoScriptable : IObjectScriptable
     {
         void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex);
+
+        void OnDeploy();
+
+        void OnStopCommand();
     }
 
     [Serializable]
@@ -27,6 +31,11 @@ namespace Extension.Script
         { }
 
         public virtual void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex) { }
+
+        public virtual void OnDeploy() { }
+
+        public virtual void OnStopCommand() { }
+        
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
@@ -21,11 +22,17 @@ namespace DpLib.Scripts.Heros
 
 
         //光束颜色
-        static ColorStruct innerColor = new ColorStruct(0, 64, 128);
-        static ColorStruct outerColor = new ColorStruct(0, 64, 128);
-        static ColorStruct outerSpread = new ColorStruct(0, 64, 128);
+        //static ColorStruct innerColor = new ColorStruct(0, 64, 128);
+        //static ColorStruct outerColor = new ColorStruct(0, 64, 128);
+        //static ColorStruct outerSpread = new ColorStruct(0, 64, 128);
+
+        static ColorStruct innerColor = new ColorStruct(255, 64, 32);
+        static ColorStruct outerColor = new ColorStruct(255, 64, 32);
+        static ColorStruct outerSpread = new ColorStruct(255, 64, 32);
 
         private bool isActived = false;
+
+        private Pointer<WeaponTypeClass> weaponType => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("LotusIonLaser");
 
         //光束聚集时使用的弹头
         static Pointer<WarheadTypeClass> beanWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DPIonBeanBlue");
@@ -47,6 +54,8 @@ namespace DpLib.Scripts.Heros
         private int blastRadius = 0;
 
         private int height = 0;
+
+        private int radiusSpeed = 5;
 
 
         //中心点位置
@@ -74,20 +83,24 @@ namespace DpLib.Scripts.Heros
                     for (var angle = startAngle; angle < startAngle + 360; angle += 45)
                     {
                         var pos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
-                        Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 9000), pos + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, 5);
-                        pLaser.Ref.Thickness = 10;
-                        pLaser.Ref.IsHouseColor = false;
+                        //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 9000), pos + new CoordStruct(0, 0, -center.Z), innerColor, outerColor, outerSpread, 5);
+                        //pLaser.Ref.Thickness = 10;
+                        //pLaser.Ref.IsHouseColor = true;
+
+
 
                         //每条光束/帧的伤害
-                        int damage = 6;
+                        int damage = weaponType.Ref.Damage;
                         Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
+                        pBullet.Ref.Base.SetLocation(pos + new CoordStruct(0, 0, -height));
+                        Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, weaponType, pos + new CoordStruct(0, 0, 9000));
                         pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                     }
 
                     //每次半径缩小越大，光束聚集越快
-                    radius -= 5;
+                    radius -= (radiusSpeed <= 40 ? radiusSpeed++ / 2 : 20);
                     //每次旋转的角度，角度越大旋转越快
-                    startAngle -= 2;
+                    //startAngle -= 2;
                 }
                 else
                 {
@@ -169,7 +182,8 @@ namespace DpLib.Scripts.Heros
                         //光束开始聚集的半径
                         radius = 1000;
                         blastRadius = 0;
-                        startAngle = -180;
+                        startAngle = -160;
+                        radiusSpeed = 5;
 
                         height = Owner.OwnerObject.Ref.Base.GetHeight();
 
@@ -181,5 +195,7 @@ namespace DpLib.Scripts.Heros
             }
 
         }
+
+      
     }
 }
