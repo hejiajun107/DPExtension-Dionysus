@@ -26,17 +26,30 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+
+                var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ScSniprDeploy"), location);
+                var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 100, pCrazyWH, 100, true);
+                bullet.Ref.DetonateAndUnInit(location);
+            }
+
+
+
             base.OnUpdate();
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             base.OnFire(pTarget, weaponIndex);
-            if (weaponIndex == 1)
-            {
-                var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, pCrazyWH, 100, true);
-                bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-            }
+            //if (weaponIndex == 1)
+            //{
+            //    var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, pCrazyWH, 100, true);
+            //    bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            //}
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)

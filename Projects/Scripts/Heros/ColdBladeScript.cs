@@ -42,9 +42,23 @@ namespace DpLib.Scripts.Heros
 
         private int currentFrame = 0;
 
+        private static Pointer<WarheadTypeClass> wCharger => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChargeWeaponWh");
+        private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                if (_manaCounter.Cost(20))
+                {
+                    var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Cast<AbstractClass>(), Owner.OwnerObject, 1, wCharger, 100, false);
+                    bullet.Ref.DetonateAndUnInit(Owner.OwnerRef.Base.Base.GetCoords());
+                }
+            }
+
             if (isActived)
             {
                 if (currentFrame >= delay)

@@ -24,6 +24,48 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+
+                if (_manaCounter.Cost(100))
+                {
+                    var selected = Owner.OwnerObject.Ref.Base.IsSelected;
+
+                    var techno = ptype.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
+
+                    var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+                    Owner.OwnerObject.Ref.Base.Remove();
+
+                    if (TechnoPlacer.PlaceTechnoNear(techno, CellClass.Coord2Cell(location)))
+                    {
+                        techno.Ref.Veterancy.Veterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
+                        if (selected)
+                        {
+                            techno.Ref.Base.Select();
+                        }
+                        var ext = TechnoExt.ExtMap.Find(techno);
+                        if (ext != null)
+                        {
+                            ext.GameObject.CreateScriptComponent(nameof(ExecutionerScript), ExecutionerScript.UniqueId, "ExecutionerScript", ext, Owner);
+                        }
+                        YRMemory.Create<AnimClass>(pAnim, location);
+                    }
+                    else
+                    {
+                        if (!TechnoPlacer.PlaceTechnoNear(Owner.OwnerObject, CellClass.Coord2Cell(location)))
+                        {
+                            Owner.OwnerObject.Ref.Base.UnInit();
+                        }
+                        techno.Ref.Base.UnInit();
+                    }
+
+                }
+
+            }
+
             base.OnUpdate();
         }
 
@@ -59,40 +101,7 @@ namespace Scripts
             }
             else
             {
-                if (_manaCounter.Cost(100))
-                {
-                    var selected = Owner.OwnerObject.Ref.Base.IsSelected;
 
-                    var techno = ptype.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
-
-                    var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-
-                    Owner.OwnerObject.Ref.Base.Remove();
-
-                    if (TechnoPlacer.PlaceTechnoNear(techno, CellClass.Coord2Cell(location)))
-                    {
-                        techno.Ref.Veterancy.Veterancy = Owner.OwnerObject.Ref.Veterancy.Veterancy;
-                        if (selected)
-                        {
-                            techno.Ref.Base.Select();
-                        }
-                        var ext = TechnoExt.ExtMap.Find(techno);
-                        if (ext != null)
-                        {
-                            ext.GameObject.CreateScriptComponent(nameof(ExecutionerScript), ExecutionerScript.UniqueId, "ExecutionerScript", ext, Owner);
-                        }
-                        YRMemory.Create<AnimClass>(pAnim, location);
-                    }
-                    else
-                    {
-                        if (!TechnoPlacer.PlaceTechnoNear(Owner.OwnerObject, CellClass.Coord2Cell(location)))
-                        {
-                            Owner.OwnerObject.Ref.Base.UnInit();
-                        }
-                        techno.Ref.Base.UnInit();
-                    }
-
-                }
             }
         }
     }

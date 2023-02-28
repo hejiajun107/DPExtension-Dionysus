@@ -33,6 +33,13 @@ namespace DpLib.Scripts.Heros
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+
+                Respawn();
+            }
 
             //检索附近单位，记录进数据
             if (checkDelay-- <= 0)
@@ -105,11 +112,11 @@ namespace DpLib.Scripts.Heros
         }
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if (weaponIndex == 1)
-            {
-                Respawn();
-            }
-            base.OnFire(pTarget, weaponIndex);
+            //if (weaponIndex == 1)
+            //{
+            //    Respawn();
+            //}
+            //base.OnFire(pTarget, weaponIndex);
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)

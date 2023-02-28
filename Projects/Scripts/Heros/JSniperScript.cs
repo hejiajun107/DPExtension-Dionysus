@@ -25,33 +25,52 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
 
+                if (_manaCounter.Cost(80))
+                {
+                    YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    Owner.OwnerObject.Ref.Ammo = 1;
+                }
+            }
         }
 
 
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if (weaponIndex == 0)
+            if(!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
-
-            }
-            if (weaponIndex == 1)
-            {
-                if(_manaCounter.Cost(100))
+                if (_manaCounter.Cost(80))
                 {
+                    YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     Owner.OwnerObject.Ref.Ammo = 1;
                 }
-                //if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
-                //{
-                //    TechnoExt pTargetExt = TechnoExt.ExtMap.Find(pTechno);
-
-                //    if (pTargetExt.GameObject.GetComponent(VirusSpreadDecorator.ID) == null)
-                //    {
-                //        pTargetExt.GameObject.CreateScriptComponent(nameof(VirusSpreadDecorator), VirusSpreadDecorator.ID, "VirusSpread Decorator", Owner, pTargetExt, 1000);
-                //    }
-                //}
             }
+
+            //if (weaponIndex == 0)
+            //{
+
+            //}
+            //if (weaponIndex == 1)
+            //{
+            //    if(_manaCounter.Cost(100))
+            //    {
+            //        Owner.OwnerObject.Ref.Ammo = 1;
+            //    }
+            //    //if (pTarget.CastToTechno(out Pointer<TechnoClass> pTechno))
+            //    //{
+            //    //    TechnoExt pTargetExt = TechnoExt.ExtMap.Find(pTechno);
+
+            //    //    if (pTargetExt.GameObject.GetComponent(VirusSpreadDecorator.ID) == null)
+            //    //    {
+            //    //        pTargetExt.GameObject.CreateScriptComponent(nameof(VirusSpreadDecorator), VirusSpreadDecorator.ID, "VirusSpread Decorator", Owner, pTargetExt, 1000);
+            //    //    }
+            //    //}
+            //}
         }
     }
 

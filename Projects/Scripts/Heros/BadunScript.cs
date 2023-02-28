@@ -2,6 +2,7 @@
 using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 
@@ -42,7 +43,9 @@ namespace Scripts
         static Pointer<WarheadTypeClass> pWH => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BaidunAOEffect");
         static Pointer<WarheadTypeClass> sWH => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BaidunLaserReportWh");
 
-        static Pointer<WarheadTypeClass> showWH => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BaidunAnimEffectWh");
+        static Pointer<WarheadTypeClass> showWH => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BaidunAnimEFWh");
+
+        static Pointer<WeaponTypeClass> bdlaser => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("BadunLaser");
 
 
 
@@ -66,9 +69,17 @@ namespace Scripts
 
         private int currentDuration = 0;
 
+        private int filp = 1;
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+
+                StartBurst();
+            }
 
             if (reloaded)
             {
@@ -94,18 +105,23 @@ namespace Scripts
 
                         var pTechno = Owner.OwnerObject;
                         var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                        var launchLocation = new CoordStruct(currentLocation.X, currentLocation.Y, currentLocation.Z + 100);
+                        filp = -filp;
+                        var launchLocation = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(100, -25, 115), false, filp);
+                        //new CoordStruct(currentLocation.X, currentLocation.Y, currentLocation.Z + 100);
 
                         var ntarget = new CoordStruct(target.X + random.Next(-360, 360), target.Y + random.Next(-360, 360), target.Z);
 
-                        Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(launchLocation, ntarget, innerColor, outerColor, outerSpread, 10);
-                        pLaser.Ref.Thickness = 10;
-                        pLaser.Ref.IsHouseColor = false;
+
+                        //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(launchLocation, ntarget, innerColor, outerColor, outerSpread, 10);
+                        //pLaser.Ref.Thickness = 10;
+                        //pLaser.Ref.IsHouseColor = false;
 
                         Pointer<BulletClass> pBullets = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, sWH, 100, true);
                         pBullets.Ref.DetonateAndUnInit(ntarget);
 
                         Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 16, pWH, 100, true);
+                        pBullet.Ref.Base.SetLocation(ntarget);
+                        Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, bdlaser, launchLocation);
                         pBullet.Ref.DetonateAndUnInit(ntarget);
                     }
                     else
@@ -133,7 +149,12 @@ namespace Scripts
                     controlledByAi = true;
             }
 
-            if (weaponIndex == 0 && !controlledByAi)
+            if (controlledByAi && !reloaded)
+            {
+                StartBurst();
+            }
+
+            if (weaponIndex == 0)
             {
                 if (isBurst == false)
                 {
@@ -145,18 +166,27 @@ namespace Scripts
                     }
                 }
             }
-            else
-            {
-                if (_manaCounter.Cost(100))
-                {
-                    var pTechno = Owner.OwnerObject;
+            //else
+            //{
 
-                    Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 16, showWH, 100, true);
-                    pBullet.Ref.DetonateAndUnInit(pTechno.Ref.Base.Base.GetCoords());
-                    reloaded = true;
-                    currentDuration = 0;
-                    burstRate = 50;
-                }
+            //}
+        }
+
+
+        private void StartBurst()
+        {
+            if (_manaCounter.Cost(100))
+            {
+                var pTechno = Owner.OwnerObject;
+
+                //Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, showWH, 100, true);
+                //pBullet.Ref.DetonateAndUnInit(pTechno.Ref.Base.Base.GetCoords());
+                var panim = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("DYRELOADEDEFFECT"), pTechno.Ref.Base.Base.GetCoords());
+                panim.Ref.SetOwnerObject(pTechno.Convert<ObjectClass>());
+
+                reloaded = true;
+                currentDuration = 0;
+                burstRate = 50;
             }
         }
     }

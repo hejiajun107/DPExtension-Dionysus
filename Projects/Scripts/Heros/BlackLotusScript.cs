@@ -74,6 +74,18 @@ namespace DpLib.Scripts.Heros
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if(mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                if (_manaCounter.Cost(100))
+                {
+                    Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, showWarhead, 100, false);
+                    pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    IsTargetSelecting = true;
+                }
+            }
+
             if (isActived)
             {
                 //光束聚集
@@ -160,7 +172,7 @@ namespace DpLib.Scripts.Heros
 
             if (IsTargetSelecting == false)
             {
-                if (weaponIndex == 1 || controlledByAi)
+                if (controlledByAi)
                 {
                     if (_manaCounter.Cost(100))
                     {

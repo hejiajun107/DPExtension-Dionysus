@@ -41,7 +41,16 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
 
+                if (_manaCounter.Cost(100))
+                {
+                    CreateNano();
+                }
+            }
             //if (IsRainning && currentRainFrame<rainDuration)
             //{
             //    if(rainRof++ >=4)
@@ -89,20 +98,20 @@ namespace Scripts
                     }
                 }
             }
-            if (weaponIndex == 1)
-            {
-                //if (!IsRainning)
-                //{
-                if (_manaCounter.Cost(100))
-                {
-                    CreateNano();
-                    //IsRainning = true;CreateNano
-                    //rainRof = 0;
-                    //currentRainFrame = 0;
-                    //center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                }
-                //}
-            }
+            //if (weaponIndex == 1)
+            //{
+            //    //if (!IsRainning)
+            //    //{
+            //    if (_manaCounter.Cost(100))
+            //    {
+            //        CreateNano();
+            //        //IsRainning = true;CreateNano
+            //        //rainRof = 0;
+            //        //currentRainFrame = 0;
+            //        //center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+            //    }
+            //    //}
+            //}
         }
 
 
