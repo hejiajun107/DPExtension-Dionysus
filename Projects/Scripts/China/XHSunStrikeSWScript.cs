@@ -62,7 +62,7 @@ namespace Scripts.China
                 ghouse.XHSunstrikeTarget4 = CellClass.Cell2Coord(cell);
             }
 
-            if (index != 4)
+            if (index != 4 && Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
                 Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw1);
                 pSuper.Ref.IsCharged = true;
