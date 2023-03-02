@@ -1,7 +1,9 @@
 ﻿
 using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 
 namespace Scripts
@@ -13,9 +15,10 @@ namespace Scripts
     {
         public IvanKingScript(TechnoExt owner) : base(owner)
         {
-
+            _manaCounter = new ManaCounter(owner);
         }
 
+        private ManaCounter _manaCounter;
 
         Random random = new Random(114545);
 
@@ -30,7 +33,13 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
 
+                ReleaseDrone();
+            }
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
@@ -43,6 +52,10 @@ namespace Scripts
         {
             try
             {
+                if(!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                {
+                    ReleaseDrone();
+                }
                 if (pAttackingHouse.IsNull)
                 {
                     return;
@@ -80,6 +93,14 @@ namespace Scripts
             {
                 //可能是因为爆炸产生的碎片之类的伤害导致获取不到攻击者
                 ;
+            }
+        }
+
+        private void ReleaseDrone()
+        {
+            if(_manaCounter.Cost(100))
+            {
+                TechnoPlacer.PlaceTechnoNear(TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("ODRON"), Owner.OwnerObject.Ref.Owner, CellClass.Coord2Cell(Owner.OwnerObject.Ref.Base.Base.GetCoords()));
             }
         }
     }

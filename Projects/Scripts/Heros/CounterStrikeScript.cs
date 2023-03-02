@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using System;
 
@@ -13,7 +14,7 @@ namespace DpLib.Scripts.Heros
     {
         public CounterStrikeScript(TechnoExt owner) : base(owner)
         {
-
+            _manaCounter = new ManaCounter(owner);
         }
 
 
@@ -27,6 +28,8 @@ namespace DpLib.Scripts.Heros
         static ColorStruct outerColor = new ColorStruct(34, 177, 76);
         static ColorStruct outerSpread = new ColorStruct(34, 177, 76);
 
+        private ManaCounter _manaCounter;
+
         private bool isActived = false;
 
         static Pointer<WeaponTypeClass> weapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("HM4M");
@@ -35,6 +38,8 @@ namespace DpLib.Scripts.Heros
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
         static Pointer<SuperWeaponTypeClass> airStrike => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("A5AirstrikeSpecial");
+
+        private Pointer<AnimTypeClass> pblood => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("FKBLOOD");
 
 
         private int maxHealth = 650;
@@ -62,9 +67,45 @@ namespace DpLib.Scripts.Heros
 
         Random random = new Random(130522);
 
+        private int healthCheckRof = 5;
+        private int animCheckRof = 150;
 
         public override void OnUpdate()
         {
+            if (healthCheckRof-- <= 0)
+            {
+                healthCheckRof = 5;
+                var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
+                var health = Owner.OwnerObject.Ref.Base.Health;
+                if (health <= strength * 0.3)
+                {
+                    if(_manaCounter.Cost(5))
+                    {
+                        if (health > strength * 0.2)
+                        {
+                            Owner.OwnerRef.Base.Health += 10;
+                        }
+                        else
+                        {
+                            Owner.OwnerRef.Base.Health += 20;
+                        }
+                    }
+                   
+                }
+            }
+
+            if (animCheckRof-- <= 0)
+            {
+                animCheckRof = 150;
+                var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
+                var health = Owner.OwnerObject.Ref.Base.Health;
+                if (health <= strength * 0.35)
+                {
+                    var anim = YRMemory.Create<AnimClass>(pblood, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    anim.Ref.SetOwnerObject(Owner.OwnerObject.Convert<ObjectClass>());
+                }
+            }
+
             if (!isActived && coolDown > 0)
             {
                 coolDown--;

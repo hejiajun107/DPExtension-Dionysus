@@ -1,6 +1,7 @@
 
 using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,12 @@ namespace Scripts
     [ScriptAlias(nameof(TanyScript))]
     public class TanyScript : TechnoScriptable
     {
-        public TanyScript(TechnoExt owner) : base(owner) { }
+        public TanyScript(TechnoExt owner) : base(owner) {
+            _manaCounter = new ManaCounter(owner, 2);
+        }
+
+        private ManaCounter _manaCounter;
+
 
         static TanyScript()
         {
@@ -62,6 +68,18 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+
+                if (_manaCounter.Cost(100))
+                {
+                    BackWrap(true);
+                }
+            }
+
             currentInterval++;
 
             if (currentInterval >= historyInterval)
@@ -120,34 +138,46 @@ namespace Scripts
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
              Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-            int rate = random.Next(100);
-            if (rate < 40)
+            if(!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
-                if (healthAndPostionHistories.Count == historyMaxCount)
+                int rate = random.Next(100);
+                if (rate < 40)
                 {
-                    var hal = healthAndPostionHistories.OrderByDescending(x => x.Health).FirstOrDefault();
-                    Pointer<TechnoClass> pTechno = Owner.OwnerObject;
-                    if (pTechno.Ref.Base.Health < hal.Health)
+                    if(_manaCounter.Cost(100))
                     {
-                        CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
-                        Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, -10, warhead, 100, false);
-                        pBullet.Ref.DetonateAndUnInit(currentLocation);
-                        //MapClass.FlashbangWarheadAt(1, warhead, currentLocation, false);
-                        //MapClass.DamageArea(currentLocation, 1, pTechno, warhead, false, pTechno.Ref.owner);
-
-                        //chroAnim.Ref.Base.SpawnAtMapCoords(CellClass.Coord2Cell(currentLocation), pTechno.Ref.Owner);
-                        //var pAnim = YRMemory.Create<AnimClass>(chroAnim, currentLocation);
-                        pTechno.Ref.Base.Health = hal.Health;
-                        //pTechno.Ref.Base.SetLocation(hal.Location);
-                        TrySetLocation(pTechno, hal.Location);
-
-                        //pBullet.Ref.DetonateAndUnInit(hal.Location);
-
-                        healthAndPostionHistories.RemoveAll(x => true);
+                        BackWrap(false);
                     }
                 }
             }
+          
 
+        }
+
+        public void BackWrap(bool force)
+        {
+            if (healthAndPostionHistories.Count == historyMaxCount)
+            {
+                var hal = healthAndPostionHistories.OrderByDescending(x => x.Health).FirstOrDefault();
+                Pointer<TechnoClass> pTechno = Owner.OwnerObject;
+                if (pTechno.Ref.Base.Health < hal.Health || force)
+                {
+                    CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
+                    Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, -10, warhead, 100, false);
+                    pBullet.Ref.DetonateAndUnInit(currentLocation);
+                    //MapClass.FlashbangWarheadAt(1, warhead, currentLocation, false);
+                    //MapClass.DamageArea(currentLocation, 1, pTechno, warhead, false, pTechno.Ref.owner);
+
+                    //chroAnim.Ref.Base.SpawnAtMapCoords(CellClass.Coord2Cell(currentLocation), pTechno.Ref.Owner);
+                    //var pAnim = YRMemory.Create<AnimClass>(chroAnim, currentLocation);
+                    pTechno.Ref.Base.Health = hal.Health;
+                    //pTechno.Ref.Base.SetLocation(hal.Location);
+                    TrySetLocation(pTechno, hal.Location);
+
+                    //pBullet.Ref.DetonateAndUnInit(hal.Location);
+
+                    healthAndPostionHistories.RemoveAll(x => true);
+                }
+            }
         }
 
 
