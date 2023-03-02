@@ -61,7 +61,8 @@ namespace Scripts
 
         private void CreateParadDrop(CoordStruct center)
         {
-            for (int i = 0; i < 2; i++)
+            var count = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 4 : 2;
+            for (int i = 0; i < count; i++)
             {
                 var ntarget = new CoordStruct(center.X + random.Next(-500, 500), center.Y + random.Next(-500, 500), 2000);
                 var ntargetGround = new CoordStruct(ntarget.X, ntarget.Y, center.Z);

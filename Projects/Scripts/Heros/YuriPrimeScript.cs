@@ -1,6 +1,7 @@
 ﻿
 using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -15,10 +16,10 @@ namespace Scripts
     {
         public YuriPrimeScript(TechnoExt owner) : base(owner)
         {
-            //_manaCounter = new ManaCounter();
+            _manaCounter = new ManaCounter(owner);
         }
 
-        //private ManaCounter _manaCounter;
+        private ManaCounter _manaCounter;
 
 
 
@@ -69,9 +70,15 @@ namespace Scripts
                             {
                                 if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
                                 {
-                                    Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 150, warhead, 100, false);
-                                    pBullet.Ref.DetonateAndUnInit(pTargetRef.OwnerObject.Ref.Base.Base.GetCoords());
-                                    break;
+                                    if (_manaCounter.Cost(30))
+                                    {
+                                        Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 150, warhead, 100, false);
+                                        pBullet.Ref.DetonateAndUnInit(pTargetRef.OwnerObject.Ref.Base.Base.GetCoords());
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }

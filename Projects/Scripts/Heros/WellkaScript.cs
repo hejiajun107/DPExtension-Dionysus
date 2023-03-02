@@ -17,7 +17,7 @@ namespace Scripts
     {
         public WellkaScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(owner, 5);
+            _manaCounter = new ManaCounter(owner, 7);
         }
 
         private ManaCounter _manaCounter;
