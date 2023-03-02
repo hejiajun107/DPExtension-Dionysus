@@ -15,7 +15,7 @@ namespace Scripts
     {
         public IvanKingScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(owner);
+            _manaCounter = new ManaCounter(owner, 8);
         }
 
         private ManaCounter _manaCounter;
