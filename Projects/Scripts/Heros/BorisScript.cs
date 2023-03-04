@@ -31,6 +31,17 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+
+                if (_manaCounter.Cost(100))
+                {
+                    CreateParadDrop(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                }
+            }
+
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
@@ -43,15 +54,18 @@ namespace Scripts
         {
             try
             {
-                if (pAttackingHouse.IsNull)
+                if(!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
                 {
-                    return;
-                }
-                if (pAttackingHouse.Ref.ArrayIndex != Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
-                {
-                    if (_manaCounter.Cost(100))
+                    if (pAttackingHouse.IsNull)
                     {
-                        CreateParadDrop(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        return;
+                    }
+                    if (pAttackingHouse.Ref.ArrayIndex != Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                    {
+                        if (_manaCounter.Cost(100))
+                        {
+                            CreateParadDrop(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        }
                     }
                 }
             }
