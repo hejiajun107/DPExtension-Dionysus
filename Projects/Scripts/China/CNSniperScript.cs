@@ -1,6 +1,7 @@
 ﻿using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using Scripts.Japan;
 using System;
@@ -35,6 +36,14 @@ namespace Scripts.China
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                reload();
+            }
+
+
             if (Owner.OwnerObject.Ref.Ammo == 0 && weaponChanged)
             {
                 weaponChanged = false;
@@ -74,17 +83,18 @@ namespace Scripts.China
                 //    toRecover = true;
                 //}
             }
-            else
+        }
+
+        private void reload()
+        {
+            if (rof <= 0)
             {
-                if (rof <= 0)
-                {
-                    rof = 500;
-                    Owner.OwnerObject.Ref.Ammo = 1;
-                    weaponChanged = true;
-                    toRecover = false;
-                    YRMemory.Create<AnimClass>(pAnim,Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = Owner.OwnerObject.Ref.Veterancy.IsElite() ? WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE") : WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
-                }
+                rof = 500;
+                Owner.OwnerObject.Ref.Ammo = 1;
+                weaponChanged = true;
+                toRecover = false;
+                YRMemory.Create<AnimClass>(pAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = Owner.OwnerObject.Ref.Veterancy.IsElite() ? WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE") : WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
             }
         }
     }
