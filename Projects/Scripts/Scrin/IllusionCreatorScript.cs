@@ -114,7 +114,21 @@ namespace DpLib.Scripts.Scrin
                         if (target.OwnerObject.Ref.Owner.IsNull)
                             return;
 
-                        var techno = target.OwnerObject.Ref.Type.Ref.Base.CreateObject(target.OwnerObject.Ref.Owner).Convert<TechnoClass>();
+                        var gext = target.GameObject.GetTechnoGlobalComponent();
+                        if (gext == null)
+                            return;
+
+                        Pointer<TechnoTypeClass> copyType;
+                        if (string.IsNullOrEmpty(gext.Data.CopyAs))
+                        {
+                            copyType = target.OwnerObject.Ref.Type;
+                        }
+                        else
+                        {
+                            copyType = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(gext.Data.CopyAs);
+                        }
+
+                        var techno = copyType.Ref.Base.CreateObject(target.OwnerObject.Ref.Owner).Convert<TechnoClass>();
                         if (techno == null)
                             return;
 

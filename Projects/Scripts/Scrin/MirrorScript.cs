@@ -66,7 +66,17 @@ namespace DpLib.Scripts.Scrin
 
                 var height = Owner.OwnerObject.Ref.Base.GetHeight();
 
-                var techno = pTechno.Ref.Type.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
+                Pointer<TechnoTypeClass> copyType;
+                if(string.IsNullOrEmpty(gext.Data.CopyAs))
+                {
+                    copyType = pTechno.Ref.Type;
+                }
+                else
+                {
+                    copyType = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(gext.Data.CopyAs);
+                }
+
+                var techno = copyType.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
                 if (techno == null)
                     return;
 

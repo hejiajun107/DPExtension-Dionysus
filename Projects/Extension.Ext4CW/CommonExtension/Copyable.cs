@@ -12,6 +12,9 @@ namespace Extension.CW
     {
         [INIField(Key = "Copyable")]
         public bool Copyable = true;
+
+        [INIField(Key = "CopyAs")]
+        public string CopyAs = "";
     }
 
 }

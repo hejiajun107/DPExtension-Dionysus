@@ -45,6 +45,8 @@ namespace Extension.CW
         [INIField(Key = "UnitBaseNormal")]
         public bool IsUnitBaseNormal = false;
 
+    
+
         ///// <summary>
         ///// 
         ///// </summary>
