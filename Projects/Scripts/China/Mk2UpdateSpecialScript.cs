@@ -50,6 +50,9 @@ namespace DpLib.Scripts.China
                         if (!gext.Data.CanMk2Update)
                             return false;
 
+                        if (gext.MKIIUpdated)
+                            return false;
+
                         return true;
                     }, FindRange.Allies).ToList();
 
@@ -108,6 +111,9 @@ namespace DpLib.Scripts.China
                     if (!gext.Data.CanMk2Update)
                         return false;
 
+                    if(gext.MKIIUpdated)
+                        return false;
+
                     var mycoords = p.Ref.Base.Base.GetCoords();
                     var distance = new CoordStruct(mycoords.X, mycoords.Y, location.Z).DistanceFrom(location);
                     if (double.IsNaN(distance) || distance > 1000)
@@ -138,6 +144,7 @@ namespace DpLib.Scripts.China
                     {
                         var pBullet = inviso.Ref.CreateBullet(techno.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
                         pBullet.Ref.DetonateAndUnInit(techno.OwnerObject.Ref.Base.Base.GetCoords());
+                        techno.GameObject.GetTechnoGlobalComponent().MKIIUpdated = true;
                     }
                 }
             }

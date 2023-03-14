@@ -15,6 +15,8 @@ namespace Extension.CW
         /// </summary>
         public bool IgnoreBaseNormal { get; set; } = false;
 
+        public bool MKIIUpdated { get; set; } = false;
+
 
     }
 
