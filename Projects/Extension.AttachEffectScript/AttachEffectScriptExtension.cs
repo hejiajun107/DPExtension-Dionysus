@@ -114,7 +114,7 @@ namespace Scripts
                         return;
                 }
 
-                if (MapClass.GetTotalDamage(10000, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) > 0 || INI.Data.AllowZeroDamage)
+                if (MapClass.GetTotalDamage(10000, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) != 0 || INI.Data.AllowZeroDamage)
                 {
                     if (!string.IsNullOrEmpty(INI.Data.AttachEffectScript))
                     {

@@ -70,6 +70,7 @@
     <Compile Include="AE\MultiFunctionAttachEffectScript.cs" />
     <Compile Include="AE\NanoSightAttachEffectScript.cs" />
     <Compile Include="AE\NCannonQuakeAttachEffectScript.cs" />
+    <Compile Include="AE\ReparingAttachEffectScript.cs" />
     <Compile Include="AE\TimeRevertAttachEffectScript.cs" />
     <Compile Include="AircraftScript.cs" />
     <Compile Include="AirportScript.cs" />
