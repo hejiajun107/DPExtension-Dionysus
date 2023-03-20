@@ -23,6 +23,8 @@ namespace Scripts
 
         private int maxDistance;
 
+        private int minDistance;
+
         static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> pWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("DpStop100Wh");
 
@@ -33,6 +35,7 @@ namespace Scripts
             deloyOnFire = ini.Data.DeloyOnFire;
             deloyOnMove = ini.Data.DeloyOnMove;
             maxDistance = ini.Data.PrimaryUnloadMaxRange;
+            minDistance = ini.Data.PrimaryMinRange;
         }
 
         private int checkTargetRof = 50;
@@ -43,18 +46,38 @@ namespace Scripts
 
             if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID != deloyOnMove)
             {
+                var dir = new DirStruct(3, 2);
+                Owner.OwnerObject.Ref.Facing.set(dir);
+
                 if (Owner.OwnerObject.CastToFoot(out var pfoot))
                 {
                     pfoot.Ref.SpeedMultiplier = 0;
+
+                    //不允许选取最近目标
+                  
+                    if(Owner.OwnerObject.Ref.Target.IsNotNull)
+                    {
+                        var weaponIndex = Owner.OwnerObject.Ref.SelectWeapon(Owner.OwnerObject.Ref.Target);
+                        if (weaponIndex == 0)
+                        {
+                            var distance = Owner.OwnerObject.Ref.Base.Base.GetCoords().DistanceFrom(Owner.OwnerObject.Ref.Target.Ref.GetCoords());
+                            if (!double.IsNaN(distance) && distance < minDistance * 256)
+                            {
+                                Owner.OwnerObject.Ref.SetTarget(default);
+                                mission.Ref.ForceMission(Mission.Stop);
+                            }
+                        }
+                    }
 
                     if (mission.Ref.CurrentMission == Mission.Move)
                     {
                         mission.Ref.ForceMission(Mission.Stop);
                         mission.Ref.ForceMission(Mission.Unload);
-                    }else if(checkTargetRof--<=0)
+                    }
+                    else if(checkTargetRof--<=0)
                     {
                         checkTargetRof = 50;
-                        if (Owner.OwnerObject.Ref.Target != null)
+                        if (Owner.OwnerObject.Ref.Target.IsNotNull)
                         {
                             if(!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
                             {
@@ -154,6 +177,8 @@ namespace Scripts
         [INIField(Key = "AutoDeploy.PrimaryMaxRange")]
         public int PrimaryUnloadMaxRange;
 
+        [INIField(Key = "AutoDeploy.PrimaryMinRange")]
+        public int PrimaryMinRange;
 
     }
 }

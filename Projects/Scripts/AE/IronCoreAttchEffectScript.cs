@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 
@@ -11,12 +12,16 @@ namespace DpLib.Scripts.AE
     {
         public IronCoreAttchEffectScript(TechnoExt owner) : base(owner)
         {
+            pAnim = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
         }
 
         static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> ironWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ICTKCoreIronOtherWh");
         static Pointer<WarheadTypeClass> breakMindWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BreakMindControlWh");
 
+        private SwizzleablePointer<AnimClass> pAnim;
+
+        static Pointer<AnimTypeClass> ironAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IronShield");
 
         private int immnueCoolDown = 0;
 
@@ -32,6 +37,32 @@ namespace DpLib.Scripts.AE
             //        initHouse = pTechno.Ref.Owner.Ref.ArrayIndex;
             //    }
             //}
+
+            if (immnueCoolDown <= 0 && Duration >= 1850)
+            {
+                if (pAnim.IsNull)
+                {
+                    CreateAnim();
+                }
+                //var visible = false;
+
+                //if (Owner.OwnerObject.Ref.Base.Health < Owner.OwnerRef.Type.Ref.Base.Strength)
+                //    visible = true;
+
+                //if (Owner.OwnerObject.Ref.Owner != HouseClass.Player)
+                //    visible = false;
+
+                //pAnim.Ref.Invisible = !visible;
+                pAnim.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            }
+            else
+            {
+                if (!pAnim.IsNull)
+                {
+                    KillAnim();
+                }
+            }
+
 
             if (immnueCoolDown > 0)
                 immnueCoolDown--;
@@ -81,6 +112,37 @@ namespace DpLib.Scripts.AE
             }
         }
 
+        public override void OnRemove()
+        {
+            base.OnRemove();
+            KillAnim();
+        }
 
+        public override void OnAttachEffectRemove()
+        {
+            base.OnAttachEffectRemove();
+            KillAnim();
+        }
+
+        private void CreateAnim()
+        {
+            if (!pAnim.IsNull)
+            {
+                KillAnim();
+            }
+
+            var anim = YRMemory.Create<AnimClass>(ironAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            pAnim.Pointer = anim;
+        }
+
+        private void KillAnim()
+        {
+            if (!pAnim.IsNull)
+            {
+                pAnim.Ref.TimeToDie = true;
+                pAnim.Ref.Base.UnInit();
+                pAnim.Pointer = IntPtr.Zero;
+            }
+        }
     }
 }
