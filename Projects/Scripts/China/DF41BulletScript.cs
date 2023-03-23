@@ -524,17 +524,34 @@ namespace Scripts.China
                     return false;
                 }).OrderBy(x => x.Ref.Base.GetCoords().DistanceFrom(targetCoord)).Take(10).ToList();
 
+                int targetCount = 0;
+
                 if (techno10.Count() > 0)
                 {
                     foreach (var pobj in techno10)
                     {
                         CreateBulletToTarget(pobj.Convert<AbstractClass>());
+                        targetCount++;
                     }
                 }
-           
-                if(techno10.Count<10)
+
+                if (targetCount < 10)
                 {
-                    var left = 10 - techno10.Count();
+                    foreach (var pobj in techno10)
+                    {
+                        if (targetCount >= 10)
+                        {
+                            break;
+                        }
+                        CreateBulletToTarget(pobj.Convert<AbstractClass>());
+                        targetCount++;
+                    }
+                }
+
+
+                if(targetCount < 10)
+                {
+                    var left = 10 - targetCount;
                     for (var i = 0; i < left; i++)
                     {
                         
