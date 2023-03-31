@@ -28,6 +28,7 @@ namespace Extension.Shared
             return manaBarScript.Cost(num);
         }
 
+
         public int Current
         {
             get

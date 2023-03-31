@@ -74,9 +74,12 @@ namespace Scripts
             {
                 mission.Ref.ForceMission(Mission.Stop);
 
-                if (_manaCounter.Cost(100))
+                if (_manaCounter.Current >= 100)
                 {
-                    BackWrap(true);
+                    if (_manaCounter.Cost(80))
+                    {
+                        BackWrap(true);
+                    }
                 }
             }
 
@@ -143,9 +146,12 @@ namespace Scripts
                 int rate = random.Next(100);
                 if (rate < 40)
                 {
-                    if(_manaCounter.Cost(100))
+                    if (_manaCounter.Current >= 100)
                     {
-                        BackWrap(false);
+                        if (_manaCounter.Cost(80))
+                        {
+                            BackWrap(true);
+                        }
                     }
                 }
             }

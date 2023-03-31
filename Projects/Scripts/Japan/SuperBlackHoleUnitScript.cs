@@ -1,4 +1,5 @@
 ﻿using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -163,12 +164,22 @@ namespace DpLib.Scripts.Japan
                             pTargetRef = (TechnoExt.ExtMap.Find(techno));
                             if (!pTargetRef.IsNullOrExpired())
                             {
-                                if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building && pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.BuildingType)
+                                if (pTargetRef.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building)
                                 {
                                     if (immnueToBlackHoles.Contains(pTargetRef.OwnerObject.Ref.Type.Ref.Base.Base.ID))
                                     {
                                         continue;
                                     }
+
+                                    var gext = pTargetRef.GameObject.GetTechnoGlobalComponent();
+                                    if (gext is null)
+                                        continue;
+
+                                    if (gext.Data.IsEpicUnit)
+                                        continue;
+
+                                    if (gext.Data.ImmnueToBlackHole)
+                                        continue;
 
                                     //仅仅用于标记该单位已经在黑洞作用中了
                                     if (pTargetRef.GameObject.GetComponent(BlackHoleEffectedDecorator.ID) == null)
