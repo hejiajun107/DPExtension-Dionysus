@@ -119,6 +119,14 @@ namespace DpLib.Scripts.Scrin
                             if (!refertTechno.OwnerObject.Ref.Base.Put(lastLocation, Direction.N))
                                 refertTechno.OwnerObject.Ref.Base.UnInit();
                         }
+                        else
+                        {
+                            if (!refertTechno.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                            {
+                                var mission = refertTechno.OwnerObject.Convert<MissionClass>();
+                                mission.Ref.ForceMission(Mission.Hunt);
+                            }
+                        }
                         index++;
                     }
                 }

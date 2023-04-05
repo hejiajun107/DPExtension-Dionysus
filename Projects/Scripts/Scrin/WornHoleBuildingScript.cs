@@ -25,7 +25,6 @@ namespace DpLib.Scripts.Scrin
         {
             var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            Logger.Log($"当前位置{location.X},{location.Y},{location.Z}");
             List<Pointer<FootClass>> passengers = new List<Pointer<FootClass>>();
 
             while (!Owner.OwnerObject.Ref.Passengers.GetFirstPassenger().IsNull)
