@@ -32,9 +32,6 @@ namespace DpLib.Scripts.Scrin
                 var passenger = Owner.OwnerObject.Ref.Passengers.GetFirstPassenger();
                 if (passenger.Convert<AbstractClass>().CastToTechno(out Pointer<TechnoClass> pPassenger))
                 {
-                    Logger.Log(passenger.Ref.BaseMission.CurrentMission);
-                    Logger.Log(pPassenger.Ref.Base.InLimbo);
-
                     passenger.Ref.BaseMission.ForceMission(Mission.Stop);
                     passengers.Insert(0, passenger);
                 }
