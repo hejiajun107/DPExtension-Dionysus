@@ -29,6 +29,38 @@ namespace DpLib.Scripts.Scrin
         static Pointer<WarheadTypeClass> aWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("WornActiveWH");
         static Pointer<WarheadTypeClass> eWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("WornEffectWH");
 
+        static List<string> AiTypes = new List<string>()
+        {
+            "PlanetShip",
+            "SCDISK",
+            "SCDISK",
+            "SCRINAA",
+            "SCRINAA",
+            "SCRINAA",
+            "SCSeeker",
+            "SCSeeker",
+            "SCSeeker",
+            "SCSeeker",
+            "SCSeeker",
+            "SCARAB4AI",
+            "Corruptor4AI",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCINF",
+            "SCAAINF",
+            "SCAAINF",
+            "SCAAINF",
+            "SCAAINF",
+            "SCAAINF",
+        };
+
         List<TechnoExt> targets = new List<TechnoExt>();
 
         public override void OnUpdate()
@@ -95,15 +127,49 @@ namespace DpLib.Scripts.Scrin
                 //放置单位
                 var index = 0;
 
-
+                
 
                 if (emptyCells.Count > 0)
                 {
-                    //寻找虫洞附近的友方单位
-                    targets = Finder.FindTechno(pTechno.Ref.Owner, techno =>
+                    if(Owner.OwnerObject.Ref.Owner.IsNotNull)
                     {
-                        return (techno.Ref.Base.Base.GetCoords().DistanceFrom(currentLocation) <= 5 * 256 || (techno.Ref.Base.Base.GetCoords().Z - currentLocation.Z > 100 && techno.Ref.Base.Base.GetCoords().DistanceFrom(currentLocation) <= 8 * 256)) && techno.Ref.Base.IsOnMap && !techno.Ref.Base.InLimbo && (techno.Ref.Base.Base.WhatAmI() == AbstractType.Unit || techno.Ref.Base.Base.WhatAmI() == AbstractType.Infantry);
-                    }, FindRange.Owner).Take(emptyCells.Count()).ToList();
+                        if(Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref.ControlledByHuman())
+                        {
+                            //寻找虫洞附近的友方单位
+                            targets = Finder.FindTechno(pTechno.Ref.Owner, techno =>
+                            {
+                                return (techno.Ref.Base.Base.GetCoords().DistanceFrom(currentLocation) <= 5 * 256 || (techno.Ref.Base.Base.GetCoords().Z - currentLocation.Z > 100 && techno.Ref.Base.Base.GetCoords().DistanceFrom(currentLocation) <= 8 * 256)) && techno.Ref.Base.IsOnMap && !techno.Ref.Base.InLimbo && (techno.Ref.Base.Base.WhatAmI() == AbstractType.Unit || techno.Ref.Base.Base.WhatAmI() == AbstractType.Infantry);
+                            }, FindRange.Owner).Take(emptyCells.Count()).ToList();
+                        }
+                        else
+                        {
+                            targets = new List<TechnoExt>();
+                            var takeCount = emptyCells.Count() > 8 ? 8 : emptyCells.Count();
+                            var rd = new Random(Owner.OwnerObject.Ref.TargetCoords.X + Owner.OwnerObject.Ref.TargetCoords.Y + Owner.OwnerObject.Ref.TargetCoords.Z);
+                            for(var i = 0; i < takeCount; i++)
+                            {
+                                var stype = AiTypes[rd.Next(0, AiTypes.Count())];
+                                var pType = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(stype);
+                                if (pType.IsNotNull)
+                                {
+                                    var techno = pType.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner.Ref.Owner).Convert<TechnoClass>();
+                                    if (techno == null)
+                                        continue;
+                                       
+                                    if(TechnoPlacer.PlaceTechnoNear(techno, CellClass.Coord2Cell(Owner.OwnerObject.Ref.SourceCoords)))
+                                    {
+                                        targets.Add(TechnoExt.ExtMap.Find(techno));
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                    else
+                    {
+                        targets = new List<TechnoExt>();
+                    }
+                  
                 }
 
                 foreach (var refertTechno in targets)
