@@ -2,6 +2,7 @@
 using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -87,10 +88,13 @@ namespace Scripts
                 return;
             }
 
-            if (_manaCounter.Cost(8))
+            if (Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(pAttacker.Ref.Base.GetCoords()) < 7 * Game.CellSize)
             {
-                var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, ChaosFeedbackWh, 100, false);
-                bullet.Ref.DetonateAndUnInit(pAttacker.Ref.Base.GetCoords());
+                if (_manaCounter.Cost(8))
+                {
+                    var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, ChaosFeedbackWh, 100, false);
+                    bullet.Ref.DetonateAndUnInit(pAttacker.Ref.Base.GetCoords());
+                }
             }
         }
 
