@@ -36,6 +36,11 @@ namespace Extension.CWUtilities
     }
 
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    sealed class LateUpdateActionAttribute : Attribute
+    {
+    }
+    
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     sealed class PutActionAttribute : Attribute
     {
     }
@@ -56,6 +61,11 @@ namespace Extension.CWUtilities
     {
     }
 
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    sealed class RenderActionAttribute : Attribute 
+    {
+    }
+
 
 
     public static class PartialHelper
@@ -67,6 +77,11 @@ namespace Extension.CWUtilities
 
 
         public static Action<TechnoGlobalExtension> TechnoUpdateAction = (owner) => { };
+
+        public static Action<TechnoGlobalExtension> TechnoLateUpdateAction = (owner) => { };
+
+
+        public static Action<TechnoGlobalExtension> TechnoRenderAction = (owner) => { };
 
         public static Action<TechnoGlobalExtension> TechnoRemoveAction = (owner) => { };
 
@@ -138,6 +153,23 @@ namespace Extension.CWUtilities
                     TechnoUpdateAction += lambda;
                 }
 
+                if (method.GetCustomAttribute(typeof(LateUpdateActionAttribute)) != null)
+                {
+                    List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
+                    { };
+
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
+                    MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
+
+                    var parameterExpressionAll = new List<ParameterExpression>()
+                    { };
+                    parameterExpressionAll.Add(parameterExpression);
+                    parameterExpressionAll.AddRange(parameterExpressions);
+                    Expression<Action<TechnoGlobalExtension>> expression = Expression.Lambda<Action<TechnoGlobalExtension>>
+                       (methodCall, parameterExpressionAll);
+                    var lambda = expression.Compile();
+                    TechnoLateUpdateAction += lambda;
+                }
 
                 if (method.GetCustomAttribute(typeof(RemoveActionAttribute)) != null)
                 {
@@ -201,6 +233,25 @@ namespace Extension.CWUtilities
                     var lambda = expression.Compile();
 
                     TechnoReceiveDamageAction += lambda;
+                }
+
+
+                if (method.GetCustomAttribute(typeof(RenderActionAttribute)) != null)
+                {
+                    List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
+                    { };
+
+                    ParameterExpression parameterExpression = Expression.Parameter(typeof(TechnoGlobalExtension), "owner");
+                    MethodCallExpression methodCall = Expression.Call(parameterExpression, method, parameterExpressions);
+
+                    var parameterExpressionAll = new List<ParameterExpression>()
+                    { };
+                    parameterExpressionAll.Add(parameterExpression);
+                    parameterExpressionAll.AddRange(parameterExpressions);
+                    Expression<Action<TechnoGlobalExtension>> expression = Expression.Lambda<Action<TechnoGlobalExtension>>
+                       (methodCall, parameterExpressionAll);
+                    var lambda = expression.Compile();
+                    TechnoRenderAction += lambda;
                 }
 
             }

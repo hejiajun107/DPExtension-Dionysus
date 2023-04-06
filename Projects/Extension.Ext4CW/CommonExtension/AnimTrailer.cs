@@ -21,7 +21,7 @@ namespace Extension.CW
 
         [AwakeAction]
         public void Anim_Trailer_Awake()
-        { 
+        {
             HasAnimTrailer = !string.IsNullOrEmpty(Art.AnimTrailer0);
         }
 
@@ -49,7 +49,7 @@ namespace Extension.CW
                     if (!string.IsNullOrEmpty(Art.AnimTrailer0))
                     {
                         var tr = CreateTrailerAnim(Art.AnimTrailer0, Art.AnimTrailer0FLH);
-                        if (tr!=null)
+                        if (tr != null)
                             trailerAnims.Add(tr);
                     }
                     if (!string.IsNullOrEmpty(Art.AnimTrailer1))
@@ -86,7 +86,7 @@ namespace Extension.CW
                 {
                     var visible = true;
 
-                    if(Owner.OwnerObject.CastToFoot(out var pfoot))
+                    if (Owner.OwnerObject.CastToFoot(out var pfoot))
                     {
                         if (pfoot.Ref.GetCurrentSpeed() <= 0)
                             visible = false;
@@ -105,7 +105,7 @@ namespace Extension.CW
         [RemoveAction]
         public void Anim_Trailer_Remove()
         {
-            if(_trailerInited && trailerAnims != null)
+            if (_trailerInited && trailerAnims != null)
             {
                 foreach (var trailer in trailerAnims)
                 {
@@ -114,9 +114,9 @@ namespace Extension.CW
             }
         }
 
-        private TrailerAnim CreateTrailerAnim(string anim,int[] flh)
+        private TrailerAnim CreateTrailerAnim(string anim, int[] flh)
         {
-            if(string.IsNullOrEmpty(anim))
+            if (string.IsNullOrEmpty(anim))
             {
                 return null;
             }
@@ -144,6 +144,23 @@ namespace Extension.CW
 
             return trailerAnim;
         }
+
+        //[LateUpdateAction]
+        //public void Anim_Trailer_Late_Update()
+        //{
+        //    if (trailerAnims == null)
+        //        return;
+
+        //    if (Owner.OwnerObject.Ref.Base.InLimbo || !Owner.OwnerObject.Ref.Base.IsOnMap)
+        //        return;
+
+        //    foreach (var trailer in trailerAnims)
+        //    {
+        //        if (trailer.Anim.IsNull)
+        //            continue;
+        //        DisplayClass.Instance.Ref.Submit(trailer.Anim.Pointer.Convert<ObjectClass>());
+        //    }
+        //}
 
     }
 

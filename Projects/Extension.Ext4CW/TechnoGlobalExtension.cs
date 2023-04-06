@@ -44,6 +44,12 @@ namespace Extension.CW
             PartialHelper.TechnoUpdateAction(this);
         }
 
+        public override void OnLateUpdate()
+        {
+            base.OnLateUpdate();
+            PartialHelper.TechnoLateUpdateAction(this);
+        }
+
         public override void OnPut(CoordStruct coord, Direction faceDir)
         {
             base.OnPut(coord, faceDir);
@@ -66,6 +72,12 @@ namespace Extension.CW
         {
             base.OnReceiveDamage(pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
             PartialHelper.TechnoReceiveDamageAction(this, pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
+        }
+
+        public override void OnRender()
+        {
+            base.OnRender();
+            PartialHelper.TechnoRenderAction(this);
         }
     }
 
