@@ -102,23 +102,27 @@ namespace DpLib.Scripts.AE
 
         public override void OnRemove()
         {
-            if(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "YAREFN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SMIN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SLAV")
-            {
-                return;
-            }
-
-            //如果从地图上提前移除则直接引爆
-            if (inited == false)
-            {
-                inited = true;
-                var coord = lastCoord != default ? lastCoord : Owner.OwnerObject.Ref.Base.Base.GetCoords();
-                //直接引爆
-                TakeSpreadAt(getAttacker(), coord);
-                TakeDamageAt(getAttacker(), coord);
-            }
-            //直接清理AE
             Duration = 0;
             base.OnRemove();
+            return;
+
+            //if(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "YAREFN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SMIN" || Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID == "SLAV")
+            //{
+            //    return;
+            //}
+
+            ////如果从地图上提前移除则直接引爆
+            //if (inited == false)
+            //{
+            //    inited = true;
+            //    var coord = lastCoord != default ? lastCoord : Owner.OwnerObject.Ref.Base.Base.GetCoords();
+            //    //直接引爆
+            //    TakeSpreadAt(getAttacker(), coord);
+            //    TakeDamageAt(getAttacker(), coord);
+            //}
+            ////直接清理AE
+            //Duration = 0;
+            //base.OnRemove();
         }
 
         //当AE被贴上时获取发射者
