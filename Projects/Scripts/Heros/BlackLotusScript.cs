@@ -174,6 +174,8 @@ namespace DpLib.Scripts.Heros
             {
                 if (controlledByAi)
                 {
+                    if (Owner.OwnerObject.Ref.Base.InLimbo)
+                        return;
                     if (_manaCounter.Cost(100))
                     {
                         Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, showWarhead, 100, false);

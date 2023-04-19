@@ -151,7 +151,8 @@ namespace Scripts
 
             if (controlledByAi && !reloaded)
             {
-                StartBurst();
+                if (!Owner.OwnerObject.Ref.Base.InLimbo)
+                    StartBurst();
             }
 
             if (weaponIndex == 0)

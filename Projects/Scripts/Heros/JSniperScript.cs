@@ -42,7 +42,10 @@ namespace Scripts
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if(!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+            if (Owner.OwnerObject.Ref.Base.InLimbo)
+                return;
+
+            if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
                 if (_manaCounter.Cost(80))
                 {
