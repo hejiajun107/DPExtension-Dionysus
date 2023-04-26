@@ -1,13 +1,8 @@
 ﻿using Extension.Ext;
 using Extension.Script;
-using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scripts.China
 {
@@ -157,6 +152,15 @@ namespace Scripts.China
                 var health = Owner.OwnerObject.Ref.Base.Health;
                 Owner.OwnerObject.Ref.Base.Health = health + 5 > strenth ? strenth : health + 5;
             }
+        }
+
+        public override void OnLateUpdate()
+        {
+            if (Owner.IsNullOrExpired())
+            {
+                DetachFromParent();
+                return;
+            }
 
             var mission = Owner.OwnerObject.Convert<MissionClass>();
             if (mission.Ref.CurrentMission == Mission.Unload)
@@ -165,17 +169,49 @@ namespace Scripts.China
             var pfoot = Owner.OwnerObject.Convert<FootClass>();
             pfoot.Ref.StopMoving();
             pfoot.Convert<FootClass>().Ref.StopDrive();
+            pfoot.Convert<FootClass>().Ref.AbortMotion();
             pfoot.Convert<FootClass>().Ref.Locomotor.Lock();
+            pfoot.Convert<FootClass>().Ref.StopDrive();
+
             Owner.OwnerObject.Ref.SetDestination(default, false);
 
-            if(Owner.OwnerObject.Ref.Base.Base.GetCoords().Z < target.Z)
+            if (Owner.OwnerObject.Ref.Target.IsNotNull)
             {
+                var target = Owner.OwnerObject.Ref.Target;
+                if (!Owner.OwnerObject.Ref.IsCloseEnoughToAttack(target))
+                    mission.Ref.ForceMission(Mission.Stop);
+            }
+            else if (mission.Ref.CurrentMission == Mission.Attack && !Owner.OwnerObject.Ref.IsCloseEnoughToAttackCoords(Owner.OwnerObject.Ref.GetTargetCoords()))
+                mission.Ref.ForceMission(Mission.Stop);
+            else if (mission.Ref.CurrentMission == Mission.AttackMove)
+                mission.Ref.ForceMission(Mission.Stop);
+
+            if (Owner.OwnerObject.Ref.Base.Base.GetCoords().Z < target.Z)
                 Owner.OwnerObject.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 10));
-            }
             else
-            {
                 Owner.OwnerObject.Ref.Base.SetLocation(target);
+        }
+
+        private bool CanAttackTarget(Pointer<AbstractClass> pTarget)
+        {
+            int i = Owner.OwnerObject.Ref.SelectWeapon(pTarget);
+            FireError fireError = Owner.OwnerObject.Ref.GetFireError(pTarget, i, true);
+            switch (fireError)
+            {
+                case FireError.ILLEGAL:
+                case FireError.CANT:
+                case FireError.MOVING:
+                case FireError.RANGE:
+                    return false;
             }
+            return true;
+        }
+
+        private FireError GetFireError(Pointer<AbstractClass> pTarget)
+        {
+            int i = Owner.OwnerObject.Ref.SelectWeapon(pTarget);
+            FireError fireError = Owner.OwnerObject.Ref.GetFireError(pTarget, i, false);
+            return fireError;
         }
     }
 }

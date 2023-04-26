@@ -5,6 +5,7 @@ using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using System;
+using System.Data;
 using System.Linq;
 
 namespace DpLib.Scripts.China
@@ -20,7 +21,7 @@ namespace DpLib.Scripts.China
 
         private static Pointer<BulletTypeClass> inviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
-        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIISpWh");
+        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIIAnimWh");
 
 
         private int delay = 10;
@@ -142,9 +143,15 @@ namespace DpLib.Scripts.China
                 {
                     if (!techno.IsNullOrExpired())
                     {
-                        var pBullet = inviso.Ref.CreateBullet(techno.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
-                        pBullet.Ref.DetonateAndUnInit(techno.OwnerObject.Ref.Base.Base.GetCoords());
-                        techno.GameObject.GetTechnoGlobalComponent().MKIIUpdated = true;
+                        if (techno.GameObject.GetComponent<ToBeMkUpdatedScript>() == null)
+                        {
+                            var pBullet = inviso.Ref.CreateBullet(techno.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
+                            pBullet.Ref.DetonateAndUnInit(techno.OwnerObject.Ref.Base.Base.GetCoords());
+                            techno.GameObject.CreateScriptComponent(nameof(ToBeMkUpdatedScript), "Delay To Attach MKII Update", techno);
+                        }
+                        //var pBullet = inviso.Ref.CreateBullet(techno.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
+                        //pBullet.Ref.DetonateAndUnInit(techno.OwnerObject.Ref.Base.Base.GetCoords());
+                        //techno.GameObject.GetTechnoGlobalComponent().MKIIUpdated = true;
                     }
                 }
             }
@@ -158,5 +165,37 @@ namespace DpLib.Scripts.China
             base.OnUpdate();
         }
 
+    }
+
+    [Serializable]
+    [ScriptAlias(nameof(ToBeMkUpdatedScript))]
+    public class ToBeMkUpdatedScript : TechnoScriptable
+    {
+        public ToBeMkUpdatedScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        private static Pointer<BulletTypeClass> inviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIISpWh");
+
+        private int delay = 200;
+
+        public override void OnUpdate()
+        {
+            if(Owner.IsNullOrExpired())
+            {
+                DetachFromParent();
+                return;
+            }
+
+            if(delay--<=0)
+            {
+                var pBullet = inviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
+                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                Owner.GameObject.GetTechnoGlobalComponent().MKIIUpdated = true;
+                DetachFromParent();
+            }
+            
+        }
     }
 }
