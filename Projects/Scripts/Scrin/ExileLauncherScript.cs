@@ -55,7 +55,13 @@ namespace DpLib.Scripts.Scrin
                                     {
                                         if (gext.Data.Copyable != false)
                                         {
-                                            var techno = pPassenger.Ref.Type.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
+                                            var copyTyoe = pPassenger.Ref.Type;
+                                            if (!string.IsNullOrEmpty(gext.Data.CopyAs))
+                                            {
+                                                copyTyoe = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(gext.Data.CopyAs);
+                                            }
+                                            
+                                            var techno = copyTyoe.Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
                                             if (techno != null)
                                             {
                                                 CellSpreadEnumerator enumerator = new CellSpreadEnumerator(5);

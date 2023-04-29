@@ -190,12 +190,14 @@ namespace DpLib.Scripts.China
 
             if(delay--<=0)
             {
-                var pBullet = inviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
-                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                Owner.GameObject.GetTechnoGlobalComponent().MKIIUpdated = true;
-                DetachFromParent();
+                if(!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
+                {
+                    var pBullet = inviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
+                    pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    Owner.GameObject.GetTechnoGlobalComponent().MKIIUpdated = true;
+                    DetachFromParent();
+                }
             }
-            
         }
     }
 }
