@@ -50,4 +50,47 @@ namespace Scripts.Yuri
             }
         }
     }
+
+    [ScriptAlias(nameof(RCROSScript))]
+    [Serializable]
+    public class RCROSScript : TechnoScriptable
+    {
+        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("RCROSAGWhB");
+
+        private static Pointer<BulletTypeClass> inviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+
+
+        public RCROSScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        {
+            if (weaponIndex != 0)
+                return;
+
+            if (pTarget.IsNull)
+                return;
+
+            if (pTarget.Ref.WhatAmI() == AbstractType.Building)
+                return;
+
+            if (pTarget.CastToTechno(out var ptechno))
+            {
+                var technoExt = TechnoExt.ExtMap.Find(ptechno);
+
+                if (technoExt.IsNullOrExpired())
+                    return;
+
+                var gext = technoExt.GameObject.GetTechnoGlobalComponent();
+
+                if ((ptechno.Ref.IsMindControlled() || ptechno.Ref.Type.Ref.ImmuneToPsionics) && !gext.Data.IsEpicUnit && !gext.Data.IsHero)
+                {
+                    var damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 170 : 85;
+                    var pbullet = inviso.Ref.CreateBullet(pTarget, Owner.OwnerObject, damage, warhead, 100, true);
+                    pbullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
+                }
+            }
+        }
+    }
 }
