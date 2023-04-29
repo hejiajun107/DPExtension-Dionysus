@@ -15,7 +15,7 @@ namespace Scripts.Yuri
     [Serializable]
     public class SMNKScript : TechnoScriptable
     {
-        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SMNKSSA");
+        private static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SMNKSSB");
 
         private static Pointer<BulletTypeClass> inviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
@@ -27,6 +27,9 @@ namespace Scripts.Yuri
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             if (pTarget.IsNull)
+                return;
+
+            if (pTarget.Ref.WhatAmI() == AbstractType.Building)
                 return;
 
             if (pTarget.CastToTechno(out var ptechno))
