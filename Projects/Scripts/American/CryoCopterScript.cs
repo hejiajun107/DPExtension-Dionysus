@@ -129,9 +129,83 @@ namespace DpLib.Scripts.American
         }
     }
 
+    [ScriptAlias(nameof(CryoFreeszingAttachEffect))]
+    [Serializable]
+    public class CryoFreeszingAttachEffect : AttachEffectScriptable
+    {
+        public CryoFreeszingAttachEffect(TechnoExt owner) : base(owner)
+        {
+        }
 
+        static Pointer<BulletTypeClass> bulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisibleAll");
 
+        static Pointer<WarheadTypeClass> warhead0 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH0");
+        static Pointer<WarheadTypeClass> warhead1 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH1");
+        static Pointer<WarheadTypeClass> warhead2 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH2");
+        static Pointer<WarheadTypeClass> warhead3 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH3");
+        static Pointer<WarheadTypeClass> warhead4 => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CryoFrozenWH4");
 
+        private int initTemperature;
 
+        int temperature = 300;
 
+        public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
+        {
+            initTemperature = 300 + (int)(Owner.OwnerObject.Ref.Base.Health * 5 / 100);
+        }
+
+        public override void OnUpdate()
+        {
+            if (temperature >= initTemperature + 200)
+                return;
+            temperature++;
+        }
+
+        public override void OnAttachEffectRecieveNew(int duration, Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
+        {
+            Duration = duration;
+
+            if (pAttacker.IsNull)
+                return;
+
+            if(pAttacker.CastToTechno(out var ptechno))
+            {
+                temperature -= 18;
+                if (temperature < -50)
+                {
+                    temperature = -50;
+                }
+
+                Pointer<WarheadTypeClass> warhead;
+
+                if (temperature > 180)
+                {
+                    warhead = warhead0;
+                }
+                else if (temperature >= 150 && temperature <= 180)
+                {
+                    //第一阶段的冰冻
+                    warhead = warhead1;
+                }
+                else if (temperature > 100 && temperature < 150)
+                {
+                    //第二阶段的冰冻
+                    warhead = warhead2;
+                }
+                else if (temperature > 0 && temperature <= 100)
+                {
+                    //第三阶段的冰冻
+                    warhead = warhead3;
+                }
+                else
+                {
+                    //第四阶段的冰冻
+                    warhead = warhead4;
+                }
+
+                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(ptechno.Convert<AbstractClass>(), ptechno, 1, warhead, 100, false);
+                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            }
+        }
+    }
 }
