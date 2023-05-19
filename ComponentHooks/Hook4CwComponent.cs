@@ -231,6 +231,25 @@ namespace ComponentHooks
         }
 
 
+        //[Hook(HookType.AresHook, Address = 0x6FC339, Size = 6)]
+        //public static unsafe UInt32 TechnoClass_CanFire(REGISTERS* R)
+        //{
+        //    Pointer<TechnoClass> pTechno = (IntPtr)(void*)R->ESI;
+        //    Pointer<WeaponTypeClass> pWeapon = (IntPtr)(void*)R->EDI;
+        //    Pointer<AbstractClass> pTarget = R->Stack<Pointer<AbstractClass>>(0x20 - (-0x4));
+        //    TechnoExt ext = TechnoExt.ExtMap.Find(pTechno);
+        //    var gscript = ext.GameObject.GetTechnoGlobalComponent();
+        //    UInt32 cannotFire = 0x6FCB7E;
+
+        //    if (gscript != null)
+        //    {
+        //        if (!gscript.CanFire(pTarget, pWeapon))
+        //        {
+        //            return cannotFire;
+        //        }
+        //    }
+        //    return 0;
+        //}
 
         //[Hook(HookType.AresHook, Address = 0x739450, Size = 5)]
         //public static unsafe UInt32 Unit_Class_Deploy_LocationFix(REGISTERS* R)

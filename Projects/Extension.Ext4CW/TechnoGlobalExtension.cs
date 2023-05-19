@@ -79,6 +79,8 @@ namespace Extension.CW
             base.OnRender();
             PartialHelper.TechnoRenderAction(this);
         }
+
+        public partial bool CanFire(Pointer<AbstractClass> pTarget, Pointer<WeaponTypeClass> pWeapon);
     }
 
     [Serializable]
