@@ -21,7 +21,6 @@ namespace Scripts.Scrin
         private bool InIonStorm;
         private int Delay = 0;
 
-        private Random random = new Random(114514);
 
         private static Pointer<AnimTypeClass> pblast => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SCLIGHTNWAVE");
         private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
@@ -39,7 +38,7 @@ namespace Scripts.Scrin
                 if (Delay % 20 == 0)
                 {
                     var spread = 7 * Game.CellSize;
-                    var target = new CoordStruct(location.X + random.Next(-spread, spread), location.Y + random.Next(-spread, spread), location.Z);
+                    var target = new CoordStruct(location.X + MathEx.Random.Next(-spread, spread), location.Y + MathEx.Random.Next(-spread, spread), location.Z);
                     YRMemory.Create<AnimClass>(pblast, target);
                     var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 120, pWh, 100, true);
                     bullet.Ref.DetonateAndUnInit(target);
