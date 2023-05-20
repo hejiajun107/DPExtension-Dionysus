@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 
@@ -11,9 +12,12 @@ namespace DpLib.Scripts.AE
     {
         public DamageDeepenAttachEffectScript(TechnoExt owner) : base(owner)
         {
+            pAnim = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
         }
 
-        private int damage = 20;
+        private int damage => count <= 5 ? 20 * count : (count - 5) * 5 + 100;
+
+        private int count = 1;
 
         private int delay = 20;
 
@@ -21,8 +25,23 @@ namespace DpLib.Scripts.AE
 
         private Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MirageEXWH");
 
+        private Pointer<AnimTypeClass> counterAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("MgtkLock");
+
+        private SwizzleablePointer<AnimClass> pAnim;
+
+
         public override void OnUpdate()
         {
+            if (pAnim.IsNull)
+            {
+                CreateAnim();
+            }
+
+            pAnim.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            var scount = count <= 0 ? 0 : count - 1;
+            pAnim.Ref.Animation.Value = scount > 9 ? 9 : scount;
+            pAnim.Ref.Pause();
+
             if (delay > 0)
             {
                 delay--;
@@ -74,9 +93,9 @@ namespace DpLib.Scripts.AE
         //重置duration
         public override void OnAttachEffectRecieveNew(int duration, Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
-            if (damage <= 100)
+            if (count < 10)
             {
-                damage += 20;
+                count += 1;
             }
             Duration = duration;
         }
@@ -84,8 +103,35 @@ namespace DpLib.Scripts.AE
         public override void OnRemove()
         {
             Duration = 0;
+            KillAnim();
             base.OnRemove();
         }
 
+        public override void OnAttachEffectRemove()
+        {
+            KillAnim();
+            base.OnAttachEffectRemove();
+        }
+
+        private void CreateAnim()
+        {
+            if (!pAnim.IsNull)
+            {
+                KillAnim();
+            }
+
+            var anim = YRMemory.Create<AnimClass>(counterAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            pAnim.Pointer = anim;
+        }
+
+        private void KillAnim()
+        {
+            if (!pAnim.IsNull)
+            {
+                pAnim.Ref.TimeToDie = true;
+                pAnim.Ref.Base.UnInit();
+                pAnim.Pointer = IntPtr.Zero;
+            }
+        }
     }
 }
