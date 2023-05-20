@@ -119,7 +119,16 @@ namespace Scripts
             {
                 if (!salve.IsNullOrExpired())
                 {
-                    if (!salve.OwnerObject.Ref.Base.IsOnMap)
+                    var salveScript = salve.GameObject.GetComponent<ExtraUnitSalveScript>();
+                    if (salveScript == null)
+                        continue;
+                    if (salveScript.Defination.LimboUnit == true)
+                    {
+                        salve.OwnerObject.Ref.Base.InLimbo = true;
+                        continue;
+                    }
+
+                    if (salve.OwnerObject.Ref.Base.InLimbo || !salve.OwnerObject.Ref.Base.IsOnMap)
                     {
                         ++Game.IKnowWhatImDoing;
                         salve.OwnerObject.Ref.Base.Put(Owner.OwnerObject.Ref.Base.Base.GetCoords(), GameUtil.Facing2Dir(Owner.OwnerObject.Ref.Facing));
@@ -187,7 +196,7 @@ namespace Scripts
         public static int UniqueId = 1145142;
 
         public TechnoExt Master;
-        ExtraUnitDefinationPoco Defination;
+        public ExtraUnitDefinationPoco Defination;
 
         public CoordStruct Position;
 
@@ -271,7 +280,10 @@ namespace Scripts
                 }
             }
 
-            Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
+            if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Building)
+            {
+                Owner.OwnerObject.Ref.Base.Mark(MarkType.UP);
+            }
 
             //同步位置
             var location = ExHelper.GetFLHAbsoluteCoords(Master.OwnerObject, Position, Defination.BindTurret);
@@ -280,7 +292,7 @@ namespace Scripts
 
             if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
             {
-                Owner.OwnerObject.Ref.Base.UpdatePlacement(PlacementType.Redraw);
+                //Owner.OwnerObject.Ref.Base.UpdatePlacement(PlacementType.Redraw);
             }
             else
             {
@@ -625,6 +637,9 @@ namespace Scripts
         [INIField(Key = "ExtraUnit.WorkingHeight")]
         public int WorkingHeight = 0;
 
+        [INIField(Key = "ExtraUnit.LimboUnit")]
+        public bool LimboUnit = false;
+
         public ExtraUnitDefinationPoco Copy()
         {
             return new ExtraUnitDefinationPoco()
@@ -641,7 +656,8 @@ namespace Scripts
                 FacingAngleAdjust = this.FacingAngleAdjust,
                 ForceSameFacing = this.ForceSameFacing,
                 ForceFacingAllowAngle = this.ForceFacingAllowAngle,
-                WorkingHeight = this.WorkingHeight
+                WorkingHeight = this.WorkingHeight,
+                LimboUnit = this.LimboUnit
             };
         }
     }
@@ -718,6 +734,7 @@ namespace Scripts
         /// </summary>
         public int WorkingHeight = 0;
 
+        public bool LimboUnit = false;
     }
 
 }

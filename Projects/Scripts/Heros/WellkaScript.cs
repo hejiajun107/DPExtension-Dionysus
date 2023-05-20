@@ -4,6 +4,7 @@ using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -185,7 +186,6 @@ namespace Scripts
                 }
             }
         }
-
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
              Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
