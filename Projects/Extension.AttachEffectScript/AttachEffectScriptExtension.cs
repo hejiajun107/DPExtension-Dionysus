@@ -91,17 +91,18 @@ namespace Scripts
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
-            INI.Section = pWH.Ref.Base.ID;
-
             foreach (var ae in _attachEffectScriptables)
             {
                 ae.OnReceiveDamage(pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
             }
 
+            INI.Section = pWH.Ref.Base.ID;
+            var data = INI.Data;
+
             if (pAttackingHouse.IsNull)
                 return;
 
-            if (INI.Data != null)
+            if (data != null)
             {
                 if (pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
                 {
@@ -110,27 +111,27 @@ namespace Scripts
                 }
                 else
                 {
-                    if (!INI.Data.AffectsEnemies)
+                    if (!data.AffectsEnemies)
                         return;
                 }
 
-                if (MapClass.GetTotalDamage(10000, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) != 0 || INI.Data.AllowZeroDamage)
+                if (MapClass.GetTotalDamage(10000, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) != 0 || data.AllowZeroDamage)
                 {
-                    if (!string.IsNullOrEmpty(INI.Data.AttachEffectScript))
+                    if (!string.IsNullOrEmpty(data.AttachEffectScript))
                     {
-                        var currentScript = _attachEffectScriptables.Where(s => s.ScriptName == INI.Data.AttachEffectScript).FirstOrDefault();
+                        var currentScript = _attachEffectScriptables.Where(s => s.ScriptName == data.AttachEffectScript).FirstOrDefault();
 
-                        if (currentScript != null && !INI.Data.AttachEffectCumulative)
+                        if (currentScript != null && !data.AttachEffectCumulative)
                         {
-                            currentScript.OnAttachEffectRecieveNew(INI.Data.AttachEffectDuration, pDamage, pWH, pAttacker, pAttackingHouse);
+                            currentScript.OnAttachEffectRecieveNew(data.AttachEffectDuration, pDamage, pWH, pAttacker, pAttackingHouse);
                         }
                         else
                         {
-                            if (INI.Data.AttachEffectDuration > 0)
+                            if (data.AttachEffectDuration > 0)
                             {
-                                var script = ScriptManager.GetScript(INI.Data.AttachEffectScript);
+                                var script = ScriptManager.GetScript(data.AttachEffectScript);
                                 currentScript = ScriptManager.CreateScriptable(script, Owner) as AttachEffectScriptable;
-                                currentScript.Duration = INI.Data.AttachEffectDuration;
+                                currentScript.Duration = data.AttachEffectDuration;
                                 currentScript.OnAttachEffectPut(pDamage, pWH, pAttacker, pAttackingHouse);
                                 _attachEffectScriptables.Add(currentScript);
                             }

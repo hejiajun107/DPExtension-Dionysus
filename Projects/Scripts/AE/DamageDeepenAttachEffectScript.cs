@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -15,7 +16,7 @@ namespace DpLib.Scripts.AE
             pAnim = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
         }
 
-        private int damage => count <= 5 ? 20 * count : (count - 5) * 5 + 100;
+        private int damage => count <= 5 ? 16 * count : (count - 5) * 5 + 80;
 
         private int count = 1;
 
@@ -62,6 +63,9 @@ namespace DpLib.Scripts.AE
 
             if (!pWH.IsNull)
             {
+                if (pWH.Ref.Base.ID == "MirageEXWH")
+                    return;
+
                 if (pAttacker.CastToTechno(out var pAttackTechno))
                 {
                     if (pWH.Ref.Base.ID == "MirageWH")
@@ -82,7 +86,6 @@ namespace DpLib.Scripts.AE
                 }
             }
 
-            base.OnReceiveDamage(pDamage, DistanceFromEpicenter, pWH, pAttacker, IgnoreDefenses, PreventPassengerEscape, pAttackingHouse);
         }
 
         public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
@@ -97,6 +100,7 @@ namespace DpLib.Scripts.AE
             {
                 count += 1;
             }
+
             Duration = duration;
         }
 
