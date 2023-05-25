@@ -16,7 +16,7 @@ namespace DpLib.Scripts.AE
             pAnim = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
         }
 
-        private int damage => count <= 5 ? 16 * count : (count - 5) * 5 + 80;
+        private int damage => count <= 5 ? 16 * count : (count - 5) * 10 + 80;
 
         private int count = 1;
 
