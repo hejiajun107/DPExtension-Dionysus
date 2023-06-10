@@ -272,12 +272,12 @@ namespace Scripts
 
                                     var start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-                                    var flipX = target.X > start.X ? 1 : -1;
-                                    var flipY = target.Y > start.Y ? 1 : -1;
+                                    var flipX =1;//target.X > start.X ? 1 : -1;
+                                    var flipY = 1;//target.Y > start.Y ? 1 : -1;
 
-                                    var cita = Math.Atan(Math.Abs((target.Y - start.Y) / (target.X - start.X)));
+                                    var cita = Math.Atan2((target.Y - start.Y), (target.X - start.X));
 
-                               
+
                                     var cs = 25 * Game.CellSize;
                                     var dest = new CoordStruct((start.X + (int)(cs * Math.Cos(cita) * flipX)), start.Y + (int)(cs * Math.Sin(cita)) * flipY, start.Z);
 
@@ -313,10 +313,10 @@ namespace Scripts
                                 {
                                     var start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-                                    var flipX = target.X > start.X ? 1 : -1;
-                                    var flipY = target.Y > start.Y ? 1 : -1;
+                                    var flipX = 1;//;target.X > start.X ? 1 : -1;
+                                    var flipY = 1;//; target.Y > start.Y ? 1 : -1;
 
-                                    var cita = Math.Atan(Math.Abs((target.Y - start.Y) / (target.X - start.X)));
+                                    var cita = Math.Atan2((target.Y - start.Y) , (target.X - start.X));
                                     var cs = -10 * Game.CellSize;
                                     var sdest = new CoordStruct((target.X + (int)(cs * Math.Cos(cita) * flipX)), target.Y + (int)(cs * Math.Sin(cita)) * flipY, target.Z);
 
@@ -855,10 +855,10 @@ namespace Scripts
 
         public override void OnDetonate(Pointer<CoordStruct> pCoords)
         {
-            var flipX = target.X > start.X ? 1 : -1;
-            var flipY = target.Y > start.Y ? 1 : -1;
+            var flipX =1;//target.X > start.X ? 1 : -1;
+            var flipY =1;//target.Y > start.Y ? 1 : -1;
 
-            var cita = Math.Atan(Math.Abs((target.Y - start.Y) / (target.X - start.X)));
+            var cita = Math.Atan2((target.Y - start.Y) , (target.X - start.X));
 
 
             var cs = 15 * Game.CellSize;
