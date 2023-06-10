@@ -45,6 +45,8 @@ namespace DpLib.Scripts.AE
                 {
                     if (delay <= 0)
                     {
+                        YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IColdSnapE"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+
                         delay = 40;
                         var bullet = inviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), pAttackTechno, 1, warhead, 100, true);
                         bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
