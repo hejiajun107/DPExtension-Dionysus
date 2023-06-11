@@ -80,9 +80,22 @@ namespace Scripts
             }
         }
 
+        private bool started = false;
 
         public override void OnUpdate()
         {
+            if(!started)
+            {
+                if (connection.State == HubConnectionState.Connected)
+                {
+                    Task.Run(async () =>
+                    {
+                        await connection.SendAsync("Start");
+                    });
+                }
+            }
+    
+
             SkillType? skill = null;
             if (SkillCmd.Count > 0)
             {
@@ -390,7 +403,7 @@ namespace Scripts
 
             if (target != null)
             {
-                var bullet1 = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 600, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("InvEmpWh"), 100, false);
+                var bullet1 = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 400, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("InvEmpWh"), 100, false);
                 bullet1.Ref.DetonateAndUnInit(target);
             }
         }
