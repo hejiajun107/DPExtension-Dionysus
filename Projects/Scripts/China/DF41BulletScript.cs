@@ -631,7 +631,7 @@ namespace Scripts.China
                 {
                     if (Owner.OwnerObject.Ref.Target.IsNull)
                     {
-                        var techno = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Base.IsOnMap && !x.Ref.Base.InLimbo && GameUtil.CanAffectTarget(Owner.OwnerObject, x) && !Owner.OwnerObject.Ref.Base.Base.IsInAir(), FindRange.Enermy).OrderByDescending(x =>
+                        var techno = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Base.IsOnMap && !x.Ref.Base.InLimbo && GameUtil.CanAffectTarget(Owner.OwnerObject, x) && !x.Ref.Base.Base.IsInAir(), FindRange.Enermy).OrderByDescending(x =>
                         {
                             var baseThreat = 0;
                             if(Owner.OwnerObject.Ref.Base.Base.WhatAmI()== AbstractType.Building)

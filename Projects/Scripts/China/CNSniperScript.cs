@@ -73,6 +73,10 @@ namespace Scripts.China
         {
             if (weaponIndex == 0)
             {
+                if (!Owner.OwnerObject.Ref.IsHumanControlled && rof <= 0)
+                {
+                    reload();
+                }
                 if (Owner.OwnerObject.Ref.Ammo == 1)
                 {
                     Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = Owner.OwnerObject.Ref.Veterancy.IsElite()? WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE") : WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
