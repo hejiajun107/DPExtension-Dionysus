@@ -624,7 +624,33 @@ namespace Scripts.China
                     Owner.OwnerObject.Ref.Ammo = 1;
                 }
             }
-           
+
+            if(!Owner.OwnerObject.Ref.IsHumanControlled) 
+            {
+                if (Owner.OwnerObject.Ref.Ammo == 1)
+                {
+                    if (Owner.OwnerObject.Ref.Target.IsNull)
+                    {
+                        var techno = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Base.IsOnMap && !x.Ref.Base.InLimbo && GameUtil.CanAffectTarget(Owner.OwnerObject, x) && !Owner.OwnerObject.Ref.Base.Base.IsInAir(), FindRange.Enermy).OrderByDescending(x =>
+                        {
+                            var baseThreat = 0;
+                            if(Owner.OwnerObject.Ref.Base.Base.WhatAmI()== AbstractType.Building)
+                            {
+                                baseThreat = 50;
+                            }
+                            return x.OwnerObject.Ref.Type.Ref.Cost * 100 / x.OwnerObject.Ref.Base.Health + baseThreat;
+                        }).FirstOrDefault();
+
+                        if(!techno.IsNullOrExpired())
+                        {
+                            Owner.OwnerObject.Ref.SetTarget(techno.OwnerObject.Convert<AbstractClass>());
+                            var mission = Owner.OwnerObject.Convert<MissionClass>();
+                            mission.Ref.QueueMission(Mission.Attack,true);
+                        }
+                    }
+                }
+            }
+            
         }
     }
 
