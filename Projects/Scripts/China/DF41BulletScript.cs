@@ -616,7 +616,7 @@ namespace Scripts.China
 
         public override void OnUpdate()
         {
-            if(Owner.OwnerObject.Ref.Ammo==0)
+            if (Owner.OwnerObject.Ref.Ammo == 0)
             {
                 if (delay-- <= 0)
                 {
@@ -625,32 +625,38 @@ namespace Scripts.China
                 }
             }
 
-            if(!Owner.OwnerObject.Ref.IsHumanControlled) 
+            if (!Owner.OwnerObject.Ref.IsHumanControlled)
             {
                 if (Owner.OwnerObject.Ref.Ammo == 1)
                 {
-                    if (Owner.OwnerObject.Ref.Target.IsNull)
-                    {
-                        var techno = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Base.IsOnMap && !x.Ref.Base.InLimbo && GameUtil.CanAffectTarget(Owner.OwnerObject, x) && !x.Ref.Base.Base.IsInAir(), FindRange.Enermy).OrderByDescending(x =>
-                        {
-                            var baseThreat = 0;
-                            if(Owner.OwnerObject.Ref.Base.Base.WhatAmI()== AbstractType.Building)
-                            {
-                                baseThreat = 50;
-                            }
-                            return x.OwnerObject.Ref.Type.Ref.Cost * 100 / x.OwnerObject.Ref.Base.Health + baseThreat;
-                        }).FirstOrDefault();
 
-                        if(!techno.IsNullOrExpired())
+                    var mission = Owner.OwnerObject.Convert<MissionClass>();
+
+                    if (mission.Ref.CurrentMission != Mission.Unload && mission.Ref.CurrentMission != Mission.Construction)
+                    {
+                        if (Owner.OwnerObject.Ref.Target.IsNull)
                         {
-                            Owner.OwnerObject.Ref.SetTarget(techno.OwnerObject.Convert<AbstractClass>());
-                            var mission = Owner.OwnerObject.Convert<MissionClass>();
-                            mission.Ref.QueueMission(Mission.Attack,true);
+                            var techno = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, x => x.Ref.Base.IsOnMap && !x.Ref.Base.InLimbo && GameUtil.CanAffectTarget(Owner.OwnerObject, x) && !x.Ref.Base.Base.IsInAir(), FindRange.Enermy).OrderByDescending(x =>
+                            {
+                                var baseThreat = 0;
+                                if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
+                                {
+                                    baseThreat = 50;
+                                }
+                                return x.OwnerObject.Ref.Type.Ref.Cost * 100 / x.OwnerObject.Ref.Base.Health + baseThreat;
+                            }).FirstOrDefault();
+
+                            if (!techno.IsNullOrExpired())
+                            {
+                                Owner.OwnerObject.Ref.SetTarget(techno.OwnerObject.Convert<AbstractClass>());
+                                mission.Ref.QueueMission(Mission.Attack, true);
+                            }
                         }
+
                     }
                 }
             }
-            
+
         }
     }
 

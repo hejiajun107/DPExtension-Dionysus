@@ -22,7 +22,7 @@ namespace DpLib.Scripts
 
         private List<string> registeredFighters = new List<string>()
         {
-            "MQWZDJ","ICWG","J10","MIG","JALC","RCROS","J20","WindRider"
+            "MQWZDJ","ICWG","J10","MIG","JALC","RCROS","J20","WindRider","MIG_AI1"
         };
 
         public override void OnUpdate()
