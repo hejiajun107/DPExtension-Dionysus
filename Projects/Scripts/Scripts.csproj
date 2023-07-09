@@ -139,6 +139,7 @@
     <Compile Include="ForceSaleScript.cs" />
     <Compile Include="GGIScript.cs" />
     <Compile Include="GiantNukeUpScript.cs" />
+    <Compile Include="GuardToPickTargetScript.cs" />
     <Compile Include="Heros\BadunScript.cs" />
     <Compile Include="Heros\BlackLotusScript.cs" />
     <Compile Include="Heros\BorisScript.cs" />
