@@ -14,6 +14,9 @@ namespace DpLib.Scripts.China
 
         static Pointer<WarheadTypeClass> mk2Warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIIAttachWh");
 
+        static Pointer<WarheadTypeClass> powrWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JWPowrWH");
+        
+
         static Pointer<WarheadTypeClass> healWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ORCACARAOEHelWH");
 
         static Pointer<WarheadTypeClass> empWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ORCACARAOEWH");
@@ -32,6 +35,19 @@ namespace DpLib.Scripts.China
                 var pEmp = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, empWh, 100, false);
                 pHeal.Ref.DetonateAndUnInit(target);
                 pEmp.Ref.DetonateAndUnInit(target);
+            }
+
+            if(pTarget.CastToTechno(out var ptechno))
+            {
+                if (ptechno.Ref.Owner.IsNull)
+                    return;
+                if (!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                    return;
+                if (ptechno.Ref.Base.Health < ptechno.Ref.Type.Ref.Base.Strength)
+                    return;
+                var target = pTarget.Ref.GetCoords();
+                var pPowr = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, powrWarhead, 100, false);
+                pPowr.Ref.DetonateAndUnInit(target);
             }
 
 
