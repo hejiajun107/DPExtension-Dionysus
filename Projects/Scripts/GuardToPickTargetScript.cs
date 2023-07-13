@@ -23,6 +23,9 @@ namespace Scripts
 
         INIComponentWith<GuardToPickTargetData> settingINI;
 
+        const string Special = "Special";
+        const string Neutral = "Neutral";
+
         public override void Awake()
         {
             settingINI = this.CreateRulesIniComponentWith<GuardToPickTargetData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
@@ -44,6 +47,9 @@ namespace Scripts
                         if (techno.Ref.Base.InLimbo)
                             return false;
                         if (!techno.Ref.Base.IsOnMap)
+                            return false;
+                        var houseName = Owner.OwnerObject.Ref.Owner.Ref.Type.Ref.Base.ID;
+                        if (houseName == Special || houseName == Neutral)
                             return false;
                         if (Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(techno.Ref.Owner))
                             return false;
