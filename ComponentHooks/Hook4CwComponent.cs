@@ -215,6 +215,7 @@ namespace ComponentHooks
             Pointer<BuildingClass> pBuilding = (IntPtr)R->ECX;
             Pointer<HouseClass> pEnter = R->Stack<Pointer<HouseClass>>(0x4);
 
+
             if(pBuilding.IsNotNull && pEnter.IsNotNull)
             {
                 var technoExt = TechnoExt.ExtMap.Find(pBuilding.Convert<TechnoClass>());

@@ -48,7 +48,7 @@ namespace Scripts
                             return false;
                         if (!techno.Ref.Base.IsOnMap)
                             return false;
-                        var houseName = Owner.OwnerObject.Ref.Owner.Ref.Type.Ref.Base.ID;
+                        var houseName = techno.Ref.Owner.Ref.Type.Ref.Base.ID;
                         if (houseName == Special || houseName == Neutral)
                             return false;
                         if (Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(techno.Ref.Owner))

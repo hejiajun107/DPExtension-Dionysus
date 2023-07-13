@@ -16,6 +16,9 @@ namespace Extension.CW
         {
             if(Data.UseSpyEffect)
             {
+                if (Owner.OwnerObject.Ref.Owner == enterer || Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(enterer))
+                    return;
+
                 if (!string.IsNullOrEmpty(Data.VictimSuperWeapon))
                 {
                     var swType = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(Data.VictimSuperWeapon);
