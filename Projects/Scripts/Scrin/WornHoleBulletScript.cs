@@ -1,4 +1,5 @@
 ﻿using Extension.Ext;
+using Extension.INI;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -61,7 +62,15 @@ namespace DpLib.Scripts.Scrin
             "SCAAINF",
         };
 
+        public override void Start()
+        {
+            INI = this.CreateRulesIniComponentWith<WornHoleAISetting>("");
+        }
+
+
         List<TechnoExt> targets = new List<TechnoExt>();
+
+        private INIComponentWith<WornHoleAISetting> INI;
 
         public override void OnUpdate()
         {
@@ -72,7 +81,7 @@ namespace DpLib.Scripts.Scrin
 
                 if (Owner.OwnerObject.Ref.Owner.IsNull)
                     return;
-
+                
                 Pointer<TechnoClass> pTechno = Owner.OwnerObject.Ref.Owner;
 
                 var currentLocation = pTechno.Ref.Base.Base.GetCoords();
@@ -131,9 +140,11 @@ namespace DpLib.Scripts.Scrin
 
                 if (emptyCells.Count > 0)
                 {
-                    if(Owner.OwnerObject.Ref.Owner.IsNotNull)
+                    targets = new List<TechnoExt>();
+
+                    if (Owner.OwnerObject.Ref.Owner.IsNotNull)
                     {
-                        if(Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref.ControlledByHuman())
+                        if(Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref.ControlledByHuman() || INI.Data.EnableAIBehavior )
                         {
                             //寻找虫洞附近的友方单位
                             targets = Finder.FindTechno(pTechno.Ref.Owner, techno =>
@@ -141,10 +152,13 @@ namespace DpLib.Scripts.Scrin
                                 return (techno.Ref.Base.Base.GetCoords().DistanceFrom(currentLocation) <= 5 * 256 || (techno.Ref.Base.Base.GetCoords().Z - currentLocation.Z > 100 && techno.Ref.Base.Base.GetCoords().DistanceFrom(currentLocation) <= 8 * 256)) && techno.Ref.Base.IsOnMap && !techno.Ref.Base.InLimbo && (techno.Ref.Base.Base.WhatAmI() == AbstractType.Unit || techno.Ref.Base.Base.WhatAmI() == AbstractType.Infantry);
                             }, FindRange.Owner).Take(emptyCells.Count()).ToList();
                         }
-                        else
+
+
+                        if (!Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref.ControlledByHuman())
                         {
-                            targets = new List<TechnoExt>();
-                            var takeCount = emptyCells.Count() > 8 ? 8 : emptyCells.Count();
+                            var takeCount = emptyCells.Count() > 8 ? 8 : emptyCells.Count() - targets.Count;
+                            if (takeCount <= 0)
+                                takeCount = 0;
                             var rd = new Random(Owner.OwnerObject.Ref.TargetCoords.X + Owner.OwnerObject.Ref.TargetCoords.Y + Owner.OwnerObject.Ref.TargetCoords.Z);
                             for(var i = 0; i < takeCount; i++)
                             {
@@ -244,5 +258,11 @@ namespace DpLib.Scripts.Scrin
             return false;
         }
 
+    }
+
+    public class WornHoleAISetting : INIAutoConfig
+    {
+        [INIField(Key = "WornHole.AIBehavior")]
+        public bool EnableAIBehavior = false;
     }
 }

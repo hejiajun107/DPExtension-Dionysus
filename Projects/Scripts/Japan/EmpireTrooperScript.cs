@@ -33,7 +33,15 @@ namespace DpLib.Scripts.Japan
                 if (guardDelay-- == 0)
                 {
                     var mission = Owner.OwnerObject.Convert<MissionClass>();
-                    mission.Ref.ForceMission(Mission.Area_Guard);
+                    if (Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                    {
+                        mission.Ref.ForceMission(Mission.Area_Guard);
+                    }
+                    else
+                    {
+                        mission.Ref.ForceMission(Mission.Stop);
+                        mission.Ref.ForceMission(Mission.Hunt);
+                    }
                     //mission.Ref.NextMission();
                     //mission.Ref.QueueMission(Mission.Guard, false);
                     //mission.Ref.NextMission();
