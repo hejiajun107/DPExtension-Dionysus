@@ -64,7 +64,7 @@ namespace DpLib.Scripts.Scrin
 
         public override void Start()
         {
-            INI = this.CreateRulesIniComponentWith<WornHoleAISetting>("");
+            INI = this.CreateRulesIniComponentWith<WornHoleAISetting>("WornHoleSpecial");
         }
 
 
