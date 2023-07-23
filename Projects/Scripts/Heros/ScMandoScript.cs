@@ -66,6 +66,7 @@ namespace DpLib.Scripts.Heros
                                 //    continue;
                                 if (Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex != tref.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                                     continue;
+
                                 if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Unit && Owner.OwnerObject.Ref.Base.Base.WhatAmI() != AbstractType.Infantry)
                                     continue;
 
