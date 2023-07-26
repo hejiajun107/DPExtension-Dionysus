@@ -103,6 +103,7 @@
     <Compile Include="China\DragonTowerScript.cs" />
     <Compile Include="China\DTowercript.cs" />
     <Compile Include="China\DTowerLaserBullet.cs" />
+    <Compile Include="China\DYHCannonScript.cs" />
     <Compile Include="China\FloodDragonBulletScript.cs" />
     <Compile Include="China\GreatWallScript.cs" />
     <Compile Include="China\IonCannonReshadeBulletScript.cs" />
