@@ -1,7 +1,9 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
+using System.Linq;
 
 namespace DpLib.Scripts.Soviet
 {
@@ -42,7 +44,7 @@ namespace DpLib.Scripts.Soviet
             {
                 if (SleepDuration > 30)
                 {
-                    var extraDamage = (int)((SleepDuration / 100d) * 30);
+                    var extraDamage = (int)((SleepDuration / 100d) * 35);
                     if (SleepDuration <= 300)
                     {
                         Pointer<BulletClass> plv1 = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, extraDamage, teslaWarhead, 100, true);
@@ -77,6 +79,5 @@ namespace DpLib.Scripts.Soviet
                 }
             }
         }
-
     }
 }
