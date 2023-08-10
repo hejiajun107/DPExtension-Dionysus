@@ -46,6 +46,7 @@ namespace Scripts
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
             string attacker = "[梅友人]";
+            string house = "[吴政赢]";
 
             if (!pAttacker.IsNull)
             {
@@ -59,7 +60,12 @@ namespace Scripts
                 }
             }
 
-            Logger.Log($"{Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID}受到来自{attacker}的伤害,伤害值{pDamage.Ref},弹头{pWH.Ref.Base.ID},当前生命值{Owner.OwnerObject.Ref.Base.Health}");
+            if (pAttackingHouse.IsNotNull)
+            {
+                house = $"所属{pAttackingHouse.Ref.ArrayIndex}";
+            }
+
+            Logger.Log($"{Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID}受到来自{house}的{attacker}的伤害,伤害值{pDamage.Ref},弹头{pWH.Ref.Base.ID},当前生命值{Owner.OwnerObject.Ref.Base.Health}");
         }
     }
 }

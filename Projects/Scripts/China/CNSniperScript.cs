@@ -20,15 +20,10 @@ namespace Scripts.China
         {
         }
 
-        private string weaponName;
-        private string eliteWeaponName;
-
         static Pointer<AnimTypeClass> pAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SniperReloadSound");
 
         public override void Awake()
         {
-            weaponName = Owner.OwnerObject.Ref.Type.Ref.Weapon.Ref.WeaponType.Ref.Base.ID;
-            eliteWeaponName = Owner.OwnerObject.Ref.Type.Ref.EliteWeapon.Ref.WeaponType.Ref.Base.ID;
             Owner.OwnerObject.Ref.Ammo = 0;
         }
 
@@ -43,25 +38,25 @@ namespace Scripts.China
                 reload();
             }
 
-
-            if (Owner.OwnerObject.Ref.Ammo == 0 && weaponChanged)
-            {
-                weaponChanged = false;
-                Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = Owner.OwnerObject.Ref.Veterancy.IsElite() ? WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(eliteWeaponName) : WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(weaponName);
-                return;
-            }
-
-            //进入载具后无论如何换回主武器
-            if (!Owner.OwnerObject.Ref.Base.IsOnMap && weaponChanged)
-            {
-                Owner.OwnerObject.Ref.Ammo = 0;
-                weaponChanged = false;
-                Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = Owner.OwnerObject.Ref.Veterancy.IsElite() ? WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(eliteWeaponName) : WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(weaponName);
-            }
-
-            if (rof > 0)
+            if (rof > 0 && Owner.OwnerObject.Ref.Ammo == 0)
             {
                 rof--;
+            }
+
+            if (Owner.OwnerObject.Ref.Ammo == 1)
+            {
+                if (Owner.OwnerObject.Ref.Base.InLimbo)
+                {
+                    Owner.OwnerObject.Ref.Ammo = 0;
+                }
+            }
+
+            if (rof <= 0)
+            {
+                if (!Owner.OwnerObject.Ref.IsHumanControlled && rof <= 0 && !Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
+                {
+                    reload();
+                }
             }
             
         }
@@ -71,22 +66,7 @@ namespace Scripts.China
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if (weaponIndex == 0)
-            {
-                if (!Owner.OwnerObject.Ref.IsHumanControlled && rof <= 0)
-                {
-                    reload();
-                }
-                if (Owner.OwnerObject.Ref.Ammo == 1)
-                {
-                    Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = Owner.OwnerObject.Ref.Veterancy.IsElite()? WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE") : WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
-                }
-                //if (weaponChanged)
-                //{
-                //    weaponChanged = false;
-                //    toRecover = true;
-                //}
-            }
+           
         }
 
         private void reload()
@@ -95,10 +75,7 @@ namespace Scripts.China
             {
                 rof = 500;
                 Owner.OwnerObject.Ref.Ammo = 1;
-                weaponChanged = true;
-                toRecover = false;
                 YRMemory.Create<AnimClass>(pAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                Owner.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = Owner.OwnerObject.Ref.Veterancy.IsElite() ? WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwpE") : WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ExplosiveAwp");
             }
         }
     }
