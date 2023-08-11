@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
@@ -35,14 +36,17 @@ namespace Scripts.Japan
 
         public override void OnUpdate()
         {
-            if (!Owner.OwnerObject.Ref.IsHumanControlled)
+            if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
                 if (Owner.OwnerObject.Ref.Base.Health < 800 && !startExplode)
-                    startExplode = true;
+                {
+                    startExplode = true; 
+                }
             }
 
             if (!startExplode)
                 return;
+
 
             if (delay % 5 == 0 && delay > 0)
             {
@@ -58,6 +62,7 @@ namespace Scripts.Japan
 
             if (delay <= 0 && !blasted)
             {
+
                 blasted = true;
                 var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 var height = Owner.OwnerObject.Ref.Base.GetHeight();
@@ -85,6 +90,8 @@ namespace Scripts.Japan
 
                 YRMemory.Create<AnimClass>(pshock, location);
                 Owner.OwnerObject.Ref.Base.TakeDamage(10000, selfDestructWh, false);
+
+
             }
         }
 

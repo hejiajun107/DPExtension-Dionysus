@@ -625,7 +625,7 @@ namespace Scripts.China
                 }
             }
 
-            if (!Owner.OwnerObject.Ref.IsHumanControlled)
+            if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
             {
                 if (Owner.OwnerObject.Ref.Ammo == 1)
                 {

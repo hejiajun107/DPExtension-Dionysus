@@ -27,7 +27,7 @@ namespace Scripts.China
             Owner.OwnerObject.Ref.Ammo = 0;
         }
 
-        private int rof = 0;
+        private int rof = 200;
 
         public override void OnUpdate()
         {
@@ -53,7 +53,7 @@ namespace Scripts.China
 
             if (rof <= 0)
             {
-                if (!Owner.OwnerObject.Ref.IsHumanControlled && rof <= 0 && !Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
+                if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman() && rof <= 0 && !Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
                 {
                     reload();
                 }
