@@ -331,13 +331,19 @@ namespace Scripts
 
                                     var cita = Math.Atan2((target.Y - start.Y) , (target.X - start.X));
                                     var cs = -10 * Game.CellSize;
-                                    var sdest = new CoordStruct((target.X + (int)(cs * Math.Cos(cita) * flipX)), target.Y + (int)(cs * Math.Sin(cita)) * flipY, target.Z);
+                                    //var sdest = new CoordStruct((target.X + (int)(cs * Math.Cos(cita) * flipX)), target.Y + (int)(cs * Math.Sin(cita)) * flipY, target.Z);
 
                                     FaceToCoord(target);
                                     YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IMeotor"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                                    var bullet = bMeotor.Ref.CreateBullet(pcell.Convert<AbstractClass>(), Owner.OwnerObject, 500, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MeotorHitWh"), 50, false);
-                                    bullet.Ref.MoveTo(sdest + new CoordStruct(0, 0, 3000), new BulletVelocity(0, 0, 0));
-                                    bullet.Ref.SetTarget(pcell.Convert<AbstractClass>());
+                                    for(var i = 0; i <= 2; i++)
+                                    {
+                                        var angle = (cita + (i - 1) * 3.14 / 180 * 30);
+                                        var dest = new CoordStruct((target.X + (int)(cs * Math.Cos(angle) * flipX)), target.Y + (int)(cs * Math.Sin(angle)) * flipY, target.Z);
+                                        var bullet = bMeotor.Ref.CreateBullet(pcell.Convert<AbstractClass>(), Owner.OwnerObject, 500, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MeotorHitWh"), 50, false);
+                                        bullet.Ref.MoveTo(dest + new CoordStruct(0, 0, 3000), new BulletVelocity(0, 0, 0));
+                                        bullet.Ref.SetTarget(pcell.Convert<AbstractClass>());
+                                    }
+                            
                                     SkillCompleted(skill.Value);
                                 }
                             }
