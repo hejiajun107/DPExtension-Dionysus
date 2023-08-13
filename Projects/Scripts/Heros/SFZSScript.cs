@@ -131,6 +131,20 @@ namespace Scripts
 
         public static int UniqueId = 1668829562;
 
+        public override void Start()
+        {
+            if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+            {
+                var mission = Owner.OwnerObject.Convert<MissionClass>();
+                mission.Ref.ForceMission(Mission.Hunt);
+            }
+        }
+
+        public override void OnPut(CoordStruct coord, Direction faceDir)
+        {
+           
+        }
+
         public override void OnDestroy()
         {
             if (!Caller.IsNullOrExpired())
