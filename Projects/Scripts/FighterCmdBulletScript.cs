@@ -75,6 +75,11 @@ namespace DpLib.Scripts
                             return false;
                         }
 
+                        if(x.Ref.Type.Ref.Cost<100)
+                        {
+                            return false;
+                        }
+
                         var bounsRange = 0;
                         if (coords.Z > location.Z)
                         {
