@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -72,6 +73,7 @@ namespace DpLib.Scripts.China
             public ParticleCannonUnitDecorator(TechnoExt self) : base(self)
             {
                 Self = self;
+                pAnim = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
             }
 
             TechnoExt Self;
@@ -94,12 +96,28 @@ namespace DpLib.Scripts.China
 
             static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
+        
+            private SwizzleablePointer<AnimClass> pAnim;
+
+            static Pointer<WeaponTypeClass> laserWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ParticleLaser");
+
+            static Pointer<AnimTypeClass> ballAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("PCBALL");
+
+            static Pointer<AnimTypeClass> fireAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("PartBallFire");
+
+
+            private int angle = 0;
+            private int height = 150;
+            private int radius = 256;
+            private int stop = 0;
+
 
             public override void OnUpdate()
             {
                 if (Self.IsNullOrExpired() || --lifeTime <= 0)
                 {
                     DetachFromParent();
+                    KillAnim();
                     return;
                 }
 
@@ -112,6 +130,31 @@ namespace DpLib.Scripts.China
                 {
                     attackedRof--;
                 }
+
+                if (pAnim.IsNull)
+                {
+                    CreateAnim();
+                }
+
+                if(stop>0)
+                {
+                    stop--;
+                }
+                else
+                {
+                    angle += 2;
+                    if (angle > 360)
+                    {
+                        angle = angle - 360;
+                    }
+                }
+        
+
+                var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                var target = new CoordStruct(coord.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), coord.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), coord.Z + height);
+
+                pAnim.Ref.Base.SetLocation(target);
+
             }
 
 
@@ -150,28 +193,70 @@ namespace DpLib.Scripts.China
                 }
             }
 
+            public override void OnRemove()
+            {
+                KillAnim();
+            }
+
+            public override void OnDestroy()
+            {
+                KillAnim();
+            }
 
             private void FireTo(CoordStruct target)
             {
                 var owner = Self;
                 if (owner != null)
                 {
+                    int damage = 160;
+
+                    var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+                    var distance = coord.DistanceFrom(target);
+                    if(double.IsNaN(distance) || distance > 256 * 15)
+                    {
+                        damage = 80;
+                    }else if (distance > 256 * 15)
+                    {
+                        damage = 100;
+                    }else if( distance > 256 * 10)
+                    {
+                        damage = 120;
+                    }
+
                     var ntarget = new CoordStruct(target.X, target.Y, target.Z);
 
-                    //for (var angle = 0; angle < 360; angle += 60)
-                    //{
-                    //    var pos = new CoordStruct(ntarget.X + (int)(15 * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), ntarget.Y + (int)(15 * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), ntarget.Z);
-                    //    Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(pos + new CoordStruct(0, 0, 3000), pos, innerColor, outerColor, outerSpread, 8);
-                    //    pLaser.Ref.Thickness = 10;
-                    //    pLaser.Ref.IsHouseColor = false;
-                    //}
+                    stop = 10;
 
-                    Pointer<BulletClass> pBean = pBulletType.Ref.CreateBullet(owner.OwnerObject.Convert<AbstractClass>(), owner.OwnerObject, 1, beanWarhead, 100, false);
-                    pBean.Ref.DetonateAndUnInit(ntarget);
-
-                    int damage = 160;
                     Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(owner.OwnerObject.Convert<AbstractClass>(), owner.OwnerObject, damage, blastWarhead, 100, true);
-                    pBullet.Ref.DetonateAndUnInit(ntarget);
+                    var start = new CoordStruct(coord.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), coord.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), coord.Z + height);
+
+                    YRMemory.Create<AnimClass>(fireAnim, start);
+
+                    pBullet.Ref.Base.SetLocation(target);
+                    Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, start);
+                    pBullet.Ref.DetonateAndUnInit(target);
+                }
+            }
+
+            private void CreateAnim()
+            {
+                if (!pAnim.IsNull)
+                {
+                    KillAnim();
+                }
+
+                var anim = YRMemory.Create<AnimClass>(ballAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                pAnim.Pointer = anim;
+            }
+
+            private void KillAnim()
+            {
+                if (!pAnim.IsNull)
+                {
+                    pAnim.Ref.TimeToDie = true;
+                    pAnim.Ref.Base.UnInit();
+                    pAnim.Pointer = IntPtr.Zero;
                 }
             }
 
