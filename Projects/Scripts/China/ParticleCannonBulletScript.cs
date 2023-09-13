@@ -131,6 +131,12 @@ namespace DpLib.Scripts.China
                     attackedRof--;
                 }
 
+                if(Owner.OwnerObject.Ref.Base.InLimbo)
+                {
+                    return;
+                }
+
+
                 if (pAnim.IsNull)
                 {
                     CreateAnim();
@@ -188,7 +194,7 @@ namespace DpLib.Scripts.China
                     attackedRof = coolDown;
                     if (pAttacker.CastToTechno(out var pAttackerTechno))
                     {
-                        FireTo(pAttacker.Ref.Base.GetCoords());
+                        FireTo(pAttacker.Ref.Base.GetCoords(),true);
                     }
                 }
             }
@@ -203,25 +209,32 @@ namespace DpLib.Scripts.China
                 KillAnim();
             }
 
-            private void FireTo(CoordStruct target)
+            private void FireTo(CoordStruct target,bool feedback = false)
             {
                 var owner = Self;
                 if (owner != null)
                 {
-                    int damage = 160;
+                    int damage = 140;
+
+                    if(feedback)
+                    {
+                        damage = damage + 20;
+                    }
 
                     var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
                     var distance = coord.DistanceFrom(target);
-                    if(double.IsNaN(distance) || distance > 256 * 15)
+                    if (double.IsNaN(distance) || distance > 256 * 15)
                     {
-                        damage = 80;
-                    }else if (distance > 256 * 15)
+                        damage = damage - 60;
+                    }
+                    else if (distance > 256 * 15)
                     {
-                        damage = 100;
-                    }else if( distance > 256 * 10)
+                        damage = damage - 40;
+                    }
+                    else if (distance > 256 * 10)
                     {
-                        damage = 120;
+                        damage = damage - 20;
                     }
 
                     var ntarget = new CoordStruct(target.X, target.Y, target.Z);

@@ -61,6 +61,7 @@
     <Compile Include="AE\FreezingSnapAttachEffectScript.cs" />
     <Compile Include="AE\GuardOfHimikoScript.cs" />
     <Compile Include="AE\HonorRetiredAttachEffect.cs" />
+    <Compile Include="AE\IceWingFreezingAttachEffectScript.cs" />
     <Compile Include="AE\InsuranceAttachEffectScript.cs" />
     <Compile Include="AE\IronCoreAttchEffectScript.cs" />
     <Compile Include="AE\J20ExplodeAttachEffect.cs" />
