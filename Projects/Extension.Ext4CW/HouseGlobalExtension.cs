@@ -35,6 +35,12 @@ namespace Extension.CW
         public CoordStruct XHSunstrikeTarget4 { get; set; }
 
 
+        /// <summary>
+        /// 机场补贴发放次数
+        /// </summary>
+        public int AirportPaybackTime { get; set; } = 0;
+
+
 
     }
 
