@@ -32,19 +32,17 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            //var mission = Owner.OwnerObject.Convert<MissionClass>();
-
             //Logger.Log($"Mission：{mission.Ref.CurrentMission}");
 
             //if(mission.Ref.CurrentMission == Mission.Hunt)
             //{
             //    mission.Ref.ForceMission(Mission.Guard);
             //}
-            var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-            if(MapClass.Instance.TryGetCellAt(location,out var pcell))
-            {
-                DebugUtilities.HighlightCell(pcell, new ColorStruct(255, 0, 0), 3, 10);
-            }
+            //var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+            //if(MapClass.Instance.TryGetCellAt(location,out var pcell))
+            //{
+            //    DebugUtilities.HighlightCell(pcell, new ColorStruct(255, 0, 0), 3, 10);
+            //}
 
 
             //if (delay-- > 0)

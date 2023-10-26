@@ -55,9 +55,11 @@ namespace DpLib.Scripts.Japan
             var currentCell = CellClass.Coord2Cell(location);
 
 
-            var ptechnos = ObjectFinder.FindTechnosNear(location, 4 * Game.CellSize).ToList();
+            //var ptechnos = ObjectFinder.FindTechnosNear(location, 4 * Game.CellSize).ToList();
 
-            foreach(var pobj in ptechnos)
+            var ptechnos = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), 4 * Game.CellSize);
+
+            foreach (var pobj in ptechnos)
             {
                 if (count >= 2)
                     break;
@@ -67,7 +69,7 @@ namespace DpLib.Scripts.Japan
                     if (ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex))
                         continue;
 
-                    if (ptechno.Ref.Base.IsVisible == false || ptechno.Ref.Base.InLimbo == true || ptechno.Ref.Base.IsAlive == false)
+                    if (ptechno.Ref.Base.InLimbo == true)
                     {
                         continue;
                     }
