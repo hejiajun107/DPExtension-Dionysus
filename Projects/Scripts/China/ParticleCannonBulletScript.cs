@@ -185,6 +185,11 @@ namespace DpLib.Scripts.China
                     return;
                 }
 
+                if(pAttacker.IsNull)
+                {
+                    return;
+                }
+
                 if (pAttackingHouse.Ref.ArrayIndex == Self.OwnerObject.Ref.Owner.Ref.ArrayIndex)
                 {
                     return;
