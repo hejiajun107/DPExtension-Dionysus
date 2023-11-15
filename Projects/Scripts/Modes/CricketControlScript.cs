@@ -41,7 +41,13 @@ namespace Scripts
                     }
                 });
 
-                
+                connection.On("Destroyed", () =>
+                {
+                    lock (qLocker)
+                    {
+                        Cmds.Enqueue(new CricketCommand() { CricketCmdType = CricketCmdType.Destroy });
+                    }
+                });
 
                 Task.Run(async () =>
                 {
@@ -95,9 +101,19 @@ namespace Scripts
                                     break;
                                 }
 
-                                var house = HouseClass.Array[info.House + 1];
+                                var hindex = info.House;
 
-                                if(house.IsNull)
+
+                                if (HouseClass.Observer.IsNotNull)
+                                {
+                                    if (HouseClass.Observer == HouseClass.Array[0])
+                                        hindex = info.House + 1;
+                                }
+
+                                var house = HouseClass.Array[hindex];
+
+
+                                if (house.IsNull)
                                 {
                                     Logger.Log("house is null");
                                     break;
@@ -162,6 +178,15 @@ namespace Scripts
                                     if (!TechnoPlacer.PlaceTechnoNear(techno, targetCell))
                                         return;
 
+                                    if (info.Veterancy == 1)
+                                    {
+                                        techno.Ref.Veterancy.SetVeteran(true);
+                                    }else if(info.Veterancy == 2)
+                                    {
+                                        techno.Ref.Veterancy.SetElite(true);
+                                    }
+
+
                                     var mission = techno.Convert<MissionClass>();
                                     mission.Ref.ForceMission(Mission.Stop);
                                 }
@@ -177,7 +202,7 @@ namespace Scripts
                                     continue;
 
                                 var ownerName = item.Ref.Owner.Ref.Type.Ref.Base.ID.ToString();
-                                if (ownerName != "Special" && ownerName != "Neutral")
+                                if (ownerName == "Special" || ownerName == "Neutral")
                                     continue;
 
                                 if (item.Ref.Base.Base.WhatAmI() == AbstractType.Building)
@@ -189,7 +214,25 @@ namespace Scripts
                             break;
                         }
                     case CricketCmdType.Destroy:
-                        break;
+                        {
+                            for (var i = TechnoClass.Array.Count() - 1; i > 0; i--)
+                            {
+                                var item = TechnoClass.Array[i];
+                                if (item.Ref.Owner.IsNull)
+                                    continue;
+
+                                var ownerName = item.Ref.Owner.Ref.Type.Ref.Base.ID.ToString();
+                                if (ownerName == "Special" || ownerName == "Neutral")
+                                    continue;
+
+                                var ext = TechnoExt.ExtMap.Find(item);
+                                if (ext.GameObject.GetComponent<CricketMCVScript>() != null)
+                                    continue;
+
+                                item.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super"), true);
+                            }
+                            break;
+                        }
                     default:
                         break;
                 }
@@ -201,6 +244,16 @@ namespace Scripts
 
 
     }
+
+    [Serializable]
+    [ScriptAlias(nameof(CricketMCVScript))]
+    public class CricketMCVScript : TechnoScriptable
+    {
+        public CricketMCVScript(TechnoExt owner) : base(owner)
+        {
+        }
+    }
+
 
     [Serializable]
     public class CricketCommand
@@ -225,6 +278,9 @@ namespace Scripts
         public int House { get; set; } = 0;
 
         public int Count { get; set; } = 1;
+
+        public int Veterancy { get; set; } = 0;
+
         public TechnoPosition TechnoPosition { get; set; }
     }
 

@@ -217,6 +217,7 @@
     <Compile Include="LinkSWScript.cs" />
     <Compile Include="MMKSeekerScript.cs" />
     <Compile Include="Modes\CricketControlScript.cs" />
+    <Compile Include="Modes\GIDeployScript.cs" />
     <Compile Include="MovingPlacementScript.cs" />
     <Compile Include="MTNKScript.cs" />
     <Compile Include="NanoSwarmUnitScript.cs" />
