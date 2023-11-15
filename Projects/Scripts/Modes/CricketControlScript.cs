@@ -229,7 +229,15 @@ namespace Scripts
                                 if (ext.GameObject.GetComponent<CricketMCVScript>() != null)
                                     continue;
 
-                                item.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super"), true);
+                                if(item.Ref.Base.InLimbo)
+                                {
+                                    item.Ref.Base.RegisterKill(item.Ref.Owner);
+                                    item.Ref.Base.UnInit();
+                                }
+                                else
+                                {
+                                    item.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super"), false);
+                                }
                             }
                             break;
                         }

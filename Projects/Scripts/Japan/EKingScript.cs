@@ -96,7 +96,7 @@ namespace DpLib.Scripts.Japan
             {
                 if (pTarget.CastToTechno(out var ptech))
                 {
-                    var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), ptech, 45, healthWarhead, 100, false);
+                    var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), ptech, (int)(60 * Owner.OwnerObject.Ref.FirepowerMultiplier), healthWarhead, 100, false);
                     bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 }
             }
