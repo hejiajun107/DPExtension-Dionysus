@@ -7,6 +7,7 @@ using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -208,6 +209,16 @@ namespace Scripts
                                 if (item.Ref.Base.Base.WhatAmI() == AbstractType.Building)
                                     continue;
 
+                                var ext = TechnoExt.ExtMap.Find(item);
+                                if(ext != null)
+                                {
+                                    var hunt = ext.GameObject.GetComponent<CricketHuntScript>();
+                                    if(hunt == null)
+                                    {
+                                        ext.GameObject.CreateScriptComponent(nameof(CricketHuntScript), nameof(CricketHuntScript), ext);
+                                    }
+                                }
+
                                 var mission = item.Convert<MissionClass>();
                                 mission.Ref.ForceMission(Mission.Hunt);
                             }
@@ -261,6 +272,58 @@ namespace Scripts
         {
         }
     }
+
+
+    [Serializable]
+    [ScriptAlias(nameof(CricketHuntScript))]
+    public class CricketHuntScript : TechnoScriptable
+    {
+        public CricketHuntScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        private int rof = 10;
+
+        public override void OnUpdate()
+        {
+            if (rof-- > 0)
+            {
+                return;
+            }
+
+            rof = 10;
+
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+
+            if(mission.Ref.CurrentMission == Mission.Hunt || mission.Ref.CurrentMission == Mission.Area_Guard)
+            {
+                if (Owner.OwnerObject.Ref.Target.IsNull)
+                {
+                    Owner.OwnerObject.CastToFoot(out Pointer<FootClass> pFoot);
+                    if (!pFoot.Ref.Base.CanAttackMove())
+                        return;
+
+                    if(mission.Ref.CurrentMission != Mission.Area_Guard)
+                        mission.Ref.ForceMission(Mission.Area_Guard);
+
+                    var targets = Owner.OwnerObject.Ref.FindAttackTechnos(100 * Game.CellSize).Where(x => x.Ref.Owner.Ref.Type.Ref.Base.ID != "Special" && x.Ref.Owner.Ref.Type.Ref.Base.ID != "Neutral").OrderBy(x => Owner.OwnerObject.Ref.GetDistanceToTarget(x.Convert<AbstractClass>())).ToList();
+                    if (targets.Count() > 0)
+                    {
+                        var target = targets.First();
+                        if (MapClass.Instance.TryGetCellAt(CellClass.Coord2Cell(target.Ref.Base.Base.GetCoords()),out var pcell))
+                        {
+                            pFoot.Ref.AttackMove(target.Convert<AbstractClass>(), pcell);
+                        }
+                    }
+                    else
+                    {
+                        rof = 100;
+                    }
+                }
+            }
+        }
+    }
+
 
 
     [Serializable]

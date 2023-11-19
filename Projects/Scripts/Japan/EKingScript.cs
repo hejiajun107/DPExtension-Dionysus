@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -27,10 +28,29 @@ namespace DpLib.Scripts.Japan
 
         private int FireKeepTime = 0;
 
+        private int feedBackRecoverRof = 100;
+
+        private int feedBackCount = 1;
+
         private int rof = 0;
 
         public override void OnUpdate()
         {
+            if (feedBackRecoverRof > 0)
+            {
+                feedBackRecoverRof--;
+            }
+            else
+            {
+                if (feedBackCount < 3)
+                {
+                    feedBackRecoverRof = 100;
+                    feedBackCount += 1;
+                }
+            }
+
+            Owner.OwnerObject.Ref.Ammo = feedBackCount;
+
             if (!IsMkIIUpdated)
             {
                 return;
@@ -57,7 +77,7 @@ namespace DpLib.Scripts.Japan
 
             //var ptechnos = ObjectFinder.FindTechnosNear(location, 4 * Game.CellSize).ToList();
 
-            var ptechnos = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), 4 * Game.CellSize);
+            var ptechnos = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), 4 * Game.CellSize).OrderBy(x=>x.Ref.Base.GetCoords().DistanceFrom(location));
 
             foreach (var pobj in ptechnos)
             {
@@ -74,10 +94,10 @@ namespace DpLib.Scripts.Japan
                         continue;
                     }
 
-                    Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, damageWarhead, 30, true);
+                    Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 60, damageWarhead, 30, true);
                     dbullet.Ref.DetonateAndUnInit(ptechno.Ref.Base.Base.GetCoords());
 
-                    Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, shootWarhead, 30, true);
+                    Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 60, shootWarhead, 30, true);
                     bullet.Ref.MoveTo(ptechno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(0, 0, 0));
                     bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
                     count++;
@@ -111,6 +131,37 @@ namespace DpLib.Scripts.Japan
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
           Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
+            if (feedBackCount > 0)
+            {
+                if (pAttackingHouse.IsNotNull && pAttacker.IsNotNull)
+                {
+                    if (pAttackingHouse.Ref.ArrayIndex != Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                    {
+                        var selfLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                        var targetLocation = pAttacker.Ref.Base.GetCoords();
+
+                        var distance = selfLocation.BigDistanceForm(targetLocation);
+
+                        if (distance <= Game.CellSize * 7)
+                        {
+                            if(pWH != healthWarhead)
+                            {
+                                feedBackCount--;
+                                Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, damageWarhead, 30, true);
+                                dbullet.Ref.DetonateAndUnInit(pAttacker.Ref.Base.GetCoords());
+
+                                Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, shootWarhead, 30, true);
+                                bullet.Ref.MoveTo(pAttacker.Ref.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(0, 0, 0));
+                                bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
+                            }
+                        }
+                    }
+                }
+            }
+            
+           
+
+
             if (IsMkIIUpdated == false)
             {
                 //判断是否来自升级弹头
