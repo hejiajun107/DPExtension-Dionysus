@@ -104,6 +104,11 @@ namespace Scripts.AE
 
         private int delay = 100;
 
+        private static HashSet<string> whs = new HashSet<string>()
+        {
+            "ScudStrikeWH","SRBomb4WH","JALCbombBombWH","Minerdeath","ToxinShotSWH1","MiniSubExpWh"
+        };
+
         public override void OnUpdate()
         {
             Duration = 2000;
@@ -155,6 +160,20 @@ namespace Scripts.AE
         public override void OnAttachEffectRecieveNew(int duration, Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
             base.OnAttachEffectRecieveNew(duration, pDamage, pWH, pAttacker, pAttackingHouse);
+        }
+
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            if (pAttackingHouse.IsNull)
+                return;
+
+            if (!pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                return;
+
+            if(whs.Contains(pWH.Ref.Base.ID))
+            {
+                pDamage.Ref = (int)(pDamage.Ref * 0.4);
+            }
         }
 
         private void CreateAnim()

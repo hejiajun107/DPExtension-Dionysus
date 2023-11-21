@@ -200,6 +200,7 @@
     <Compile Include="Japan\EmpireTrooperScript.cs" />
     <Compile Include="Japan\EpicVirusScript.cs" />
     <Compile Include="Japan\JEpicScript.cs" />
+    <Compile Include="Japan\JPTowerScript.cs" />
     <Compile Include="Japan\MiniSubScript.cs" />
     <Compile Include="Japan\NanoCoreBuildingScript.cs" />
     <Compile Include="Japan\NanoLinkScript.cs" />
