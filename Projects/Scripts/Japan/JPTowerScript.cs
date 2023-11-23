@@ -56,7 +56,7 @@ namespace Scripts.Japan
             if (count > 0)
             {
                 var pBullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
-                var pWh = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ETowrBuffWh");
+                var pWh = count > 1 ? WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ETowrBuffWh2") : WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ETowrBuffWh");
                 var bullet = pBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pWh, 100, false);
                 bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 delay = 50;

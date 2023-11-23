@@ -154,6 +154,7 @@
     <Compile Include="China\PLAScript.cs" />
     <Compile Include="China\PowerDownVirtualBuilding.cs" />
     <Compile Include="China\RocketSequenceScriptable.cs" />
+    <Compile Include="China\ShieldTowerScript.cs" />
     <Compile Include="China\SupportCenterScript.cs" />
     <Compile Include="China\XHFragmentBulletScirpt.cs" />
     <Compile Include="China\XHLaserTrailerBulletScript.cs" />
