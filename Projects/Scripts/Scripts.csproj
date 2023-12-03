@@ -252,6 +252,7 @@
     <Compile Include="Soviet\SickleJumpBullet.cs" />
     <Compile Include="Soviet\SickleScript.cs" />
     <Compile Include="Soviet\SovietParaDropPlaneScript.cs" />
+    <Compile Include="Soviet\STankBunkerScript.cs" />
     <Compile Include="Soviet\SuperArouseScript.cs" />
     <Compile Include="Soviet\SuperMobilizationScript.cs" />
     <Compile Include="Soviet\TeslaTankScript.cs" />
@@ -266,6 +267,7 @@
     <Compile Include="VerticalLauncherScriptable.cs" />
     <Compile Include="Yuri\MagnetronScript.cs" />
     <Compile Include="Yuri\MindFrenzyScript.cs" />
+    <Compile Include="Yuri\PlastTowerScript.cs" />
     <Compile Include="Yuri\RegeneratorBulletScript.cs" />
     <Compile Include="Yuri\RegeneratorScript.cs" />
     <Compile Include="Yuri\SMNKScript.cs" />
