@@ -161,6 +161,12 @@ namespace DpLib.Scripts.China
             {
                 if (attackRof <= 0)
                 {
+                    if(pTarget.CastToTechno(out var ptechnoTarget))
+                    {
+                        if (ptechnoTarget.Ref.Owner.Ref.IsAlliedWith(Self.OwnerObject.Ref.Owner))
+                            return;
+                    }
+
                     attackRof = coolDown;
                     FireTo(pTarget.Ref.GetCoords());
                 }
@@ -183,7 +189,7 @@ namespace DpLib.Scripts.China
                     return;
                 }
 
-                if (pAttackingHouse.Ref.ArrayIndex == Self.OwnerObject.Ref.Owner.Ref.ArrayIndex)
+                if (pAttackingHouse.Ref.IsAlliedWith(Self.OwnerObject.Ref.Owner))
                 {
                     return;
                 }
