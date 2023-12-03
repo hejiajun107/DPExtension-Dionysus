@@ -30,17 +30,12 @@ namespace DpLib.Scripts.China
                 var house = Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref;
                 var houseIdx = Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref.ArrayIndex;
 
-                CellSpreadEnumerator enumerator = new CellSpreadEnumerator(3);
+                var objs = ObjectFinder.FindTechnosNear(location, 2 * Game.CellSize);
 
-                foreach (CellStruct offset in enumerator)
+                foreach(var obj in objs)
                 {
-                    CoordStruct where = CellClass.Cell2Coord(currentCell + offset, location.Z);
-
-                    if (MapClass.Instance.TryGetCellAt(where, out Pointer<CellClass> pCell))
+                    if(obj.CastToTechno(out var target))
                     {
-                        Point2D p2d = new Point2D(60, 60);
-                        Pointer<TechnoClass> target = pCell.Ref.FindTechnoNearestTo(p2d, false, launcher);
-
                         pTargetRef = (TechnoExt.ExtMap.Find(target));
                         if (!pTargetRef.IsNullOrExpired())
                         {
@@ -56,8 +51,6 @@ namespace DpLib.Scripts.China
                             }
                         }
                     }
-
-
                 }
             }
         }
