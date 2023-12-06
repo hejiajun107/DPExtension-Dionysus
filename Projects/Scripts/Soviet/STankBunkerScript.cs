@@ -1,6 +1,7 @@
 ﻿using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -17,6 +18,7 @@ namespace Scripts.Soviet
     {
         public STankBunkerScript(TechnoExt owner) : base(owner)
         {
+            pBunkerAnim = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
         }
 
         private int rof = 100;
@@ -35,15 +37,35 @@ namespace Scripts.Soviet
 
         private static Pointer<WeaponTypeClass> chargeWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("AssaultBolt");
 
+        private SwizzleablePointer<AnimClass> pBunkerAnim;
+
         public override void OnUpdate()
         {
-            if(!CanWork())
+            CreateAnim();
+
+            if (!CanWork())
             {
+                pBunkerAnim.Ref.Invisible = true;
                 return;
             }
 
             if (Owner.OwnerObject.Ref.BunkerLinkedItem.IsNull)
+            {
+                pBunkerAnim.Ref.Invisible = true;
                 return;
+            }
+
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if(mission.Ref.CurrentMission == Mission.Construction || mission.Ref.CurrentMission == Mission.Selling)
+            {
+                pBunkerAnim.Ref.Invisible = true;
+            }
+            else
+            {
+                pBunkerAnim.Ref.Invisible = false;
+
+            }
+
 
             if (erof <= 0)
             {
@@ -91,6 +113,31 @@ namespace Scripts.Soviet
             double powerP = Owner.OwnerObject.Ref.Owner.Ref.GetPowerPercentage();
             return Owner.OwnerObject.Ref.IsPowerOnline() & (powerP >= 1);
         }
+
+        public override void OnRemove()
+        {
+            KillAnim();
+        }
+
+        private void CreateAnim()
+        {
+            if (pBunkerAnim.IsNull)
+            {
+                var anim = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("NASTBNK_C"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                pBunkerAnim.Pointer = anim;
+            }
+        }
+
+        private void KillAnim()
+        {
+            if (!pBunkerAnim.IsNull)
+            {
+                pBunkerAnim.Ref.TimeToDie = true;
+                pBunkerAnim.Ref.Base.UnInit();
+                pBunkerAnim.Pointer = IntPtr.Zero;
+            }
+        }
+
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
