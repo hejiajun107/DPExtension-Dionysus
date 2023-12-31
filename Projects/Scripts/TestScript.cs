@@ -6,6 +6,7 @@ using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DpLib.Scripts
@@ -29,6 +30,16 @@ namespace DpLib.Scripts
         private int fireCount = 0;
 
         private bool typeChanged = false;
+
+        public override void Awake()
+        {
+            //var bdtype = Owner.OwnerObject.Ref.Type.Cast<BuildingTypeClass>();
+            //Logger.Log("foundation:");
+            //for(var i = 0; i < 9; i++)
+            //{
+            //    Logger.Log($"({bdtype.Ref.FoundationData[i].X},{bdtype.Ref.FoundationData[i].Y})");
+            //}
+        }
 
         public override void OnUpdate()
         {

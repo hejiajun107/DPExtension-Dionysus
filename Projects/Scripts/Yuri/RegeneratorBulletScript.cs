@@ -1,8 +1,10 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DpLib.Scripts.Yuri
 {
@@ -31,7 +33,11 @@ namespace DpLib.Scripts.Yuri
         static Pointer<BulletTypeClass> mindBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("CtrlToGround");
         static Pointer<WarheadTypeClass> mindCtrlWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GenCtrlAirWh");
 
+        static Pointer<BulletTypeClass> mindBulletTypeCL => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("CtrlToGround2");
 
+        static Pointer<WarheadTypeClass> mindCtrlWarheadCL => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SplitControllerCL");
+
+        
 
 
         private static Dictionary<string, int> specialWarheadList = new Dictionary<string, int>()
@@ -44,7 +50,8 @@ namespace DpLib.Scripts.Yuri
             { "Laserman",3},
             { "PRES",4},
             { "YURIPR",5 },
-            { "YURIGAI",6 }
+            { "YURIGAI",6 },
+            { "YURI",7 }
         };
 
         public override void OnUpdate()
@@ -127,6 +134,11 @@ namespace DpLib.Scripts.Yuri
                         warhead = genicWarhead;
                         break;
                     }
+                case 7:
+                    {
+                        warhead = mindWarhead;
+                        break;
+                    }
                 default:
                     {
                         warhead = expWarhead;
@@ -154,8 +166,21 @@ namespace DpLib.Scripts.Yuri
                         var mindBullet = mindBulletType.Ref.CreateBullet(ptechno.Convert<AbstractClass>(), ptechno, 1, mindCtrlWarhead, 50, false);
                         mindBullet.Ref.SetTarget(pcell.Convert<AbstractClass>());
                         mindBullet.Ref.MoveTo(location + new CoordStruct(0, 0, delay + 2000), new BulletVelocity(0, 0, 0));
+                    }else if(warheadType == 7)
+                    {
+                        var clocation = location + new CoordStruct(MathEx.Random.Next(-3 * Game.CellSize, 3 * Game.CellSize), MathEx.Random.Next(-3 * Game.CellSize, 3 * Game.CellSize), 0);
+                        var technos = ObjectFinder.FindTechnosNear(clocation, 4 * Game.CellSize).Where(x=>(x.Ref.Base.WhatAmI() == AbstractType.Unit || x.Ref.Base.WhatAmI() == AbstractType.Infantry)).OrderBy(x => x.Ref.Base.GetCoords().DistanceFrom(location)).Take(2).ToList();
+                        if(technos != null && technos.Count()> 0)
+                        {
+                            foreach(var techno in technos)
+                            {
+                                var mindBulletCL = mindBulletTypeCL.Ref.CreateBullet(techno.Convert<AbstractClass>(), ptechno, 1, mindCtrlWarheadCL, 50, false);
+                                mindBulletCL.Ref.SetTarget(techno.Convert<AbstractClass>());
+                                mindBulletCL.Ref.MoveTo(location + new CoordStruct(0, 0, delay + 2000), new BulletVelocity(0, 0, 0));
+                            }
+                        }
+                       
                     }
-
                 }
             }
         }

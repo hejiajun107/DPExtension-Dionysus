@@ -81,9 +81,11 @@ namespace Scripts
                 StartBurst();
             }
 
+            int maxKeep = 350;
+
             if (reloaded)
             {
-                if (currentDuration >= 300)
+                if (currentDuration >= maxKeep)
                 {
                     reloaded = false;
                     burstRate = 10;
@@ -92,7 +94,17 @@ namespace Scripts
                 else
                 {
                     currentDuration++;
+                    var ammo = 6 - (int)((currentDuration / (double)maxKeep) * 6);
+                    if (ammo < 0)
+                    {
+                        ammo = 0;
+                    }
+                    Owner.OwnerObject.Ref.Ammo = ammo;
                 }
+            }
+            else
+            {
+                Owner.OwnerObject.Ref.Ammo = 0;
             }
 
             if (isBurst)
@@ -106,7 +118,7 @@ namespace Scripts
                         var pTechno = Owner.OwnerObject;
                         var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                         filp = -filp;
-                        var launchLocation = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(100, -25, 115), false, filp);
+                        var launchLocation = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(100, -15, 115), false, filp);
                         //new CoordStruct(currentLocation.X, currentLocation.Y, currentLocation.Z + 100);
 
                         var ntarget = new CoordStruct(target.X + random.Next(-360, 360), target.Y + random.Next(-360, 360), target.Z);
@@ -182,12 +194,12 @@ namespace Scripts
 
                 //Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, showWH, 100, true);
                 //pBullet.Ref.DetonateAndUnInit(pTechno.Ref.Base.Base.GetCoords());
-                var panim = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("DYRELOADEDEFFECT"), pTechno.Ref.Base.Base.GetCoords());
-                panim.Ref.SetOwnerObject(pTechno.Convert<ObjectClass>());
+                //var panim = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("DYRELOADEDEFFECT"), pTechno.Ref.Base.Base.GetCoords());
+                //panim.Ref.SetOwnerObject(pTechno.Convert<ObjectClass>());
 
                 reloaded = true;
                 currentDuration = 0;
-                burstRate = 50;
+                burstRate = 60;
             }
         }
     }
