@@ -28,6 +28,17 @@ namespace Extension.Shared
             return manaBarScript.Cost(num);
         }
 
+        public void Pause()
+        {
+            manaBarScript.paused = true;
+        }
+
+        public void Resume()
+        {
+            manaBarScript.paused = false;
+        }
+
+
 
         public int Current
         {
@@ -63,6 +74,9 @@ namespace Extension.Shared
 
         private int currentIntervel = 0;
 
+        public bool paused = false;
+
+    
         public int Current
         {
             get { return currentMana; }
@@ -103,18 +117,22 @@ namespace Extension.Shared
             }
 
 
-            if (currentMana < max)
+            if(!paused)
             {
-                if (currentIntervel < recoverDuration)
+                if (currentMana < max)
                 {
-                    currentIntervel++;
-                }
-                else
-                {
-                    currentMana++;
-                    currentIntervel = 0;
+                    if (currentIntervel < recoverDuration)
+                    {
+                        currentIntervel++;
+                    }
+                    else
+                    {
+                        currentMana++;
+                        currentIntervel = 0;
+                    }
                 }
             }
+           
 
             if (pAnim.IsNull)
             {

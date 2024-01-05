@@ -4,6 +4,7 @@ using Extension.Script;
 using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Reflection;
 
@@ -126,7 +127,20 @@ namespace DpLib.Scripts
 
         }
 
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            if (delay <= 0)
+                return;
 
+            if (pAttackingHouse.IsNull)
+                return;
+
+            if (pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                return;
+
+            pDamage.Ref = (int)(pDamage.Ref * 0.25);
+
+        }
 
     }
 

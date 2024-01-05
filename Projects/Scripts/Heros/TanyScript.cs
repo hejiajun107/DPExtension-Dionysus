@@ -22,7 +22,7 @@ namespace Scripts
     public class TanyScript : TechnoScriptable
     {
         public TanyScript(TechnoExt owner) : base(owner) {
-            _manaCounter = new ManaCounter(owner, 2);
+            _manaCounter = new ManaCounter(owner, 3);
         }
 
         private ManaCounter _manaCounter;

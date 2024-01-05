@@ -86,6 +86,7 @@ namespace DpLib.Scripts.Heros
                 mission.Ref.ForceMission(Mission.Stop);
                 if (_manaCounter.Cost(100))
                 {
+                    _manaCounter.Pause();
                     Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, showWarhead, 100, false);
                     pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     Owner.OwnerObject.Ref.Ammo = 1;
@@ -180,6 +181,7 @@ namespace DpLib.Scripts.Heros
                     return;
                 if (_manaCounter.Cost(100))
                 {
+                    _manaCounter.Pause();
                     Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, showWarhead, 100, false);
                     pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     Owner.OwnerObject.Ref.Ammo = 1;
@@ -195,6 +197,7 @@ namespace DpLib.Scripts.Heros
             {
                 if (isActived == false)
                 {
+                    _manaCounter.Resume();
                     isActived = true;
 
                     //光束开始聚集的半径

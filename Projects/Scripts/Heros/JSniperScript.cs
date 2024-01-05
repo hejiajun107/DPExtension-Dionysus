@@ -36,6 +36,15 @@ namespace Scripts
                     Owner.OwnerObject.Ref.Ammo = 1;
                 }
             }
+
+            if(Owner.OwnerObject.Ref.Ammo == 0)
+            {
+                _manaCounter.Resume();
+            }
+            else
+            {
+                _manaCounter.Pause();
+            }
         }
 
 
