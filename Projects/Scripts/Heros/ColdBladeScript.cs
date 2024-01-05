@@ -106,7 +106,7 @@ namespace DpLib.Scripts.Heros
         {
             if (weaponIndex == 0)
             {
-                if (_manaCounter.Cost(100))
+                if (_manaCounter.Cost(80))
                 {
                     center = pTarget.Ref.GetCoords();
                     isActived = true;
