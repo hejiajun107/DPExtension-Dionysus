@@ -1,5 +1,7 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 
@@ -152,21 +154,43 @@ namespace DpLib.Scripts.China
             {
                 try
                 {
+                    if (pAttacker.IsNull)
+                        return;
+
                     if (pAttackingHouse.IsNull)
+                        return;
+
+                    if (pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                        return;
+
+                    var currentHeight = Owner.OwnerObject.Ref.Base.GetHeight();
+                    var sourceHeight = pAttacker.Ref.GetHeight();
+
+                    if (sourceHeight - currentHeight > 500)
+                        return;
+
+                    var sourceCoord = pAttacker.Ref.Base.GetCoords();
+                    var targetCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+                    var dir =  GameUtil.Point2Dir(targetCoord, sourceCoord);
+                    var face = GameUtil.Facing2Dir(Owner.OwnerObject.Ref.TurretFacing);
+
+                    var diff = Math.Abs((int)face - (int)dir);
+                    if (diff > 4)
+                        diff = 8 - diff;
+
+                    if (Math.Abs(diff) >= 2)
                     {
                         return;
                     }
-                    if (pAttackingHouse.Ref.ArrayIndex != Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex)
-                    {
-                        guardCoolDown = 200;
-                        Pointer<TechnoClass> pTechno = Owner.OwnerObject;
-                        CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
-                        Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, guardWarhead, 100, false);
-                        pBullet.Ref.DetonateAndUnInit(currentLocation);
+                   
+                    guardCoolDown = 180;
+                    Pointer<TechnoClass> pTechno = Owner.OwnerObject;
+                    CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
+                    Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, guardWarhead, 100, false);
+                    pBullet.Ref.DetonateAndUnInit(currentLocation);
 
 
-
-                    }
                 }
                 catch (Exception) {; }
 
