@@ -1,7 +1,9 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
+using System.Linq;
 
 namespace DpLib.Scripts.American
 {
@@ -13,6 +15,7 @@ namespace DpLib.Scripts.American
 
         //引爆闪电的弹头
         static Pointer<WarheadTypeClass> warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ZeusTnkWh");
+
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisibleHigh");
 
@@ -26,14 +29,23 @@ namespace DpLib.Scripts.American
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
+
             if (weaponIndex == 1)
             {
                 var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-                var target = new CoordStruct(location.X + random.Next(-spread, spread), location.Y + random.Next(-spread, spread), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
 
                 for (var i = 0; i < 3; i++)
                 {
+                    var target = new CoordStruct(location.X + random.Next(-spread, spread), location.Y + random.Next(-spread, spread), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
+                    var targetsNearBy = ObjectFinder.FindTechnosNear(target, 5 * Game.CellSize).Select(x => x.Convert<TechnoClass>()).Where(x=>!x.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner)).OrderByDescending(x => x.Ref.Base.Base.GetCoords().DistanceFrom(target)).ToList();
+                    var nearyby = targetsNearBy.FirstOrDefault();
+
+                    if (nearyby != null && nearyby.IsNotNull)
+                    {
+                        target = nearyby.Ref.Base.Base.GetCoords();
+                    }
+
                     var bullet1 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 100, true);
                     bullet1.Ref.DetonateAndUnInit(target);
 

@@ -34,7 +34,7 @@ namespace DpLib.Scripts.China
 
         static Pointer<AnimTypeClass> missingAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("MissAnim");
 
-        private bool IsMkIIUpdated = false;
+        public bool IsMkIIUpdated = false;
 
         private Random rd = new Random(114514);
 
@@ -128,5 +128,20 @@ namespace DpLib.Scripts.China
 
     }
 
+
+    [Serializable]
+    [ScriptAlias(nameof(XHJ20Script))]
+    public class XHJ20Script : J20Script
+    {
+        public XHJ20Script(TechnoExt owner) : base(owner)
+        {
+        }
+
+        public override void Awake()
+        {
+            IsMkIIUpdated = true;
+        }
+
+    }
 
 }

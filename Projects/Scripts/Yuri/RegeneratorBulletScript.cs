@@ -18,6 +18,10 @@ namespace DpLib.Scripts.Yuri
 
         static Pointer<WarheadTypeClass> expWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("RegenExplodeWh");
 
+        static Pointer<BulletTypeClass> seekerBullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("RegenSeeker");
+
+
+
         static Pointer<BulletTypeClass> expBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("RegenMissile");
         static Pointer<WarheadTypeClass> virusWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("RegenExplodeWh3");
         static Pointer<WarheadTypeClass> nukeWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("RegenExplodeWh4");
@@ -37,7 +41,7 @@ namespace DpLib.Scripts.Yuri
 
         static Pointer<WarheadTypeClass> mindCtrlWarheadCL => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SplitControllerCL");
 
-        
+
 
 
         private static Dictionary<string, int> specialWarheadList = new Dictionary<string, int>()
@@ -65,7 +69,7 @@ namespace DpLib.Scripts.Yuri
 
             var targetLocation = Owner.OwnerObject.Ref.TargetCoords;
 
-            Random random = new Random(targetLocation.X + targetLocation.Y);
+            var random = MathEx.Random;
 
             //var passengerCount = ptechno.Ref.Passengers.NumPassengers;
 
@@ -73,20 +77,44 @@ namespace DpLib.Scripts.Yuri
 
             int i = 0;
 
-            while (!ptechno.Ref.Passengers.GetFirstPassenger().IsNull)
+            if (ptechno.Ref.Passengers.GetFirstPassenger().IsNull)
             {
-                i++;
-                var passenger = ptechno.Ref.Passengers.GetFirstPassenger();
-                if (passenger.Convert<AbstractClass>().CastToTechno(out Pointer<TechnoClass> pPassenger))
+                var alliesInf = ObjectFinder.FindObjectsNear(ptechno.Ref.Base.Base.GetCoords(), 3 * Game.CellSize).Select(x => x.Convert<TechnoClass>()).Where(x => x.Ref.Owner == ptechno.Ref.Owner && x.Ref.Base.Base.WhatAmI() == AbstractType.Infantry)
+                    .OrderBy(x => x.Ref.Base.Base.GetCoords().DistanceFrom(ptechno.Ref.Base.Base.GetCoords())).Take(20).ToList();
+
+                foreach (var item in alliesInf)
                 {
-                    var strength = pPassenger.Ref.Base.Health;
-
-                    var id = passenger.Ref.Base.Type.Ref.Base.Base.ID.ToString();
-
+                    var strength = item.Ref.Type.Ref.Base.Strength;
+                    var id = item.Ref.Type.Ref.Base.Base.ID;
                     FireExplodeAt(ptechno, targetLocation + new CoordStruct(random.Next(-1200, 1200), random.Next(-1200, 1200), 0), 60 + (int)(1.2 * strength), 200 * i, specialWarheadList.ContainsKey(id) ? specialWarheadList[id] : 0);
-                    pPassenger.Ref.Base.UnInit();
+
+                    Pointer<BulletClass> bullet = seekerBullet.Ref.CreateBullet(ptechno.Convert<AbstractClass>(), ptechno, 0, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special"), 60, true);
+                    bullet.Ref.MoveTo(item.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(random.Next(-100, 100), random.Next(-100, 100), random.Next(-100, 100)));
+                    bullet.Ref.SetTarget(ptechno.Convert<AbstractClass>());
+
+                    item.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("RegenKillWh"), false);
+
                 }
             }
+            else
+            {
+                while (!ptechno.Ref.Passengers.GetFirstPassenger().IsNull)
+                {
+                    i++;
+                    var passenger = ptechno.Ref.Passengers.GetFirstPassenger();
+                    if (passenger.Convert<AbstractClass>().CastToTechno(out Pointer<TechnoClass> pPassenger))
+                    {
+                        var strength = pPassenger.Ref.Base.Health;
+
+                        var id = passenger.Ref.Base.Type.Ref.Base.Base.ID.ToString();
+
+                        FireExplodeAt(ptechno, targetLocation + new CoordStruct(random.Next(-1200, 1200), random.Next(-1200, 1200), 0), 60 + (int)(1.2 * strength), 200 * i, specialWarheadList.ContainsKey(id) ? specialWarheadList[id] : 0);
+                        pPassenger.Ref.Base.UnInit();
+                    }
+                }
+
+            }
+
 
 
             base.OnUpdate();
@@ -166,20 +194,21 @@ namespace DpLib.Scripts.Yuri
                         var mindBullet = mindBulletType.Ref.CreateBullet(ptechno.Convert<AbstractClass>(), ptechno, 1, mindCtrlWarhead, 50, false);
                         mindBullet.Ref.SetTarget(pcell.Convert<AbstractClass>());
                         mindBullet.Ref.MoveTo(location + new CoordStruct(0, 0, delay + 2000), new BulletVelocity(0, 0, 0));
-                    }else if(warheadType == 7)
+                    }
+                    else if (warheadType == 7)
                     {
                         var clocation = location + new CoordStruct(MathEx.Random.Next(-3 * Game.CellSize, 3 * Game.CellSize), MathEx.Random.Next(-3 * Game.CellSize, 3 * Game.CellSize), 0);
-                        var technos = ObjectFinder.FindTechnosNear(clocation, 4 * Game.CellSize).Where(x=>(x.Ref.Base.WhatAmI() == AbstractType.Unit || x.Ref.Base.WhatAmI() == AbstractType.Infantry)).OrderBy(x => x.Ref.Base.GetCoords().DistanceFrom(location)).Take(2).ToList();
-                        if(technos != null && technos.Count()> 0)
+                        var technos = ObjectFinder.FindTechnosNear(clocation, 4 * Game.CellSize).Where(x => (x.Ref.Base.WhatAmI() == AbstractType.Unit || x.Ref.Base.WhatAmI() == AbstractType.Infantry)).OrderBy(x => x.Ref.Base.GetCoords().DistanceFrom(location)).Take(2).ToList();
+                        if (technos != null && technos.Count() > 0)
                         {
-                            foreach(var techno in technos)
+                            foreach (var techno in technos)
                             {
                                 var mindBulletCL = mindBulletTypeCL.Ref.CreateBullet(techno.Convert<AbstractClass>(), ptechno, 1, mindCtrlWarheadCL, 50, false);
                                 mindBulletCL.Ref.SetTarget(techno.Convert<AbstractClass>());
                                 mindBulletCL.Ref.MoveTo(location + new CoordStruct(0, 0, delay + 2000), new BulletVelocity(0, 0, 0));
                             }
                         }
-                       
+
                     }
                 }
             }
