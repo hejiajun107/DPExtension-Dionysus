@@ -36,51 +36,64 @@ namespace DpLib.Scripts.Japan
 
             var currentAmount = Owner.OwnerObject.Ref.Tiberium.GetTotalAmount();
 
-            if (currentAmount >= 120) return;
-
-            //获取脚下的矿
-            var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-            var currentCell = CellClass.Coord2Cell(coord);
-
-            var enumerator = new CellSpreadEnumerator(1);
-
-            foreach (CellStruct offset in enumerator)
+            if (currentAmount < 120) 
             {
-                currentAmount = (int)Owner.OwnerObject.Ref.Tiberium.GetTotalAmount();
+                //获取脚下的矿
+                var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                var currentCell = CellClass.Coord2Cell(coord);
 
-                if (currentAmount >= 120) return;
+                var enumerator = new CellSpreadEnumerator(1);
 
-                CoordStruct where = CellClass.Cell2Coord(currentCell + offset, coord.Z);
-
-                if (MapClass.Instance.TryGetCellAt(where, out var pCell))
+                foreach (CellStruct offset in enumerator)
                 {
-                    var value = pCell.Ref.GetContainedTiberiumValue();
-                    if (value > 0)
+                    currentAmount = (int)Owner.OwnerObject.Ref.Tiberium.GetTotalAmount();
+
+                    if (currentAmount >= 120) return;
+
+                    CoordStruct where = CellClass.Cell2Coord(currentCell + offset, coord.Z);
+
+                    if (MapClass.Instance.TryGetCellAt(where, out var pCell))
                     {
+                        var value = pCell.Ref.GetContainedTiberiumValue();
+                        if (value > 0)
+                        {
 
-                        var index = pCell.Ref.GetContainedTiberiumIndex();
-                        var amount = value / (index == 0 ? 25f : 50f);
+                            var index = pCell.Ref.GetContainedTiberiumIndex();
+                            var amount = value / (index == 0 ? 25f : 50f);
 
-                        amount = (currentAmount + amount > 120) ? (120 - currentAmount) : amount;
+                            amount = (currentAmount + amount > 120) ? (120 - currentAmount) : amount;
 
 
-                        Owner.OwnerObject.Ref.Tiberium.AddAmount(amount, index);
-                        pCell.Ref.ReduceTiberium((int)amount);
-                        YRMemory.Create<AnimClass>(anim, where);
+                            Owner.OwnerObject.Ref.Tiberium.AddAmount(amount, index);
+                            pCell.Ref.ReduceTiberium((int)amount);
+                            YRMemory.Create<AnimClass>(anim, where);
+                        }
                     }
                 }
             }
 
-            if (Owner.OwnerObject.Ref.Tiberium.GetTotalAmount() >= 120) return;
 
-            if (random.Next(100) >= 70)
+            if (Owner.OwnerObject.Ref.Tiberium.GetTotalAmount() >= 120) 
             {
-                Owner.OwnerObject.Ref.Tiberium.AddAmount(1, 1);
+                var pWarhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("EPICMONEYWH");
+                var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+                var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pWarhead, 100, false);
+                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                
             }
             else
             {
-                Owner.OwnerObject.Ref.Tiberium.AddAmount(1, 0);
+                if (random.Next(100) >= 70)
+                {
+                    Owner.OwnerObject.Ref.Tiberium.AddAmount(1, 1);
+                }
+                else
+                {
+                    Owner.OwnerObject.Ref.Tiberium.AddAmount(1, 0);
+                }
             }
+
+         
 
         }
 

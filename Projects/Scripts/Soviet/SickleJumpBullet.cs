@@ -59,6 +59,20 @@ namespace DpLib.Scripts.Soviet
 
             }
         }
+
+        public override void OnDetonate(Pointer<CoordStruct> pCoords)
+        {
+            if (!Owner.OwnerObject.Ref.Owner.IsNull)
+            {
+                if(Owner.OwnerObject.Ref.Owner.Ref.Type.Ref.Base.Base.ID == "SICKLE")
+                {
+                    var pWarhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ICTKCoreIronOtherWh");
+                    var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+                    var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Ref.Owner.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, 0, pWarhead, 100, false);
+                    pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Owner.Ref.Base.Base.GetCoords());
+                }
+            }
+        }
     }
 
 

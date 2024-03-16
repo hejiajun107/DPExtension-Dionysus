@@ -15,6 +15,10 @@ namespace Extension.Script
         void OnDeploy();
 
         void OnStopCommand();
+
+        void OnKilledBy(Pointer<TechnoClass> killer);
+
+        void OnKill(Pointer<TechnoClass> victim);
     }
 
     [Serializable]
@@ -36,6 +40,11 @@ namespace Extension.Script
 
         public virtual void OnStopCommand() { }
         
+
+        public virtual void OnKilledBy(Pointer<TechnoClass> killer) {}
+
+        public virtual void OnKill(Pointer<TechnoClass> victim) { }
+      
     }
 
 }

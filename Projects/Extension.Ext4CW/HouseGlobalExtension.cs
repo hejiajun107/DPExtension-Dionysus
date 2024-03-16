@@ -1,8 +1,11 @@
-﻿using Extension.CWUtilities;
+﻿using DynamicPatcher;
+using Extension.CWUtilities;
 using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +27,14 @@ namespace Extension.CW
 
         public int NatashaNukeCount = 0;
 
-
+        public override void OnUpdate()
+        {
+            if(NeedRecalcNumOfThunderBird == true)
+            {
+                NeedRecalcNumOfThunderBird = false;
+                RecalcNumOfThunderBird();
+            }
+        }
 
         /// <summary>
         /// 羲和阳炎攻击位置
@@ -40,6 +50,22 @@ namespace Extension.CW
         /// </summary>
         public int AirportPaybackTime { get; set; } = 0;
 
+
+        #region 雷鸟运输机
+        /// <summary>
+        /// 雷鸟运输机的数量
+        /// </summary>
+        public int NumOfThunderBird { get; set; } = 0;
+        /// <summary>
+        /// 是否需要重新计算雷鸟运输机的数量
+        /// </summary>
+        public bool NeedRecalcNumOfThunderBird { get; set; } = false;
+
+        public void RecalcNumOfThunderBird()
+        {
+            NumOfThunderBird = Finder.FindTechno(Owner.OwnerObject, x => (x.Ref.Type.Ref.Base.Base.ID == "ORCAB" || x.Ref.Type.Ref.Base.Base.ID == "ORCAB2") && !x.Ref.Base.InLimbo && x.Ref.IsInPlayfield == true, FindRange.Owner).Count();
+        }
+        #endregion
 
 
     }

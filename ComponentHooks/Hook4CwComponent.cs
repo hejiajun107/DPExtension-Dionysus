@@ -5,6 +5,8 @@ using System;
 using Extension.CW;
 using Extension.Utilities;
 using Extension.Ext4CW;
+using static System.Net.Mime.MediaTypeNames;
+using Extension.Script;
 
 namespace ComponentHooks
 {
@@ -26,6 +28,7 @@ namespace ComponentHooks
                     var technoExt = TechnoExt.ExtMap.Find(pTechno);
                     var globalExt = technoExt.GameObject.GetTechnoGlobalComponent();
                     giveExpMultiple = globalExt.Data.GiveExperienceMultiple;
+                    //technoExt.GameObject.Foreach(c => (c as ITechnoScriptable)?.OnKilledBy(pKiller));
                 }
 
                 if (pKiller != null)
@@ -33,6 +36,7 @@ namespace ComponentHooks
                     var killerExt = TechnoExt.ExtMap.Find(pKiller);
                     var globalExt = killerExt.GameObject.GetTechnoGlobalComponent();
                     gainExpMultiple = globalExt.Data.GainExperienceMultiple;
+                    //killerExt.GameObject.Foreach(c => (c as ITechnoScriptable)?.OnKill(pTechno));
                 }
 
                 int cost = (int)R->EBP;
