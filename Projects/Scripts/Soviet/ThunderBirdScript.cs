@@ -4,6 +4,7 @@ using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 
 namespace Scripts.Soviet
@@ -59,7 +60,6 @@ namespace Scripts.Soviet
                 var component = house.GameObject.GetComponent<HouseGlobalExtension>();
                 var powerDrain = house.OwnerObject.Ref.PowerDrain + 40 * component.NumOfThunderBird;
                 var powerOutput = house.OwnerObject.Ref.PowerOutput;
-
                 var dPower = powerOutput - powerDrain;
                 if (dPower < 0)
                 {
@@ -75,7 +75,7 @@ namespace Scripts.Soviet
                     elecLevel = 1;
                     //无事发生
                 }
-                else if (dPower > 0 && dPower <= 50 * component.NumOfThunderBird)
+                else if (dPower > 0 && dPower <= 60 * component.NumOfThunderBird)
                 {
                     elecLevel = 2;
                     var pWarhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ORCABCharge1Wh");
@@ -92,6 +92,18 @@ namespace Scripts.Soviet
                     var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, pWarhead, 100, false);
                     pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     //电力充足
+
+                    for(var i=0;i<2;i++)
+                    {
+                        Pointer<EBolt> pBolt = YRMemory.Create<EBolt>();
+                        if (!pBolt.IsNull)
+                        {
+                            var eSource = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(0, 160 * (i == 0 ? 1 : -1), 35), false);
+                            pBolt.Ref.Fire(eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100), eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100), 0);
+                            pBolt.Ref.AlternateColor = true;
+                        }
+                    }
+                   
                 }
             }
         }
