@@ -19,7 +19,6 @@ namespace DpLib.Scripts.American
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisibleHigh");
 
-        private Random random = new Random(12135);
 
         //范围 CellSpread*256
         private int spread = 2560;
@@ -37,7 +36,7 @@ namespace DpLib.Scripts.American
 
                 for (var i = 0; i < 3; i++)
                 {
-                    var target = new CoordStruct(location.X + random.Next(-spread, spread), location.Y + random.Next(-spread, spread), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
+                    var target = new CoordStruct(location.X + MathEx.Random.Next(-spread, spread), location.Y + MathEx.Random.Next(-spread, spread), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
                     var targetsNearBy = ObjectFinder.FindTechnosNear(target, 5 * Game.CellSize).Select(x => x.Convert<TechnoClass>()).Where(x=>!x.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner)).OrderByDescending(x => x.Ref.Base.Base.GetCoords().DistanceFrom(target)).ToList();
                     var nearyby = targetsNearBy.FirstOrDefault();
 
@@ -49,16 +48,16 @@ namespace DpLib.Scripts.American
                     var bullet1 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 100, true);
                     bullet1.Ref.DetonateAndUnInit(target);
 
-                    if (random.Next(100) > 50)
+                    if (MathEx.Random.Next(100) > 50)
                     {
-                        var target2 = new CoordStruct(location.X + random.Next(-spread / 2, spread / 2), location.Y + random.Next(-spread / 2, spread / 2), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
+                        var target2 = new CoordStruct(location.X + MathEx.Random.Next(-spread / 2, spread / 2), location.Y + MathEx.Random.Next(-spread / 2, spread / 2), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
                         var bullet2 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 100, true);
                         bullet2.Ref.DetonateAndUnInit(target2);
                     }
 
-                    if (random.Next(100) > 50)
+                    if (MathEx.Random.Next(100) > 50)
                     {
-                        var target3 = new CoordStruct(location.X + random.Next(-spread, spread), location.Y + random.Next(-spread, spread), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
+                        var target3 = new CoordStruct(location.X + MathEx.Random.Next(-spread, spread), location.Y + MathEx.Random.Next(-spread, spread), location.Z - Owner.OwnerObject.Ref.Base.GetHeight());
                         var bullet3 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 100, true);
                         bullet3.Ref.DetonateAndUnInit(target3);
                     }

@@ -124,6 +124,7 @@
     <Compile Include="American\ZuesTankScript.cs" />
     <Compile Include="ArmyFlagScript.cs" />
     <Compile Include="AutoDeployScript.cs" />
+    <Compile Include="AutoExplodeWarheadScript.cs" />
     <Compile Include="BulletLikeRocketScript.cs" />
     <Compile Include="CallingAirStrikeSWScirpt.cs" />
     <Compile Include="CampFireScript.cs" />
@@ -262,6 +263,7 @@
     <Compile Include="StraightBulletScriptable.cs" />
     <Compile Include="StrongholdScript.cs" />
     <Compile Include="TechnoDisplayImageScript.cs" />
+    <Compile Include="TestObjAutoPutScript.cs" />
     <Compile Include="TestScript.cs" />
     <Compile Include="TrackingRocketScript.cs" />
     <Compile Include="UnOnMapaleScript.cs" />
