@@ -236,6 +236,24 @@ namespace ComponentHooks
         }
 
 
+
+        //Prevent_7BAEA1
+        [Hook(HookType.AresHook, Address = 0x7BAE60, Size = 5)]
+        public static unsafe UInt32 BSurface_GetPixel(REGISTERS* R)
+        {
+            Pointer<BSurface> pSurface = (IntPtr)R->ECX;
+            Pointer<Point2D> pPoint = R->Stack<Pointer<Point2D>>(0x4);
+
+            if(pPoint.Ref.X > pSurface.Ref.BaseSurface.Width || pPoint.Ref.Y > pSurface.Ref.BaseSurface.Height)
+            {
+                pPoint.Ref.X = 0;
+                pPoint.Ref.Y = 0;
+            }
+
+            return 0;
+        }
+
+
         //[Hook(HookType.AresHook, Address = 0x6FC339, Size = 6)]
         //public static unsafe UInt32 TechnoClass_CanFire(REGISTERS* R)
         //{
