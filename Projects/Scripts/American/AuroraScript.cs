@@ -19,6 +19,10 @@ namespace DpLib.Scripts.American
 
         private int coolDown = 500;
 
+        private int takedDamage = 0;
+
+        private bool isInShield = false;
+
         static Pointer<WarheadTypeClass> immnueWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("AuroraImmnueWh");
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
@@ -27,11 +31,14 @@ namespace DpLib.Scripts.American
         {
             base.OnUpdate();
 
+
+
             if (checkRof-- <= 0)
             {
+                isInShield = false;
                 checkRof = 20;
 
-                if (Owner.OwnerObject.Ref.Ammo > 0 && duration <= 1000)
+                if (Owner.OwnerObject.Ref.Ammo > 0 && duration <= 600 && takedDamage <= 3000)
                 {
                     pTargetRef = (TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
                     if (!pTargetRef.IsNullOrExpired())
@@ -41,6 +48,8 @@ namespace DpLib.Scripts.American
                         var distance = currentLocation.DistanceFrom(targetLocation);
                         if (distance <= 30 * 256)
                         {
+                            isInShield = true;
+
                             //施加免疫效果
                             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, immnueWarhead, 100, false);
                             pBullet.Ref.DetonateAndUnInit(currentLocation);
@@ -55,13 +64,24 @@ namespace DpLib.Scripts.American
                     {
                         coolDown = 500;
                         duration = 0;
+                        takedDamage = 0;
                     }
 
                 }
             }
         }
 
-
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            if(isInShield)
+            {
+                var damage = MapClass.GetTotalDamage(pDamage.Ref, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter);
+                if (damage > 0)
+                {
+                    takedDamage += damage;
+                }
+            }
+        }
 
     }
 }

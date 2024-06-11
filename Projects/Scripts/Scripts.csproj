@@ -173,6 +173,7 @@
     <Compile Include="DISKScript.cs" />
     <Compile Include="DrainPassengerScript.cs" />
     <Compile Include="DrawableBulletScript.cs" />
+    <Compile Include="Experimental\RealAircraftCarrierScript.cs" />
     <Compile Include="FighterCmdBulletScript.cs" />
     <Compile Include="ForceSaleScript.cs" />
     <Compile Include="GGIScript.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="Yuri\RegeneratorBulletScript.cs" />
     <Compile Include="Yuri\RegeneratorScript.cs" />
     <Compile Include="Yuri\SMNKScript.cs" />
+    <Compile Include="Yuri\SuperBruteScript.cs" />
     <Compile Include="Yuri\YuriHeadLaserBullet.cs" />
     <Compile Include="Yuri\YuriHeadScript.cs" />
   </ItemGroup>

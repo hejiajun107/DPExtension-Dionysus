@@ -1,8 +1,10 @@
-﻿using Extension.Ext;
+﻿using Extension.Coroutines;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
+using System.Collections;
 
 namespace DpLib.Scripts.Japan
 {
@@ -23,10 +25,78 @@ namespace DpLib.Scripts.Japan
 
         static Pointer<AnimTypeClass> anim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("PIFFPIFF");
 
+        private bool IsExploding = false;
+
+        private int explodeDelay = 200;
+
+        private static Pointer<BulletTypeClass> pLaserBullet => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("JEpicLaser");
+
+        private static Pointer<WarheadTypeClass> chargingWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SRChargingWh");
+
+        private bool IsDead = false;
+
+
+        private static Pointer<WarheadTypeClass> slowWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JEPRippleWh");
+
+
+        private static Pointer<WarheadTypeClass> toGroundWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JEPBombWH");
+
+
         public override void OnUpdate()
         {
             base.OnUpdate();
 
+            if(IsDead)
+            {
+                Owner.OwnerObject.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super"), false);
+            }
+
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                IsExploding = !IsExploding;
+                explodeDelay = 200;
+                mission.Ref.ForceMission(Mission.Stop);
+            }
+
+
+            if (IsExploding)
+            {
+                if (explodeDelay > 0)
+                {
+                    if (explodeDelay % 5 == 0 && explodeDelay > 0 && explodeDelay != 0)
+                    {
+                        var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                        for (var i = 0; i < 5; i++)
+                        {
+                            var bullet = pLaserBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 200, chargingWh, 80, true);
+                            bullet.Ref.MoveTo(location + new CoordStruct(random.Next(-1000, 1000), random.Next(-1000, 1000), Owner.OwnerObject.Ref.Base.GetHeight() + 500), new BulletVelocity(random.Next(0, 90), random.Next(0, 90), random.Next(0, 90)));
+                            bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
+                        }
+                    }
+
+                    explodeDelay--;
+                }
+                else
+                {
+                    if (explodeDelay == 0)
+                    {
+                        var yellowAmount = Owner.OwnerObject.Ref.Tiberium.GetAmount(0);
+                        var colorfulAmount = Owner.OwnerObject.Ref.Tiberium.GetAmount(1);
+                        Owner.OwnerObject.Ref.Tiberium.RemoveAmount(colorfulAmount, 1);
+                        Owner.OwnerObject.Ref.Tiberium.RemoveAmount(yellowAmount, 0);
+                        Owner.GameObject.StartCoroutine(Boom((int)yellowAmount, (int)colorfulAmount, Owner.OwnerObject.Ref.Base.Base.GetCoords()));
+                        explodeDelay--;
+                    }
+                    else
+                    {
+                        if (Owner.OwnerObject.CastToFoot(out var pfoot))
+                        {
+                            pfoot.Ref.SpeedMultiplier = 0;
+                        }
+                    }
+                }
+            }
 
 
 
@@ -36,7 +106,7 @@ namespace DpLib.Scripts.Japan
 
             var currentAmount = Owner.OwnerObject.Ref.Tiberium.GetTotalAmount();
 
-            if (currentAmount < 120) 
+            if (currentAmount < 120)
             {
                 //获取脚下的矿
                 var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
@@ -73,13 +143,13 @@ namespace DpLib.Scripts.Japan
             }
 
 
-            if (Owner.OwnerObject.Ref.Tiberium.GetTotalAmount() >= 120) 
+            if (Owner.OwnerObject.Ref.Tiberium.GetTotalAmount() >= 120)
             {
                 var pWarhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("EPICMONEYWH");
                 var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
                 var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, pWarhead, 100, false);
                 pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                
+
             }
             else
             {
@@ -93,7 +163,7 @@ namespace DpLib.Scripts.Japan
                 }
             }
 
-         
+
 
         }
 
@@ -136,6 +206,74 @@ namespace DpLib.Scripts.Japan
 
 
         }
+
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            if (explodeDelay < 0)
+            {
+                if (pWH.IsNotNull)
+                {
+                    if(pWH.Ref.Base.ID != "Super")
+                    {
+                        pDamage.Ref = 0;
+                        return;
+                    }
+                }
+            }
+        }
+
+
+
+        IEnumerator Boom(int yellow, int colorful, CoordStruct center)
+        {
+            var count = yellow + colorful;
+
+            var max = count / 4 + 5;
+
+
+            var waveCount = 6;
+
+            for (var radius = 1; radius <= 15; radius++)
+            {
+                var r = radius * Game.CellSize;
+
+                for (var angle = 0; angle < 360; angle += 360 / waveCount)
+                {
+                    var pos = new CoordStruct(center.X + (int)(r * Math.Round(Math.Cos(angle * Math.PI / 180), 2)), center.Y + (int)(r * Math.Round(Math.Sin(angle * Math.PI / 180), 2)), center.Z);
+                    var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+                    int damage = 10;
+                    Pointer<BulletClass> pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, slowWh, 100, true);
+                    pBullet.Ref.DetonateAndUnInit(pos);
+                }
+
+                waveCount++;
+
+                yield return new WaitForFrames(5);
+            }
+
+            for (var radius = 15; radius > 0; radius--)
+            {
+                var burstCount = 6 + radius * 2 + max * radius / 15;
+                var r = radius * Game.CellSize;
+
+                for (var angle = 0; angle < 360; angle += 360 / burstCount)
+                {
+                    var pos = new CoordStruct(center.X + (int)(r * Math.Round(Math.Cos(angle * Math.PI / 180), 2)), center.Y + (int)(r * Math.Round(Math.Sin(angle * Math.PI / 180), 2)), center.Z);
+                    var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+                    int damage = 100;
+                    Pointer<BulletClass> pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, toGroundWh, 100, true);
+                    pBullet.Ref.DetonateAndUnInit(pos);
+                }
+
+                yield return new WaitForFrames(10);
+            }
+
+            yield return new WaitForFrames(5);
+
+
+            IsDead = true;
+        }
+
 
     }
 }
