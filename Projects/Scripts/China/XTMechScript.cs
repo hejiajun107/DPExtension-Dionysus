@@ -294,4 +294,104 @@ namespace DpLib.Scripts.China
         }
 
     }
+
+
+    [Serializable]
+    [ScriptAlias(nameof(XTMechHeroScript))]
+    public class XTMechHeroScript : TechnoScriptable
+    {
+        public XTMechHeroScript(TechnoExt owner) : base(owner)
+        {
+            pAnim = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
+        }
+
+
+        static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+        static Pointer<WarheadTypeClass> axeWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTAxeWh");
+
+        static Pointer<AnimTypeClass> lvAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("LV100");
+
+        private SwizzleablePointer<AnimClass> pAnim;
+
+
+        private int CurrentLevel = 1;
+
+        public override void OnUpdate()
+        {
+            
+            if (Owner.OwnerObject.Ref.Veterancy.Veterancy > 1.0)
+            {
+                Owner.OwnerObject.Ref.Veterancy.Reset();
+                if (CurrentLevel < 100)
+                {
+                    CurrentLevel++;
+                }
+            }
+
+            if (pAnim.IsNull)
+            {
+                CreateAnim();
+            }
+
+            pAnim.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(-180, -180, 0));
+            pAnim.Ref.Animation.Value = CurrentLevel;
+            pAnim.Ref.Pause();
+            if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
+            {
+                pAnim.Ref.Invisible = false;
+            }
+            else
+            {
+                pAnim.Ref.Invisible = true;
+            }
+
+        }
+
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        {
+            Pointer<BulletClass> pAxe = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, 20 + CurrentLevel * 2, axeWarhead, 100, true);
+            pAxe.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
+
+            var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
+            var health = Owner.OwnerObject.Ref.Base.Health + (int)(200 * CurrentLevel * 0.01);
+            Owner.OwnerObject.Ref.Base.Health = health > strength ? strength : health;
+        }
+
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+
+            if (CurrentLevel > 1)
+            {
+                pDamage.Ref = (int)(pDamage.Ref * (1 - 0.007 * CurrentLevel));
+            }
+        }
+
+        public override void OnRemove()
+        {
+            KillAnim();
+        }
+
+        private void CreateAnim()
+        {
+            if (!pAnim.IsNull)
+            {
+                KillAnim();
+            }
+
+            var anim = YRMemory.Create<AnimClass>(lvAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            //anim.Ref.SetOwnerObject(Owner.OwnerObject.Convert<ObjectClass>());
+            pAnim.Pointer = anim;
+        }
+
+        private void KillAnim()
+        {
+            if (!pAnim.IsNull)
+            {
+                pAnim.Ref.TimeToDie = true;
+                pAnim.Ref.Base.UnInit();
+                pAnim.Pointer = IntPtr.Zero;
+            }
+        }
+    }
+
 }

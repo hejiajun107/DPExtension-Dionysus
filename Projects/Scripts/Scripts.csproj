@@ -124,6 +124,7 @@
     <Compile Include="American\ZuesTankScript.cs" />
     <Compile Include="ArmyFlagScript.cs" />
     <Compile Include="AutoDeployScript.cs" />
+    <Compile Include="AutoEnterTankBunkerScript.cs" />
     <Compile Include="AutoExplodeWarheadScript.cs" />
     <Compile Include="BulletLikeRocketScript.cs" />
     <Compile Include="CallingAirStrikeSWScirpt.cs" />

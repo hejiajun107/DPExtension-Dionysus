@@ -249,6 +249,86 @@ namespace Scripts.Japan
     }
 
 
+    [ScriptAlias(nameof(BunkerWallFenceScript))]
+    [Serializable]
+    public class BunkerWallFenceScript : TechnoScriptable
+    {
+        public BunkerWallFenceScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+
+        private Tuple<bool, string, CoordStruct> FindWallPost(Pointer<CellClass> pCell, Direction direction)
+        {
+
+            List<string> LaserPosts = new List<string>()
+            {
+                "WAWALLCR"
+            };
+
+            bool finded = false;
+            string wallName = "";
+
+
+            Pointer<CellClass> pLast = pCell;
+
+            for (var i = 0; i < 8; i++)
+            {
+                pLast = pLast.Ref.GetNeighbourCell(direction);
+                if (pLast.IsNull)
+                    break;
+                var build = pLast.Ref.GetBuilding();
+                if (!build.IsNull)
+                {
+                    var id = build.Ref.Base.Type.Ref.Base.Base.ID;
+                    if (LaserPosts.Contains(id))
+                    {
+                        finded = true;
+                        wallName = id;
+                        return Tuple.Create(finded, wallName, pLast.Ref.Base.GetCoords());
+                    }
+                }
+            }
+            return Tuple.Create(finded, wallName, new CoordStruct(0, 0, 0));
+        }
+
+
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            int trueDamage = MapClass.GetTotalDamage(pDamage.Ref, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter);
+
+            if(trueDamage < Owner.OwnerObject.Ref.Base.Health)
+                return;
+
+            var id = Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID;
+            bool postExist = false;
+
+            if (MapClass.Instance.TryGetCellAt(Owner.OwnerObject.Ref.Base.Base.GetCoords(), out var pCell))
+            {
+                if (id == "WAWALLSN")
+                {
+                    if (FindWallPost(pCell, Direction.W).Item1 && FindWallPost(pCell, Direction.E).Item1)
+                    {
+                        postExist = true;
+                    }
+                }
+                else
+                {
+                    if (FindWallPost(pCell, Direction.N).Item1 && FindWallPost(pCell, Direction.S).Item1)
+                    {
+                        postExist = true;
+                    }
+                }
+            }
+
+            if (postExist)
+            {
+                pDamage.Ref = 0;
+                Owner.OwnerObject.Ref.Base.Health = 1;
+            }
+        }
+    }
+
 
 
     [Serializable]
