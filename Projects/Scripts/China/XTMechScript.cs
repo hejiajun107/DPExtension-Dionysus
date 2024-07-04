@@ -333,7 +333,7 @@ namespace DpLib.Scripts.China
                 CreateAnim();
             }
 
-            pAnim.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(-180, -180, 0));
+            pAnim.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(-120, -120, 0));
             pAnim.Ref.Animation.Value = CurrentLevel;
             pAnim.Ref.Pause();
             if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
@@ -352,9 +352,16 @@ namespace DpLib.Scripts.China
             Pointer<BulletClass> pAxe = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, 20 + CurrentLevel * 2, axeWarhead, 100, true);
             pAxe.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
 
-            var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
-            var health = Owner.OwnerObject.Ref.Base.Health + (int)(200 * CurrentLevel * 0.01);
-            Owner.OwnerObject.Ref.Base.Health = health > strength ? strength : health;
+            if(pTarget.CastToTechno(out var ptechno))
+            {
+                if(!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                {
+                    var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
+                    var health = Owner.OwnerObject.Ref.Base.Health + (int)(200 * CurrentLevel * 0.01);
+                    Owner.OwnerObject.Ref.Base.Health = health > strength ? strength : health;
+                }
+            }
+           
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
