@@ -262,6 +262,7 @@
     <Compile Include="Soviet\ThunderBirdScript.cs" />
     <Compile Include="Soviet\Tu160Script.cs" />
     <Compile Include="Soviet\ZepScript.cs" />
+    <Compile Include="SpecialCrateScript.cs" />
     <Compile Include="StraightBulletScriptable.cs" />
     <Compile Include="StrongholdScript.cs" />
     <Compile Include="TechnoDisplayImageScript.cs" />
