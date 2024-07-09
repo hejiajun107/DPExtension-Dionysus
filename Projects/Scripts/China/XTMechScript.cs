@@ -357,7 +357,7 @@ namespace DpLib.Scripts.China
                 if(!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
                 {
                     var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
-                    var health = Owner.OwnerObject.Ref.Base.Health + (int)(200 * CurrentLevel * 0.01);
+                    var health = Owner.OwnerObject.Ref.Base.Health + (int)(300 * CurrentLevel * 0.01);
                     Owner.OwnerObject.Ref.Base.Health = health > strength ? strength : health;
                 }
             }
