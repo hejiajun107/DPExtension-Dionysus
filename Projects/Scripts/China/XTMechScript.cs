@@ -349,7 +349,7 @@ namespace DpLib.Scripts.China
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            Pointer<BulletClass> pAxe = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, 20 + CurrentLevel * 2, axeWarhead, 100, true);
+            Pointer<BulletClass> pAxe = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, 20 + CurrentLevel * 3, axeWarhead, 100, true);
             pAxe.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
 
             if(pTarget.CastToTechno(out var ptechno))
@@ -357,7 +357,7 @@ namespace DpLib.Scripts.China
                 if(!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
                 {
                     var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
-                    var health = Owner.OwnerObject.Ref.Base.Health + (int)(300 * CurrentLevel * 0.01);
+                    var health = Owner.OwnerObject.Ref.Base.Health + (int)(200 * CurrentLevel * 0.01) + 30;
                     Owner.OwnerObject.Ref.Base.Health = health > strength ? strength : health;
                 }
             }
