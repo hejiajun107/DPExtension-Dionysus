@@ -170,6 +170,7 @@
     <Compile Include="DebugScriptable.cs" />
     <Compile Include="DelayToAttachScript.cs" />
     <Compile Include="DeptScript.cs" />
+    <Compile Include="DetectTechnoAndExplodeScript.cs" />
     <Compile Include="DetonatePassThrougthBulletScript.cs" />
     <Compile Include="DISKScript.cs" />
     <Compile Include="DrainPassengerScript.cs" />

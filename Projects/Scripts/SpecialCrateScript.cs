@@ -44,7 +44,7 @@ namespace Scripts
 
             var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            var technos = ObjectFinder.FindTechnosNear(location, 1 * Game.CellSize).OrderByDescending(x=>x.Ref.Base.GetCoords().DistanceFrom(location)).ToList();
+            var technos = ObjectFinder.FindTechnosNear(location, 1 * Game.CellSize).Where(x => !x.Ref.InLimbo).OrderByDescending(x => x.Ref.Base.GetCoords().DistanceFrom(location)).ToList();
 
             if (!technos.Any())
                 return;

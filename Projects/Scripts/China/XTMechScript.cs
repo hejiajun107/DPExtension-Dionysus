@@ -1,9 +1,16 @@
 ﻿using DynamicPatcher;
+using Extension.Coroutines;
 using Extension.Ext;
+using Extension.Ext4CW.Untilities;
+using Extension.INI;
 using Extension.Script;
 using Extension.Utilities;
+using Microsoft.AspNet.SignalR.Client.Infrastructure;
 using PatcherYRpp;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace DpLib.Scripts.China
 {
@@ -172,7 +179,7 @@ namespace DpLib.Scripts.China
                     var sourceCoord = pAttacker.Ref.Base.GetCoords();
                     var targetCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-                    var dir =  GameUtil.Point2Dir(targetCoord, sourceCoord);
+                    var dir = GameUtil.Point2Dir(targetCoord, sourceCoord);
                     var face = GameUtil.Facing2Dir(Owner.OwnerObject.Ref.TurretFacing);
 
                     var diff = Math.Abs((int)face - (int)dir);
@@ -183,7 +190,7 @@ namespace DpLib.Scripts.China
                     {
                         return;
                     }
-                   
+
                     guardCoolDown = 180;
                     Pointer<TechnoClass> pTechno = Owner.OwnerObject;
                     CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
@@ -313,12 +320,114 @@ namespace DpLib.Scripts.China
 
         private SwizzleablePointer<AnimClass> pAnim;
 
+        public static TechnoExt RegisteredXTMECH;
+
 
         private int CurrentLevel = 1;
 
+        private bool isShieldOnline = false;
+        private bool isRingOnline = false;
+        private bool isBoltOnline = false;
+        private bool isShakeOnline = false;
+
+        private bool isFireOnline = false;
+
+        public bool FireOn = false;
+
+        private int ringRof = 50;
+
+        private bool isInit = false;
+
+        private int fireAttachRof = 20;
+        private int fireHealRof = 2;
+        private int fireBlastRof = 150;
+
+
         public override void OnUpdate()
         {
-            
+            if (RegisteredXTMECH.IsNullOrExpired())
+            {
+                RegisteredXTMECH = Owner;
+            }
+
+            if (!isInit)
+            {
+                isInit = true;
+                Owner.OwnerObject.Ref.Owner.GiveSuperWeapon(SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkillLV1ASW"));
+                Owner.OwnerObject.Ref.Owner.GiveSuperWeapon(SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkillLV1BSW"));
+            }
+
+            if (CurrentLevel >= 10 && !isShieldOnline)
+            {
+                Owner.OwnerObject.Ref.Owner.GiveSuperWeapon(SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkillLV10SW"));
+                isShieldOnline = true;
+                Pointer<BulletClass> pShield = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTMechShieldWh"), 100, true);
+                pShield.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            }
+
+            if (CurrentLevel >= 20 && !isRingOnline)
+            {
+                Owner.OwnerObject.Ref.Owner.GiveSuperWeapon(SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkillLV20SW"));
+                isRingOnline = true;
+                Pointer<BulletClass> pRing = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTMechRingWh"), 100, true);
+                pRing.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            }
+
+            if (CurrentLevel >= 30 && !isBoltOnline)
+            {
+                isBoltOnline = true;
+                Owner.OwnerObject.Ref.Owner.GiveSuperWeapon(SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkillLV30SW"));
+            }
+
+            if (CurrentLevel >= 50 && !isShakeOnline)
+            {
+                isShakeOnline = true;
+                Owner.OwnerObject.Ref.Owner.GiveSuperWeapon(SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkillLV50SW"));
+            }
+
+
+            if (CurrentLevel >= 70 && !isFireOnline)
+            {
+                isFireOnline = true;
+                Owner.OwnerObject.Ref.Owner.GiveSuperWeapon(SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkillLV70SW"));
+            }
+
+            if (FireOn)
+            {
+                if (fireHealRof-- <= 0)
+                {
+                    fireHealRof = 2;
+                    if (Owner.OwnerObject.Ref.Base.Health > 5)
+                    {
+                        Owner.OwnerObject.Ref.Base.Health = Owner.OwnerObject.Ref.Base.Health - 3;
+                    }
+                }
+
+                if (fireAttachRof-- <= 0)
+                {
+                    fireAttachRof = 20;
+                    Pointer<BulletClass> pInviso = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTPoweredWh"), 100, true);
+                    pInviso.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+
+                }
+            }
+
+            if (isRingOnline)
+            {
+                if (ringRof-- <= 0)
+                {
+                    ringRof = 50;
+                    isShieldOnline = true;
+                    Pointer<BulletClass> pInviso = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTMechRingEffWh"), 100, true);
+                    pInviso.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                }
+            }
+
+            if (fireBlastRof > 0)
+            {
+                fireBlastRof--;
+            }
+
             if (Owner.OwnerObject.Ref.Veterancy.Veterancy > 1.0)
             {
                 Owner.OwnerObject.Ref.Veterancy.Reset();
@@ -352,16 +461,21 @@ namespace DpLib.Scripts.China
             Pointer<BulletClass> pAxe = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, 20 + CurrentLevel * 3, axeWarhead, 100, true);
             pAxe.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
 
-            if(pTarget.CastToTechno(out var ptechno))
+            if (pTarget.CastToTechno(out var ptechno))
             {
-                if(!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                if (!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
                 {
                     var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
                     var health = Owner.OwnerObject.Ref.Base.Health + (int)(200 * CurrentLevel * 0.01) + 30;
                     Owner.OwnerObject.Ref.Base.Health = health > strength ? strength : health;
                 }
             }
-           
+
+            if (FireOn)
+            {
+                Owner.GameObject.StartCoroutine(FireBlast(pTarget.Ref.GetCoords()));
+            }
+
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
@@ -398,6 +512,189 @@ namespace DpLib.Scripts.China
                 pAnim.Ref.Base.UnInit();
                 pAnim.Pointer = IntPtr.Zero;
             }
+        }
+
+
+        IEnumerator FireBlast(CoordStruct center)
+        {
+            var startAngle = 0;
+            fireBlastRof = 150;
+            for (var radius = 0; radius <= 5 * 256; radius += 100)
+            {
+                for (var angle = startAngle; angle < startAngle + 360; angle += 30)
+                {
+                    var pos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
+                    int damage = 20;
+                    Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTFireWH"), 100, false);
+                    pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, 0));
+                }
+
+                startAngle -= 3;
+                yield return new WaitForFrames(1);
+            }
+        }
+
+        public void ShakeSkill(CoordStruct targetCoord)
+        {
+            var dir = GameUtil.Point2Dir(Owner.OwnerObject.Ref.Base.Base.GetCoords(), targetCoord);
+            Owner.OwnerObject.Ref.TurretFacing.turn(dir.ToDirStruct());
+            YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SwordWaveWithSound"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            Owner.GameObject.StartCoroutine(SpellShakeSkill(targetCoord));
+        }
+
+        IEnumerator SpellShakeSkill(CoordStruct targetCoord)
+        {
+            var start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+            var range = 9;
+
+
+            var flipX = targetCoord.X > start.X ? 1 : -1;
+            var flipY = targetCoord.Y > start.Y ? 1 : -1;
+
+            var cita = Math.Atan(Math.Abs((targetCoord.Y - start.Y) / (targetCoord.X - start.X)));
+
+            List<CoordStruct> targetCoords = new List<CoordStruct>();
+
+            for (var i = 1; i <= range; i += 2)
+            {
+                var cs = i * Game.CellSize;
+                var dest = new CoordStruct((start.X + (int)(cs * Math.Cos(cita) * flipX)), start.Y + (int)(cs * Math.Sin(cita)) * flipY, start.Z);
+                targetCoords.Add(dest);
+                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("XTGapA"), dest);
+                yield return new WaitForFrames(5);
+            }
+
+            foreach(var target in targetCoords)
+            {
+                var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 150, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ShockerWH"), 100, true);
+                bullet.Ref.DetonateAndUnInit(target);
+            }
+        }
+        
+
+    }
+
+
+    [ScriptAlias(nameof(XTLV30SkillSWScript))]
+    [Serializable]
+    public class XTLV30SkillSWScript : SuperWeaponScriptable
+    {
+        public XTLV30SkillSWScript(SuperWeaponExt owner) : base(owner)
+        {
+        }
+
+        public override void OnLaunch(CellStruct cell, bool isPlayer)
+        {
+            if (XTMechHeroScript.RegisteredXTMECH.IsNullOrExpired())
+                return;
+            var techno = XTMechHeroScript.RegisteredXTMECH;
+            if (isPlayer)
+            {
+                techno.OwnerObject.Ref.Base.Select();
+            }
+            techno.GameObject.CreateScriptComponent(nameof(XTMechLV30EffectScript), "XTMechLV30EffectScript", techno);
+        }
+    }
+
+
+
+    [ScriptAlias(nameof(XTLV50SkillSWScript))]
+    [Serializable]
+    public class XTLV50SkillSWScript : SuperWeaponScriptable
+    {
+        public XTLV50SkillSWScript(SuperWeaponExt owner) : base(owner)
+        {
+        }
+
+        public override void OnLaunch(CellStruct cell, bool isPlayer)
+        {
+            if (XTMechHeroScript.RegisteredXTMECH.IsNullOrExpired())
+                return;
+            var techno = XTMechHeroScript.RegisteredXTMECH;
+            if (isPlayer)
+            {
+                techno.OwnerObject.Ref.Base.Select();
+            }
+            var script = techno.GameObject.GetComponent<XTMechHeroScript>();
+            if (script != null)
+            {
+                script.ShakeSkill(CellClass.Cell2Coord(cell));
+            }
+        }
+    }
+
+
+
+    [ScriptAlias(nameof(XTLV70SkillSWScript))]
+    [Serializable]
+    public class XTLV70SkillSWScript : SuperWeaponScriptable
+    {
+        public XTLV70SkillSWScript(SuperWeaponExt owner) : base(owner)
+        {
+        }
+
+        public override void OnLaunch(CellStruct cell, bool isPlayer)
+        {
+            if (XTMechHeroScript.RegisteredXTMECH.IsNullOrExpired())
+                return;
+            var techno = XTMechHeroScript.RegisteredXTMECH;
+            if (isPlayer)
+            {
+                techno.OwnerObject.Ref.Base.Select();
+            }
+
+            var script = techno.GameObject.GetComponent<XTMechHeroScript>();
+            if (script != null)
+            {
+                script.FireOn = !script.FireOn;
+            }
+        }
+    }
+
+
+
+    [ScriptAlias(nameof(XTMechLV30EffectScript))]
+    [Serializable]
+    public class XTMechLV30EffectScript : TechnoScriptable
+    {
+        public XTMechLV30EffectScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        private int duration = 250;
+
+
+
+        public override void OnUpdate()
+        {
+            if (duration-- <= 0)
+            {
+                DetachFromParent();
+                return;
+            }
+
+            if (duration == 240 || duration == 120)
+            {
+                Pointer<BulletClass> pBullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTSkipSpeedWh"), 100, false);
+                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            }
+
+            if (duration == 240 || duration == 210)
+            {
+                Pointer<BulletClass> pBullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTGuardWh"), 100, false);
+                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            }
+
+
+
+            base.OnUpdate();
+        }
+
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        {
+            Pointer<BulletClass> pAxe = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(pTarget, Owner.OwnerObject, 100, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XTBoltWh"), 100, true);
+            pAxe.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
+            DetachFromParent();
         }
     }
 

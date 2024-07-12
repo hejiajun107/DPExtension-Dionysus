@@ -228,6 +228,21 @@ namespace Extension.Utilities
 
         }
 
+        public static void GiveSuperWeapon(this Pointer<HouseClass> pHouse,Pointer<SuperWeaponTypeClass> pSWType)
+        {
+            var sw = pHouse.Ref.FindSuperWeapon(pSWType);
+            sw.Ref.Grant(false, false, false);
+            sw.Ref.CanHold = 0;
+            //sw.Ref.IsCharged = true;
+
+            if (HouseClass.Player == pHouse)
+            {
+                SidebarClass.pInstance.Ref.AddCameo(AbstractType.Special, pSWType.Ref.ArrayIndex);
+                int ObjectTabIdx_0 = SidebarClass.GetObjectTabIdx(AbstractType.Special, pSWType.Ref.ArrayIndex, 0);
+                SidebarClass.pInstance.Ref.RepaintSidebar(ObjectTabIdx_0);
+            }
+        }
+
         //public static CoordStruct GetFLH(this TechnoExt technoExt, CoordStruct flh, DirStruct dir, bool flip = false)
         //{
         //    return GetFLH(technoExt.OwnerObject.Ref.Base.Base.GetCoords(), flh, dir, flip);
