@@ -342,9 +342,23 @@ namespace DpLib.Scripts.China
         private int fireHealRof = 2;
         private int fireBlastRof = 150;
 
+        private int checkPassengersRof = 30;
+
 
         public override void OnUpdate()
         {
+
+            Logger.Log(Owner.OwnerObject.Ref.Passengers.NumPassengers);
+            if (Owner.OwnerObject.Ref.Passengers.NumPassengers == 1)
+            {
+                if (!CheckOperator())
+                {
+                    var mission = Owner.OwnerObject.Convert<MissionClass>();
+                    mission.Ref.QueueMission(Mission.Unload, true);
+                }
+
+            }
+
             if (RegisteredXTMECH.IsNullOrExpired())
             {
                 RegisteredXTMECH = Owner;
@@ -456,6 +470,33 @@ namespace DpLib.Scripts.China
 
         }
 
+        private bool CheckOperator()
+        {
+            var first = Owner.OwnerObject.Ref.Passengers.FirstPassenger;
+            if (first.Ref.Base.Type.Ref.Base.Base.ID == "SLKZS")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+            //var pCurrent = first.Convert<ObjectClass>();
+
+            //while(pCurrent.Ref.NextObject.IsNotNull)
+            //{
+            //    pCurrent = pCurrent.Ref.NextObject;
+
+            //    if (pCurrent.CastToTechno(out var ptechno))
+            //    {
+            //        if (ptechno.Ref.Type.Ref.Base.Base.ID == "SLKZS")
+            //            return true;
+            //    }
+            //}
+            //return false;
+        }
+
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
             Pointer<BulletClass> pAxe = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, 20 + CurrentLevel * 3, axeWarhead, 100, true);
@@ -564,13 +605,13 @@ namespace DpLib.Scripts.China
                 yield return new WaitForFrames(5);
             }
 
-            foreach(var target in targetCoords)
+            foreach (var target in targetCoords)
             {
                 var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 150, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ShockerWH"), 100, true);
                 bullet.Ref.DetonateAndUnInit(target);
             }
         }
-        
+
 
     }
 

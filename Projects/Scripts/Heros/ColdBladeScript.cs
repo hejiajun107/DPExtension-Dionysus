@@ -298,7 +298,7 @@ namespace DpLib.Scripts.Heros
                 .FirstOrDefault();
                 ;
 
-            if(techno != null)
+            if(techno != null && techno.IsNotNull)
             {
                 rof = 30;
                 var health = techno.Ref.Base.Health + 30;
