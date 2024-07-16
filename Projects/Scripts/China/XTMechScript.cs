@@ -348,7 +348,6 @@ namespace DpLib.Scripts.China
         public override void OnUpdate()
         {
 
-            Logger.Log(Owner.OwnerObject.Ref.Passengers.NumPassengers);
             if (Owner.OwnerObject.Ref.Passengers.NumPassengers == 1)
             {
                 if (!CheckOperator())

@@ -221,6 +221,7 @@
     <Compile Include="JumpWithBulletScript.cs" />
     <Compile Include="LimboBulletScript.cs" />
     <Compile Include="LinkSWScript.cs" />
+    <Compile Include="Mission\CannotAttackAlliesScript.cs" />
     <Compile Include="MMKSeekerScript.cs" />
     <Compile Include="Modes\CricketControlScript.cs" />
     <Compile Include="Modes\GIDeployScript.cs" />
