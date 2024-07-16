@@ -9,9 +9,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scripts.Mission
+namespace Scripts
 {
     [ScriptAlias(nameof(CannotAttackAlliesScript))]
+    [Serializable]
     public class CannotAttackAlliesScript : TechnoScriptable
     {
         public CannotAttackAlliesScript(TechnoExt owner) : base(owner)
