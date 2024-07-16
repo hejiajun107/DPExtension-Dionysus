@@ -55,6 +55,18 @@ namespace Scripts
                         mission.Ref.ForceMission(Mission.Enter);
                         techno.Ref.SetDestination(Owner.OwnerObject.Convert<AbstractClass>());
 
+                        if (dataINI.Data.FreeUnitLevel > 1)
+                        {
+                            if(dataINI.Data.FreeUnitLevel == 2)
+                            {
+                                techno.Ref.Veterancy.SetVeteran(true);
+                            }
+                            else
+                            {
+                                techno.Ref.Veterancy.SetElite(true);
+                            }
+                        }
+
                     }
 
                 }
@@ -69,5 +81,8 @@ namespace Scripts
     {
         [INIField(Key = "TankBunker.FreeUnit")]
         public string FreeUnit;
+
+        [INIField(Key = "TankBunker.FreeUnitLevel")]
+        public int FreeUnitLevel = 1;
     }
 }
