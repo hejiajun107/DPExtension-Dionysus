@@ -297,8 +297,10 @@ namespace Scripts.Japan
         {
             int trueDamage = MapClass.GetTotalDamage(pDamage.Ref, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter);
 
-            if(trueDamage < Owner.OwnerObject.Ref.Base.Health)
+            if (trueDamage < 0)
                 return;
+            //if(trueDamage < Owner.OwnerObject.Ref.Base.Health)
+            //    return;
 
             var id = Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID;
             bool postExist = false;
@@ -323,8 +325,8 @@ namespace Scripts.Japan
 
             if (postExist)
             {
-                pDamage.Ref = 0;
-                Owner.OwnerObject.Ref.Base.Health = 1;
+                pDamage.Ref = (int)(pDamage.Ref / 5);
+                //Owner.OwnerObject.Ref.Base.Health = 1;
             }
         }
     }
