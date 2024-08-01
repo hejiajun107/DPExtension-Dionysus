@@ -245,6 +245,8 @@
     <Compile Include="Scrin\ScrinMotherShipScript.cs" />
     <Compile Include="Scrin\ScrinSpyScript.cs" />
     <Compile Include="Scrin\StormTowerScript.cs" />
+    <Compile Include="Scrin\TiberiumGeneratorScript.cs" />
+    <Compile Include="Scrin\TiberiumGrowthTargetScript.cs" />
     <Compile Include="Scrin\TiberiumInfestScript.cs" />
     <Compile Include="Scrin\TiberiumScannerScript.cs" />
     <Compile Include="Scrin\WornHoleBuildingScript.cs" />
