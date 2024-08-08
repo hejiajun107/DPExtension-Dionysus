@@ -54,9 +54,28 @@ namespace DpLib.Scripts.Japan
             var mission = Owner.OwnerObject.Convert<MissionClass>();
             if (mission.Ref.CurrentMission == Mission.Unload)
             {
-                IsExploding = !IsExploding;
-                explodeDelay = 200;
-                mission.Ref.ForceMission(Mission.Stop);
+                bool canMissionExplode = true;
+                var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                if(MapClass.Instance.TryGetCellAt(coord,out var pcell))
+                {
+                    var pBuilding = pcell.Ref.GetBuilding();
+                    
+                    if(pBuilding.IsNotNull)
+                    {
+                        if (pBuilding.Ref.Base.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                        {
+                            canMissionExplode = false;
+                        }
+                    }
+                    
+                }
+
+                if(canMissionExplode)
+                {
+                    IsExploding = !IsExploding;
+                    explodeDelay = 200;
+                    mission.Ref.ForceMission(Mission.Stop);
+                }
             }
 
 

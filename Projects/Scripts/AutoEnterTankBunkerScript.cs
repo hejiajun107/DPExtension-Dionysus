@@ -31,7 +31,7 @@ namespace Scripts
             base.OnPut(coord, faceDir);
         }
 
-        private int delay = 20;
+        private int delay = 60;
         public override void OnUpdate()
         {
             if (delay < 0)
