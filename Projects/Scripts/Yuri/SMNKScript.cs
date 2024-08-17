@@ -96,7 +96,7 @@ namespace Scripts.Yuri
                             }
                         }
                     }
-                    else if (AIBehavior == 1)
+                    else if (AIBehavior == 2)
                     {
                         isShieldOpen = true;
                     }

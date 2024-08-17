@@ -95,6 +95,8 @@ namespace DpLib.Scripts.Scrin
                         var transBullet = pBulletType.Ref.CreateBullet(pBuilding.Convert<AbstractClass>(), pBuilding, 1, transWarhead, 100, true);
                         transBullet.Ref.DetonateAndUnInit(technoExt.OwnerObject.Ref.Base.Base.GetCoords());
 
+                        var mission = technoExt.OwnerObject.Convert<MissionClass>();
+                        mission.Ref.ForceMission(Mission.Stop);
                         if (technoExt.OwnerObject.Ref.Base.Remove())
                         {
                             pBuilding.Ref.Passengers.AddPassenger(technoExt.OwnerObject.Convert<FootClass>());

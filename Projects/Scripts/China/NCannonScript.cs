@@ -60,12 +60,12 @@ namespace DpLib.Scripts.China
                     //if (!pAttackingHouse.Ref.IsAlliedWith(ownerHouse) && pAttackingHouse.Ref.ArrayIndex != ownerHouse)
                     if (!pDamage.IsNull)
                     {
-                        if (pDamage.Ref > 0)
+                        if (MapClass.GetTotalDamage(pDamage.Ref, pWH, Owner.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) > 0)
                         {
                             if (delay <= 0)
                             {
-                                if (Owner.OwnerObject.Ref.Base.Health < 300)
-                                {
+                                //if (Owner.OwnerObject.Ref.Base.Health < 300)
+                                //{
                                     //紧急维修
                                     Pointer<TechnoClass> pTechno = Owner.OwnerObject;
                                     CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
@@ -73,7 +73,7 @@ namespace DpLib.Scripts.China
                                     buffBullet.Ref.DetonateAndUnInit(currentLocation);
 
                                     delay = 25;
-                                }
+                                //}
                             }
                         }
 
