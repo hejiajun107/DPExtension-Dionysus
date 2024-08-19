@@ -241,6 +241,7 @@
     <Compile Include="Scrin\MirrorScript.cs" />
     <Compile Include="Scrin\PlanetShipScript.cs" />
     <Compile Include="Scrin\ScarabTargetScript.cs" />
+    <Compile Include="Scrin\SCEaterScript.cs" />
     <Compile Include="Scrin\ScrabScript.cs" />
     <Compile Include="Scrin\ScrinMotherShipScript.cs" />
     <Compile Include="Scrin\ScrinSpyScript.cs" />
@@ -249,6 +250,7 @@
     <Compile Include="Scrin\TiberiumGrowthTargetScript.cs" />
     <Compile Include="Scrin\TiberiumInfestScript.cs" />
     <Compile Include="Scrin\TiberiumScannerScript.cs" />
+    <Compile Include="Scrin\TriMechScript.cs" />
     <Compile Include="Scrin\WornHoleBuildingScript.cs" />
     <Compile Include="Scrin\WornHoleBulletScript.cs" />
     <Compile Include="SelfUninitScript.cs" />
