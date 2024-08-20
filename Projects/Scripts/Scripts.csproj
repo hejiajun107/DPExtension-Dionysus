@@ -231,6 +231,7 @@
     <Compile Include="PassengerChangeHouseScript.cs" />
     <Compile Include="PreventSbMCVScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReshadeLaserTrailer.cs" />
     <Compile Include="Scrin\BuzzerShieldableScript.cs" />
     <Compile Include="Scrin\CorruptorScript.cs" />
     <Compile Include="Scrin\ExileBulletScript.cs" />

@@ -19,7 +19,7 @@ namespace Scripts.Scrin
         {
         }
 
-        public int rof = 2500;
+        public int rof = 1800;
 
         private uint range = 3;
 
@@ -33,7 +33,7 @@ namespace Scripts.Scrin
             if (rof-- > 0)
                 return;
 
-            rof = 2500;
+            rof = 1800;
 
             var currentCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
