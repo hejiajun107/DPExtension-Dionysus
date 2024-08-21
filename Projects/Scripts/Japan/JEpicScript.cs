@@ -148,7 +148,7 @@ namespace DpLib.Scripts.Japan
                         {
 
                             var index = pCell.Ref.GetContainedTiberiumIndex();
-                            var amount = value / (index == 0 ? 25f : 50f);
+                            var amount = value / ((index == 0 || index == 3) ? 25f : 50f);
 
                             amount = (currentAmount + amount > 120) ? (120 - currentAmount) : amount;
 
@@ -198,13 +198,26 @@ namespace DpLib.Scripts.Japan
                 {
                     var yellowAmount = Owner.OwnerObject.Ref.Tiberium.GetAmount(0);
                     var colorfulAmount = Owner.OwnerObject.Ref.Tiberium.GetAmount(1);
+                    var yellow2Amount = Owner.OwnerObject.Ref.Tiberium.GetAmount(2);
+
 
                     var colorful = colorfulAmount > 10 ? 10 : colorfulAmount;
-                    var yellow = 10 - colorful;
+                    var yellow = (int)((10 - colorful) > yellowAmount ? yellowAmount : 10 - colorful);
+                    var yellow2 = 0;
+                    if(colorful - yellow < 10)
+                    {
+                        yellow2 = 10 - (int)colorful - (int)yellow;
+                    }
+
 
                     //每次消耗5个矿
                     Owner.OwnerObject.Ref.Tiberium.RemoveAmount(colorful, 1);
                     Owner.OwnerObject.Ref.Tiberium.RemoveAmount(yellow, 0);
+
+                    if(yellow2 > 0)
+                    {
+                        Owner.OwnerObject.Ref.Tiberium.RemoveAmount(yellow2, 2);
+                    }
 
                     //todo
                     var damage = (int)(yellowAmount * 15 + colorful * 30);

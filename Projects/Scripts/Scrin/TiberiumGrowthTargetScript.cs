@@ -1,4 +1,5 @@
-﻿using Extension.Coroutines;
+﻿using DynamicPatcher;
+using Extension.Coroutines;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
@@ -86,11 +87,20 @@ namespace Scripts.Scrin
                             }
                         }
                     }
-                    else if (pCell.Ref.GetContainedTiberiumIndex() == 0)
+                    else
                     {
-                        var currentAmount = value / 25;
-                        pCell.Ref.ReduceTiberium(currentAmount);
-                        pCell.Ref.IncreaseTiberium(1, currentAmount);
+                        if (pCell.Ref.GetContainedTiberiumIndex() == 0)
+                        {
+                            var currentAmount = value / 25;
+                            pCell.Ref.ReduceTiberium(currentAmount);
+                            pCell.Ref.IncreaseTiberium(1, currentAmount);
+                        }
+                        else if(pCell.Ref.GetContainedTiberiumIndex() == 2)
+                        {
+                            var currentAmount = value / 25;
+                            pCell.Ref.ReduceTiberium(currentAmount);
+                            pCell.Ref.IncreaseTiberium(1, currentAmount);
+                        }
                     }
                 }
                 else

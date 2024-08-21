@@ -58,10 +58,9 @@ namespace Scripts.Scrin
                     if (value > 0)
                     {
                         var index = pCell.Ref.GetContainedTiberiumIndex();
-                        var amount = value / (index == 0 ? 25f : 50f);
 
                         var ammo = Owner.OwnerObject.Ref.Ammo;
-                        ammo = ammo + (index == 0 ? 1 : 2);
+                        ammo = ammo + ((index == 0 || index == 3)? 1 : 2);
                         ammo = ammo > 5 ? 5 : ammo;
 
                         Owner.OwnerObject.Ref.Ammo = ammo;
