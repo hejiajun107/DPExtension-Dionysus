@@ -44,33 +44,25 @@ namespace Scripts.Scrin
 
         private void SeekTibrium()
         {
-            var currentAmount = Owner.OwnerObject.Ref.Tiberium.GetTotalAmount();
+            //获取脚下的矿
+            var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            if (currentAmount < 120)
+            if (MapClass.Instance.TryGetCellAt(coord, out var pCell))
             {
-                //获取脚下的矿
-                var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-
-
-                if (MapClass.Instance.TryGetCellAt(coord, out var pCell))
+                var value = pCell.Ref.GetContainedTiberiumValue();
+                if (value > 0)
                 {
-                    var value = pCell.Ref.GetContainedTiberiumValue();
-                    if (value > 0)
-                    {
-                        var index = pCell.Ref.GetContainedTiberiumIndex();
+                    var index = pCell.Ref.GetContainedTiberiumIndex();
 
-                        var ammo = Owner.OwnerObject.Ref.Ammo;
-                        ammo = ammo + ((index == 0 || index == 3)? 1 : 2);
-                        ammo = ammo > 5 ? 5 : ammo;
+                    var ammo = Owner.OwnerObject.Ref.Ammo;
+                    ammo = ammo + ((index == 0 || index == 2) ? 1 : 2);
+                    ammo = ammo > 5 ? 5 : ammo;
 
-                        Owner.OwnerObject.Ref.Ammo = ammo;
+                    Owner.OwnerObject.Ref.Ammo = ammo;
                        
-                        pCell.Ref.ReduceTiberium(1);
-                        YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SCAbsorbRay"), coord + new CoordStruct(0,0,50));
-                    }
+                    pCell.Ref.ReduceTiberium(1);
+                    YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SCAbsorbRay"), coord + new CoordStruct(0,0,50));
                 }
-
-
             }
         }
     }
