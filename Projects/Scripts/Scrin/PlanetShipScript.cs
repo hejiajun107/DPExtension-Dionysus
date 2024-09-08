@@ -164,13 +164,13 @@ namespace Scripts.Scrin
             }
 
             pMana.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-            var frame = (int)((charge / (double)chargeMax) * 20 - 1);
+            var frame = (int)((charge / (double)chargeMax) * 100);
             if(frame<0)
             {
                 frame = 0;
-            }else if (frame > 19)
+            }else if (frame > 100)
             {
-                frame = 19;
+                frame = 100;
             }
             pMana.Ref.Animation.Value = frame;
             pMana.Ref.Pause();
@@ -193,7 +193,7 @@ namespace Scripts.Scrin
                 KillAnim();
             }
 
-            var anim1 = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("UnitChargeBar"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            var anim1 = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("StormChargeBar"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
           
             pMana.Pointer = anim1;
         }
