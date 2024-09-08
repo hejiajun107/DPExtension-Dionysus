@@ -59,6 +59,7 @@
     <Compile Include="CommonExtension\FighterAreaGuard.cs" />
     <Compile Include="CommonExtension\FireAngle.cs" />
     <Compile Include="CommonExtension\ForceLayer.cs" />
+    <Compile Include="CommonExtension\HeroBreakControl.cs" />
     <Compile Include="CommonExtension\HeroKeepVeterancy.cs" />
     <Compile Include="CommonExtension\PassengerExtension.cs" />
     <Compile Include="CommonExtension\CustomExperience.cs" />

@@ -1,4 +1,5 @@
-﻿using Extension.CW;
+﻿using DynamicPatcher;
+using Extension.CW;
 using Extension.Ext;
 using PatcherYRpp;
 using System;
@@ -100,6 +101,7 @@ namespace Extension.CWUtilities
 
                 if (method.GetCustomAttribute(typeof(AwakeActionAttribute)) != null)
                 {
+
                     List<ParameterExpression> parameterExpressions = new List<ParameterExpression>()
                     { };
 

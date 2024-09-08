@@ -4,7 +4,9 @@ using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
+using System.Linq;
 
 namespace DpLib.Scripts.Scrin
 {
@@ -82,15 +84,59 @@ namespace DpLib.Scripts.Scrin
 
                 inited = true;
 
-                var warhead = weapon.Ref.Warhead;
-                var damage = weapon.Ref.Damage;
+                var swCount = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, x => (x.Ref.Type.Ref.Base.Base.ID == "RARIFT"
+                    && x.Ref.Base.IsOnMap && !x.Ref.Base.InLimbo && x.Ref.IsInPlayfield
+                ),FindRange.Owner).Count();
+
                 var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 var cell = CellClass.Coord2Cell(location);
-                if (MapClass.Instance.TryGetCellAt(cell, out var pCell))
+
+                double damageMultipler = 1;
+                var range = 5;
+
+                if (swCount>3)
                 {
-                    var bullet = bulletType.Ref.CreateBullet(pCell.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 100, false);
-                    bullet.Ref.MoveTo(location + new CoordStruct(0, 0, 2000), new BulletVelocity(0, 0, 0));
+                    swCount = 3;
                 }
+                if (swCount <= 1)
+                {
+                    swCount = 1;
+                }
+
+
+                switch (swCount)
+                {
+                    case 1:
+                        break;
+                    case 2:
+                        {
+                            damageMultipler = 0.8;
+                            range = 4;
+                            break;
+                        }
+                    case 3:
+                        {
+                            damageMultipler = 0.7;
+                            range = 6;
+                            break;
+                        }
+                    default: 
+                        break;
+                }
+
+                SpellMeotorAt(location, damageMultipler);
+
+                if (swCount > 1)
+                {
+                    for (var i = 1; i < swCount; i++)
+                    {
+                        var angle = MathEx.Random.Next(0, 360);
+                        var pos = new CoordStruct(location.X + (int)(range * Game.CellSize * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), location.Y + (int)(range * Game.CellSize * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), location.Z);
+                        SpellMeotorAt(pos, damageMultipler);
+                    }
+                }
+
+
 
                 if (Owner.OwnerObject.Ref.Owner != null)
                 {
@@ -128,5 +174,18 @@ namespace DpLib.Scripts.Scrin
 
 
         }
+
+        private void SpellMeotorAt(CoordStruct location,double damageMultipler)
+        {
+            var warhead = weapon.Ref.Warhead ;
+            var damage = (int)(weapon.Ref.Damage * damageMultipler);
+            var cell = CellClass.Coord2Cell(location);
+            if (MapClass.Instance.TryGetCellAt(cell, out var pCell))
+            {
+                var bullet = bulletType.Ref.CreateBullet(pCell.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 100, false);
+                bullet.Ref.MoveTo(location + new CoordStruct(0, 0, 2000), new BulletVelocity(0, 0, 0));
+            }
+        }
+
     }
 }

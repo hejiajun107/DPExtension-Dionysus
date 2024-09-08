@@ -123,6 +123,7 @@
     <Compile Include="American\MirageTankScript.cs" />
     <Compile Include="American\ZuesTankScript.cs" />
     <Compile Include="ArmyFlagScript.cs" />
+    <Compile Include="AttachAnimScript.cs" />
     <Compile Include="AutoDeployScript.cs" />
     <Compile Include="AutoEnterTankBunkerScript.cs" />
     <Compile Include="AutoExplodeWarheadScript.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="China\XHSunStrikeTrailerBulletScript.cs" />
     <Compile Include="China\XHSunStrikeUnitScript.cs" />
     <Compile Include="China\XTMechScript.cs" />
+    <Compile Include="China\ZZJBScript.cs" />
     <Compile Include="ConvertWhenBornScript.cs" />
     <Compile Include="CopyUnitScript.cs" />
     <Compile Include="DebugScriptable.cs" />
