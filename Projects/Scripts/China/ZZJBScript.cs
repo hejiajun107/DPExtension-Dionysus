@@ -121,7 +121,35 @@ namespace Scripts.China
 
             if (follower.Ref.Target.IsNull)
             {
-                isIdle = true;
+                var pick = FindTarget(follower.Ref.Base.Base.GetCoords());
+
+                if(Owner.OwnerObject.Ref.Target.IsNull)
+                {
+                    if (pick.IsNull)
+                    {
+                        isIdle = true;
+                    }
+                    else
+                    {
+                        var pfoot = Owner.OwnerObject.Convert<FootClass>();
+                        pfoot.Ref.Base.Attack(pick);
+                    }
+                }
+                else
+                {
+                    if (Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(follower.Ref.Base.Base.GetCoords()) > 8 * Game.CellSize)
+                    {
+                        if (pick.IsNull)
+                        {
+                            isIdle = true;
+                        }
+                        else
+                        {
+                            var pfoot = Owner.OwnerObject.Convert<FootClass>();
+                            pfoot.Ref.Base.Attack(pick);
+                        }
+                    }
+                }
             }
             else
             {
@@ -136,7 +164,7 @@ namespace Scripts.China
                 }
             }
 
-            if (follower.Ref.Base.Base.GetCoords().BigDistanceForm(follower.Ref.Base.Base.GetCoords()) > 15 * Game.CellSize)
+            if (Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(follower.Ref.Base.Base.GetCoords()) > 15 * Game.CellSize)
             {
                 isIdle = true;
             }
@@ -176,6 +204,35 @@ namespace Scripts.China
                 }
             }
             return follower.Ref.Base.Base.GetCoords() + AroundPoints[pointIdx];
+        }
+
+        private int findRate = 10;
+
+        public Pointer<AbstractClass> FindTarget(CoordStruct coord)
+        {
+            if (findRate-- <= 0)
+            {
+                findRate = 10;
+            }
+
+            var zhongli = new[]
+            {
+                "Special",
+                "Neutral"
+            };
+
+            List<Pointer<ObjectClass>> list = ObjectFinder.FindTechnosNear(coord, 5 * Game.CellSize)
+                .Where(x=>!x.Ref.Base.GetOwningHouse().Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner) && !zhongli.Contains(x.Ref.Base.GetOwningHouse().Ref.Type.Ref.Base.ID))
+                .Where(x=> Owner.OwnerObject.Ref.CanAttack(x))
+                .OrderBy(x=>x.Ref.Base.GetCoords().DistanceFrom(coord))
+                .ToList();
+
+            if (list.Count > 0) 
+            {
+                return list.FirstOrDefault().Convert<AbstractClass>();
+            }
+
+            return Pointer<AbstractClass>.Zero;
         }
     }
 }
