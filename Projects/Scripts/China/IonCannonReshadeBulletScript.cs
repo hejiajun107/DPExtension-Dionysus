@@ -87,6 +87,10 @@ namespace DpLib.Scripts.China
 
             static Pointer<WeaponTypeClass> laserWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("IonLaser");
 
+            static Pointer<WeaponTypeClass> bigLaserWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("IonBigLaser");
+
+
+
             static Pointer<BulletTypeClass> pBulletExplode => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("IonToGBullet");
 
             static Pointer<AnimTypeClass> pPreAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("PreIon");
@@ -315,13 +319,13 @@ namespace DpLib.Scripts.China
                                 pSuper.Ref.IsCharged = false;
 
                                 //if(MapClass.Instance.TryGetCellAt(center + new CoordStruct(0, 0, -height),out var pCell))
-                                //{
+                                ////{
 
-                                var blue = new ColorStruct(0, 255, 255);
+                                //var blue = new ColorStruct(0, 255, 255);
 
-                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(center + new CoordStruct(0, 0, 9000), center + new CoordStruct(0, 0, -center.Z), blue, blue, blue, 10);
-                                pLaser.Ref.IsHouseColor = true;
-                                pLaser.Ref.Thickness = 80;
+                                //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(center + new CoordStruct(0, 0, 9000), center + new CoordStruct(0, 0, -center.Z), blue, blue, blue, 10);
+                                //pLaser.Ref.IsHouseColor = true;
+                                //pLaser.Ref.Thickness = 80;
 
                                 int damage = 700;
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, waveWarhead, 100, false);
@@ -329,6 +333,8 @@ namespace DpLib.Scripts.China
                                 //pBullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
                                 //}
 
+                                pBullet.Ref.Base.SetLocation(center + new CoordStruct(0, 0, -height));
+                                Self.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, bigLaserWeapon, center + new CoordStruct(0, 0, 9000));
                                 pBullet.Ref.DetonateAndUnInit(center + new CoordStruct(0, 0, -height));
                                 isWaveRelased = true;
                             }
