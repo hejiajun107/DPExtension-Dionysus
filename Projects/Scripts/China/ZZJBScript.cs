@@ -37,7 +37,7 @@ namespace Scripts.China
 
                 if(Flying.IsNullOrExpired() && !locked)
                 {
-                    if (Owner.OwnerObject.Ref.Owner.Ref.Available_Money() > 500)
+                    if (Owner.OwnerObject.Ref.Owner.Ref.Available_Money() > 400)
                     {
                         locked = true;
                         var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
