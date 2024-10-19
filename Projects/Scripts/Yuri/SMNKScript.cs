@@ -11,6 +11,7 @@ using Extension.Ext4CW;
 using Extension.Utilities;
 using PatcherYRpp.Utilities;
 using Extension.INI;
+using DynamicPatcher;
 
 namespace Scripts.Yuri
 {
@@ -50,6 +51,7 @@ namespace Scripts.Yuri
         {
             var ini = this.CreateRulesIniComponentWith<SMNKData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             AIBehavior = ini.Data.AIBehavior;
+
             base.Awake();
         }
 

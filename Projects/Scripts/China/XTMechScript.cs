@@ -412,7 +412,7 @@ namespace DpLib.Scripts.China
                     fireHealRof = 2;
                     if (Owner.OwnerObject.Ref.Base.Health > 5)
                     {
-                        Owner.OwnerObject.Ref.Base.Health = Owner.OwnerObject.Ref.Base.Health - 3;
+                        Owner.OwnerObject.Ref.Base.Health = Owner.OwnerObject.Ref.Base.Health - 2;
                     }
                 }
 

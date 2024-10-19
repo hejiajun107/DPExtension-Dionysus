@@ -19,7 +19,7 @@ namespace Scripts.Scrin
         {
         }
 
-        public int rof = 1800;
+        public int rof = 1500;
 
         private uint range = 3;
 
