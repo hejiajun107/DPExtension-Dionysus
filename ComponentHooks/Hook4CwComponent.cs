@@ -254,6 +254,33 @@ namespace ComponentHooks
         }
 
 
+
+        /// <summary>
+        /// Prevent 004C2C19
+        /// From Modenc
+        /// 	A vehicle that did not achieve complete "independent existence" launched a weapon with EBolt special effects, the game crashes due to the loss of the shooter's pointer.
+        ///        Examples:
+        ///A vehicle, as a passenger with a vehicle with OpenTopped=true(like Battle Fortress), fires outwards.
+        ///At this point, the Battle Fortress is suddenly destroyed, which has a high chance of causing a crash.
+        ///Replacing IsElectricBolt with IsLaser can partially reduce the probability of crashing, but it still IE(0046650D), albeit with a slightly lower probability.
+        ///After a huge number of tests, it seems very stable if the payload is an Infantry instead of a Vehicle.
+        ///If we don't use any conventional weapon effects (including lasers) and instead use the Railgun particle system's laser and other particle effects, it seems to be quite stable
+        /// </summary>
+        /// <param name="R"></param>
+        /// <returns></returns>
+        [Hook(HookType.AresHook, Address = 0x6FD5FC, Size = 10)]
+        public static unsafe UInt32 Set_EBolt_Owner(REGISTERS* R)
+        {
+            Pointer<UnitClass> pUnit = (IntPtr)R->ECX;
+            if(!pUnit.Ref.Base.Base.Base.InLimbo)
+            {
+                return 0;
+            }
+            return 0X6FD60B;
+        }
+
+
+
         //[Hook(HookType.AresHook, Address = 0x6FC339, Size = 6)]
         //public static unsafe UInt32 TechnoClass_CanFire(REGISTERS* R)
         //{
