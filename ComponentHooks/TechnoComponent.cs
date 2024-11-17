@@ -138,18 +138,18 @@ namespace ComponentHooks
             }
         }
 
-        //[Hook(HookType.AresHook, Address = 0x730EEB, Size = 6)]
-        //public static unsafe UInt32 ObjectClass_StopCommand(REGISTERS* R)
-        //{
-        //    Pointer<ObjectClass> pObject = (IntPtr)R->ESI;
-        //    if (pObject.CastToTechno(out Pointer<TechnoClass> pTechno))
-        //    {
-        //        // Logger.Log("{0} Stop Command", pTechno.IsNull ? "Unknow" : pTechno.Ref.Type.Ref.Base.Base.ID);
-        //        TechnoExt ext = TechnoExt.ExtMap.Find(pTechno);
-        //        ext.GameObject.Foreach(c => (c as ITechnoScriptable)?.OnStopCommand());
-        //    }
-        //    return 0;
-        //}
+        [Hook(HookType.AresHook, Address = 0x4C74E8, Size = 6)]
+        public static unsafe UInt32 TechnoClass_StopCommand(REGISTERS* R)
+        {
+            Pointer<TechnoClass> pTechno = (IntPtr)R->ESI;
+            if (pTechno.IsNotNull)
+            {
+
+                TechnoExt ext = TechnoExt.ExtMap.Find(pTechno);
+                ext.GameObject.Foreach(c => (c as ITechnoScriptable)?.OnStopCommand());
+            }
+            return 0;
+        }
 
         //[Hook(HookType.AresHook, Address = 0x739AC0, Size = 6)]
         //public static unsafe UInt32 UnitClass_Deploy_Components(REGISTERS* R)
