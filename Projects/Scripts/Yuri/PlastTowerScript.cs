@@ -81,8 +81,6 @@ namespace Scripts.Yuri
             if (attacker.IsNullOrExpired())
                 return;
 
-            if (Owner.OwnerObject.Ref.Type.Ref.ImmuneToPsionics)
-                return;
 
             if (attacker.OwnerObject.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
                 return;
@@ -94,7 +92,10 @@ namespace Scripts.Yuri
 
             var damage = (int)(Owner.OwnerObject.Ref.Type.Ref.Base.Strength / 10);
 
-            var inviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+            if (Owner.OwnerObject.Ref.Type.Ref.ImmuneToPsionics)
+                damage = (int)(damage * 0.3);
+
+             var inviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
             var pBullet = inviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), attacker.OwnerObject, damage, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("PlastFBWh"), 100, true);
             pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
         }
