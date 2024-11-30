@@ -65,7 +65,7 @@ namespace DpLib.Scripts.Japan
 
         private int level = 1;
 
-        private int StartDelay = 161;
+        private int StartDelay = 121;
 
         public override void OnUpdate()
         {
