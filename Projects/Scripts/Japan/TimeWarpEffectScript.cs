@@ -33,7 +33,7 @@ namespace Scripts.Japan
         static Pointer<WarheadTypeClass> pWH => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special");
         static Pointer<BulletTypeClass> pInvisible => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisble");
 
-        private int delay = 50;
+        private int delay = 50 + 160;
 
         public override void OnUpdate()
         {

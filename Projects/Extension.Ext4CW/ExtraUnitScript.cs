@@ -157,6 +157,7 @@ namespace Scripts
             {
                 if (!salve.IsNullOrExpired())
                 {
+                    salve.OwnerObject.Ref.Base.Remove();
                     salve.OwnerObject.Ref.Base.UnInit();
                 }
             }
@@ -472,6 +473,7 @@ namespace Scripts
         private void Disable()
         {
             DetachFromParent();
+            Owner.OwnerObject.Ref.Base.Remove();
             Owner.OwnerObject.Ref.Base.UnInit();
         }
 

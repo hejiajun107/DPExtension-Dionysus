@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
@@ -48,6 +49,7 @@ namespace DpLib.Scripts.Japan
 
         static Pointer<WarheadTypeClass> trackWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special");
 
+        static Pointer<WarheadTypeClass> hintWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BLHHintWH");
 
         //此处修改持续时间
         private int delay = 300;
@@ -63,8 +65,27 @@ namespace DpLib.Scripts.Japan
 
         private int level = 1;
 
+        private int StartDelay = 161;
+
         public override void OnUpdate()
         {
+            if (StartDelay-- >= 0)
+            {
+                if(StartDelay % 5 == 0)
+                {
+                    var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                    var radius = Game.CellSize * 5;
+                    //每xx角度生成一个动画，越小越密集
+                    for (var angle = 0; angle < 360; angle += 60)
+                    {
+                        var pos = new CoordStruct(coord.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), coord.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), coord.Z);
+                        Pointer<BulletClass> pbullet = bulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, hintWarhead, 100, false);
+                        pbullet.Ref.DetonateAndUnInit(pos);
+                    }
+                }
+                return;
+            }
+
             if (delay-- <= 0)
             {
                 Owner.OwnerObject.Ref.Base.Remove();

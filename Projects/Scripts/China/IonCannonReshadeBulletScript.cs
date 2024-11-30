@@ -99,6 +99,10 @@ namespace DpLib.Scripts.China
 
             static Pointer<AnimTypeClass> ionScanSound => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IonScanImpact");
 
+            static Pointer<AnimTypeClass> disortWave => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("IonBlastDisort");
+            static Pointer<AnimTypeClass> disortWave2 => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("BlackHoleDistort_S");
+
+
             private Random random = new Random(114514);
 
 
@@ -337,6 +341,9 @@ namespace DpLib.Scripts.China
                                 Self.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, bigLaserWeapon, center + new CoordStruct(0, 0, 9000));
                                 pBullet.Ref.DetonateAndUnInit(center + new CoordStruct(0, 0, -height));
                                 isWaveRelased = true;
+
+                                YRMemory.Create<AnimClass>(disortWave2, center + new CoordStruct(0, 0, -height));
+                                YRMemory.Create<AnimClass>(disortWave,center + new CoordStruct(0, 0, -height));
                             }
                             else
                             {

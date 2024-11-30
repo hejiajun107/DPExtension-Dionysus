@@ -247,6 +247,7 @@
     <Compile Include="Scrin\SCEaterScript.cs" />
     <Compile Include="Scrin\ScrabScript.cs" />
     <Compile Include="Scrin\ScrinMotherShipScript.cs" />
+    <Compile Include="Scrin\ScrinPowerScript.cs" />
     <Compile Include="Scrin\ScrinSpyScript.cs" />
     <Compile Include="Scrin\StormTowerScript.cs" />
     <Compile Include="Scrin\TiberiumGeneratorScript.cs" />
