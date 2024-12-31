@@ -125,8 +125,7 @@ namespace Scripts
                     {
                         if (component.Detonated == false)
                         {
-                            Master.OwnerObject.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                            Master.OwnerObject.Ref.Base.UnInit();
+                            Master.OwnerObject.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                         }
                     }
                     //Master.OwnerObject.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());

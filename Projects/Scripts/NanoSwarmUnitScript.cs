@@ -149,15 +149,13 @@ namespace DpLib.Scripts
                                 {
                                     //直接摧毁单位
                                     var sbullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 500, warheadExp, 100, false);
-                                    sbullet.Ref.Detonate(location);
-                                    sbullet.Ref.Base.UnInit();
+                                    sbullet.Ref.DetonateAndUnInit(location);
                                 }
                                 else
                                 {
                                     //会对尝试穿越屏障的施加一个零速AE，如果要对飞行单位有效的话要等Phobos的修复空中单位受AE影响的修复发布
                                     var sbullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
-                                    sbullet.Ref.Detonate(location);
-                                    sbullet.Ref.Base.UnInit();
+                                    sbullet.Ref.DetonateAndUnInit(location);
                                 }
                             }
                         }
@@ -165,8 +163,7 @@ namespace DpLib.Scripts
                         {
                             //停了就别动了!
                             var sbullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
-                            sbullet.Ref.Detonate(location);
-                            sbullet.Ref.Base.UnInit();
+                            sbullet.Ref.DetonateAndUnInit(location);
                         }
                     }
                 }

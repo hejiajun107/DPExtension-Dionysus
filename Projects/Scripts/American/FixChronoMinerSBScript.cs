@@ -34,8 +34,7 @@ namespace DpLib.Scripts.American
                 mission.Ref.ForceMission(Mission.Guard);
                 var pBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, warhead, 100, false);
                 //pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                pBullet.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                pBullet.Ref.Base.UnInit();
+                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 sleeped = false;
                 return;
             }

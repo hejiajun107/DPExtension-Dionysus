@@ -148,6 +148,7 @@
     <Compile Include="China\IonCannonBulletScript.cs" />
     <Compile Include="China\IonCannonScript.cs" />
     <Compile Include="China\J20Script.cs" />
+    <Compile Include="China\J20SScript.cs" />
     <Compile Include="China\JingWeiHeliScript.cs" />
     <Compile Include="China\Mk2UpdateSpecialScript.cs" />
     <Compile Include="China\NCannonScript.cs" />
