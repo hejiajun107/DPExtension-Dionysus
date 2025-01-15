@@ -97,10 +97,13 @@ namespace Scripts
 
         private static Pointer<WeaponTypeClass> BowSpitWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("BowSpitWeapon");
 
+
         public override void OnDetonate(Pointer<CoordStruct> pCoords)
         {
             if (!Owner.OwnerObject.Ref.Owner.IsNull)
             {
+                var ownedByAI = !Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref.ControlledByHuman();
+
                 if (Owner.OwnerObject.Ref.Owner.Ref.Ammo > 0)
                 {
                     Owner.OwnerObject.Ref.Owner.Ref.Ammo = 0;
@@ -123,7 +126,12 @@ namespace Scripts
                     {
                         foreach(var tTarget in technos)
                         {
-                            var bullet = BowSpitWeapon.Ref.Projectile.Ref.CreateBullet(tTarget.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, BowSpitWeapon.Ref.Damage, BowSpitWeapon.Ref.Warhead, BowSpitWeapon.Ref.Speed, BowSpitWeapon.Ref.Warhead.Ref.Bright);
+                            var damage = BowSpitWeapon.Ref.Damage;
+                            if (ownedByAI)
+                            {
+                                damage = (int)Math.Floor(damage * 0.5);
+                            }
+                            var bullet = BowSpitWeapon.Ref.Projectile.Ref.CreateBullet(tTarget.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, damage, BowSpitWeapon.Ref.Warhead, BowSpitWeapon.Ref.Speed, BowSpitWeapon.Ref.Warhead.Ref.Bright);
                             if (vIndex > list.Count - 1)
                             {
                                 vIndex = 0;

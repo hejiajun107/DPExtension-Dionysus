@@ -120,6 +120,10 @@ namespace DpLib.Scripts.Heros
 
                             //每条光束/帧的伤害
                             int damage = weaponType.Ref.Damage;
+                            if (controlledByAi)
+                            {
+                                damage = (int)(Math.Floor(damage * 0.7));
+                            }
                             Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, beanWarhead, 100, true);
                             pBullet.Ref.Base.SetLocation(pos + new CoordStruct(0, 0, -height));
                             Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, weaponType, pos + new CoordStruct(0, 0, 9000));
@@ -143,6 +147,10 @@ namespace DpLib.Scripts.Heros
                             if (!isWaveRelased)
                             {
                                 int damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 100 : 50;
+                                if (controlledByAi)
+                                {
+                                    damage = (int)(Math.Floor(damage * 0.7));
+                                }
                                 Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, waveWarhead, 100, false);
                                 pBullet.Ref.DetonateAndUnInit(center + new CoordStruct(0, 0, -height));
                                 isWaveRelased = true;
@@ -157,6 +165,10 @@ namespace DpLib.Scripts.Heros
                                     var pos = new CoordStruct(center.X + (int)(blastRadius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(blastRadius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
                                     //每个冲击波/帧的伤害
                                     int damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 8 : 5;
+                                    if (controlledByAi)
+                                    {
+                                        damage = (int)(Math.Floor(damage * 0.7));
+                                    }
                                     Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, blastWarhead, 100, false);
                                     pBullet.Ref.DetonateAndUnInit(pos + new CoordStruct(0, 0, -height));
                                 }

@@ -166,6 +166,11 @@ namespace DpLib.Scripts.Japan
 
                     var realDamage = MapClass.GetTotalDamage(pDamage.Ref, pWH, Self.OwnerObject.Ref.Type.Ref.Base.Armor, DistanceFromEpicenter) / 2;
 
+                    if (!Target.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                    {
+                        realDamage *= 2;
+                    }
+
                     Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(Self.OwnerObject.Convert<AbstractClass>(), Self.OwnerObject, realDamage, warhead, 100, true);
                     pBullet.Ref.DetonateAndUnInit(Target.OwnerObject.Ref.Base.Base.GetCoords());
 

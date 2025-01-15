@@ -148,7 +148,7 @@ namespace Scripts
                 {
                     if (_manaCounter.Current >= 100)
                     {
-                        if (_manaCounter.Cost(80))
+                        if (_manaCounter.Cost(100))
                         {
                             BackWrap(true);
                         }

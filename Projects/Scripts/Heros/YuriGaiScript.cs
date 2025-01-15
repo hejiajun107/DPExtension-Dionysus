@@ -90,7 +90,14 @@ namespace Scripts
 
             if (Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(pAttacker.Ref.Base.GetCoords()) < 7 * Game.CellSize)
             {
-                if (_manaCounter.Cost(8))
+                var cost = 8;
+
+                if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                {
+                    cost = 16;
+                }
+
+                if (_manaCounter.Cost(cost))
                 {
                     var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 50, ChaosFeedbackWh, 100, false);
                     bullet.Ref.DetonateAndUnInit(pAttacker.Ref.Base.GetCoords());
