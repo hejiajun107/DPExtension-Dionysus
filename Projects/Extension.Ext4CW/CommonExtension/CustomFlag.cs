@@ -18,6 +18,7 @@ namespace Extension.CW
         public bool MKIIUpdated { get; set; } = false;
 
 
+        public bool IsAiEdition { get; set; }
     }
 
     public partial class TechnoGlobalTypeExt

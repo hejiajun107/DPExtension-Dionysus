@@ -8,6 +8,7 @@ using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extension.Ext4CW;
 
 namespace Scripts
 {
@@ -49,10 +50,20 @@ namespace Scripts
         static Pointer<WarheadTypeClass> chaosWarheads => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChaosWaveWh");
 
         static Pointer<WarheadTypeClass> ChaosFeedbackWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChaosFbWh");
-        
+
+
+        public override void Awake()
+        {
+            base.Awake();
+            if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID.ToString().EndsWith("AI"))
+            {
+                Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition = true;
+            }
+        }
 
         public override void OnUpdate()
         {
+
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
@@ -92,7 +103,7 @@ namespace Scripts
             {
                 var cost = 8;
 
-                if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                if (Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition)
                 {
                     cost = 16;
                 }

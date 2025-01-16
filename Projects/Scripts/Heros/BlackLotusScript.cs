@@ -5,6 +5,7 @@ using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
 using System;
+using Extension.Ext4CW;
 
 namespace DpLib.Scripts.Heros
 {
@@ -76,6 +77,10 @@ namespace DpLib.Scripts.Heros
         public override void Awake()
         {
             Owner.OwnerObject.Ref.Ammo = 0;
+            if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID.ToString().EndsWith("AI"))
+            {
+                Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition = true;
+            }
         }
 
         public override void OnUpdate()
@@ -101,6 +106,8 @@ namespace DpLib.Scripts.Heros
                     controlledByAi = true;
             }
 
+            bool isAIEdtion = Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition;
+
             if (isActived)
             {
                 if(waitForFrames--<=0)
@@ -120,7 +127,7 @@ namespace DpLib.Scripts.Heros
 
                             //每条光束/帧的伤害
                             int damage = weaponType.Ref.Damage;
-                            if (controlledByAi)
+                            if (isAIEdtion)
                             {
                                 damage = (int)(Math.Floor(damage * 0.7));
                             }
@@ -147,7 +154,7 @@ namespace DpLib.Scripts.Heros
                             if (!isWaveRelased)
                             {
                                 int damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 100 : 50;
-                                if (controlledByAi)
+                                if (isAIEdtion)
                                 {
                                     damage = (int)(Math.Floor(damage * 0.7));
                                 }
@@ -165,7 +172,7 @@ namespace DpLib.Scripts.Heros
                                     var pos = new CoordStruct(center.X + (int)(blastRadius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(blastRadius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
                                     //每个冲击波/帧的伤害
                                     int damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 8 : 5;
-                                    if (controlledByAi)
+                                    if (isAIEdtion)
                                     {
                                         damage = (int)(Math.Floor(damage * 0.7));
                                     }

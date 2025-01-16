@@ -1,4 +1,5 @@
 ﻿using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
@@ -38,6 +39,15 @@ namespace Scripts
         private int currentRainFrame = 0;
 
         private int rainRof = 0;
+
+        public override void Awake()
+        {
+            base.Awake();
+            if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID.ToString().EndsWith("AI"))
+            {
+                Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition = true;
+            }
+        }
 
         public override void OnUpdate()
         {

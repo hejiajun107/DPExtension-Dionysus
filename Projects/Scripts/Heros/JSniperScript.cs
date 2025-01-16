@@ -1,5 +1,6 @@
 ﻿using DynamicPatcher;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
@@ -22,6 +23,14 @@ namespace Scripts
 
         private ManaCounter _manaCounter;
 
+        public override void Awake()
+        {
+            base.Awake();
+            if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID.ToString().EndsWith("AI"))
+            {
+                Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition = true;
+            }
+        }
 
         public override void OnUpdate()
         {
@@ -102,7 +111,15 @@ namespace Scripts
         {
             if (!Owner.OwnerObject.Ref.Owner.IsNull)
             {
-                var ownedByAI = !Owner.OwnerObject.Ref.Owner.Ref.Owner.Ref.ControlledByHuman();
+                var ownedByAI = false;
+                var ownerExt = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+                if (!ownerExt.IsNullOrExpired())
+                {
+                    if(ownerExt.GameObject.GetTechnoGlobalComponent().IsAiEdition)
+                    {
+                        ownedByAI = true;
+                    }
+                }
 
                 if (Owner.OwnerObject.Ref.Owner.Ref.Ammo > 0)
                 {

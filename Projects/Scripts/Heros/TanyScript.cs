@@ -6,6 +6,8 @@ using PatcherYRpp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extension.Ext4CW;
+
 
 namespace Scripts
 {
@@ -27,6 +29,14 @@ namespace Scripts
 
         private ManaCounter _manaCounter;
 
+        public override void Awake()
+        {
+            base.Awake();
+            if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID.ToString().EndsWith("AI"))
+            {
+                Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition = true;
+            }
+        }
 
         static TanyScript()
         {
@@ -148,10 +158,21 @@ namespace Scripts
                 {
                     if (_manaCounter.Current >= 100)
                     {
-                        if (_manaCounter.Cost(100))
+                        if (Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition)
                         {
-                            BackWrap(true);
+                            if (_manaCounter.Cost(100))
+                            {
+                                BackWrap(true);
+                            }
                         }
+                        else
+                        {
+                            if (_manaCounter.Cost(80))
+                            {
+                                BackWrap(true);
+                            }
+                        }
+                           
                     }
                 }
             }
