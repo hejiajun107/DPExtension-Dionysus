@@ -1,9 +1,11 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DpLib.Scripts.Heros
@@ -38,14 +40,14 @@ namespace DpLib.Scripts.Heros
 
         private int maxAttackCount = 30;
 
-        private int currentAttackCount = 0;
-
         private int delay = 8;
 
         private int currentFrame = 0;
 
         private static Pointer<WarheadTypeClass> wCharger => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ChargeWeaponWh");
         private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+
+        private Queue<CoordStruct> targetCoords = new Queue<CoordStruct>();
 
 
         public override void OnUpdate()
@@ -65,31 +67,35 @@ namespace DpLib.Scripts.Heros
             {
                 if (currentFrame >= delay)
                 {
-                    if (currentAttackCount < maxAttackCount)
+                    if (targetCoords.Count() > 0)
                     {
+                        var tcenter = targetCoords.Dequeue();
+
                         for (int i = 0; i < 2; i++)
                         {
                             //导弹轰炸
-                            var ntarget = new CoordStruct(center.X + random.Next(-1000, 1000), center.Y + random.Next(-1000, 1000), 2000);
-                            var ntargetGround = new CoordStruct(center.X + random.Next(-1000, 1000), center.Y + random.Next(-1000, 1000), -center.Z);
+                            var ntargetGround = new CoordStruct(tcenter.X + random.Next(-Game.CellSize * 2, Game.CellSize), tcenter.Y + random.Next(-Game.CellSize * 2, Game.CellSize), tcenter.Z);
+                            var ntarget = new CoordStruct(ntargetGround.X, ntargetGround.Y, ntargetGround.Z + 3800);
 
                             if (MapClass.Instance.TryGetCellAt(ntargetGround, out Pointer<CellClass> pCell))
                             {
                                 var damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 70 : 50;
-                                Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 70, true);
+                                Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pCell.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, 150, true);
                                 BulletVelocity velocity = new BulletVelocity(0, 0, 0);
+                                //var cellCoord = pCell.Ref.GetCenterCoords();
+                                //var t = ntargetGround.BigDistanceForm(cellCoord) / 120;
+                                //velocity.X = (ntarget.X - cellCoord.X) / t;
+                                //velocity.Y = (ntarget.Y - cellCoord.Y) / t;
+                                //velocity.Z = (ntarget.Z - cellCoord.Z) / t;
                                 pBullet.Ref.MoveTo(ntarget, velocity);
                                 pBullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
                             }
                         }
-
-                        currentAttackCount++;
                     }
                     else
                     {
                         isActived = false;
                         currentFrame = 0;
-                        currentAttackCount = 0;
                     }
                     currentFrame = 0;
                 }
@@ -111,8 +117,22 @@ namespace DpLib.Scripts.Heros
                 if (_manaCounter.Cost(80))
                 {
                     center = pTarget.Ref.GetCoords();
+                    targetCoords.Clear();
+
+                    var picked = ObjectFinder.FindTechnosNear(center, 5 * Game.CellSize).Select(x => x.Convert<TechnoClass>()).Where(x => !x.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner) && !x.Ref.Base.Base.IsInAir() && !x.Ref.Base.InLimbo).OrderBy(x => x.Ref.Base.Base.GetCoords().BigDistanceForm(center))
+                        .Take(30);
+
+                    foreach(var pick in picked)
+                    {
+                        targetCoords.Enqueue(pick.Ref.Base.Base.GetCoords());
+                    }
+
+                    while (targetCoords.Count() < 30)
+                    {
+                        targetCoords.Enqueue(new CoordStruct(center.X + random.Next(-4 * Game.CellSize, 4 * Game.CellSize), center.Y + random.Next(-4 * Game.CellSize, 4 * Game.CellSize), center.Z));
+                    }
+
                     isActived = true;
-                    currentAttackCount = 0;
                     currentFrame = 0;
                 }
             }
