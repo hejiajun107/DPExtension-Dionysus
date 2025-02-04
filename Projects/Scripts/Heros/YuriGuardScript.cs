@@ -2,6 +2,7 @@
 using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
+using Extension.Utilities;
 using PatcherYRpp;
 using System;
 
@@ -58,7 +59,29 @@ namespace Scripts
             {
                 if(ghostWalkingDuration > 0)
                 {
-                    var bullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(pTarget, Owner.OwnerObject, Owner.OwnerObject.Ref.Veterancy.IsElite() ? 160 : 80, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("AKVHitWH"), 100, false);
+                    double mult = 1.0;
+
+                    if(pTarget.CastToTechno(out var pTechno))
+                    {
+                        var sourceCoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                        var targetCoord = pTarget.Ref.GetCoords();
+
+                        var dir = GameUtil.Point2Dir(targetCoord, sourceCoord);
+                        var face = GameUtil.Facing2Dir(pTechno.Ref.Facing);
+
+                        var diff = Math.Abs((int)face - (int)dir);
+                        if (diff > 4)
+                            diff = 8 - diff;
+
+                        if (Math.Abs(diff) > 2)
+                        {
+                            mult = 1.8;
+                        }
+                    }
+
+
+
+                    var bullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(pTarget, Owner.OwnerObject, (int)((Owner.OwnerObject.Ref.Veterancy.IsElite() ? 160 : 80) * mult), WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("AKVHitWH"), 100, mult == 1.8 ? true : false);
                     bullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
                 }
             }
