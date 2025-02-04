@@ -59,7 +59,7 @@ namespace DpLib.Scripts.Heros
                 if (_manaCounter.Cost(20))
                 {
                     var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Cast<AbstractClass>(), Owner.OwnerObject, 1, wCharger, 100, false);
-                    bullet.Ref.DetonateAndUnInit(Owner.OwnerRef.Base.Base.GetCoords());
+                    bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 }
             }
 
