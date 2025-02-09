@@ -18,9 +18,12 @@ namespace DpLib.Scripts.Heros
         public ColdBladeScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(owner,10);
+            _voc = new VocExtensionComponent(owner);
         }
 
         private ManaCounter _manaCounter;
+
+        private VocExtensionComponent _voc;
 
 
         private bool isActived = false;
@@ -49,6 +52,11 @@ namespace DpLib.Scripts.Heros
 
         private Queue<CoordStruct> targetCoords = new Queue<CoordStruct>();
 
+        public override void Awake()
+        {
+            base.Awake();
+            _voc.Awake();
+        }
 
         public override void OnUpdate()
         {
@@ -58,8 +66,13 @@ namespace DpLib.Scripts.Heros
                 mission.Ref.ForceMission(Mission.Stop);
                 if (_manaCounter.Cost(20))
                 {
+                    _voc.PlaySpecialVoice(1, false);
                     var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Cast<AbstractClass>(), Owner.OwnerObject, 1, wCharger, 100, false);
                     bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                }
+                else
+                {
+                    _voc.PlaySpecialVoice(3, false);
                 }
             }
 
@@ -116,6 +129,8 @@ namespace DpLib.Scripts.Heros
             {
                 if (_manaCounter.Cost(80))
                 {
+                    _voc.PlaySpecialVoice(2, false);
+
                     center = pTarget.Ref.GetCoords();
                     targetCoords.Clear();
 

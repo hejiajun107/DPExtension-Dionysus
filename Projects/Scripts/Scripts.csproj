@@ -261,6 +261,7 @@
     <Compile Include="SelfUninitScript.cs" />
     <Compile Include="SharedTimerSWScript.cs" />
     <Compile Include="Shared\ManaCounter.cs" />
+    <Compile Include="Shared\VocExtensionComponent.cs" />
     <Compile Include="Soviet\DTruckScript.cs" />
     <Compile Include="Soviet\IronCoreScript.cs" />
     <Compile Include="Soviet\IronProtectedScript.cs" />

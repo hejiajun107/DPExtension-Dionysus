@@ -19,10 +19,12 @@ namespace Scripts
         public WellkaScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(owner, 7);
+            _voc = new VocExtensionComponent(owner);
         }
 
         private ManaCounter _manaCounter;
 
+        private VocExtensionComponent _voc;
 
         static Pointer<BulletTypeClass> pBulletType => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
         static Pointer<WarheadTypeClass> heroWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("WellkaIronRingHeroWh");
@@ -34,6 +36,12 @@ namespace Scripts
 
         //每隔多少帧检测一次
         private int rof = 0;
+
+        public override void Awake()
+        {
+            base.Awake();
+            _voc.Awake();
+        }
 
 
         public override void OnUpdate()
@@ -136,7 +144,8 @@ namespace Scripts
                         var firer = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("NTLAUNCHB").Ref.Base.CreateObject(Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
                         if (TechnoPlacer.PlaceTechnoFromEdge(firer))
                         {
-                            YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("NataCallAir"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                            //YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("NataCallAir"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                            _voc.PlaySpecialVoice(1, false);
                             var firerExt = TechnoExt.ExtMap.Find(firer);
                             firerExt.GameObject.CreateScriptComponent(nameof(NatashLauncherScript), NatashLauncherScript.UniqueId, "Launcher Rocket Script Manager", firerExt, Owner);
 

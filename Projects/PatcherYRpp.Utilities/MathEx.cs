@@ -18,6 +18,14 @@ namespace PatcherYRpp.Utilities
         public static Random Random => _random;
         public static object RandomLocker => _randomLocker;
 
+
+
+        private static Random _randomLocal = new Random(114514);
+        /// <summary>
+        /// Random for no logic related use
+        /// </summary>
+        public static Random RandomLocal => _randomLocal;
+
         // ===============================================
         // Utilities for numeric
         #region Numeric

@@ -19,13 +19,17 @@ namespace Scripts
         public JSniperScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(owner, 12);
+            _voc = new VocExtensionComponent(owner);
         }
+
+        private VocExtensionComponent _voc;
 
         private ManaCounter _manaCounter;
 
         public override void Awake()
         {
             base.Awake();
+            _voc.Awake();
             if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID.ToString().EndsWith("AI"))
             {
                 Owner.GameObject.GetTechnoGlobalComponent().IsAiEdition = true;
@@ -41,7 +45,7 @@ namespace Scripts
 
                 if (_manaCounter.Cost(80))
                 {
-                    YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    //YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     Owner.OwnerObject.Ref.Ammo = 1;
                 }
             }
@@ -67,11 +71,16 @@ namespace Scripts
             {
                 if (_manaCounter.Cost(80))
                 {
-                    YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    //YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     Owner.OwnerObject.Ref.Ammo = 1;
                 }
             }
 
+
+            if (Owner.OwnerObject.Ref.Ammo > 0)
+            {
+                _voc.PlaySpecialVoice(1, false);
+            }
             //if (weaponIndex == 0)
             //{
 
@@ -124,6 +133,7 @@ namespace Scripts
                 if (Owner.OwnerObject.Ref.Owner.Ref.Ammo > 0)
                 {
                     Owner.OwnerObject.Ref.Owner.Ref.Ammo = 0;
+
                     var technos = ObjectFinder.FindTechnosNear(pCoords.Ref, (int)(2.5 * Game.CellSize));
 
                     List<BulletVelocity> list = new List<BulletVelocity>()
