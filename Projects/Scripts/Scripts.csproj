@@ -283,6 +283,7 @@
     <Compile Include="TestScript.cs" />
     <Compile Include="TrackingRocketScript.cs" />
     <Compile Include="UnOnMapaleScript.cs" />
+    <Compile Include="VertenceyChangeSWScript.cs" />
     <Compile Include="VerticalLauncherScriptable.cs" />
     <Compile Include="Yuri\BlackHandScript.cs" />
     <Compile Include="Yuri\MagnetronScript.cs" />

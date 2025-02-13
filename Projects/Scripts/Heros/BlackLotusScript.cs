@@ -18,17 +18,21 @@ namespace DpLib.Scripts.Heros
         public BlackLotusScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(owner, 15);
-        }
+			_voc = new VocExtensionComponent(owner);
+            _vwatcher = new VertenceyWatcher(owner,_voc);
+		}
 
-        private ManaCounter _manaCounter;
+		private ManaCounter _manaCounter;
+		private VocExtensionComponent _voc;
+        private VertenceyWatcher _vwatcher;
 
 
-        //光束颜色
-        //static ColorStruct innerColor = new ColorStruct(0, 64, 128);
-        //static ColorStruct outerColor = new ColorStruct(0, 64, 128);
-        //static ColorStruct outerSpread = new ColorStruct(0, 64, 128);
+		//光束颜色
+		//static ColorStruct innerColor = new ColorStruct(0, 64, 128);
+		//static ColorStruct outerColor = new ColorStruct(0, 64, 128);
+		//static ColorStruct outerSpread = new ColorStruct(0, 64, 128);
 
-        static ColorStruct innerColor = new ColorStruct(255, 64, 32);
+		static ColorStruct innerColor = new ColorStruct(255, 64, 32);
         static ColorStruct outerColor = new ColorStruct(255, 64, 32);
         static ColorStruct outerSpread = new ColorStruct(255, 64, 32);
 
@@ -76,6 +80,7 @@ namespace DpLib.Scripts.Heros
 
         public override void Awake()
         {
+            _voc.Awake();
             Owner.OwnerObject.Ref.Ammo = 0;
             if (Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID.ToString().EndsWith("AI"))
             {
@@ -85,7 +90,9 @@ namespace DpLib.Scripts.Heros
 
         public override void OnUpdate()
         {
-            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            _vwatcher.Update();
+
+			var mission = Owner.OwnerObject.Convert<MissionClass>();
             if(mission.Ref.CurrentMission == Mission.Unload)
             {
                 mission.Ref.ForceMission(Mission.Stop);
@@ -95,8 +102,13 @@ namespace DpLib.Scripts.Heros
                     Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, showWarhead, 100, false);
                     pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     Owner.OwnerObject.Ref.Ammo = 1;
-                }
-            }
+					_voc.PlaySpecialVoice(1, true);
+				}
+				else
+                {
+					_voc.PlaySpecialVoice(3, true);
+				}
+			}
 
             bool controlledByAi = false;
 
@@ -216,7 +228,8 @@ namespace DpLib.Scripts.Heros
             {
                 if (isActived == false)
                 {
-                    _manaCounter.Resume();
+					_voc.PlaySpecialVoice(2, false);
+					_manaCounter.Resume();
                     isActived = true;
 
                     //光束开始聚集的半径

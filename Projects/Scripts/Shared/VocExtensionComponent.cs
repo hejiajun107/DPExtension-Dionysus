@@ -21,13 +21,14 @@ namespace Extension.Shared
         }
 
         int VocSp1;
-
         int VocSp2;
-
         int VocSp3;
+		int VocSp4;
+		int VocSp5;
 
 
-        public void Awake()
+
+		public void Awake()
         {
             var ini = Owner.GameObject.CreateRulesIniComponentWith<VocExtData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             if(!string.IsNullOrEmpty(ini.Data.VocSpecial1))
@@ -47,7 +48,21 @@ namespace Extension.Shared
                 var item = ini.Data.VocSpecial3;
                 VocSp3 = VocClass.FindIndex(item);
             }
-        }
+
+
+			if (!string.IsNullOrEmpty(ini.Data.VocSpecial4))
+			{
+				var item = ini.Data.VocSpecial4;
+				VocSp4 = VocClass.FindIndex(item);
+			}
+
+
+			if (!string.IsNullOrEmpty(ini.Data.VocSpecial5))
+			{
+				var item = ini.Data.VocSpecial5;
+				VocSp5 = VocClass.FindIndex(item);
+			}
+		}
 
         private void LoadSounds(List<int> array,List<string> items)
         {
@@ -78,6 +93,12 @@ namespace Extension.Shared
             }else if (idx == 3)
             {
                 spVoice = VocSp3;
+            }else if(idx == 4)
+            {
+                spVoice = VocSp4;
+            }else if(idx == 5)
+            {
+                spVoice = VocSp5;
             }
 
             if(spVoice == -1)
@@ -94,6 +115,67 @@ namespace Extension.Shared
             Owner.OwnerObject.Ref.QueueVoice(spVoice);
         }
 
+    }
+
+    [Serializable]
+    public class VertenceyWatcher
+	{
+		TechnoExt Owner;
+        VocExtensionComponent _voc;
+
+		public VertenceyWatcher(TechnoExt owner,VocExtensionComponent voc)
+		{
+			Owner = owner;
+            _voc = voc;
+		}
+
+        private int delay = 100;
+
+        private float lastV = 0;
+
+        public int GetLevel()
+        {
+            var val = Owner.OwnerObject.Ref.Veterancy.Veterancy;
+            if (val >= 0 & val < 1)
+            {
+                return 0;
+            }
+            else if (val >= 1 & val < 2)
+            {
+                return 1;
+            }
+            else if (val >= 2)
+            {
+                return 2;
+            }
+            else
+                return 0;
+        }
+
+		public void Update()
+        {
+            int cLevel = GetLevel();
+            if (delay > 0)
+            {
+				delay--;
+				lastV = cLevel;
+                return;
+            }
+            
+
+            if(cLevel > lastV)
+            {
+                if(cLevel == 1)
+                {
+                    _voc.PlaySpecialVoice(4, true);
+                }else if(cLevel == 2)
+                {
+					_voc.PlaySpecialVoice(5, true);
+				}
+			}
+            lastV = GetLevel();
+
+		}
     }
 
     /// <summary>
@@ -116,5 +198,9 @@ namespace Extension.Shared
         public string VocSpecial2;
         [INIField(Key = "VoiceExt.Special3")]
         public string VocSpecial3;
-    }
+		[INIField(Key = "VoiceExt.Special4")]
+		public string VocSpecial4;
+		[INIField(Key = "VoiceExt.Special5")]
+		public string VocSpecial5;
+	}
 }
