@@ -6,8 +6,11 @@ using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
+using PatcherYRpp.Utilities;
 using System;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 
 namespace Scripts.China
 {
@@ -23,9 +26,20 @@ namespace Scripts.China
         private bool InIonStorm;
         private int Delay = 0;
 
-        private int charge = 0;
+        private int charge = 500;
 
         private int chargeMax = 1000;
+
+        public bool CanFire { get
+            {
+                return charge >= chargeMax;
+            } 
+        }
+
+        public void Refresh()
+        {
+            charge = 0;
+        }
 
         public override void Awake()
         {
@@ -49,6 +63,21 @@ namespace Scripts.China
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+
+                if (Owner.OwnerObject.Ref.Owner.Ref.IsControlledByCurrentPlayer())
+                {
+                    var swType = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XHCallFireSW");
+                    Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(swType);
+                    pSuper.Ref.IsCharged = true;
+                    MapClass.UnselectAll();
+                    Game.CurrentSWType = swType.Ref.ArrayIndex;
+                }
+            }
+
             if (charge < chargeMax)
             {
                 charge++;
@@ -93,5 +122,46 @@ namespace Scripts.China
             }
         }
 
+    }
+
+
+    [ScriptAlias(nameof(XHCallFireSWScript))]
+    [Serializable]
+    public class XHCallFireSWScript : SuperWeaponScriptable
+    {
+        public XHCallFireSWScript(SuperWeaponExt owner) : base(owner)
+        {
+        }
+
+        public override void OnLaunch(CellStruct cell, bool isPlayer)
+        {
+            if (Owner.OwnerObject.Ref.Owner.TryGetHouseGlobalExtension(out var houseGlobalExtension))
+            {
+                var epics = houseGlobalExtension.FindEpicUnitByType("CNXHWSHIP");
+                var coord = CellClass.Cell2Coord(cell);
+                foreach(var ep in epics)
+                {
+                    if(coord.BigDistanceForm(ep.OwnerObject.Ref.Base.Base.GetCoords()) > Game.CellSize * 32)
+                    {
+                        continue;
+                    }
+
+                    var component = ep.GameObject.GetComponents<XHWarShipScript>().FirstOrDefault();
+                    if(component!= null)
+                    {
+                        if (component.CanFire)
+                        {
+                            if(MapClass.Instance.TryGetCellAt(cell,out var pcell))
+                            {
+                                component.Refresh();
+                                ep.OwnerObject.Ref.Ammo = 1;
+                                ep.OwnerObject.Ref.SetTarget(pcell.Convert<AbstractClass>());
+                            }
+                        }
+                    }
+                }
+            }
+            base.OnLaunch(cell, isPlayer);
+        }
     }
 }

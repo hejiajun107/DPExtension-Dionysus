@@ -2,6 +2,7 @@
 using Extension.CW;
 using Extension.Ext;
 using Extension.Script;
+using PatcherYRpp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,29 @@ namespace Extension.Ext4CW
 
             var component = house.GameObject.GetComponent<HouseGlobalExtension>();
             if(component !=null)
+            {
+                houseGlobalExtension = component;
+                return true;
+            }
+
+            houseGlobalExtension = null;
+            return false;
+        }
+
+
+        public static bool TryGetHouseGlobalExtension(this Pointer<HouseClass> pHouse, out HouseGlobalExtension houseGlobalExtension)
+        {
+            //注册单位
+            var house = HouseExt.ExtMap.Find(pHouse);
+
+            if (house == null)
+            {
+                houseGlobalExtension = null;
+                return false;
+            }
+
+            var component = house.GameObject.GetComponent<HouseGlobalExtension>();
+            if (component != null)
             {
                 houseGlobalExtension = component;
                 return true;
