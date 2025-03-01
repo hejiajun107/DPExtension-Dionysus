@@ -17,6 +17,8 @@ namespace Extension.EventSystems
 
         public static MouseEventSystem MouseEventSystem { get; }
 
+        public static GScreenEventSystem GScreen { get; }
+
 
         private static event EventHandler OnClearTemporaryHandler;
 
@@ -28,6 +30,7 @@ namespace Extension.EventSystems
                 OnClearTemporaryHandler?.Invoke(sender, e);
             });
             PointerExpire = new PointerExpireEventSystem();
+            GScreen = new GScreenEventSystem();
             SaveGame = new SaveGameEventSystem();
             MouseEventSystem = new MouseEventSystem();
         }

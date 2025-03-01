@@ -166,6 +166,7 @@
     <Compile Include="China\XHSunStrikeSWScript.cs" />
     <Compile Include="China\XHSunStrikeTrailerBulletScript.cs" />
     <Compile Include="China\XHSunStrikeUnitScript.cs" />
+    <Compile Include="China\XHWarShipScript.cs" />
     <Compile Include="China\XTMechScript.cs" />
     <Compile Include="China\ZZJBScript.cs" />
     <Compile Include="ConvertWhenBornScript.cs" />

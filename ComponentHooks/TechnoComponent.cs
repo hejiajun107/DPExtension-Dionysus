@@ -207,6 +207,16 @@ namespace ComponentHooks
             Pointer<UnitClass> pUnit = (IntPtr)R->ECX;
             return TechnoClass_Render_Components(pUnit.Convert<TechnoClass>());
         }
+
+
+
+
+
+
+
+
+
+
         #endregion
     }
 }

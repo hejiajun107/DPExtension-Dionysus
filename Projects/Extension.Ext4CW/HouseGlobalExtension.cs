@@ -68,6 +68,33 @@ namespace Extension.CW
         #endregion
 
 
+
+        #region 史诗单位
+        private List<TechnoExt> EpicUnits { get; set; } = new List<TechnoExt>();
+
+        public void RegisterEpicUnit(TechnoExt technoExt)
+        {
+            if(!EpicUnits.Where(x=>x != technoExt).Any())
+            {
+                EpicUnits.Add(technoExt);
+            }
+        }
+
+        public void RemoveEpicUnit(TechnoExt technoExt)
+        {
+            EpicUnits.RemoveAll(x=>x == technoExt);
+        }
+
+        public List<TechnoExt> FindEpicUnitByType(string typeName)
+        {
+            return EpicUnits.Where(x=>x.OwnerObject.Ref.Type.Ref.Base.Base.ID == typeName).ToList();
+        }
+
+
+        #endregion
+
+
+
     }
 
 

@@ -1,9 +1,11 @@
 ﻿using DynamicPatcher;
 using Extension.Coroutines;
+using Extension.EventSystems;
 using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.FileFormats;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections;
@@ -20,13 +22,13 @@ namespace Scripts.Scrin
     {
         public PlanetShipScript(TechnoExt owner) : base(owner)
         {
-            pMana = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
+            //pMana = new SwizzleablePointer<AnimClass>(IntPtr.Zero);
         }
 
         private bool InIonStorm;
         private int Delay = 0;
 
-        private SwizzleablePointer<AnimClass> pMana;
+        //private SwizzleablePointer<AnimClass> pMana;
 
 
         private static Pointer<AnimTypeClass> pblast => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SCLIGHTNWAVE");
@@ -37,6 +39,15 @@ namespace Scripts.Scrin
 
         private int chargeMax = 3000;//3000;
 
+        public override void Awake()
+        {
+            EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+        }
+
+        public override void OnDestroy()
+        {
+            EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+        }
 
         public override void OnUpdate()
         {
@@ -57,7 +68,7 @@ namespace Scripts.Scrin
                 charge++;
             }
 
-            UpdateAnim();
+            //UpdateAnim();
 
             //if (InIonStorm)
             //{
@@ -147,70 +158,93 @@ namespace Scripts.Scrin
             Delay = 600;
         }
 
-        private void UpdateAnim()
-        {
-            CheckAnim();
+        //private void UpdateAnim()
+        //{
+        //    CheckAnim();
+
+        //    if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap && Owner.OwnerObject.Ref.Owner == HouseClass.Player && Owner.OwnerObject.Ref.Base.IsSelected)
+        //    {
+        //        pMana.Ref.Invisible = false;
+        //    }
+        //    else
+        //    {
+        //        pMana.Ref.Invisible = true;
+        //    }
+
+        //    pMana.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+        //    var frame = (int)((charge / (double)chargeMax) * 100);
+        //    if(frame<0)
+        //    {
+        //        frame = 0;
+        //    }else if (frame > 100)
+        //    {
+        //        frame = 100;
+        //    }
+        //    pMana.Ref.Animation.Value = frame;
+        //    pMana.Ref.Pause();
+        //}
 
 
+        //private void CheckAnim()
+        //{
+        //    if (pMana.IsNull)
+        //    {
+        //        CreateAnim();
+        //    }
 
+        //}
 
-            if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap && Owner.OwnerObject.Ref.Owner == HouseClass.Player && Owner.OwnerObject.Ref.Base.IsSelected)
-            {
-                pMana.Ref.Invisible = false;
-            }
-            else
-            {
-                pMana.Ref.Invisible = true;
-            }
+        //private void CreateAnim()
+        //{
+        //    if (!pMana.IsNull)
+        //    {
+        //        KillAnim();
+        //    }
 
-            pMana.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-            var frame = (int)((charge / (double)chargeMax) * 100);
-            if(frame<0)
-            {
-                frame = 0;
-            }else if (frame > 100)
-            {
-                frame = 100;
-            }
-            pMana.Ref.Animation.Value = frame;
-            pMana.Ref.Pause();
-        }
-
-
-        private void CheckAnim()
-        {
-            if (pMana.IsNull)
-            {
-                CreateAnim();
-            }
-
-        }
-
-        private void CreateAnim()
-        {
-            if (!pMana.IsNull)
-            {
-                KillAnim();
-            }
-
-            var anim1 = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("StormChargeBar"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+        //    var anim1 = YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("StormChargeBar"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
           
-            pMana.Pointer = anim1;
-        }
+        //    pMana.Pointer = anim1;
+        //}
 
-        private void KillAnim()
-        {
-            if (!pMana.IsNull)
-            {
-                pMana.Ref.TimeToDie = true;
-                pMana.Ref.Base.UnInit();
-                pMana.Pointer = IntPtr.Zero;
-            }
-        }
+        //private void KillAnim()
+        //{
+        //    if (!pMana.IsNull)
+        //    {
+        //        pMana.Ref.TimeToDie = true;
+        //        pMana.Ref.Base.UnInit();
+        //        pMana.Pointer = IntPtr.Zero;
+        //    }
+        //}
 
         public override void OnRemove()
         {
-            KillAnim();
+            //KillAnim();
+        }
+
+        public void OnGScreenRender(object sender, EventArgs args)
+        {
+            if (args is GScreenEventArgs gScreenEvtArgs)
+            {
+                if (!gScreenEvtArgs.IsLateRender)
+                {
+                    return;
+                }
+
+                if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap && Owner.OwnerObject.Ref.Owner == HouseClass.Player && Owner.OwnerObject.Ref.Base.IsSelected)
+                {
+                    if (FileSystem.TyrLoadSHPFile("StormChargeBar.shp", out Pointer<SHPStruct> pCustomSHP))
+                    {
+                        Pointer<Surface> pSurface = Surface.Current;
+                        RectangleStruct rect = pSurface.Ref.GetRect();
+                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords() + new CoordStruct(20, 0, 400));
+                        {
+                            var frame = (int)((charge / (double)chargeMax) * 100);
+
+                            pSurface.Ref.DrawSHP(FileSystem.UNITx_PAL, pCustomSHP, frame, point, rect.GetThisPointer());
+                        }
+                    }
+                }
+            }
         }
 
     }
