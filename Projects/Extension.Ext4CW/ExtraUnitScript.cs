@@ -313,6 +313,13 @@ namespace Scripts
             }
 
             var target = Master.OwnerObject.Ref.Target;
+            if(Defination.NeverAttackGround)
+            {
+                if (!target.CastToTechno(out _))
+                {
+                    target = Pointer<AbstractClass>.Zero;
+                }
+            }
 
             if (Owner.OwnerObject.Ref.Target.IsNotNull)
             {
@@ -381,6 +388,8 @@ namespace Scripts
                     }
                 }
             }
+
+
 
             bool syncFaceing = false;
 
@@ -642,6 +651,10 @@ namespace Scripts
         [INIField(Key = "ExtraUnit.LimboUnit")]
         public bool LimboUnit = false;
 
+        [INIField(Key = "ExtraUnit.NeverAttackGround")]
+
+        public bool NeverAttackGround = false;
+
         public ExtraUnitDefinationPoco Copy()
         {
             return new ExtraUnitDefinationPoco()
@@ -659,7 +672,8 @@ namespace Scripts
                 ForceSameFacing = this.ForceSameFacing,
                 ForceFacingAllowAngle = this.ForceFacingAllowAngle,
                 WorkingHeight = this.WorkingHeight,
-                LimboUnit = this.LimboUnit
+                LimboUnit = this.LimboUnit,
+                NeverAttackGround = this.NeverAttackGround,
             };
         }
     }
@@ -737,6 +751,9 @@ namespace Scripts
         public int WorkingHeight = 0;
 
         public bool LimboUnit = false;
+
+        public bool NeverAttackGround = false;
+
     }
 
 }

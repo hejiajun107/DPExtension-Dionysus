@@ -57,8 +57,6 @@ namespace Scripts.China
             {
                 houseComponent.RegisterEpicUnit(Owner);
             }
-
-            
         }
 
         public override void OnUpdate()
@@ -141,7 +139,7 @@ namespace Scripts.China
                 var coord = CellClass.Cell2Coord(cell);
                 foreach(var ep in epics)
                 {
-                    if(coord.BigDistanceForm(ep.OwnerObject.Ref.Base.Base.GetCoords()) > Game.CellSize * 38)
+                    if(coord.BigDistanceForm(ep.OwnerObject.Ref.Base.Base.GetCoords()) > Game.CellSize * 45)
                     {
                         continue;
                     }
