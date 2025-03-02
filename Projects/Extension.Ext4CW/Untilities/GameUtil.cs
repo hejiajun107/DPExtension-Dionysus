@@ -7,6 +7,7 @@
 //using System.Threading.Tasks;
 
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 
 namespace Extension.Utilities
@@ -159,6 +160,21 @@ namespace Extension.Utilities
             return dir;
         }
 
+        public static DirStruct Point2DirStruct(this CoordStruct sourcePos, CoordStruct targetPos)
+        {
+            // get angle
+            double radians = Math.Atan2(sourcePos.Y - targetPos.Y, targetPos.X - sourcePos.X);
+            // Magic form tomsons26
+            radians -= MathEx.Deg2Rad(90);
+            return Radians2DirStruct(radians);
+        }
+
+        public static DirStruct Radians2DirStruct(double radians)
+        {
+            short d = (short)(radians / BINARY_ANGLE_MAGIC);
+            return new DirStruct(d);
+        }
+
 
         public static CoordStruct Direction2Vector(Direction dir)
         {
@@ -204,6 +220,12 @@ namespace Extension.Utilities
             }
 
             var warhead = weapon.Ref.WeaponType.Ref.Warhead;
+            return MapClass.GetTotalDamage(10000, warhead, target.Ref.Type.Ref.Base.Armor, 0) > 0;
+        }
+
+        public static bool CanAffectTarget(Pointer<WeaponTypeClass> weapon, Pointer<TechnoClass> target)
+        {
+            var warhead = weapon.Ref.Warhead;
             return MapClass.GetTotalDamage(10000, warhead, target.Ref.Type.Ref.Base.Armor, 0) > 0;
         }
 

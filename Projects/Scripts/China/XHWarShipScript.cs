@@ -141,7 +141,7 @@ namespace Scripts.China
                 var coord = CellClass.Cell2Coord(cell);
                 foreach(var ep in epics)
                 {
-                    if(coord.BigDistanceForm(ep.OwnerObject.Ref.Base.Base.GetCoords()) > Game.CellSize * 32)
+                    if(coord.BigDistanceForm(ep.OwnerObject.Ref.Base.Base.GetCoords()) > Game.CellSize * 38)
                     {
                         continue;
                     }
@@ -153,6 +153,7 @@ namespace Scripts.China
                         {
                             if(MapClass.Instance.TryGetCellAt(cell,out var pcell))
                             {
+                                ep.OwnerObject.Ref.SetTarget(default);
                                 component.Refresh();
                                 ep.OwnerObject.Ref.Ammo = 1;
                                 ep.OwnerObject.Ref.SetTarget(pcell.Convert<AbstractClass>());

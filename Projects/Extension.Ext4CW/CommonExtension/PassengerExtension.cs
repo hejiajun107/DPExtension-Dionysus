@@ -40,18 +40,32 @@ namespace Extension.CW
             if (Owner.OwnerObject.Ref.Owner.IsNull)
                 return;
 
-            if (Owner.OwnerObject.Ref.Passengers.NumPassengers == 0 && Data.InitPassengers != null && Data.PassengerNums != null && !passengerInited)
+            if (Owner.OwnerObject.Ref.Passengers.NumPassengers == 0 && ((Data.InitPassengers != null && Data.PassengerNums != null) || (Data.InitPassengers2 !=null && Data.PassengerNums2 != null)) && !passengerInited)
             {
+                string[] passengers = null ;
+                int[] nums = null;
+
+                if (Data.NotAresPassenger)
+                {
+                    passengers = Data.InitPassengers2;
+                    nums = Data.PassengerNums2;
+                }
+                else
+                {
+                    passengers = Data.InitPassengers;
+                    nums = Data.PassengerNums;
+                }
+
                 //数量不一致说明ini写错了
-                if (Data.InitPassengers.Count() == Data.PassengerNums.Count())
+                if (passengers != null && nums != null && passengers.Count() == nums.Count())
                 {
                     //添加乘客
-                    if (Data.InitPassengers.Count() > 0)
+                    if (passengers.Count() > 0)
                     {
-                        for (var i = 0; i < Data.InitPassengers.Count(); i++)
+                        for (var i = 0; i < passengers.Count(); i++)
                         {
-                            var typeStr = Data.InitPassengers[i];
-                            var num = Data.PassengerNums[i];
+                            var typeStr = passengers[i];
+                            var num = nums[i];
 
                             var technoType = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(typeStr);
 
@@ -182,5 +196,15 @@ namespace Extension.CW
 
         [INIField(Key = "InitialPayload.Nums")]
         public int[] PassengerNums = Array.Empty<int>();
+
+        [INIField(Key = "InitialPayload.NotAres")]
+        public bool NotAresPassenger = false;
+
+        [INIField(Key = "InitialPayload2.Types")]
+        public string[] InitPassengers2 = Array.Empty<string>();
+
+        [INIField(Key = "InitialPayload2.Nums")]
+        public int[] PassengerNums2 = Array.Empty<int>();
+
     }
 }
