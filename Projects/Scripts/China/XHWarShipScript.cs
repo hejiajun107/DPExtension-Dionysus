@@ -66,13 +66,16 @@ namespace Scripts.China
             {
                 mission.Ref.ForceMission(Mission.Stop);
 
-                if (Owner.OwnerObject.Ref.Owner.Ref.IsControlledByCurrentPlayer())
+                if(charge>=chargeMax)
                 {
-                    var swType = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XHCallFireSW");
-                    Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(swType);
-                    pSuper.Ref.IsCharged = true;
-                    MapClass.UnselectAll();
-                    Game.CurrentSWType = swType.Ref.ArrayIndex;
+                    if (Owner.OwnerObject.Ref.Owner.Ref.IsControlledByCurrentPlayer())
+                    {
+                        var swType = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XHCallFireSW");
+                        Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(swType);
+                        pSuper.Ref.IsCharged = true;
+                        MapClass.UnselectAll();
+                        Game.CurrentSWType = swType.Ref.ArrayIndex;
+                    }
                 }
             }
 

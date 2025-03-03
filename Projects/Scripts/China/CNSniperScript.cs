@@ -18,12 +18,16 @@ namespace Scripts.China
     {
         public CNSniperScript(TechnoExt owner) : base(owner)
         {
+            _voc = new VocExtensionComponent(owner);
         }
+
+        private VocExtensionComponent _voc;
 
         static Pointer<AnimTypeClass> pAnim => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("SniperReloadSound");
 
         public override void Awake()
         {
+            _voc.Awake();
             Owner.OwnerObject.Ref.Ammo = 0;
         }
 
@@ -66,7 +70,10 @@ namespace Scripts.China
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-           
+            if (weaponIndex == 0)
+            {
+                _voc.PlaySpecialVoice(3, true);
+            }
         }
 
         private void reload()
@@ -76,6 +83,11 @@ namespace Scripts.China
                 rof = 500;
                 Owner.OwnerObject.Ref.Ammo = 1;
                 YRMemory.Create<AnimClass>(pAnim, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                _voc.PlaySpecialVoice(1, true);
+            }
+            else
+            {
+                _voc.PlaySpecialVoice(2, true);
             }
         }
     }
