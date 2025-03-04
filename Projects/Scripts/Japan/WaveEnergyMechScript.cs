@@ -1,7 +1,11 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
+using System.Linq;
 
 namespace Scripts.Japan
 {
@@ -13,34 +17,57 @@ namespace Scripts.Japan
         {
         }
 
-        private static Pointer<WarheadTypeClass> pWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BLMCKExpWH");
+        private bool reload = false;
 
-        private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+        private CoordStruct? targetCoord;
 
-        private static Pointer<AnimTypeClass> pAnimLow => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("1202SPARK");
+        public override void OnUpdate()
+        {
+            if (reload) {
+                reload = false;
+                Owner.OwnerObject.Ref.Ammo = 6;
+            }
 
-        private static Pointer<AnimTypeClass> pAnimHigh => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("1201SPARK");
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+
+            
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                Owner.OwnerObject.Ref.Ammo = 0;
+
+                var lpbullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("WaveEnergyNPWh"), 100, false);
+                lpbullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+
+                if (targetCoord.HasValue)
+                {
+                    var target = ObjectFinder.FindTechnosNear(targetCoord.Value, Game.CellSize).OrderBy(x=>x.Ref.Base.GetCoords().BigDistanceForm(targetCoord.Value)).FirstOrDefault();
+                    if (target.IsNotNull)
+                    {
+                        Owner.OwnerObject.Ref.SetTarget(target.Convert<AbstractClass>());
+                        mission.Ref.ForceMission(Mission.Attack);
+                    }
+                   
+                }
+            }
+
+            if (Owner.OwnerObject.Ref.Target.IsNull)
+            {
+                targetCoord = null;
+            }
+            else
+            {
+                targetCoord = Owner.OwnerObject.Ref.Target.Ref.GetCoords();
+            }
+
+            base.OnUpdate();
+        }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            if (weaponIndex == 2)
+            if (weaponIndex == 1)
             {
-                var tLocation = pTarget.Ref.GetCoords();
-                var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-
-                var distance = tLocation.DistanceFrom(location);
-                if (distance == double.NaN)
-                {
-                    distance = 2560;
-                }
-                distance = distance > 2560 ? 2560 : distance;
-
-                var baseDamage = 40;
-                var extraDamage = ((2560d + 256d - distance) / 2560) * (300 + (distance <= 760 ? 150 : 0));
-
-                var pBullet = pInviso.Ref.CreateBullet(pTarget, Owner.OwnerObject, (int)(baseDamage + extraDamage), pWarhead, 100, true);
-                pBullet.Ref.DetonateAndUnInit(tLocation);
-                YRMemory.Create<AnimClass>((extraDamage >= 220 ? pAnimHigh : pAnimLow), tLocation);
+                reload = true;
             }
         }
 
