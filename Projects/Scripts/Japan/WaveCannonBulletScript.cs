@@ -17,9 +17,9 @@ namespace Scripts.Japan
 
         private static Pointer<BulletTypeClass> pInviso => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
 
-        private static Pointer<AnimTypeClass> pAnimLow => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("1202SPARK");
+        private static Pointer<AnimTypeClass> pAnimLow => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("QGICESMALL");//AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("1202SPARK");
 
-        private static Pointer<AnimTypeClass> pAnimHigh => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("1201SPARK");
+        private static Pointer<AnimTypeClass> pAnimHigh => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("QGROCX04");// AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("1201SPARK");
 
         public WaveCannonBulletScript(BulletExt owner) : base(owner)
         {
@@ -59,6 +59,7 @@ namespace Scripts.Japan
                         if (target.Equals(lastPoint))
                         {
                             YRMemory.Create<AnimClass>(pAnimHigh, clocation);
+                            YRMemory.Create<AnimClass>(pAnimLow, clocation);
                         }
                     }
                 }
@@ -103,7 +104,7 @@ namespace Scripts.Japan
         {
         }
 
-        private static Pointer<AnimTypeClass> pAnimLow => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("1202SPARK");
+        private static Pointer<AnimTypeClass> pAnimLow => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("QGROCX02");
 
 
         public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
