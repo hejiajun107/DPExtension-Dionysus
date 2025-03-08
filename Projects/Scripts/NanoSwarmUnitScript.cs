@@ -1,6 +1,9 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,10 +124,13 @@ namespace DpLib.Scripts
 
             //以下为阻止单位进出屏障（以下需要DP2.0，或者Kratos，或者自己在YRPP中补全Locomotion相关代码）
             //遍历单位列表
-            ref DynamicVectorClass<Pointer<TechnoClass>> technos = ref TechnoClass.Array;
-            for (int j = technos.Count - 1; j >= 0; j--)
+            //ref DynamicVectorClass<Pointer<TechnoClass>> technos = ref TechnoClass.Array;
+
+            var technos = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Game.CellSize * 12).Select(x=>x.Convert<TechnoClass>());
+            //for (int j = technos.Count() - 1; j >= 0; j--)
+            foreach(var pTechno in technos)
             {
-                Pointer<TechnoClass> pTechno = technos.Get(j);
+                //Pointer<TechnoClass> pTechno = technos.Get(j);
 
                 var location = pTechno.Ref.Base.Base.GetCoords();
 
@@ -171,6 +177,55 @@ namespace DpLib.Scripts
 
 
 
+        }
+    }
+
+
+    [Serializable]
+    [ScriptAlias(nameof(NanoSwarnHealScript))]
+    public class NanoSwarnHealScript : TechnoScriptable
+    {
+        public NanoSwarnHealScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        private int delay = 20;
+        public override void OnUpdate()
+        {
+            if(delay -- <= 0)
+            {
+                delay = 50;
+
+                var pwh = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("NanoSwarmRWH");
+
+                //修复受伤友军
+                var technos = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), Game.CellSize * 8);
+
+                var healthTechnos = technos.Where(x =>
+                {
+                    var ptechno = x.Convert<TechnoClass>();
+                    if (!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                        return false;
+
+                    if (ptechno.Ref.Base.InLimbo)
+                        return false;
+
+                    if(MapClass.GetTotalDamage(10000, pwh, ptechno.Ref.Type.Ref.Base.Armor, 0) == 0)
+                        return false;
+
+                    if (ptechno.Ref.Base.Health >= ptechno.Ref.Type.Ref.Base.Strength)
+                        return false;
+
+                    return true;
+
+                }).OrderBy( x => ((double)x.Ref.Health / (double)x.Convert<TechnoClass>().Ref.Type.Ref.Base.Strength)).ThenBy(x=>x.Ref.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).Take(5).ToList();
+
+                foreach(var techno in healthTechnos)
+                {
+                    var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(techno.Convert<AbstractClass>(), Owner.OwnerObject, 100, pwh, 0, true);
+                    pInviso.Ref.DetonateAndUnInit(techno.Ref.Base.GetCoords());
+                }
+            }
         }
     }
 }
