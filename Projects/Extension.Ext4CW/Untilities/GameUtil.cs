@@ -209,7 +209,22 @@ namespace Extension.Utilities
             return vector;
         }
 
-        
+
+        public static bool CanAffectTargetAllowNegative(Pointer<TechnoClass> techno, Pointer<TechnoClass> target)
+        {
+            var widx = techno.Ref.SelectWeapon(target.Convert<AbstractClass>());
+            var weapon = techno.Ref.GetWeapon(widx);
+            if (weapon.IsNull)
+            {
+                return false;
+            }
+
+            var warhead = weapon.Ref.WeaponType.Ref.Warhead;
+            return MapClass.GetTotalDamage(10000, warhead, target.Ref.Type.Ref.Base.Armor, 0) != 0;
+        }
+
+
+
         public static bool CanAffectTarget(Pointer<TechnoClass> techno,Pointer<TechnoClass> target)
         {
             var widx = techno.Ref.SelectWeapon(target.Convert<AbstractClass>());

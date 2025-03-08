@@ -144,6 +144,10 @@ namespace Scripts
 
         }
 
+        public bool HasAttachEffect(string name)
+        {
+            return _attachEffectScriptables.Where(x => x.ScriptName == name).Any();
+        }
 
         private void ClearExpiredAttachEffect()
         {

@@ -214,6 +214,7 @@
     <Compile Include="Japan\MiniSubScript.cs" />
     <Compile Include="Japan\NanoCoreBuildingScript.cs" />
     <Compile Include="Japan\NanoLinkScript.cs" />
+    <Compile Include="Japan\NanoRobotScript.cs" />
     <Compile Include="Japan\SakuraScript.cs" />
     <Compile Include="Japan\StandToHideScript.cs" />
     <Compile Include="Japan\SunRiseFortressScript.cs" />
