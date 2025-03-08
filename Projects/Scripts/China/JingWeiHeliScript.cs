@@ -2,7 +2,10 @@
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
+using System.Linq;
+using Extension.Utilities;
 
 namespace DpLib.Scripts.China
 {
@@ -49,10 +52,64 @@ namespace DpLib.Scripts.China
                 var target = pTarget.Ref.GetCoords();
                 var pPowr = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, powrWarhead, 100, false);
                 pPowr.Ref.DetonateAndUnInit(target);
-            }
+
+				var technos = ObjectFinder.FindTechnosNear(pTarget.Ref.GetCoords(), Game.CellSize * 4);
+                var pwh = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ORCACARHelWH");
+
+				var healthTechnos = technos.Where(x =>
+				{
+                    
+					var pt = x.Convert<TechnoClass>();
+					if (!pt.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                    {
+						return false;
+					}
+
+					if (pt.Ref.Base.InLimbo)
+                    {
+						return false;
+					}
+
+					if (pt.Ref.Base.Base.IsInAir())
+					{
+						return false;
+					}
+
+					if (MapClass.GetTotalDamage(10000, pwh, pt.Ref.Type.Ref.Base.Armor, 0) == 0)
+					{
+						return false;
+					}
+
+					if (pt.Ref.Base.Health >= pt.Ref.Type.Ref.Base.Strength)
+					{
+						return false;
+					}
+					return true;
+
+				}).OrderBy(x => ((double)x.Ref.Health / (double)x.Convert<TechnoClass>().Ref.Type.Ref.Base.Strength)).ThenBy(x => x.Ref.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
 
 
+				if (healthTechnos.Any())
+                {
+                    var targetTechno = healthTechnos.FirstOrDefault();
+
+					Pointer<RadBeam> pRadBeam = RadBeam.Allocate(RadBeamType.RadBeam);
+					if (!pRadBeam.IsNull)
+					{
+                        pRadBeam.Ref.SetCoordsSource(pTarget.Ref.GetCoords());
+                        pRadBeam.Ref.SetCoordsTarget(targetTechno.Ref.Base.GetCoords());
+                        pRadBeam.Ref.Color = new ColorStruct(192, 192, 192);
+						pRadBeam.Ref.Period = 15;
+						pRadBeam.Ref.Amplitude = 40;
+					}
+
+					var pHealth = pBulletType.Ref.CreateBullet(targetTechno.Convert<AbstractClass>(), Owner.OwnerObject, 60, pwh, 100, false);
+					pHealth.Ref.DetonateAndUnInit(targetTechno.Ref.Base.GetCoords());
+				}
+			}
         }
+
+        
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
        Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
