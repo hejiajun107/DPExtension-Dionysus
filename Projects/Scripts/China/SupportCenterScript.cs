@@ -59,15 +59,11 @@ namespace DpLib.Scripts.China
             {
                 if(uavRof <= 0)
                 {
-					Logger.Log("+1");
-					uavRof = 100;
+					uavRof = 300;
 					houseExt.UAVCount = houseExt.UAVCount >= 100 ? 100 : (houseExt.UAVCount + 1);
-					Logger.Log("h_uvacount:" + houseExt.UAVCount);
 
 				}
 				uavCount = houseExt.UAVCount;
-				Logger.Log("uavCount:" + uavCount);
-
 			}
 		}
 
