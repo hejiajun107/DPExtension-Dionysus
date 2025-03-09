@@ -23,7 +23,7 @@ namespace DpLib.Scripts.China
         private static Pointer<TechnoTypeClass> targetType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("GATP2");
 
         private int uavCount = 0;
-        private int uavRof = 100;
+        private int uavRof = 300;
 
 
 
