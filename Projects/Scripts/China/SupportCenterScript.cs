@@ -1,8 +1,13 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.EventSystems;
+using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.FileFormats;
 using System;
+using System.Runtime.InteropServices;
 
 namespace DpLib.Scripts.China
 {
@@ -17,8 +22,12 @@ namespace DpLib.Scripts.China
 
         private static Pointer<TechnoTypeClass> targetType => TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("GATP2");
 
+        private int uavCount = 0;
+        private int uavRof = 100;
 
-        public override void OnPut(CoordStruct coord, Direction faceDir)
+
+
+		public override void OnPut(CoordStruct coord, Direction faceDir)
         {
             base.OnPut(coord, faceDir);
 
@@ -38,5 +47,67 @@ namespace DpLib.Scripts.China
                 }
             }
         }
-    }
+
+		public override void OnUpdate()
+		{
+			if (uavRof > 0)
+			{
+				uavRof--;
+			}
+          
+            if(Owner.TryGetHouseGlobalExtension(out var houseExt))
+            {
+                if(uavRof <= 0)
+                {
+					Logger.Log("+1");
+					uavRof = 100;
+					houseExt.UAVCount = houseExt.UAVCount >= 100 ? 100 : (houseExt.UAVCount + 1);
+					Logger.Log("h_uvacount:" + houseExt.UAVCount);
+
+				}
+				uavCount = houseExt.UAVCount;
+				Logger.Log("uavCount:" + uavCount);
+
+			}
+		}
+
+
+		public override void Awake()
+		{
+			EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+		}
+
+		public override void OnDestroy()
+		{
+			EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+		}
+
+
+		public void OnGScreenRender(object sender, EventArgs args)
+		{
+			if (args is GScreenEventArgs gScreenEvtArgs)
+			{
+				if (!gScreenEvtArgs.IsLateRender)
+				{
+					return;
+				}
+
+				if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap && Owner.OwnerObject.Ref.Owner == HouseClass.Player && Owner.OwnerObject.Ref.Base.IsSelected)
+				{
+					if (FileSystem.TyrLoadSHPFile("uavcountbar.shp", out Pointer<SHPStruct> pCustomSHP))
+					{
+						Pointer<Surface> pSurface = Surface.Current;
+						RectangleStruct rect = pSurface.Ref.GetRect();
+						Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords() + new CoordStruct(0, 0, 1000));
+						{
+							var frame = uavCount;
+
+							pSurface.Ref.DrawSHP(FileSystem.UNITx_PAL, pCustomSHP, frame, point, rect.GetThisPointer());
+						}
+					}
+				}
+			}
+		}
+
+	}
 }

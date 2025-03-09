@@ -65,12 +65,17 @@ namespace Extension.CW
         {
             NumOfThunderBird = Finder.FindTechno(Owner.OwnerObject, x => (x.Ref.Type.Ref.Base.Base.ID == "ORCAB" || x.Ref.Type.Ref.Base.Base.ID == "ORCAB2") && !x.Ref.Base.InLimbo && x.Ref.IsInPlayfield == true, FindRange.Owner).Count();
         }
-        #endregion
+		#endregion
+
+        /// <summary>
+        /// 无人机数量
+        /// </summary>
+		public int UAVCount { get; set; }
+
+		#region 史诗单位
+		private List<TechnoExt> EpicUnits { get; set; } = new List<TechnoExt>();
 
 
-
-        #region 史诗单位
-        private List<TechnoExt> EpicUnits { get; set; } = new List<TechnoExt>();
 
         public void RegisterEpicUnit(TechnoExt technoExt)
         {

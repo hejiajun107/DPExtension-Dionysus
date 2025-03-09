@@ -1,6 +1,7 @@
 ﻿using DynamicPatcher;
 using Extension.Coroutines;
 using Extension.Ext;
+using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
@@ -37,14 +38,25 @@ namespace Scripts.China
 
                 if(Flying.IsNullOrExpired() && !locked)
                 {
-                    if (Owner.OwnerObject.Ref.Owner.Ref.Available_Money() > 400)
+                    if(Owner.TryGetHouseGlobalExtension(out var houseExt))
                     {
-                        locked = true;
-                        var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
-                        var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BuyDJIWH"), 100, false);
-                        pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                        Owner.GameObject.StartCoroutine(CallDJI());
-                    }
+                        if (houseExt.UAVCount > 0) {
+							locked = true;
+                            houseExt.UAVCount--;
+							var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+							var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BuyDJIFreeWH"), 100, false);
+							pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+							Owner.GameObject.StartCoroutine(CallDJI());
+						}
+						else if (Owner.OwnerObject.Ref.Owner.Ref.Available_Money() > 400)
+						{
+							locked = true;
+							var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+							var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BuyDJIWH"), 100, false);
+							pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+							Owner.GameObject.StartCoroutine(CallDJI());
+						}
+					}
                 }
             }
           
