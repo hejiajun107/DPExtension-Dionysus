@@ -253,6 +253,7 @@
     <Compile Include="Scrin\ScrinMotherShipScript.cs" />
     <Compile Include="Scrin\ScrinPowerScript.cs" />
     <Compile Include="Scrin\ScrinSpyScript.cs" />
+    <Compile Include="Scrin\SCVanishScript.cs" />
     <Compile Include="Scrin\StormTowerScript.cs" />
     <Compile Include="Scrin\TiberiumGeneratorScript.cs" />
     <Compile Include="Scrin\TiberiumGrowthTargetScript.cs" />
