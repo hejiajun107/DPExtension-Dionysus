@@ -24,6 +24,11 @@ namespace Scripts.Scrin
 				return;
 			}
 
+			if (Owner.OwnerObject.Ref.Base.InLimbo)
+			{
+				return;
+			}
+
 			if (pTarget.CastToTechno(out var ptechno))
 			{
                 if (!ptechno.Ref.Owner.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
