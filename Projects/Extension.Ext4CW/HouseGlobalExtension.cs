@@ -99,6 +99,9 @@ namespace Extension.CW
         #endregion
 
 
+        public List<TechnoExt> ScrinVanish { get; set; } = new List<TechnoExt>();
+
+
 
     }
 
