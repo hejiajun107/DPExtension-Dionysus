@@ -69,6 +69,9 @@ namespace Scripts.Scrin
 						if (vanishExt.IsNullOrExpired())
 							continue;
 
+						if (vanishExt == Owner)
+							continue;
+
 						if(vanishExt.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords()) > 4 * Game.CellSize)
 							continue;
 
