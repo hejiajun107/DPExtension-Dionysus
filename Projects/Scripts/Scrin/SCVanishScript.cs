@@ -104,7 +104,7 @@ namespace Scripts.Scrin
                     if (extraDamage > 0)
 					{
                         var bullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(pTarget, Owner.OwnerObject, extraDamage, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SCVanExtWH"), 100, false);
-                        bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        bullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
 						YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("BlazeMiniX"), tcoord);
                     }
                 }
