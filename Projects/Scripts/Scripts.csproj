@@ -248,6 +248,7 @@
     <Compile Include="Scrin\MirrorScript.cs" />
     <Compile Include="Scrin\PlanetShipScript.cs" />
     <Compile Include="Scrin\ScarabTargetScript.cs" />
+    <Compile Include="Scrin\SCDoorUnitScript.cs" />
     <Compile Include="Scrin\SCEaterScript.cs" />
     <Compile Include="Scrin\ScrabScript.cs" />
     <Compile Include="Scrin\ScrinMotherShipScript.cs" />

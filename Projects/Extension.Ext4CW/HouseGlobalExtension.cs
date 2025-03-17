@@ -101,6 +101,8 @@ namespace Extension.CW
 
         public List<TechnoExt> ScrinVanish { get; set; } = new List<TechnoExt>();
 
+        public List<TechnoExt> SCDoorUnit { get; set; } = new List<TechnoExt>();
+
 
 
     }
