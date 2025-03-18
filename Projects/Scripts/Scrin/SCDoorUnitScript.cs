@@ -93,6 +93,9 @@ namespace Scripts.Scrin
                 var matched = new List<SCWarpFlagScript>();
                 foreach (var techno in technos)
                 {
+                    if (MapClass.GetTotalDamage(1000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("SA"), Owner.OwnerObject.Ref.Type.Ref.Base.Armor, 0) <= 0)
+                        continue;
+
                     var ext = TechnoExt.ExtMap.Find(techno);
                     if (ext.IsNullOrExpired())
                     {
@@ -159,6 +162,15 @@ namespace Scripts.Scrin
 
                     if(MapClass.Instance.TryGetCellAt(targetCoord, out var cell))
                     {
+                        if (cell.Ref.ContainsBridge())
+                            return;
+
+                        if (cell.Ref.LandType == LandType.Water)
+                            return;
+
+                        if (cell.Ref.GetBuilding().IsNotNull)
+                            return;
+                        
                         var targetCenter = cell.Ref.Base.GetCoords();
 
                         foreach(var item in matched)
