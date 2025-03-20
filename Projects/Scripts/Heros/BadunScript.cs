@@ -200,8 +200,8 @@ namespace Scripts
 
                 if (Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
                 {
-                    //Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BDBurstDWWH"), 100, false);
-                    //pBullet.Ref.DetonateAndUnInit(pTechno.Ref.Base.Base.GetCoords());
+                    Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BDBurstDWWH"), 100, false);
+                    pBullet.Ref.DetonateAndUnInit(pTechno.Ref.Base.Base.GetCoords());
                 }
 
                 reloaded = true;
@@ -278,6 +278,7 @@ namespace Scripts
             {
                 if (Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(currentTarget.OwnerObject.Ref.Base.Base.GetCoords()) > 7 * Game.CellSize)
                 {
+                    currentTarget = null;
                     return;
                 }
 
