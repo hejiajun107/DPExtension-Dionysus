@@ -161,6 +161,7 @@
     <Compile Include="China\RocketSequenceScriptable.cs" />
     <Compile Include="China\ShieldTowerScript.cs" />
     <Compile Include="China\SupportCenterScript.cs" />
+    <Compile Include="China\WeiLongScript.cs" />
     <Compile Include="China\XHFragmentBulletScirpt.cs" />
     <Compile Include="China\XHLaserTrailerBulletScript.cs" />
     <Compile Include="China\XHSpreadFireBulletScript.cs" />

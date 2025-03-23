@@ -1,4 +1,5 @@
 ﻿using DynamicPatcher;
+using Extension.Coroutines;
 using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
@@ -6,6 +7,7 @@ using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -375,7 +377,25 @@ namespace Scripts
             //如果不分开开火则跟随武器开火
             if(!INI.Data.SeparateFire)
             {
-                TryFire(pTarget, weaponIndex,INI.Data.IgnoreRof);
+                if(INI.Data.Delay == 0)
+                {
+                    TryFire(pTarget, weaponIndex, INI.Data.IgnoreRof);
+                }
+                else
+                {
+                    Owner.GameObject.StartCoroutine(DelayFire(weaponIndex));
+                }
+            }
+        }
+
+        
+        IEnumerator DelayFire(int weaponIndex)
+        {
+            yield return new WaitForFrames(INI.Data.Delay);
+
+            if (Owner.OwnerObject.Ref.Target.IsNotNull)
+            {
+                TryFire(Owner.OwnerObject.Ref.Target, weaponIndex, INI.Data.IgnoreRof);
             }
         }
 
@@ -606,6 +626,9 @@ namespace Scripts
         [INIField(Key = "AttachWeapon.AlwaysSameTarget")]
 
         public bool AlwaysSameTarget = false;
+        [INIField(Key = "AttachWeapon.Delay")]
+
+        public int Delay = 0;
 
     }
 }

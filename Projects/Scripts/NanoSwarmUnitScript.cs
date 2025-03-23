@@ -1,4 +1,5 @@
 ﻿using DynamicPatcher;
+using Extension.EventSystems;
 using Extension.Ext;
 using Extension.Script;
 using Extension.Utilities;
@@ -37,6 +38,7 @@ namespace DpLib.Scripts
             //此处会使屏障持续delay时间后自动消失
             if (delay-- <= 0)
             {
+                Owner.OwnerObject.Ref.Base.Remove();
                 Owner.OwnerObject.Ref.Base.UnInit();
                 return;
             }
@@ -46,13 +48,7 @@ namespace DpLib.Scripts
             //半径，可以自行更改
             var radius = 1792; //3584; 
 
-            List<CoordStruct> coordList = new List<CoordStruct>();
 
-            //这里偷懒了，省去了计算直线和圆的交点过程，直接每15°一个区域，取最近的一个区域作为交点
-            for (var angle = 0; angle <= 360; angle += 15)
-            {
-                coordList.Add(new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z));
-            }
 
 
             ////这段注释掉了，可以绘制激光来看实际半径是否与动画大小一致
@@ -63,57 +59,10 @@ namespace DpLib.Scripts
             //    pLaser.Ref.IsHouseColor = false;
             //}
 
-            //遍历抛射体
-            ref DynamicVectorClass<Pointer<BulletClass>> bullets = ref BulletClass.Array;
+            NanoSwarmLateUpdate();
 
-            //Logger.Log($"抛射体数量:{bullets.Count}");
-
-            for (int i = bullets.Count - 1; i >= 0; i--)
-            {
-                Pointer<BulletClass> pBullet = bullets.Get(i);
-
-                var target = pBullet.Ref.TargetCoords;
-                //if(pBullet.Ref.Owner.IsNull)
-                //    continue;
-                var source = pBullet.Ref.SourceCoords;//.Owner.Ref.Base.Base.GetCoords();
-
-                var bulletLocation = pBullet.Ref.Base.Base.GetCoords();
-
-                //Logger.Log($"目标：{radius - target.DistanceFrom(center)}");
-                //Logger.Log($"起点：{radius - source.DistanceFrom(center)}");
-                //判断是否是从圈内到圈外或者圈外到圈内
-                if ((radius - target.DistanceFrom(new CoordStruct(center.X, center.Y, target.Z))) * (radius - source.DistanceFrom(new CoordStruct(center.X, center.Y, source.Z))) <= 0)
-                {
-                    //Inviso的抛射体在于圆相交处爆炸
-                    if (pBullet.Ref.Type.Ref.Inviso == true)
-                    {
-                        var ownerLocation = source;//pBullet.Ref.Owner.Ref.Base.Base.GetCoords();
-                        //找最近的判定区爆炸（此处如果用公式计算交点更好，但是太麻烦了所以没写）
-                        var expTarget = coordList.OrderBy(coord => coord.DistanceFrom(ownerLocation)).FirstOrDefault();
-
-                        pBullet.Ref.DetonateAndUnInit(expTarget);
-                        if (MapClass.Instance.TryGetCellAt(expTarget, out var pCell))
-                        {
-                            pBullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
-                        }
-                        pBullet.Ref.Base.Health = 0;
-                        pBullet.Ref.Base.Remove();
-                        pBullet.Ref.Base.UnInit();
-                    }
-                    else
-                    {
-                        //如果抛射体在圈附近，这里取了圈内外10%的区域作为判定区域(0.8~1.2)
-                        if (bulletLocation.DistanceFrom(new CoordStruct(center.X, center.Y, bulletLocation.Z)) >= radius * 0.8 && bulletLocation.DistanceFrom(new CoordStruct(center.X, center.Y, bulletLocation.Z)) <= radius * 1.2)
-                        {
-                            pBullet.Ref.DetonateAndUnInit(bulletLocation);
-                            pBullet.Ref.Base.Health = 0;
-                            pBullet.Ref.Base.Remove();
-                            pBullet.Ref.Base.UnInit();
-                        }
-                    }
-                }
-
-            }
+            var nanoBullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("InvisibleSwarm").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special"), 100, false);
+            nanoBullet.Ref.MoveTo(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 500),new BulletVelocity(0,0,0));
 
             if (checkDelay-- > 0)
             {
@@ -178,6 +127,100 @@ namespace DpLib.Scripts
 
 
         }
+
+
+        //public override void Awake()
+        //{
+        //    EventSystem.General.AddTemporaryHandler(EventSystem.General.LogicClassUpdateEvent, NanoSwarmLateUpdate);
+        //}
+
+        //public override void OnDestroy()
+        //{
+        //    EventSystem.General.RemoveTemporaryHandler(EventSystem.General.LogicClassUpdateEvent, NanoSwarmLateUpdate);
+        //}
+
+        private void NanoSwarmLateUpdate()
+        {
+            //if (args is LogicClassUpdateEventArgs largs)
+            //{
+            //    //if (!largs.IsLateUpdate)
+            //    //    return;
+            //}
+            //else
+            //{
+            //    return;
+            //}
+
+            var center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+            //半径，可以自行更改
+            var radius = 1792; //3584; 
+
+            List<CoordStruct> coordList = new List<CoordStruct>();
+
+            //这里偷懒了，省去了计算直线和圆的交点过程，直接每15°一个区域，取最近的一个区域作为交点
+            for (var angle = 0; angle <= 360; angle += 15)
+            {
+                coordList.Add(new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z));
+            }
+
+            //遍历抛射体
+            ref DynamicVectorClass<Pointer<BulletClass>> bullets = ref BulletClass.Array;
+
+            //Logger.Log($"抛射体数量:{bullets.Count}");
+
+            for (int i = bullets.Count - 1; i >= 0; i--)
+            {
+                Pointer<BulletClass> pBullet = bullets.Get(i);
+
+                var target = pBullet.Ref.TargetCoords;
+                //if(pBullet.Ref.Owner.IsNull)
+                //    continue;
+                var source = pBullet.Ref.SourceCoords;//.Owner.Ref.Base.Base.GetCoords();
+
+                var bulletLocation = pBullet.Ref.Base.Base.GetCoords();
+
+                //Logger.Log($"目标：{radius - target.DistanceFrom(center)}");
+                //Logger.Log($"起点：{radius - source.DistanceFrom(center)}");
+                //判断是否是从圈内到圈外或者圈外到圈内
+                if ((radius - target.BigDistanceForm(new CoordStruct(center.X, center.Y, target.Z))) * (radius - source.BigDistanceForm(new CoordStruct(center.X, center.Y, source.Z))) <= 0)
+                {
+                    //Inviso的抛射体在于圆相交处爆炸
+                    if (pBullet.Ref.Type.Ref.Inviso == true)
+                    {
+                        var ownerLocation = source;//pBullet.Ref.Owner.Ref.Base.Base.GetCoords();
+                        //找最近的判定区爆炸（此处如果用公式计算交点更好，但是太麻烦了所以没写）
+                        var expTarget = coordList.OrderBy(coord => coord.DistanceFrom(ownerLocation)).FirstOrDefault();
+
+                        if (MapClass.Instance.TryGetCellAt(expTarget, out var pCell))
+                        {
+                            pBullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
+                        }
+                        pBullet.Ref.Base.SetLocation(expTarget);
+                        pBullet.Ref.Detonate(expTarget);
+                        
+                        pBullet.Ref.Base.Health = 0;
+                        pBullet.Ref.Base.Remove();
+                        pBullet.Ref.Base.UnInit();
+                    }
+                    else
+                    {
+                        //如果抛射体在圈附近，这里取了圈内外10%的区域作为判定区域(0.8~1.2)
+                        if (bulletLocation.DistanceFrom(new CoordStruct(center.X, center.Y, bulletLocation.Z)) >= radius * 0.8 && bulletLocation.DistanceFrom(new CoordStruct(center.X, center.Y, bulletLocation.Z)) <= radius * 1.2)
+                        {
+                            pBullet.Ref.Detonate(bulletLocation);
+                            pBullet.Ref.Base.Health = 0;
+                            pBullet.Ref.Base.Remove();
+                            pBullet.Ref.Base.UnInit();
+                        }
+                    }
+                }
+
+            }
+
+
+
+        }
     }
 
 
@@ -228,4 +271,109 @@ namespace DpLib.Scripts
             }
         }
     }
+
+
+
+
+    [Serializable]
+    [ScriptAlias(nameof(NanoSwarmBulletScript))]
+    public class NanoSwarmBulletScript : BulletScriptable
+    {
+
+        public NanoSwarmBulletScript(BulletExt owner) : base(owner)
+        {
+        }
+
+        public override void OnUpdate()
+        {
+            NanoSwarmLateUpdate();
+            Owner.OwnerObject.Ref.Base.Remove();
+            Owner.OwnerObject.Ref.Base.UnInit();
+        }
+
+
+
+
+
+        private void NanoSwarmLateUpdate()
+        {
+            //if (args is LogicClassUpdateEventArgs largs)
+            //{
+            //    //if (!largs.IsLateUpdate)
+            //    //    return;
+            //}
+            //else
+            //{
+            //    return;
+            //}
+
+            var center = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+            //半径，可以自行更改
+            var radius = 1792; //3584; 
+
+            List<CoordStruct> coordList = new List<CoordStruct>();
+
+            //这里偷懒了，省去了计算直线和圆的交点过程，直接每15°一个区域，取最近的一个区域作为交点
+            for (var angle = 0; angle <= 360; angle += 15)
+            {
+                coordList.Add(new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z));
+            }
+
+            //遍历抛射体
+            ref DynamicVectorClass<Pointer<BulletClass>> bullets = ref BulletClass.Array;
+
+            //Logger.Log($"抛射体数量:{bullets.Count}");
+
+            for (int i = bullets.Count - 1; i >= 0; i--)
+            {
+                Pointer<BulletClass> pBullet = bullets.Get(i);
+
+                if (!pBullet.Ref.Type.Ref.Inviso)
+                    continue;
+
+                if (pBullet == Owner.OwnerObject)
+                    continue;
+
+                var target = pBullet.Ref.TargetCoords;
+                //if(pBullet.Ref.Owner.IsNull)
+                //    continue;
+                var source = pBullet.Ref.SourceCoords;//.Owner.Ref.Base.Base.GetCoords();
+
+                var bulletLocation = pBullet.Ref.Base.Base.GetCoords();
+
+                //Logger.Log($"目标：{radius - target.DistanceFrom(center)}");
+                //Logger.Log($"起点：{radius - source.DistanceFrom(center)}");
+                //判断是否是从圈内到圈外或者圈外到圈内
+                if ((radius - target.BigDistanceForm(new CoordStruct(center.X, center.Y, target.Z))) * (radius - source.BigDistanceForm(new CoordStruct(center.X, center.Y, source.Z))) <= 0)
+                {
+                    //Inviso的抛射体在于圆相交处爆炸
+                    if (pBullet.Ref.Type.Ref.Inviso == true)
+                    {
+                        Logger.Log("逮捕Invisible" + Game.CurrentFrame);
+                        var ownerLocation = source;//pBullet.Ref.Owner.Ref.Base.Base.GetCoords();
+                        //找最近的判定区爆炸（此处如果用公式计算交点更好，但是太麻烦了所以没写）
+                        var expTarget = coordList.OrderBy(coord => coord.DistanceFrom(ownerLocation)).FirstOrDefault();
+
+                        if (MapClass.Instance.TryGetCellAt(expTarget, out var pCell))
+                        {
+                            pBullet.Ref.SetTarget(pCell.Convert<AbstractClass>());
+                        }
+                        pBullet.Ref.Base.SetLocation(expTarget);
+                        pBullet.Ref.Detonate(expTarget);
+
+                        pBullet.Ref.Base.Health = 0;
+                        pBullet.Ref.Base.Remove();
+                        pBullet.Ref.Base.UnInit();
+                    }
+                }
+
+            }
+
+
+
+        }
+
+    }
+
 }

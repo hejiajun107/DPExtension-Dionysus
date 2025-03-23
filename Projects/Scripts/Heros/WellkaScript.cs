@@ -8,6 +8,10 @@ using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
+using System.Net.Sockets;
+using Extension.Ext;
+using Extension.Ext4CW;
+using Extension.Script;
 
 namespace Scripts
 {
@@ -18,7 +22,7 @@ namespace Scripts
     {
         public WellkaScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(owner, 7);
+            _manaCounter = new ManaCounter(owner, 10);
             _voc = new VocExtensionComponent(owner);
         }
 
@@ -46,27 +50,24 @@ namespace Scripts
 
         public override void OnUpdate()
         {
-            //检测是否处于战斗状态
-            //if (battleFrame > 0)
-            //{
-            //    if (rof <= 0)
-            //    {
-            //        if (_manaCounter.Cost(10))
-            //        {
-            //            //施加一个铁幕光环
-            //            Pointer<BulletClass> pBullet1 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, heroWh, 100, false);
-            //            pBullet1.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            HouseGlobalExtension houseExt;
+            if (!Owner.TryGetHouseGlobalExtension(out houseExt))
+            {
+                return;
+            }
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                MakeNuke(houseExt);
+            }
 
-            //            Pointer<BulletClass> pBullet2 = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, unitWh, 100, false);
-            //            pBullet2.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
-            //        }
-            //        rof = 50;
-            //    }
-            //    else
-            //    {
-            //        rof--;
-            //    }
-            //}
+            if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+            {
+                MakeNuke(houseExt);
+            }
+
+
             if (aimDelay > 0)
             {
                 aimDelay--;
@@ -79,16 +80,36 @@ namespace Scripts
 
             //battleFrame--;
 
-            var house = HouseExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
-            if (house != null)
+          
+           
+            Owner.OwnerObject.Ref.Ammo = houseExt.NatashaNukeCount;
+        }
+
+
+        private void MakeNuke(HouseGlobalExtension houseExt)
+        {
+            if (_manaCounter.Current >= 100)
             {
-                var component = house.GameObject.GetComponent<HouseGlobalExtension>();
-                if (component != null)
+                if (Owner.OwnerObject.Ref.Owner.Ref.Available_Money() > 1000)
                 {
-                    Owner.OwnerObject.Ref.Ammo = component.NatashaNukeCount;
+                    {
+                        if (houseExt.NatashaNukeCount < 10)
+                        {
+                            if (_manaCounter.Cost(100))
+                            {
+                                houseExt.NatashaNukeCount = houseExt.NatashaNukeCount + 1;
+                                var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+                                var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BuyNukeWH"), 100, false);
+                                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                            }
+                        }
+                    }
                 }
             }
+
         }
+
+
 
         public override void OnRemove()
         {
@@ -158,11 +179,11 @@ namespace Scripts
                                 {
                                     if (component.NatashaNukeCount > 0)
                                     {
-                                        if (_manaCounter.Cost(100))
-                                        {
+                                        //if (_manaCounter.Cost(100))
+                                        //{
                                             component.NatashaNukeCount--;
                                             fireweapon = 1;
-                                        }
+                                        //}
                                     }
                                 }
                             }

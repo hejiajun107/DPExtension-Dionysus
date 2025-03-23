@@ -17,7 +17,7 @@ namespace Extension.CW
     {
         public bool HandleAirCommand = false;
 
-        private bool isAreaProtecting = false;
+        public bool isAreaProtecting = false;
 
         private CoordStruct areaProtectTo;
 
