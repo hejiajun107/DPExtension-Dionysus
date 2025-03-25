@@ -38,6 +38,10 @@ namespace Extension.Shared
             manaBarScript.paused = false;
         }
 
+        public void ForceSet(int num)
+        {
+            manaBarScript.ForceSet(num);
+        }
 
 
         public int Current
@@ -93,6 +97,11 @@ namespace Extension.Shared
                 currentMana -= num;
                 return true;
             }
+        }
+
+        public void ForceSet(int val)
+        {
+            currentMana = val;
         }
 
         public override void OnPut(CoordStruct coord, Direction faceDir)
