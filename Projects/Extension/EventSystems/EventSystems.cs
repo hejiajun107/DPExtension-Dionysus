@@ -19,6 +19,7 @@ namespace Extension.EventSystems
 
         public static GScreenEventSystem GScreen { get; }
 
+        public static TacticalEventSystem Tactical { get; }
 
         private static event EventHandler OnClearTemporaryHandler;
 
@@ -33,6 +34,7 @@ namespace Extension.EventSystems
             GScreen = new GScreenEventSystem();
             SaveGame = new SaveGameEventSystem();
             MouseEventSystem = new MouseEventSystem();
+            Tactical = new TacticalEventSystem();
         }
 
 

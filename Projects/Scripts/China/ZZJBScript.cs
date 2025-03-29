@@ -3,6 +3,7 @@ using Extension.Coroutines;
 using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.Script;
+using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -22,11 +23,19 @@ namespace Scripts.China
     {
         public ZZJBScript(TechnoExt owner) : base(owner)
         {
+            _voc = new VocExtensionComponent(owner);
         }
 
         public TechnoExt Flying;
+        private VocExtensionComponent _voc;
 
         private bool locked = false;
+
+        public override void Awake()
+        {
+            base.Awake();
+            _voc.Awake();
+        }
 
 
         public override void OnUpdate()
@@ -55,7 +64,11 @@ namespace Scripts.China
 							var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BuyDJIWH"), 100, false);
 							pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 							Owner.GameObject.StartCoroutine(CallDJI());
-						}
+                        }
+                        else
+                        {
+                            _voc.PlaySpecialVoice(2, true);
+                        }
 					}
                 }
             }
@@ -77,6 +90,7 @@ namespace Scripts.China
                     Flying = TechnoExt.ExtMap.Find(techno);
                     Flying.GameObject.CreateScriptComponent(nameof(CNDJIScript), CNDJIScript.UniqueId, nameof(CNDJIScript), Flying, Owner);
                 }
+                _voc.PlaySpecialVoice(1, true);
             }
             locked = false;
         }

@@ -65,6 +65,7 @@
     <Compile Include="EventSystems\MouseEventSystem.cs" />
     <Compile Include="EventSystems\PointerExpireEventSystem.cs" />
     <Compile Include="EventSystems\SaveGameEventSystem.cs" />
+    <Compile Include="EventSystems\TacticalEventSystem.cs" />
     <Compile Include="Ext\CommonExtension.cs" />
     <Compile Include="Ext\ECSInstanceExtension.cs" />
     <Compile Include="Ext\ExtensionFactory.cs" />

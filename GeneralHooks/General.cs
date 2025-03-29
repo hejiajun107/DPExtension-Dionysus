@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Extension.Components;
 using Extension.EventSystems;
+using Extension.CW;
 
 namespace GeneralHooks
 {
@@ -36,7 +37,22 @@ namespace GeneralHooks
         public static unsafe UInt32 Scenario_Start1(REGISTERS* R)
         {
             EventSystem.General.Broadcast(EventSystem.General.ScenarioStartEvent, EventArgs.Empty);
+            var uiManager = new UIManager();
+            uiManager.Init();
+            return 0;
+        }
 
+        [Hook(HookType.AresHook, Address = 0x6D3D10, Size = 6)]
+        public static unsafe UInt32 Tactical_Render(REGISTERS* R)
+        {
+            EventSystem.Tactical.Broadcast(EventSystem.Tactical.TactcialRenderEvent, new TacticalEventArgs(true));
+            return 0;
+        }
+
+        [Hook(HookType.AresHook, Address = 0x6D471A, Size = 6)]
+        public static unsafe UInt32 Tactical_LateRender(REGISTERS* R)
+        {
+            EventSystem.Tactical.Broadcast(EventSystem.Tactical.TactcialRenderEvent,new TacticalEventArgs(false));
             return 0;
         }
 

@@ -1,9 +1,12 @@
-﻿using Extension.Ext;
+﻿using Extension.EventSystems;
+using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
+using PatcherYRpp.FileFormats;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Scripts
 {
@@ -134,12 +137,18 @@ namespace Scripts
             }
             private set
             {
-                if(value == false)
+                if(_nanoShieldEnabled == value)
                 {
+                    return;
+                }
+                if (value == false)
+                {
+                    EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
                     _manaCounter.Resume();
                 }
                 else
                 {
+                    EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
                     _manaCounter.Pause();
                 }
                 _nanoShieldEnabled = value;
@@ -226,6 +235,45 @@ namespace Scripts
             //pSuper.Ref.Launch(targetCell, true);
             //pSuper.Ref.IsCharged = false;
         }
+
+
+
+
+        public override void OnDestroy()
+        {
+            EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+        }
+
+        public void OnGScreenRender(object sender, EventArgs args)
+        {
+            if (args is GScreenEventArgs gScreenEvtArgs)
+            {
+                if (!gScreenEvtArgs.IsLateRender)
+                {
+                    return;
+                }
+
+                if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap)
+                {
+                    if (FileSystem.TyrLoadSHPFile("NanoLinkBar.shp", out Pointer<SHPStruct> pCustomSHP))
+                    {
+                        Pointer<Surface> pSurface = Surface.Current;
+                        RectangleStruct rect = pSurface.Ref.GetRect();
+                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords() + new CoordStruct(0, 0, 400));
+                        {
+                            var frame = 97 - (int)((ShieldValue / (double)shieldMax) * 100);
+                            if (frame < 0)
+                            {
+                                frame = 0;
+                            }
+
+                            pSurface.Ref.DrawSHP(FileSystem.UNITx_PAL, pCustomSHP, frame, point, rect.GetThisPointer());
+                        }
+                    }
+                }
+            }
+        }
+
 
     }
 
