@@ -52,7 +52,10 @@ namespace Extension.Shared
             }
         }
 
-
+        public bool IsPaused()
+        {
+            return manaBarScript.paused;
+        }
 
     }
 

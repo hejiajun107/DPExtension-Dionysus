@@ -541,7 +541,7 @@ namespace Scripts
             if(!inited)
             {
                 inited = true;
-                if (Owner.OwnerObject.Ref.Owner != null)
+                if (Owner.OwnerObject.Ref.Owner.IsNotNull)
                 {
                     var techno = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
                     if(techno!=null)
