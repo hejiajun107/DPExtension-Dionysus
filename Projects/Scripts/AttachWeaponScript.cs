@@ -9,6 +9,7 @@ using PatcherYRpp.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -319,6 +320,12 @@ namespace Scripts
 
             var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
+            if(INI.Data.FindTargetCenterAdjust != null)
+            {
+                var adjust = INI.Data.FindTargetCenterAdjust;
+                coord = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(adjust[0], adjust[1], adjust[2]), INI.Data.Turret);
+            }
+
             List<Pointer<ObjectClass>> list = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), (weapon.Ref.Range + Owner.OwnerObject.Ref.Type.Ref.AirRangeBonus))
                 .Where(x => !x.Ref.Base.GetOwningHouse().Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner) && !zhongli.Contains(x.Ref.Base.GetOwningHouse().Ref.Type.Ref.Base.ID))
                 .Where(x => CheckRange(x.Convert<AbstractClass>(), weapon) && GameUtil.CanAffectTarget(weapon,x.Convert<TechnoClass>()))
@@ -446,6 +453,13 @@ namespace Scripts
                 range += Owner.OwnerObject.Ref.Type.Ref.AirRangeBonus;
             }
 
+            var coord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+            if (INI.Data.FindTargetCenterAdjust != null)
+            {
+                var adjust = INI.Data.FindTargetCenterAdjust;
+                coord = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(adjust[0], adjust[1], adjust[2]), INI.Data.Turret);
+            }
 
             if (Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(pTarget.Ref.GetCoords()) > range)
                 return false;
@@ -629,6 +643,13 @@ namespace Scripts
         [INIField(Key = "AttachWeapon.Delay")]
 
         public int Delay = 0;
+
+        /// <summary>
+        /// 自动寻敌的时候中心点偏移量
+        /// </summary>
+        [INIField(Key = "AttachWeapon.FindTargetCenterAdjust")]
+
+        public int[] FindTargetCenterAdjust = null;
 
     }
 }
