@@ -102,21 +102,28 @@ namespace DpLib.Scripts.China
             }
 
 
+            var center = new CoordStruct(Owner.OwnerObject.Ref.SourceCoords.X + (Owner.OwnerObject.Ref.TargetCoords.X - Owner.OwnerObject.Ref.SourceCoords.X) / 3, Owner.OwnerObject.Ref.SourceCoords.Y  + (Owner.OwnerObject.Ref.TargetCoords.Y - Owner.OwnerObject.Ref.SourceCoords.Y) / 3, Owner.OwnerObject.Ref.SourceCoords.Z + (Owner.OwnerObject.Ref.TargetCoords.Z - Owner.OwnerObject.Ref.SourceCoords.Z) / 3) + new CoordStruct(MathEx.Random.Next(-256, 256), MathEx.Random.Next(-256, 256), MathEx.Random.Next(-50, 50));
+
             if (ammoType == 1)
             {
-				Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(Owner.OwnerObject.Ref.SourceCoords, Owner.OwnerObject.Ref.TargetCoords, new ColorStruct(255, 0, 0), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 1);
-				var pb = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GATPFlameAE"), 100, true);
+
+                YRMemory.Create<LaserDrawClass>(Owner.OwnerObject.Ref.SourceCoords, center, new ColorStruct(255, 100, 100), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 2);
+                YRMemory.Create<LaserDrawClass>(center, Owner.OwnerObject.Ref.TargetCoords, new ColorStruct(255, 100, 100), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 2);
+
+                var pb = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GATPFlameAE"), 100, true);
 				pb.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 			}
 			else if (ammoType == 2)
             {
-				Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(Owner.OwnerObject.Ref.SourceCoords, Owner.OwnerObject.Ref.TargetCoords, new ColorStruct(0, 0, 255), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 1);
-				var pb = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GATPBoltAE"), 100, true);
+                YRMemory.Create<LaserDrawClass>(Owner.OwnerObject.Ref.SourceCoords, center, new ColorStruct(0, 255, 255), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 2);
+                YRMemory.Create<LaserDrawClass>(center, Owner.OwnerObject.Ref.TargetCoords, new ColorStruct(0, 255, 255), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 2);
+                var pb = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject.Ref.Owner, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GATPBoltAE"), 100, true);
 				pb.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 			}
 			else
             {
-				Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(Owner.OwnerObject.Ref.SourceCoords, Owner.OwnerObject.Ref.TargetCoords, new ColorStruct(200, 200, 160), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 1);
+                YRMemory.Create<LaserDrawClass>(Owner.OwnerObject.Ref.SourceCoords, center, new ColorStruct(200, 200, 160), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 1);
+                YRMemory.Create<LaserDrawClass>(center, Owner.OwnerObject.Ref.TargetCoords, new ColorStruct(200, 200, 160), new ColorStruct(0, 0, 0), new ColorStruct(0, 0, 0), 1);
 			}
 
 

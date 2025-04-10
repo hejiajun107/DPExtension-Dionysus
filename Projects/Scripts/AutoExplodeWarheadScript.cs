@@ -43,8 +43,12 @@ namespace Scripts
 
             if (Owner.OwnerObject.Ref.Base.IsAlive && Owner.OwnerObject.Ref.Base.IsOnMap && Owner.OwnerObject.Ref.Base.InLimbo == false)
             {
-                Pointer<BulletClass> pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find(warhead), 100, false);
-                pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                var wh = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find(warhead);
+                if (wh.IsNotNull)
+                {
+                    Pointer<BulletClass> pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, wh, 100, false);
+                    pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                }
             }
         }
     }
