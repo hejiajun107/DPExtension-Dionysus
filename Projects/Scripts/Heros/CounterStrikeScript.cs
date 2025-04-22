@@ -1,8 +1,11 @@
-﻿using Extension.Ext;
+﻿using Extension.Coroutines;
+using Extension.Ext;
 using Extension.Script;
 using Extension.Shared;
 using PatcherYRpp;
+using Scripts;
 using System;
+using System.Collections;
 
 namespace DpLib.Scripts.Heros
 {
@@ -14,7 +17,7 @@ namespace DpLib.Scripts.Heros
     {
         public CounterStrikeScript(TechnoExt owner) : base(owner)
         {
-            _manaCounter = new ManaCounter(owner);
+            _manaCounter = new ManaCounter(owner,16);
         }
 
 
@@ -39,7 +42,7 @@ namespace DpLib.Scripts.Heros
 
         static Pointer<SuperWeaponTypeClass> airStrike => SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("A5AirstrikeSpecial");
 
-        private Pointer<AnimTypeClass> pblood => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("FKBLOOD");
+        //private Pointer<AnimTypeClass> pblood => AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("FKBLOOD");
 
 
         private int maxHealth = 650;
@@ -67,44 +70,61 @@ namespace DpLib.Scripts.Heros
 
         Random random = new Random(130522);
 
-        private int healthCheckRof = 5;
-        private int animCheckRof = 150;
+        //private int healthCheckRof = 5;
+        //private int animCheckRof = 150;
 
         public override void OnUpdate()
         {
-            if (healthCheckRof-- <= 0)
+            //if (healthCheckRof-- <= 0)
+            //{
+            //    healthCheckRof = 5;
+            //    var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
+            //    var health = Owner.OwnerObject.Ref.Base.Health;
+            //    if (health <= strength * 0.3)
+            //    {
+            //        if(_manaCounter.Cost(5))
+            //        {
+            //            if (health > strength * 0.2)
+            //            {
+            //                Owner.OwnerRef.Base.Health += 10;
+            //            }
+            //            else
+            //            {
+            //                Owner.OwnerRef.Base.Health += 20;
+            //            }
+            //        }
+
+            //    }
+            //}
+
+            //if (animCheckRof-- <= 0)
+            //{
+            //    animCheckRof = 150;
+            //    var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
+            //    var health = Owner.OwnerObject.Ref.Base.Health;
+            //    if (health <= strength * 0.35)
+            //    {
+            //        var anim = YRMemory.Create<AnimClass>(pblood, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            //        anim.Ref.SetOwnerObject(Owner.OwnerObject.Convert<ObjectClass>());
+            //    }
+            //}
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Unload)
             {
-                healthCheckRof = 5;
-                var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
-                var health = Owner.OwnerObject.Ref.Base.Health;
-                if (health <= strength * 0.3)
+                mission.Ref.ForceMission(Mission.Stop);
+
+                if (_manaCounter.Cost(100))
                 {
-                    if(_manaCounter.Cost(5))
+                    //YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                    if(Owner.GameObject.GetComponent<ExtraUnitMasterScript>() == null)
                     {
-                        if (health > strength * 0.2)
-                        {
-                            Owner.OwnerRef.Base.Health += 10;
-                        }
-                        else
-                        {
-                            Owner.OwnerRef.Base.Health += 20;
-                        }
+                        var eu = new ExtraUnitMasterScript(Owner, new ExtraUnitSetting() { ExtraUnitDefinations = new string[] { "CXUNIT1", "CXUNIT2", "CXUNIT3", "CXUNIT4" } });
+                        eu.AttachToComponent(Owner.GameObject);
+                        Owner.GameObject.StartCoroutine(RemoveExtraUnit());
                     }
-                   
                 }
             }
 
-            if (animCheckRof-- <= 0)
-            {
-                animCheckRof = 150;
-                var strength = Owner.OwnerObject.Ref.Type.Ref.Base.Strength;
-                var health = Owner.OwnerObject.Ref.Base.Health;
-                if (health <= strength * 0.35)
-                {
-                    var anim = YRMemory.Create<AnimClass>(pblood, Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                    anim.Ref.SetOwnerObject(Owner.OwnerObject.Convert<ObjectClass>());
-                }
-            }
 
             if (!isActived && coolDown > 0)
             {
@@ -178,6 +198,17 @@ namespace DpLib.Scripts.Heros
             }
         }
 
+        IEnumerator RemoveExtraUnit()
+        {
+            var frame = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 500 : 400;
+            yield return new WaitForFrames(frame);
+            var eu = GameObject.GetComponent<ExtraUnitMasterScript>();
+            if (eu != null)
+            {
+                eu.Clear();
+                eu.DetachFromParent();
+            }
+        }
 
         private void CallAirStrike(CoordStruct target, int count = 1)
         {

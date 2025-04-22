@@ -102,7 +102,9 @@ namespace DpLib.Scripts.China
             }
 
 
-            var center = new CoordStruct(Owner.OwnerObject.Ref.SourceCoords.X + (Owner.OwnerObject.Ref.TargetCoords.X - Owner.OwnerObject.Ref.SourceCoords.X) / 3, Owner.OwnerObject.Ref.SourceCoords.Y  + (Owner.OwnerObject.Ref.TargetCoords.Y - Owner.OwnerObject.Ref.SourceCoords.Y) / 3, Owner.OwnerObject.Ref.SourceCoords.Z + (Owner.OwnerObject.Ref.TargetCoords.Z - Owner.OwnerObject.Ref.SourceCoords.Z) / 3) + new CoordStruct(MathEx.Random.Next(-256, 256), MathEx.Random.Next(-256, 256), MathEx.Random.Next(-50, 50));
+			//var center = new CoordStruct(Owner.OwnerObject.Ref.SourceCoords.X + (Owner.OwnerObject.Ref.TargetCoords.X - Owner.OwnerObject.Ref.SourceCoords.X) / 3, Owner.OwnerObject.Ref.SourceCoords.Y  + (Owner.OwnerObject.Ref.TargetCoords.Y - Owner.OwnerObject.Ref.SourceCoords.Y) / 3, Owner.OwnerObject.Ref.SourceCoords.Z + (Owner.OwnerObject.Ref.TargetCoords.Z - Owner.OwnerObject.Ref.SourceCoords.Z) / 3) + new CoordStruct(MathEx.Random.Next(-256, 256), MathEx.Random.Next(-256, 256), MathEx.Random.Next(-50, 50));
+
+			var center = Owner.OwnerObject.Ref.TargetCoords + new CoordStruct(MathEx.Random.Next(-256, 256), MathEx.Random.Next(-256, 256), MathEx.Random.Next(-50, 50));
 
             if (ammoType == 1)
             {

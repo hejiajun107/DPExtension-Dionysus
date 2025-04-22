@@ -188,6 +188,18 @@ namespace Scripts
             }
         }
 
+        public void Clear()
+        {
+            foreach (var salve in salveTechnos)
+            {
+                if (!salve.IsNullOrExpired())
+                {
+                    salve.OwnerObject.Ref.Base.Remove();
+                    salve.OwnerObject.Ref.Base.UnInit();
+                }
+            }
+        }
+
     }
 
     [ScriptAlias(nameof(ExtraUnitSalveScript))]
