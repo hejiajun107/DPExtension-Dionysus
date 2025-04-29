@@ -121,6 +121,7 @@ namespace DpLib.Scripts.Heros
                         var eu = new ExtraUnitMasterScript(Owner, new ExtraUnitSetting() { ExtraUnitDefinations = new string[] { "CXUNIT1", "CXUNIT2", "CXUNIT3", "CXUNIT4" } });
                         eu.AttachToComponent(Owner.GameObject);
                         Owner.GameObject.StartCoroutine(RemoveExtraUnit());
+                        YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("CXDUST"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     }
                 }
             }

@@ -99,7 +99,7 @@ namespace Scripts
             //var count = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 4 : 2;
             //for (int i = 0; i < count; i++)
             //{
-                var ntarget = new CoordStruct(center.X + random.Next(-500, 500), center.Y + random.Next(-500, 500), 3000);
+                var ntarget = new CoordStruct(center.X + random.Next(-500, 500), center.Y + random.Next(-500, 500), 3500);
                 var ntargetGround = new CoordStruct(ntarget.X, ntarget.Y, center.Z);
 
                 if (MapClass.Instance.TryGetCellAt(ntargetGround, out Pointer<CellClass> pCell))
