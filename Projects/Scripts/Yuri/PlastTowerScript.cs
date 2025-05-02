@@ -22,6 +22,7 @@ namespace Scripts.Yuri
         public int clearDelay = 100;
 
         private static Pointer<WarheadTypeClass> pWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("PlastWaveWh");
+        private static Pointer<WarheadTypeClass> pWhE => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("PlastWaveWhE");
 
         public override void OnUpdate()
         {
@@ -51,7 +52,7 @@ namespace Scripts.Yuri
          
             clearDelay = 100;
             var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
-            var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 5 + level, pWh, 100, false);
+            var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 5 + level, Owner.OwnerObject.Ref.Veterancy.IsElite() ? pWhE : pWh, 100, false);
             pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
             level++;
             if (level > 30)
@@ -95,7 +96,7 @@ namespace Scripts.Yuri
             if (Owner.OwnerObject.Ref.Type.Ref.ImmuneToPsionics)
                 damage = (int)(damage * 0.3);
 
-             var inviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+            var inviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
             var pBullet = inviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), attacker.OwnerObject, damage, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("PlastFBWh"), 100, true);
             pBullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
         }

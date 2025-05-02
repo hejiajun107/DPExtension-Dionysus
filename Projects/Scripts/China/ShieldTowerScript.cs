@@ -143,20 +143,62 @@ namespace Scripts.China
             }
         }
 
-        public int CosumeShield(int damage)
+        private int experience = 0;
+
+        public void GiveExp(int exp)
+        {
+            if (exp <= 10000)
+            {
+                experience += exp;
+            }
+
+            if (exp >= 5000 && exp < 10000)
+            {
+                if (!Owner.OwnerObject.Ref.Veterancy.IsRookie())
+                {
+                    Owner.OwnerObject.Ref.Veterancy.SetRookie();
+                }
+            }
+            else if (exp >= 10000)
+            {
+                if (!Owner.OwnerObject.Ref.Veterancy.IsElite())
+                {
+                    Owner.OwnerObject.Ref.Veterancy.SetElite();
+                }
+            }
+        }
+
+        public int CosumeShield(int damage,bool giveExp)
         {
             if (!CanWork())
-                return damage; 
+                return damage;
 
-            if (current > damage)
+            double k = 1;
+            int exp = 0;
+
+            if (Owner.OwnerObject.Ref.Veterancy.IsRookie())
             {
-                current -= damage;
+                k = 0.9;
+            }else if (Owner.OwnerObject.Ref.Veterancy.IsElite())
+            {
+                k = 0.7;
+            }
+
+            if (current > damage * k)
+            {
+                exp = damage;
+                current -= (int)(damage * k);
                 displayTimer = 50;
                 damage = 0;
             }
             else
             {
-                damage = damage - current;
+                exp = (int)(current / k);
+                damage = damage - (int)(current/k);
+                if (damage < 0)
+                {
+                    damage = 0;
+                }
                 current = 0;
             }
 
@@ -267,7 +309,16 @@ namespace Scripts.China
 
             var rate = Math.Round((double)absDamage / (double)trueDamage, 2);
 
-            var damageLeft = component.CosumeShield(trueDamage);
+            var giveExp = false;
+
+            if (pAttackingHouse.IsNotNull)
+            {
+                if(!Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(pAttackingHouse))
+                {
+                    giveExp = true;
+                }
+            }
+            var damageLeft = component.CosumeShield(trueDamage,true);
 
             if(damageLeft==0)
             {

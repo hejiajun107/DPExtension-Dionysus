@@ -25,12 +25,16 @@ namespace DpLib.Scripts.China
         {
             var target = pTarget.Ref.GetCoords();
             var count = IsMkIIUpdated ? 5 : 3;
+
+            var damage = Owner.OwnerObject.Ref.Veterancy.IsElite()?  82 : 55;
+            damage = (int)Math.Floor(damage * Owner.OwnerObject.Ref.Owner.Ref.FirepowerMultiplier);
+
             for (var i = 0; i < count; i++)
             {
                 var rdlocaton = target + new CoordStruct(random.Next(-700, 700), random.Next(-700, 700), 0);
                 if (MapClass.Instance.TryGetCellAt(target, out Pointer<CellClass> cell))
                 {
-                    Pointer<BulletClass> pBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 55, warhead, IsMkIIUpdated ? 95 + i : 90, true);
+                    Pointer<BulletClass> pBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, warhead, IsMkIIUpdated ? 95 + i : 90, true);
                     pBullet.Ref.SetTarget(cell.Convert<AbstractClass>());
                     pBullet.Ref.MoveTo(rdlocaton + new CoordStruct(0, 0, 100), new BulletVelocity(0, 0, 0));
                 }

@@ -24,6 +24,8 @@ namespace Scripts.Soviet
         private int rof = 100;
         private int erof = 30;
 
+        private int takedDamage = 0;
+
         private static List<CoordStruct> coordOffets = new List<CoordStruct>()
         {
             new CoordStruct(256,256,30),
@@ -42,6 +44,21 @@ namespace Scripts.Soviet
         public override void OnUpdate()
         {
             CreateAnim();
+
+            if(takedDamage >=5000 && takedDamage < 10000)
+            {
+                if (!Owner.OwnerObject.Ref.Veterancy.IsRookie())
+                {
+                    Owner.OwnerObject.Ref.Veterancy.SetRookie();
+                }
+            }
+            else if (takedDamage >= 10000)
+            {
+                if (!Owner.OwnerObject.Ref.Veterancy.IsElite())
+                {
+                    Owner.OwnerObject.Ref.Veterancy.SetElite();
+                }
+            }
 
             if (!CanWork())
             {
@@ -145,6 +162,23 @@ namespace Scripts.Soviet
 
             if (trueDamage > 1)
             {
+                if (takedDamage < 10000)
+                {
+                    if(pAttackingHouse.IsNotNull)
+                    {
+                        if (!Owner.OwnerObject.Ref.Owner.Ref.IsAlliedWith(pAttackingHouse))
+                        {
+                            takedDamage += trueDamage;
+                        }
+                    }
+                }
+
+
+                if (Owner.OwnerObject.Ref.Veterancy.IsElite())
+                {
+                    pDamage.Ref = (int)(pDamage.Ref * 0.6);
+                }
+
                 if (DistanceFromEpicenter > Game.CellSize)
                 {
                     pDamage.Ref =(int)(pDamage.Ref * 0.2);

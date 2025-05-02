@@ -58,8 +58,18 @@ namespace DpLib.Scripts.China
 
                 //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, usedColor, usedColor, usedColor, 10);
                 //pLaser.Ref.IsHouseColor = false;
+                var damage = 15;
+                if (Owner.OwnerObject.Ref.Owner.IsNotNull)
+                {
+                    if (Owner.OwnerObject.Ref.Owner.Ref.Veterancy.IsElite())
+                    {
+                        damage = 23;
+                    }
+                }
 
-                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 15, warhead, 100, true);
+                damage = (int)Math.Floor(damage * Owner.OwnerObject.Ref.Owner.Ref.FirepowerMultiplier);
+
+                Pointer <BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, damage, warhead, 100, true);
                 pBullet.Ref.Base.SetLocation(target);
                 pTargetRef.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, rayWeapon, start);
                 pBullet.Ref.DetonateAndUnInit(target);

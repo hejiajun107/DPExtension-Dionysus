@@ -18,11 +18,18 @@ namespace Scripts.AE
         }
 
         private static Pointer<WeaponTypeClass> oWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WINDERBOLT");
+        private static Pointer<WeaponTypeClass> oEWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WINDERBOLTE");
+
+
         private static Pointer<WeaponTypeClass> lWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WaveLargeShot");
         private static Pointer<WeaponTypeClass> sWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WaveSmallShot");
         private static Pointer<WeaponTypeClass> aWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WaveAirShot");
 
 
+
+        private static Pointer<WeaponTypeClass> lEWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WaveLargeShotE");
+        private static Pointer<WeaponTypeClass> sEWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WaveSmallShotE");
+        private static Pointer<WeaponTypeClass> aEWeapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("WaveAirShotE");
 
 
         TechnoExt attacker;
@@ -53,10 +60,19 @@ namespace Scripts.AE
         {
             if (!attacker.IsNullOrExpired())
             {
-
-                attacker.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = isAir ? aWeapon : (large ? lWeapon : sWeapon);
-                attacker.OwnerRef.Fire_NotVirtual(Owner.OwnerObject.Convert<AbstractClass>(), 0);
-                attacker.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = oWeapon;
+                if(attacker.OwnerObject.Ref.Veterancy.IsElite())
+                {
+                    attacker.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = isAir ? aEWeapon : (large ? lEWeapon : sEWeapon);
+                    attacker.OwnerRef.Fire_NotVirtual(Owner.OwnerObject.Convert<AbstractClass>(), 0);
+                    attacker.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = oEWeapon;
+                }
+                else
+                {
+                    attacker.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = isAir ? aWeapon : (large ? lWeapon : sWeapon);
+                    attacker.OwnerRef.Fire_NotVirtual(Owner.OwnerObject.Convert<AbstractClass>(), 0);
+                    attacker.OwnerObject.Ref.GetWeapon(0).Ref.WeaponType = oWeapon;
+                }
+           
             }
         }
     }
