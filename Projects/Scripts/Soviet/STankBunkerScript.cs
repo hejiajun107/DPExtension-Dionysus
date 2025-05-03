@@ -45,14 +45,14 @@ namespace Scripts.Soviet
         {
             CreateAnim();
 
-            if(takedDamage >=5000 && takedDamage < 10000)
+            if(takedDamage >=4000 && takedDamage < 8000)
             {
                 if (!Owner.OwnerObject.Ref.Veterancy.IsRookie())
                 {
                     Owner.OwnerObject.Ref.Veterancy.SetRookie();
                 }
             }
-            else if (takedDamage >= 10000)
+            else if (takedDamage >= 8000)
             {
                 if (!Owner.OwnerObject.Ref.Veterancy.IsElite())
                 {
@@ -162,7 +162,7 @@ namespace Scripts.Soviet
 
             if (trueDamage > 1)
             {
-                if (takedDamage < 10000)
+                if (takedDamage < 8000)
                 {
                     if(pAttackingHouse.IsNotNull)
                     {

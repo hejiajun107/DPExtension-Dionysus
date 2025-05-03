@@ -147,19 +147,19 @@ namespace Scripts.China
 
         public void GiveExp(int exp)
         {
-            if (exp <= 10000)
+            if (experience <= 10000)
             {
                 experience += exp;
             }
 
-            if (exp >= 5000 && exp < 10000)
+            if (experience >= 5000 && experience < 10000)
             {
                 if (!Owner.OwnerObject.Ref.Veterancy.IsRookie())
                 {
                     Owner.OwnerObject.Ref.Veterancy.SetRookie();
                 }
             }
-            else if (exp >= 10000)
+            else if (experience >= 10000)
             {
                 if (!Owner.OwnerObject.Ref.Veterancy.IsElite())
                 {
@@ -200,6 +200,11 @@ namespace Scripts.China
                     damage = 0;
                 }
                 current = 0;
+            }
+
+            if (giveExp)
+            {
+                GiveExp(exp);
             }
 
             if (current <= 0)
@@ -318,7 +323,7 @@ namespace Scripts.China
                     giveExp = true;
                 }
             }
-            var damageLeft = component.CosumeShield(trueDamage,true);
+            var damageLeft = component.CosumeShield(trueDamage,giveExp);
 
             if(damageLeft==0)
             {

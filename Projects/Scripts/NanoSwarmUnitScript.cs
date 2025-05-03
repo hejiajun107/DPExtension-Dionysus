@@ -350,7 +350,6 @@ namespace DpLib.Scripts
                     //Inviso的抛射体在于圆相交处爆炸
                     if (pBullet.Ref.Type.Ref.Inviso == true)
                     {
-                        Logger.Log("逮捕Invisible" + Game.CurrentFrame);
                         var ownerLocation = source;//pBullet.Ref.Owner.Ref.Base.Base.GetCoords();
                         //找最近的判定区爆炸（此处如果用公式计算交点更好，但是太麻烦了所以没写）
                         var expTarget = coordList.OrderBy(coord => coord.DistanceFrom(ownerLocation)).FirstOrDefault();

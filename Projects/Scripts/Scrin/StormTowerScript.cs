@@ -1,6 +1,7 @@
 ﻿using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
+using Scripts;
 using System;
 using System.Collections.Generic;
 
@@ -48,6 +49,9 @@ namespace DpLib.Scripts.Scrin
                     var putResult = techno.Ref.Base.Put(position, Direction.N);
 
                     var ext = TechnoExt.ExtMap.Find(techno);
+
+                    ext.GameObject.CreateScriptComponent(nameof(StormTowerBallScript), nameof(StormTowerBallScript), ext, Owner);
+
                     technos.Add(ext);
                 }
 
@@ -110,5 +114,59 @@ namespace DpLib.Scripts.Scrin
             base.OnRemove();
         }
 
+    }
+
+    [Serializable]
+    [ScriptAlias(nameof(StormTowerBallScript))]
+    public class StormTowerBallScript : TechnoScriptable
+    {
+        public StormTowerBallScript(TechnoExt owner,TechnoExt master) : base(owner)
+        {
+            Master = master;
+        }
+
+        public TechnoExt Master;
+
+        public override void OnUpdate()
+        {
+            if (!Master.IsNullOrExpired())
+            {
+                Owner.OwnerObject.Ref.Veterancy = Master.OwnerObject.Ref.Veterancy;
+            }
+        }
+    }
+
+    [Serializable]
+    [ScriptAlias(nameof(StormBallBulletScript))]
+    public class StormBallBulletScript : BulletScriptable
+    {
+        public StormBallBulletScript(BulletExt owner) : base(owner)
+        {
+        }
+
+        private bool inited = false;
+
+        public override void OnUpdate() 
+        {
+            if (!inited)
+            {
+                inited = true;
+                if (Owner.OwnerObject.Ref.Owner.IsNotNull)
+                {
+                    var techno = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+                    if (techno != null)
+                    {
+                        var ballScript = techno.GameObject.GetComponent<StormTowerBallScript>();
+                        if (ballScript != null)
+                        {
+                            if (!ballScript.Master.IsNullOrExpired())
+                            {
+                                Owner.OwnerObject.Ref.Owner = ballScript.Master.OwnerObject;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
