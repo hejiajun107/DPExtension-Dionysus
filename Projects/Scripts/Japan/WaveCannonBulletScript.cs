@@ -39,11 +39,13 @@ namespace Scripts.Japan
                 var targets = FindIntervalPoints(location.X, location.Y, tLocation.X, tLocation.Y,256);
                 var lastPoint = targets.Count > 0 ? targets[targets.Count - 1] : null;
 
-                foreach (var target in targets)
+
+                for (var i=0;i<targets.Count();i++)
                 {
+                    var target = targets[i];
                     if (!Owner.OwnerObject.Ref.Owner.IsNull)
                     {
-                        var clocation = new CoordStruct(target.Item1, target.Item2, location.Z);
+                        var clocation = new CoordStruct(target.Item1, target.Item2, location.Z + (tLocation.Z - location.Z) / targets.Count() * i);
                         var distance = clocation.DistanceFrom(location);
                         if (distance == double.NaN)
                         {
@@ -69,7 +71,7 @@ namespace Scripts.Japan
         static List<Tuple<int, int>> FindIntervalPoints(double x1, double y1, double x2, double y2, double interval)
         {
             double d = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
-            if (d == 0) return new List<Tuple<int, int>>();
+            if (d == 0 || d<interval) return new List<Tuple<int, int>>() { Tuple.Create((int)x2, (int)y2) };
 
             double ux = (x2 - x1) / d;
             double uy = (y2 - y1) / d;
