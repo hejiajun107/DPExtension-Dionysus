@@ -1,6 +1,7 @@
 ﻿using DynamicPatcher;
 using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -24,10 +25,9 @@ namespace Scripts
         public override void OnLaunch(CellStruct cell, bool isPlayer)
         {
             var coord = CellClass.Cell2Coord(cell);
-            var technos = ObjectFinder.FindTechnosNear(coord, Game.CellSize * 6).Select(x=> x.Convert<TechnoClass>()).ToList().Where(x=>x.Ref.Owner == Owner.OwnerObject.Ref.Owner && !x.Ref.Base.InLimbo).ToList();
+            var technos = ObjectFinder.FindTechnosNear(coord, Game.CellSize * 6).Select(x=> x.Convert<TechnoClass>()).ToList().Where(x=>x.Ref.Owner == Owner.OwnerObject.Ref.Owner && !x.Ref.Base.InLimbo).OrderBy(x=>x.Ref.Base.Base.GetCoords().BigDistanceForm(coord)).ToList();
 
             var passengers = technos.Where(x => x.Ref.Base.Base.WhatAmI() == AbstractType.Infantry).Where(x => x.Ref.Type.Ref.Size <= 2).ToList();
-            Logger.Log(passengers.Count());
 
             var carriers = technos.Where(x=>!x.Ref.Base.Base.IsInAir() && x.Ref.Type.Ref.Passengers >= 0 && x.Ref.Passengers.GetTotalSize() < x.Ref.Type.Ref.Passengers).ToList()
                 .Select(x=> new PassengerCarrier()
