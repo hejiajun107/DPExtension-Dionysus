@@ -126,6 +126,7 @@
     <Compile Include="AttachAnimScript.cs" />
     <Compile Include="AttachWeaponScript.cs" />
     <Compile Include="AutoDeployScript.cs" />
+    <Compile Include="AutoEnterScript.cs" />
     <Compile Include="AutoEnterTankBunkerScript.cs" />
     <Compile Include="AutoExplodeWarheadScript.cs" />
     <Compile Include="BulletLikeRocketScript.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Japan\NanoLinkScript.cs" />
     <Compile Include="Japan\NanoRobotScript.cs" />
     <Compile Include="Japan\SakuraScript.cs" />
+    <Compile Include="Japan\ScudBulletScript.cs" />
     <Compile Include="Japan\StandToHideScript.cs" />
     <Compile Include="Japan\SunRiseFortressScript.cs" />
     <Compile Include="Japan\SuperBlackHoleBulletScript.cs" />
