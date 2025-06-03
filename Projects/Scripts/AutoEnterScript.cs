@@ -25,7 +25,7 @@ namespace Scripts
         public override void OnLaunch(CellStruct cell, bool isPlayer)
         {
             var coord = CellClass.Cell2Coord(cell);
-            var technos = ObjectFinder.FindTechnosNear(coord, Game.CellSize * 6).Select(x=> x.Convert<TechnoClass>()).ToList().Where(x=>x.Ref.Owner == Owner.OwnerObject.Ref.Owner && !x.Ref.Base.InLimbo).OrderBy(x=>x.Ref.Base.Base.GetCoords().BigDistanceForm(coord)).ToList();
+            var technos = ObjectFinder.FindTechnosNear(coord, Game.CellSize * 6).Select(x=> x.Convert<TechnoClass>()).ToList().Where(x=>x.Ref.Owner == Owner.OwnerObject.Ref.Owner && !x.Ref.Base.InLimbo).OrderBy(x=>x.Ref.Type.Ref.Base.Base.ID.ToString()).ThenBy(x=>x.Ref.Base.Base.GetCoords().BigDistanceForm(coord)).ToList();
 
             var passengers = technos.Where(x => x.Ref.Base.Base.WhatAmI() == AbstractType.Infantry).Where(x => x.Ref.Type.Ref.Size <= 2).ToList();
 
@@ -36,10 +36,9 @@ namespace Scripts
                     Max = x.Ref.Type.Ref.Passengers,
                     Limit = (int)x.Ref.Type.Ref.SizeLimit,
                     TechnoExt = TechnoExt.ExtMap.Find(x)
+
                 }).ToList()
             ;
-
-            Logger.Log("车：" + carriers.Count());
 
             foreach(var passenger in passengers)
             {
@@ -47,7 +46,7 @@ namespace Scripts
                 if (mission.Ref.CurrentMission != Mission.Guard)
                     continue;
 
-                var carrier = carriers.Where(x => x.Current + passenger.Ref.Type.Ref.Size <= x.Max).FirstOrDefault();
+                var carrier = carriers.Where(x => x.Current + passenger.Ref.Type.Ref.Size <= x.Max && passenger.Ref.Type.Ref.SizeLimit <= x.Limit).OrderBy(x=>x.Current).FirstOrDefault();
 
                 if (carrier is null)
                     continue;
