@@ -32,21 +32,22 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            var mission = Owner.OwnerObject.Convert<MissionClass>();
-            if(mission.Ref.CurrentMission != Mission.Guard)
-            {
-                var technos = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), 3 * Game.CellSize).Select(x=>x.Convert<TechnoClass>()).ToList();
-                var car = technos.Where(x => x.Ref.Owner == Owner.OwnerObject.Ref.Owner && x.Ref.Type.Ref.Base.Base.ID == "APYH" && x.Ref.Passengers.GetTotalSize() < 3).FirstOrDefault();
-                if (car.IsNotNull)
-                {
+            Logger.Log("Bullet" + BulletClass.Array.Count());
+            //var mission = Owner.OwnerObject.Convert<MissionClass>();
+            //if(mission.Ref.CurrentMission != Mission.Guard)
+            //{
+            //    var technos = ObjectFinder.FindTechnosNear(Owner.OwnerObject.Ref.Base.Base.GetCoords(), 3 * Game.CellSize).Select(x=>x.Convert<TechnoClass>()).ToList();
+            //    var car = technos.Where(x => x.Ref.Owner == Owner.OwnerObject.Ref.Owner && x.Ref.Type.Ref.Base.Base.ID == "APYH" && x.Ref.Passengers.GetTotalSize() < 3).FirstOrDefault();
+            //    if (car.IsNotNull)
+            //    {
 
-                    mission.Ref.ForceMission(Mission.Enter);
-                    mission.Ref.Mission_Enter();
-                    Owner.OwnerObject.Ref.SetFocus(car.Convert<AbstractClass>());
+            //        mission.Ref.ForceMission(Mission.Enter);
+            //        mission.Ref.Mission_Enter();
+            //        Owner.OwnerObject.Ref.SetFocus(car.Convert<AbstractClass>());
 
-                    //Owner.OwnerObject.Ref.SetDestination()
-                }
-            }
+            //        //Owner.OwnerObject.Ref.SetDestination()
+            //    }
+            //}
 
         }
 
