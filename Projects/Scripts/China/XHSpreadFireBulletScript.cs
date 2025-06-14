@@ -329,7 +329,7 @@ namespace DpLib.Scripts.China
                     if (Owner.OwnerObject.Ref.Owner.IsNotNull)
                     {
                         var xhTechno = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
-                        if (xhTechno.IsNullOrExpired())
+                        if (!xhTechno.IsNullOrExpired())
                         {
                             var xhScript = xhTechno.GameObject.GetComponent<XHWarShipScript>();
                             if (xhScript != null) {
