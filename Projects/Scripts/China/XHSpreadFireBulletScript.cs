@@ -3,6 +3,7 @@ using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
+using Scripts.China;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -324,6 +325,29 @@ namespace DpLib.Scripts.China
                     {
                         totalLevel = 20;
                     }
+
+                    if (Owner.OwnerObject.Ref.Owner.IsNotNull)
+                    {
+                        var xhTechno = TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Owner);
+                        if (xhTechno.IsNullOrExpired())
+                        {
+                            var xhScript = xhTechno.GameObject.GetComponent<XHWarShipScript>();
+                            if (xhScript != null) {
+                                var soundLevel = 1;
+                                if(totalLevel>=9 && totalLevel <= 19)
+                                {
+                                    soundLevel = 2;
+                                }else if (totalLevel >= 20)
+                                {
+                                    soundLevel = 3;
+                                }
+                                xhScript.PlayLevelSound(soundLevel);
+                            }
+                            
+                        }
+                    }
+
+
                 }
             }
 

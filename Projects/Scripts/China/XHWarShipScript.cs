@@ -3,6 +3,7 @@ using Extension.EventSystems;
 using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.Script;
+using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
@@ -20,8 +21,11 @@ namespace Scripts.China
     {
         public XHWarShipScript(TechnoExt owner) : base(owner)
         {
-           
+            _voc = new VocExtensionComponent(owner);
         }
+
+        private VocExtensionComponent _voc;
+
 
         private bool InIonStorm;
         private int Delay = 0;
@@ -43,6 +47,7 @@ namespace Scripts.China
 
         public override void Awake()
         {
+            _voc.Awake();
             EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
         }
 
@@ -77,12 +82,20 @@ namespace Scripts.China
                         Game.CurrentSWType = swType.Ref.ArrayIndex;
                     }
                 }
+                else
+                {
+                    _voc.PlaySpecialVoice(4, true);
+                }
             }
 
             if (charge < chargeMax)
             {
                 charge++;
+                if (charge >= chargeMax) {
+                    _voc.PlaySpecialVoice(5, true);
+                }
             }
+            
 
             //UpdateAnim();
         }
@@ -95,6 +108,13 @@ namespace Scripts.China
             }
         }
 
+        public void PlayLevelSound(int level)
+        {
+            if(level>=1&& level <= 3)
+            {
+                _voc.PlaySpecialVoice(level, true);
+            }
+        }
 
         
         public void OnGScreenRender(object sender, EventArgs args)
