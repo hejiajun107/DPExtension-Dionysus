@@ -135,6 +135,7 @@
     <Compile Include="China\AttackPlaneBulletScript.cs" />
     <Compile Include="China\CannonBulletScript.cs" />
     <Compile Include="China\CNSniperScript.cs" />
+    <Compile Include="China\CNSpyScript.cs" />
     <Compile Include="China\DamageAsFireScript.cs" />
     <Compile Include="China\DF41BulletScript.cs" />
     <Compile Include="China\DonfFengHaoDangScirpt.cs" />
