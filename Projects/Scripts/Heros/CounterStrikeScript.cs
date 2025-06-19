@@ -18,6 +18,8 @@ namespace DpLib.Scripts.Heros
         public CounterStrikeScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(owner,16);
+            _voc = new VocExtensionComponent(owner);
+            _vwatcher = new VertenceyWatcher(owner, _voc);
         }
 
 
@@ -32,6 +34,8 @@ namespace DpLib.Scripts.Heros
         static ColorStruct outerSpread = new ColorStruct(34, 177, 76);
 
         private ManaCounter _manaCounter;
+        private VocExtensionComponent _voc;
+        private VertenceyWatcher _vwatcher;
 
         private bool isActived = false;
 
@@ -73,8 +77,15 @@ namespace DpLib.Scripts.Heros
         //private int healthCheckRof = 5;
         //private int animCheckRof = 150;
 
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
+
         public override void OnUpdate()
         {
+            _vwatcher.Update();
             //if (healthCheckRof-- <= 0)
             //{
             //    healthCheckRof = 5;
@@ -118,11 +129,16 @@ namespace DpLib.Scripts.Heros
                     //YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ArcherSpAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     if(Owner.GameObject.GetComponent<ExtraUnitMasterScript>() == null)
                     {
+                        _voc.PlaySpecialVoice(2, true);
                         var eu = new ExtraUnitMasterScript(Owner, new ExtraUnitSetting() { ExtraUnitDefinations = new string[] { "CXUNIT1", "CXUNIT2", "CXUNIT3", "CXUNIT4" } });
                         eu.AttachToComponent(Owner.GameObject);
                         Owner.GameObject.StartCoroutine(RemoveExtraUnit());
                         YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("CXDUST"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     }
+                }
+                else
+                {
+                    _voc.PlaySpecialVoice(3, true);
                 }
             }
 
@@ -181,6 +197,7 @@ namespace DpLib.Scripts.Heros
                         //{
                         //    Init();
                         //}
+                        _voc.PlaySpecialVoice(1, true);
                         CallAirStrike(target, Owner.OwnerObject.Ref.Veterancy.IsElite() ? 2 : 1);
                         Init();
                         ResetCoolDown();

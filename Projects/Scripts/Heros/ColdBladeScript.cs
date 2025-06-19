@@ -19,11 +19,12 @@ namespace DpLib.Scripts.Heros
         {
             _manaCounter = new ManaCounter(owner,10);
             _voc = new VocExtensionComponent(owner);
+            _vwatcher = new VertenceyWatcher(owner, _voc);
         }
 
         private ManaCounter _manaCounter;
-
         private VocExtensionComponent _voc;
+        private VertenceyWatcher _vwatcher;
 
 
         private bool isActived = false;
@@ -60,6 +61,7 @@ namespace DpLib.Scripts.Heros
 
         public override void OnUpdate()
         {
+            _vwatcher.Update();
             var mission = Owner.OwnerObject.Convert<MissionClass>();
             if (mission.Ref.CurrentMission == Mission.Unload)
             {
