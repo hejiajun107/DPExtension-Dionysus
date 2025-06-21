@@ -69,13 +69,13 @@ namespace DpLib.Scripts.Heros
 
             if (weaponIndex == 0)
             {
-                var blastCount = 6;
-                var blastDamage = 25;
+                var blastCount = 3;
+                var blastDamage = 20;
                 var targetLocation = pTarget.Ref.GetCoords();
                 if (Owner.OwnerObject.Ref.Veterancy.IsElite())
                 {
                     blastCount = 10;
-                    blastDamage = 40;
+                    blastDamage = 35;
                 }
 
                 for (var i = 0; i < blastCount; i++)
@@ -88,6 +88,31 @@ namespace DpLib.Scripts.Heros
                         bullet.Ref.SetTarget(pcell.Convert<AbstractClass>());
                     }
                 }
+
+
+                var rd = random.Next(0, 3);
+                var weapon = GetWeapon(rd);
+
+                var mult = 1.0d;
+
+                var target = pTarget.Ref.GetCoords();
+                if (MapClass.Instance.TryGetCellAt(target, out var pCell))
+                {
+                    if (Owner.OwnerObject.Ref.Veterancy.IsElite())
+                    {
+                        mult = 1.2d;
+                    }
+
+                    var cellTarget = pCell.Convert<AbstractClass>();
+                    var startLocation = target + new CoordStruct(0, 0, 3000);
+
+                    var anim = YRMemory.Create<AnimClass>(weapon.Ref.Anim.Get(0), startLocation);
+
+                    var bullet = weapon.Ref.Projectile.Ref.CreateBullet(cellTarget, Owner.OwnerObject, (int)(weapon.Ref.Damage * mult * 0.5), weapon.Ref.Warhead, weapon.Ref.Speed, false);
+                    bullet.Ref.MoveTo(startLocation, new BulletVelocity(0, 0, 0));
+                    bullet.Ref.SetTarget(cellTarget);
+                }
+
             }
             if (weaponIndex == 1)
             {
@@ -108,7 +133,7 @@ namespace DpLib.Scripts.Heros
             }
             else
             {
-                costResult = _manaCounter.Cost(5);
+                costResult = _manaCounter.Cost(4);
             }
 
             if (costResult)
