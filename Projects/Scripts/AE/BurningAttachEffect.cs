@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using System;
@@ -23,7 +24,15 @@ namespace Scripts.AE
 
         private int damageDelay = 20;
 
-        private const int BurningNeedCount = 8;
+        private const int BurningNeedCount = 40;
+
+        private static Dictionary<string, int> BurningLevel = new Dictionary<string, int>()
+        {
+            { "HWDYHWH" , 5 },
+            { "FireGunFlame" , 4 },
+            { "J20FireExpWH", 41 }
+
+        };
 
         public override void OnUpdate()
         {
@@ -55,12 +64,25 @@ namespace Scripts.AE
 
         }
 
+        public override void OnAttachEffectPut(Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
+        {
+            if (Count < BurningNeedCount * 3)
+            {
+                Count += BurningLevel.ContainsKey(pWH.Ref.Base.ID) ? BurningLevel[pWH.Ref.Base.ID] : 1;
+            }
+
+            if (pAttacker.CastToTechno(out var pTechno))
+            {
+                Attacker = TechnoExt.ExtMap.Find(pTechno);
+            }
+        }
+
         public override void OnAttachEffectRecieveNew(int duration, Pointer<int> pDamage, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, Pointer<HouseClass> pAttackingHouse)
         {
             Duration = duration;
             if (Count < BurningNeedCount * 3)
             {
-                Count++;
+                Count += BurningLevel.ContainsKey(pWH.Ref.Base.ID) ? BurningLevel[pWH.Ref.Base.ID] : 1;
             }
             
             if(pAttacker.CastToTechno(out var pTechno))
