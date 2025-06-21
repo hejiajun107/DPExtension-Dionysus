@@ -64,7 +64,7 @@ namespace Scripts.AE
                     if(pAttacker.CastToTechno(out var attacker))
                     {
                         var wh = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("J20FireExpWH");
-                        var bullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisble").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), attacker, 80, wh, 100, false);
+                        var bullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisble").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), attacker, (int)(50 * attacker.Ref.FirepowerMultiplier), wh, 100, false);
                         bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     }
                 }
