@@ -89,6 +89,7 @@
     <Compile Include="AdditionWeaponBulletScript.cs" />
     <Compile Include="AE\AngryEmperorScript.cs" />
     <Compile Include="AE\BlackHoleAttachEffectScript.cs" />
+    <Compile Include="AE\BurningAttachEffect.cs" />
     <Compile Include="AE\DamageDeepenAttachEffectScript.cs" />
     <Compile Include="AE\ForceFacingAttachEffectScript.cs" />
     <Compile Include="AE\FreezingSnapAttachEffectScript.cs" />
