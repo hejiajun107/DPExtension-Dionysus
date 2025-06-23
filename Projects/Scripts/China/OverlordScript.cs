@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using System;
 
@@ -22,7 +23,18 @@ namespace DpLib.Scripts.China
 
         private int delay = 0;
 
-        public OverlordScript(TechnoExt owner) : base(owner) { }
+        public OverlordScript(TechnoExt owner) : base(owner) 
+        {
+            _voc = new VocExtensionComponent(owner);
+        }
+
+        private VocExtensionComponent _voc;
+
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
 
         public override void OnUpdate()
         {
@@ -47,6 +59,7 @@ namespace DpLib.Scripts.China
                     CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
                     Pointer<BulletClass> mk2bullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, mk2Warhead, 100, false);
                     mk2bullet.Ref.DetonateAndUnInit(currentLocation);
+                    _voc.PlaySpecialVoice(1, true);
                 }
             }
             else

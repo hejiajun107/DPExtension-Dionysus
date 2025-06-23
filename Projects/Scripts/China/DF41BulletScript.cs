@@ -2,6 +2,7 @@
 using Extension.Coroutines;
 using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -610,7 +611,11 @@ namespace Scripts.China
     {
         public DFLauncherScript(TechnoExt owner) : base(owner)
         {
+            _voc = new VocExtensionComponent(owner);
         }
+
+        private VocExtensionComponent _voc;
+
 
         private int delay = 3000;
 
@@ -657,6 +662,17 @@ namespace Scripts.China
                 }
             }
 
+        }
+
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
+
+        public void PlayLanuchSound()
+        {
+            _voc.PlaySpecialVoice(1, true);
         }
     }
 

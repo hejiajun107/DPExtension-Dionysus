@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
 using System;
@@ -51,6 +52,14 @@ namespace Scripts.China
                             techno.OwnerObject.Ref.SetTarget(pcell.Convert<AbstractClass>());
                             mission.Ref.ForceMission(Mission.Attack);
                             coords.Add(tcoord);
+
+
+                            var script = techno.GameObject.GetComponent<DFLauncherScript>();
+                            if(script != null)
+                            {
+                                script.PlayLanuchSound();
+                            }
+                            
                         }
                     }
                 }
@@ -81,4 +90,6 @@ namespace Scripts.China
             }
         }
     }
+
+   
 }

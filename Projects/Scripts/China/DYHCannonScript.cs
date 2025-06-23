@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,10 @@ namespace Scripts.China
     {
         public DYHCannonScript(TechnoExt owner) : base(owner)
         {
+            _voc = new VocExtensionComponent(owner);
         }
+
+        private VocExtensionComponent _voc;
 
         //贴上mk2的buff
         static Pointer<WarheadTypeClass> mk2Warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIIAttachWh");
@@ -28,6 +32,11 @@ namespace Scripts.China
 
         private int Delay = 1200;
 
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
         public override void OnUpdate()
         {
             if(!IsMkIIUpdated) return;
@@ -65,6 +74,7 @@ namespace Scripts.China
                     CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
                     Pointer<BulletClass> mk2bullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, mk2Warhead, 100, false);
                     mk2bullet.Ref.DetonateAndUnInit(currentLocation);
+                    _voc.PlaySpecialVoice(1, true);
                 }
             }
         }
