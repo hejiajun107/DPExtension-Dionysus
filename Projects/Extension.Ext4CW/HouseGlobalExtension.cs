@@ -104,6 +104,7 @@ namespace Extension.CW
         public List<TechnoExt> SCDoorUnit { get; set; } = new List<TechnoExt>();
 
 
+        public Dictionary<string, int> DeconstructionLevels { get; set; } = new Dictionary<string, int>();
 
     }
 
