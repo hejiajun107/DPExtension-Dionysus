@@ -1,12 +1,15 @@
 ﻿using DynamicPatcher;
+using Extension.EventSystems;
 using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.Script;
 using PatcherYRpp;
+using PatcherYRpp.FileFormats;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -123,8 +126,85 @@ namespace Scripts.Japan
                 {
                     level = 0;
                 }
+
+                var displayer = Owner.GameObject.GetComponent<DeconstructionDisplayerScript>();
+                if (displayer == null)
+                {
+                    var script = ScriptManager.GetScript(nameof(DeconstructionDisplayerScript));
+                    var scriptComponent = ScriptManager.CreateScriptableTo(Owner.GameObject, script, Owner);
+                    displayer = scriptComponent as DeconstructionDisplayerScript;
+                }
+
+                displayer.Duration = 50;
+                displayer.Value = level;
+                displayer.OwnerIndex = Attacker.OwnerObject.Ref.Owner.Ref.ArrayIndex;
             }
         }
+    }
+
+    [ScriptAlias(nameof(DeconstructionDisplayerScript))]
+    [Serializable]
+    public class DeconstructionDisplayerScript : TechnoScriptable
+    {
+        public DeconstructionDisplayerScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        public int Duration { get; set; } = 50;
+
+        public int Value { get; set; } = 0;
+
+        public int OwnerIndex = 0;
+
+        public override void Awake()
+        {
+            base.Awake();
+            EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+
+        }
+
+        public override void OnDestroy()
+        {
+            EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+        }
+
+    
+        public override void OnUpdate()
+        {
+            if(Duration-- <= 0)
+            {
+                EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+                DetachFromParent();
+            }
+        }
+
+        public void OnGScreenRender(object sender, EventArgs args)
+        {
+            if (args is GScreenEventArgs gScreenEvtArgs)
+            {
+                if (!gScreenEvtArgs.IsLateRender)
+                {
+                    return;
+                }
+
+                if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap && Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex == OwnerIndex)
+                {
+                    if (FileSystem.TyrLoadSHPFile("jpdecodebar.shp", out Pointer<SHPStruct> pCustomSHP))
+                    {
+                        Pointer<Surface> pSurface = Surface.Current;
+                        RectangleStruct rect = pSurface.Ref.GetRect();
+                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords() + new CoordStruct(0, 0, 300));
+                        {
+                            var frame = (int)((Value / (double)300) * 100);
+
+                            pSurface.Ref.DrawSHP(FileSystem.UNITx_PAL, pCustomSHP, frame, point, rect.GetThisPointer());
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 
 }
