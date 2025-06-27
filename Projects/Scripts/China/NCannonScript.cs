@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using System;
 
@@ -22,7 +23,17 @@ namespace DpLib.Scripts.China
 
         private int delay = 0;
 
-        public NCannonScript(TechnoExt owner) : base(owner) { }
+        public NCannonScript(TechnoExt owner) : base(owner) {
+            _voc = new VocExtensionComponent(owner);
+        }
+
+        VocExtensionComponent _voc;
+
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
 
         public override void OnUpdate()
         {
@@ -49,6 +60,7 @@ namespace DpLib.Scripts.China
 
                     Pointer<BulletClass> armorBullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, persistArmorWarhead, 100, false);
                     armorBullet.Ref.DetonateAndUnInit(currentLocation);
+                    _voc.PlaySpecialVoice(2, true);
                 }
             }
             else
@@ -82,7 +94,13 @@ namespace DpLib.Scripts.China
             }
         }
 
-
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        {
+            if(weaponIndex == 1)
+            {
+                _voc.PlaySpecialVoice(1, true);
+            }
+        }
 
     }
 }
