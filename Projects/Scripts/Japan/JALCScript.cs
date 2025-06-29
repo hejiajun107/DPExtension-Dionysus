@@ -2,7 +2,9 @@
 using Extension.EventSystems;
 using Extension.Ext;
 using Extension.Ext4CW;
+using Extension.INI;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
 using PatcherYRpp.Utilities;
@@ -27,8 +29,11 @@ namespace Scripts.Japan
         {
             var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
             var pBullet = pInviso.Ref.CreateBullet(pTarget, Owner.OwnerObject,1,WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JALCAttachWH"),100, true);
+            pBullet.Ref.Base.SetLocation(pTarget.Ref.GetCoords());
+            var laserWeapon = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("JALCSLaser");
+            Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(0, 100, 0), false,1) );
+            Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(0, 100, 0), false, -1));
             pBullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
-
             base.OnFire(pTarget, weaponIndex);
         }
     }
@@ -98,6 +103,14 @@ namespace Scripts.Japan
                     var lastLevel = houseExt.DeconstructionLevels[typeId] + levelUp;
                     houseExt.DeconstructionLevels[typeId] = lastLevel < max ? lastLevel : max;
                 }
+
+
+                Pointer<BulletClass> bullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("JALCSBSeeker")
+                    .Ref.CreateBullet(Attacker.OwnerObject.Convert<AbstractClass>(), Attacker.OwnerObject, 1,
+                    WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JALCSBWh"),
+                    100, true);
+                bullet.Ref.MoveTo(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(0, 0, 0));
+                bullet.Ref.SetTarget(Attacker.OwnerObject.Convert<AbstractClass>());
             }
             base.OnAttachEffectRemove();
         }
