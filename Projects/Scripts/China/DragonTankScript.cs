@@ -1,5 +1,6 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,11 @@ namespace DpLib.Scripts.China
     [ScriptAlias(nameof(DragonTankScript))]
     class DragonTankScript : TechnoScriptable
     {
-        public DragonTankScript(TechnoExt owner) : base(owner) { }
+        public DragonTankScript(TechnoExt owner) : base(owner) {
+            _voc = new VocExtensionComponent(owner);
+        }
 
-
+        private VocExtensionComponent _voc;
 
         static ColorStruct innerColor1 = new ColorStruct(255, 0, 0);
         static ColorStruct outerColor1 = new ColorStruct(128, 0, 0);
@@ -49,6 +52,12 @@ namespace DpLib.Scripts.China
 
         private int atkCoolDown = 0;
 
+
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
 
         public override void OnUpdate()
         {
@@ -153,6 +162,7 @@ namespace DpLib.Scripts.China
                     CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
                     Pointer<BulletClass> mk2bullet = bullet.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, mk2Warhead, 100, false);
                     mk2bullet.Ref.DetonateAndUnInit(currentLocation);
+                    _voc.PlaySpecialVoice(1, true);
                 }
             }
         }
