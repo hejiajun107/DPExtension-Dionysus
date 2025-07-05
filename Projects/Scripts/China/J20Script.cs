@@ -1,5 +1,7 @@
-﻿using Extension.Ext;
+﻿using Extension.CW;
+using Extension.Ext;
 using Extension.Script;
+using Extension.Shared;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -11,7 +13,12 @@ namespace DpLib.Scripts.China
     [ScriptAlias(nameof(J20Script))]
     public class J20Script : TechnoScriptable
     {
-        public J20Script(TechnoExt owner) : base(owner) { }
+        public J20Script(TechnoExt owner) : base(owner) 
+        {
+            _voc = new VocExtensionComponent(Owner);
+        }
+
+        VocExtensionComponent _voc;
 
 
         static Pointer<BulletTypeClass> pAGMissle => BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("AirJamerMissile");
@@ -40,14 +47,32 @@ namespace DpLib.Scripts.China
 
         private int duration = 70;
 
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
+
+        bool lstAreaGuardStatus = false;
+
         public override void OnUpdate()
         {
+            var ext = (TechnoGlobalExtension)Owner.GameObject.FastGetScript1;
+
+            if (ext.isAreaProtecting && !lstAreaGuardStatus)
+            {
+                _voc.PlaySpecialVoice(1, true);
+            }
+
+            lstAreaGuardStatus = ext.isAreaProtecting;
+
             if (duration >= 0)
             {
                 duration--;
             }
         }
 
+     
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
 
@@ -98,6 +123,7 @@ namespace DpLib.Scripts.China
                     CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
                     Pointer<BulletClass> mk2bullet = pBulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, mk2Warhead, 100, false);
                     mk2bullet.Ref.DetonateAndUnInit(currentLocation);
+                    _voc.PlaySpecialVoice(2, true);
                 }
             }
 
