@@ -119,6 +119,7 @@ namespace Scripts
 
         private int pickTargetDelay = 0;
 
+        private int workingHeight = -1;
 
         public override void Awake()
         {
@@ -155,6 +156,8 @@ namespace Scripts
                 }
             }
 
+            workingHeight = INI.Data.WorkingHeight;
+
 
             base.Awake();
         }
@@ -173,7 +176,10 @@ namespace Scripts
             //是否分开开火
             if (INI.Data.SeparateFire)
             {
-                SeparateFireUpdate();
+                if (INI.Data.WorkingHeight <= -1 || Owner.OwnerObject.Ref.Base.GetHeight() > INI.Data.WorkingHeight)
+                {
+                    SeparateFireUpdate();
+                }
             }
         }
 
@@ -658,5 +664,8 @@ namespace Scripts
 
         public bool FindTargetCenterTurret = false;
 
+        [INIField(Key = "AttachWeapon.WorkingHeight")]
+
+        public int WorkingHeight = -1;
     }
 }
