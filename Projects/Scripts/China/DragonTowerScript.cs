@@ -37,13 +37,17 @@ namespace DpLib.Scripts.China
 
         static Pointer<WarheadTypeClass> animWarhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ZAFKMockAnimWH");
 
+        static Pointer<WarheadTypeClass> mk2Warhead => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("MarkIIAttachWh");
+
+        static Pointer<WarheadTypeClass> burnWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("FKTOWRBurnWH");
+
 
         static List<string> supportIds = new List<string>()
         {
             "ZAFKTR","ZAFKTR4AI"
         };
 
-
+        private bool IsMkIIUpdated = false;
 
         private int coolDown = 0;
 
@@ -87,6 +91,11 @@ namespace DpLib.Scripts.China
                 }
             }
 
+            if (IsMkIIUpdated)
+            {
+                Pointer<BulletClass> burnBullet = bullet.Ref.CreateBullet(pTarget, Owner.OwnerObject, 1, burnWh, 100, false);
+                burnBullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
+            }
 
 
             batteStage = 50;
@@ -116,6 +125,19 @@ namespace DpLib.Scripts.China
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
+            if (IsMkIIUpdated == false)
+            {
+                //判断是否来自升级弹头
+                if (pWH.Ref.Base.ID.ToString() == "MarkIISpWh")
+                {
+                    IsMkIIUpdated = true;
+                    Pointer<TechnoClass> pTechno = Owner.OwnerObject;
+                    CoordStruct currentLocation = pTechno.Ref.Base.Base.GetCoords();
+                    Pointer<BulletClass> mk2bullet = bullet.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), Owner.OwnerObject, 1, mk2Warhead, 100, false);
+                    mk2bullet.Ref.DetonateAndUnInit(currentLocation);
+                }
+            }
+
             if (coolDown <= 0)
             {
                 //if (Owner.OwnerObject.Ref.Target.IsNull)

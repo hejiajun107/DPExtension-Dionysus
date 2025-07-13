@@ -28,6 +28,8 @@ namespace Scripts.AE
 
         private static Dictionary<string, int> BurningLevel = new Dictionary<string, int>()
         {
+            { "ZAFKTR4AI" ,2 },
+            { "ZAFKTR" , 2 },
             { "HWDYHWH" , 5 },
             { "FireGunFlame" , 4 },
             { "J20FireExpWH", 41 }
