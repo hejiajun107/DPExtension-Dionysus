@@ -34,6 +34,9 @@ namespace DpLib.Scripts
 
         static Pointer<WarheadTypeClass> warheadA => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("XHLaserAllyExpWH");
 
+        static Pointer<WeaponTypeClass> wp => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XHLaserCannonWP");
+
+
         private int counter = 0;
 
 
@@ -55,22 +58,24 @@ namespace DpLib.Scripts
             if (!pTargetRef.IsNullOrExpired())
             {
                 var pTechno = pTargetRef.OwnerObject;
-                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, innerColor, outerColor, outerSpread, 20);
-                pLaser.Ref.IsHouseColor = true;
+                //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(start, target, innerColor, outerColor, outerSpread, 20);
+                //pLaser.Ref.IsHouseColor = true;
 
-                var thickness = counter / 5;
+                //var thickness = counter / 5;
 
-                if (thickness > 6)
-                {
-                    thickness = 6;
-                }
+                //if (thickness > 6)
+                //{
+                //    thickness = 6;
+                //}
 
-                pLaser.Ref.Thickness = thickness;
+                //pLaser.Ref.Thickness = thickness;
 
                 counter++;
 
                 Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 38, warhead, 100, true);
                 pBullet.Ref.DetonateAndUnInit(target);
+
+                pTargetRef.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, wp, start);
 
                 Pointer<BulletClass> pBulletA = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 19, warhead, 100, false);
                 pBulletA.Ref.DetonateAndUnInit(target);
