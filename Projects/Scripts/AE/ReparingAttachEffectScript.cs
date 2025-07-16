@@ -135,7 +135,7 @@ namespace Scripts.AE
                 if (delay <= 0)
                 {
                     delay = 100;
-                    var pbullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 60, pRobRepair, 100, false);
+                    var pbullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Pointer<TechnoClass>.Zero, 60, pRobRepair, 100, false);
                     pbullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 }
             }
