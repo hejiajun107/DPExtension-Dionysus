@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
@@ -82,13 +83,15 @@ namespace DpLib.Scripts.Yuri
                 var alliesInf = ObjectFinder.FindObjectsNear(ptechno.Ref.Base.Base.GetCoords(), 3 * Game.CellSize).Select(x => x.Convert<TechnoClass>()).Where(x => x.Ref.Owner == ptechno.Ref.Owner && x.Ref.Base.Base.WhatAmI() == AbstractType.Infantry)
                     .OrderBy(x => x.Ref.Base.Base.GetCoords().DistanceFrom(ptechno.Ref.Base.Base.GetCoords())).Take(20).ToList();
 
+                var spWarhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special");
+
                 foreach (var item in alliesInf)
                 {
                     var strength = item.Ref.Type.Ref.Base.Strength;
                     var id = item.Ref.Type.Ref.Base.Base.ID;
                     FireExplodeAt(ptechno, targetLocation + new CoordStruct(random.Next(-1200, 1200), random.Next(-1200, 1200), 0), 60 + (int)(1.2 * strength), 200 * i, specialWarheadList.ContainsKey(id) ? specialWarheadList[id] : 0);
 
-                    Pointer<BulletClass> bullet = seekerBullet.Ref.CreateBullet(ptechno.Convert<AbstractClass>(), ptechno, 0, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special"), 60, true);
+                    Pointer<BulletClass> bullet = seekerBullet.Ref.CreateBullet(ptechno.Convert<AbstractClass>(), ptechno, 0, spWarhead, 60, true);
                     bullet.Ref.MoveTo(item.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(random.Next(-100, 100), random.Next(-100, 100), random.Next(-100, 100)));
                     bullet.Ref.SetTarget(ptechno.Convert<AbstractClass>());
 
