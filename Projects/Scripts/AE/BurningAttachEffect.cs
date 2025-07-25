@@ -44,6 +44,20 @@ namespace Scripts.AE
             {
                 if (damageDelay-- <= 0)
                 {
+                    if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Infantry)
+                    {
+                        if(MapClass.Instance.TryGetCellAt(Owner.OwnerObject.Ref.Base.Base.GetCoords(),out var pcell))
+                        {
+                            if(pcell.Ref.LandType == LandType.Water)
+                            {
+                                if (Count > 0)
+                                    Count--;
+                                return;
+                            }
+                                
+                        }
+                    }
+
                     damageDelay = 20;
                     var burningMultipler = 0.02;
                     if (Count >= BurningNeedCount * 2)
