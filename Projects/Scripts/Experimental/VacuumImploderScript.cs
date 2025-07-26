@@ -36,6 +36,14 @@ namespace Scripts.Experimental
         /// 动画名称
         /// </summary>
         private readonly string anim = "VacuumExplosion";
+        /// <summary>
+        /// 没次造成的伤害（每10帧造成一次AOE伤害）
+        /// </summary>
+        private readonly int damge = 100;
+        /// <summary>
+        /// 早上伤害使用的弹头
+        /// </summary>
+        private readonly string damgeWh = "NUKE";
 
         private readonly int range = 10;
 
@@ -88,6 +96,11 @@ namespace Scripts.Experimental
                     }
                 }
 
+                var bullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
+                var pBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damge, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find(damgeWh), 100, false);
+                pBullet.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                pBullet.Ref.Detonate(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                pBullet.Ref.Base.UnInit();
                 return;
             }
 
