@@ -27,17 +27,30 @@ namespace Scripts.Experimental
         /// <summary>
         /// 持续时间（帧数）
         /// </summary>
-        public int Duration { get; private set; } = 600;
-
+        public int Duration { get; private set; } = 130;
+        /// <summary>
+        /// 用来判断是否有效的弹头
+        /// </summary>
         private readonly string effectWarhead = "Super";
+        /// <summary>
+        /// 动画名称
+        /// </summary>
+        private readonly string anim = "VacuumExplosion";
 
         private readonly int range = 10;
 
         private int checkRof = 10;
 
+        private bool inited = false;
 
         public override void OnUpdate()
         {
+            if(!inited)
+            { 
+                inited = true;
+                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find(anim), Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, Height));
+            }
+
             if (Duration > 0)
             {
                 Duration--;
@@ -71,8 +84,7 @@ namespace Scripts.Experimental
                         if (ext.GameObject.GetComponent<VacuumImploderEffectScript>() != null)
                             continue;
 
-                        var effectScript = new VacuumImploderEffectScript(ext, this);
-                        ext.GameObject.AddComponent(effectScript);
+                        ext.GameObject.CreateScriptComponent(nameof(VacuumImploderEffectScript), VacuumImploderEffectScript.UniqueId, nameof(VacuumImploderEffectScript), ext, this);
                     }
                 }
 
@@ -85,7 +97,7 @@ namespace Scripts.Experimental
     }
 
 
-    [ScriptAlias(nameof(VacuumImploderScript))]
+    [ScriptAlias(nameof(VacuumImploderEffectScript))]
     [Serializable]
 
     public class VacuumImploderEffectScript : TechnoScriptable
@@ -94,6 +106,8 @@ namespace Scripts.Experimental
         {
             Invoker = invoker;
         }
+
+        internal static int UniqueId = 202507269; 
 
         VacuumImploderScript Invoker;
 
@@ -111,21 +125,32 @@ namespace Scripts.Experimental
         {
             if (Invoker.Owner.IsNullOrExpired())
             {
+                Owner.OwnerObject.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super"), true);
                 DetachFromParent();
                 return;
             }
 
             if(inited == false)
             {
+                var currentPos = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 inited = true;
                 // 获取目标中心点（比如发射者位置 + 高度）
                 centerCoord = Invoker.Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, Invoker.Height);
 
                 // 初始半径：单位当前位置到中心点的距离
-                radius = Math.Floor((Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 1000))
+                radius = Math.Floor((currentPos + new CoordStruct(0, 0, 1000))
                     .BigDistanceForm(centerCoord + new CoordStruct(0, 0, 1000)));
 
-                angle = 0;
+                // 计算初始角度（弧度）
+                double dx = currentPos.X - centerCoord.X;
+                double dy = currentPos.Y - centerCoord.Y;
+                angle = Math.Atan2(dy, dx); // 返回 [-π, π] 之间的弧度值
+            }
+
+            if(Invoker.Duration <= 10)
+            {
+                Owner.OwnerObject.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super"), true);
+                return;
             }
 
             var mission = Owner.OwnerObject.Convert<MissionClass>();
@@ -140,6 +165,10 @@ namespace Scripts.Experimental
             if (radius <= minRadius)
             {
                 // 已经到达中心，可执行爆炸或销毁
+            }
+            else
+            {
+                radius -= radiusDecreaseSpeed;
             }
 
             // 极坐标转笛卡尔坐标（2D 平面绕中心点）
@@ -161,7 +190,9 @@ namespace Scripts.Experimental
                 Owner.OwnerObject.Ref.Base.SetLocation(newPosition);
                 Owner.OwnerObject.Ref.Base.UnmarkAllOccupationBits(newPosition);
             }
-          
+
+            angle += rotationSpeed;
+
             base.OnUpdate();
         }
 
