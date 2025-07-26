@@ -41,7 +41,7 @@ namespace Scripts.Experimental
         /// </summary>
         private readonly int damge = 100;
         /// <summary>
-        /// 早上伤害使用的弹头
+        /// 造成伤害使用的弹头
         /// </summary>
         private readonly string damgeWh = "NUKE";
 
