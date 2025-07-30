@@ -72,7 +72,10 @@ namespace Scripts.China
         {
             if (weaponIndex == 0)
             {
-                _voc.PlaySpecialVoice(3, true);
+                if (Owner.OwnerObject.Ref.Base.IsSelected)
+                {
+                    _voc.PlaySpecialVoice(3, true);
+                }
             }
         }
 
