@@ -17,10 +17,13 @@ namespace DpLib.Scripts
         public CComandScript(TechnoExt owner) : base(owner)
         {
             _manaCounter = new ManaCounter(owner,12);
+            _voc = new VocExtensionComponent(owner);
         }
 
 
         private ManaCounter _manaCounter;
+        private VocExtensionComponent _voc;
+
 
         static Pointer<WeaponTypeClass> Weapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("FakeWeaponTimeStop");
         //static Pointer<WeaponTypeClass> Weapon => WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("RedEye2");
@@ -35,6 +38,12 @@ namespace DpLib.Scripts
         private int rof = 0;
 
         private int checkb = 0;
+
+        public override void Awake()
+        {
+            _voc.Awake();
+            base.Awake();
+        }
         
 
         public override void OnUpdate()
@@ -93,6 +102,10 @@ namespace DpLib.Scripts
         {
             if (_manaCounter.Cost(100))
             {
+                if(Owner.OwnerObject.Ref.Base.IsSelected)
+                {
+                    _voc.PlaySpecialVoice(1, true);
+                }
                 var pbullet = bulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, animWarhead, 100, false);
                 pbullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 delay = 300;
