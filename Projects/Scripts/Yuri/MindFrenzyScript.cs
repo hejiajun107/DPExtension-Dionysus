@@ -37,7 +37,7 @@ namespace DpLib.Scripts.AE
                 Pointer<TechnoClass> ownerTechno = Owner.OwnerObject;
                 CoordStruct ownerCoord = ownerTechno.Ref.Base.Base.GetCoords();
 
-                Pointer<BulletClass> chaosBullet = bulletType.Ref.CreateBullet(ownerTechno.Convert<AbstractClass>(), Pointer<TechnoClass>.Zero, 60, chaosWarhead, 100, false);
+                Pointer<BulletClass> chaosBullet = bulletType.Ref.CreateBullet(ownerTechno.Convert<AbstractClass>(), Pointer<TechnoClass>.Zero, 120, chaosWarhead, 100, false);
                 chaosBullet.Ref.DetonateAndUnInit(ownerCoord);
             }
         }
