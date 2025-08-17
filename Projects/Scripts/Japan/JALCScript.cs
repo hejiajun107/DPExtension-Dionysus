@@ -31,8 +31,8 @@ namespace Scripts.Japan
             var pBullet = pInviso.Ref.CreateBullet(pTarget, Owner.OwnerObject,1,WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JALCAttachWH"),100, true);
             pBullet.Ref.Base.SetLocation(pTarget.Ref.GetCoords());
             var laserWeapon = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("JALCSLaser");
-            Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(0, 100, 0), false,1) );
-            Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(0, 100, 0), false, -1));
+            Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(30, -165, 25), false,1) );
+            Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(30, -165, 25), false, -1));
             pBullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
             base.OnFire(pTarget, weaponIndex);
         }
@@ -200,7 +200,7 @@ namespace Scripts.Japan
                     return;
                 }
 
-                if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap && Owner.OwnerObject.Ref.Owner.Ref.ArrayIndex == OwnerIndex)
+                if (!Owner.OwnerObject.Ref.Base.InLimbo && Owner.OwnerObject.Ref.Base.IsOnMap && HouseClass.Player.Ref.ArrayIndex == OwnerIndex)
                 {
                     if (FileSystem.TyrLoadSHPFile("jpdecodebar.shp", out Pointer<SHPStruct> pCustomSHP))
                     {
