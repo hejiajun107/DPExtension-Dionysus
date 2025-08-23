@@ -185,6 +185,7 @@
     <Compile Include="DISKScript.cs" />
     <Compile Include="DrainPassengerScript.cs" />
     <Compile Include="DrawableBulletScript.cs" />
+    <Compile Include="Experimental\PCXDrawingTestScript.cs" />
     <Compile Include="Experimental\RealAircraftCarrierScript.cs" />
     <Compile Include="Experimental\VacuumImploderScript.cs" />
     <Compile Include="FighterCmdBulletScript.cs" />

@@ -32,7 +32,7 @@ namespace DpLib.Scripts
 
         public override void OnUpdate()
         {
-            Logger.Log("Bullet" + BulletClass.Array.Count());
+            //Logger.Log("Bullet" + BulletClass.Array.Count());
             //var mission = Owner.OwnerObject.Convert<MissionClass>();
             //if(mission.Ref.CurrentMission != Mission.Guard)
             //{
