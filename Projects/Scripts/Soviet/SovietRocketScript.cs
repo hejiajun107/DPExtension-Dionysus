@@ -37,8 +37,8 @@ namespace Scripts.Soviet
                 for (var i = 0; i < 2; i++)
                 {
                     var pbolt = Owner.OwnerObject.Ref.Electric_Zap(Owner.OwnerObject.Convert<AbstractClass>(), WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ChargedElec1"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
-                    var eSource = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(-190, 80 * (i == 0 ? 1 : -1), 150), false);
-                    var eTarget = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(-110, 80 * (i == 0 ? 1 : -1), 150), false);
+                    var eSource = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(-152, 64 * (i == 0 ? 1 : -1), 120), false);
+                    var eTarget = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(-88, 64 * (i == 0 ? 1 : -1), 120), false);
                     pbolt.Ref.Point1 = eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 0);
                     pbolt.Ref.Point2 = eTarget + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 0);
                 }
