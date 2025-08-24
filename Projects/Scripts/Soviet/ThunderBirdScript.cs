@@ -95,13 +95,10 @@ namespace Scripts.Soviet
 
                     for(var i=0;i<2;i++)
                     {
-                        Pointer<EBolt> pBolt = YRMemory.Create<EBolt>();
-                        if (!pBolt.IsNull)
-                        {
-                            var eSource = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(0, 160 * (i == 0 ? 1 : -1), 35), false);
-                            pBolt.Ref.Fire(eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100), eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100), 0);
-                            pBolt.Ref.AlternateColor = true;
-                        }
+                        var pbolt = Owner.OwnerObject.Ref.Electric_Zap(Owner.OwnerObject.Convert<AbstractClass>(), WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ChargedElec1"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        var eSource = ExHelper.GetFLHAbsoluteCoords(Owner.OwnerObject, new CoordStruct(0, 160 * (i == 0 ? 1 : -1), 35), false);
+                        pbolt.Ref.Point1 = eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100);
+                        pbolt.Ref.Point2 = eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100);
                     }
                    
                 }

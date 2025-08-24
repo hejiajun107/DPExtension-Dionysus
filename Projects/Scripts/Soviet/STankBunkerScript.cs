@@ -89,15 +89,15 @@ namespace Scripts.Soviet
                 erof = 30;
                 Owner.OwnerObject.Ref.Electric_Zap(Owner.OwnerObject.Convert<AbstractClass>(), chargeWeapon, Owner.OwnerObject.Ref.Base.Base.GetCoords() + coordOffets[currentChargeIndex]);
                 Pointer<EBolt> pBolt = YRMemory.Create<EBolt>();
-                if (!pBolt.IsNull)
-                {
-                    var eSource = Owner.OwnerObject.Ref.Base.Base.GetCoords() + coordOffets[currentEIndex];
-                    pBolt.Ref.Fire(eSource, eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100), 0);
-                    pBolt.Ref.AlternateColor = false;
-                    currentEIndex++;
-                    if (currentEIndex > 3)
-                        currentEIndex = 0;
-                }
+
+                var pbolt = Owner.OwnerObject.Ref.Electric_Zap(Owner.OwnerObject.Convert<AbstractClass>(), WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ElectricBolt"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                var eSource = Owner.OwnerObject.Ref.Base.Base.GetCoords() + coordOffets[currentEIndex];
+                var eTarget = eSource + new CoordStruct(MathEx.Random.Next(-50, 50), MathEx.Random.Next(-50, 50), 100);
+                pbolt.Ref.Point1 = eSource;
+                pbolt.Ref.Point2 = eTarget;
+                currentEIndex++;
+                if (currentEIndex > 3)
+                    currentEIndex = 0;
             }
             else
             {
