@@ -111,7 +111,6 @@
     <Compile Include="AI\AntiAirGuidBuildingScript.cs" />
     <Compile Include="AttachAnimScript.cs" />
     <Compile Include="AttachWeaponScript.cs" />
-    <Compile Include="AutoDeployScript.cs" />
     <Compile Include="AutoEnterScript.cs" />
     <Compile Include="AutoEnterTankBunkerScript.cs" />
     <Compile Include="AutoExplodeWarheadScript.cs" />
@@ -144,6 +143,8 @@
     <Compile Include="Shared\VocExtensionComponent.cs" />
     <Compile Include="SpecialCrateScript.cs" />
     <Compile Include="StraightBulletScriptable.cs" />
+    <Compile Include="Tavern\CardCollectorScript.cs" />
+    <Compile Include="Tavern\CardManagerScript.cs" />
     <Compile Include="Tavern\TavernCombatSlot.cs" />
     <Compile Include="Tavern\TavernGameManager.cs" />
     <Compile Include="Tavern\TavernPlayerNode.cs" />

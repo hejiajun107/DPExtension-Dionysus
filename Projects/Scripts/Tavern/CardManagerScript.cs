@@ -1,0 +1,40 @@
+﻿using Extension.Ext;
+using Extension.Script;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Scripts.Tavern;
+
+namespace Scripts.Tavern
+{
+    /// <summary>
+    /// 发牌员
+    /// </summary>
+    [ScriptAlias(nameof(CardManagerScript))]
+    [Serializable]
+    public class CardManagerScript : TechnoScriptable
+    {
+        public CardManagerScript(TechnoExt owner) : base(owner)
+        {
+        }
+
+        public override void OnUpdate()
+        {
+            if (PlayerNode is null)
+                return;
+        }
+
+        public TavernPlayerNode PlayerNode { get {
+                if (_playerNode is null) {
+                    if (TavernGameManager.Instance is not null) {
+                        _playerNode = TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner);
+                    }
+                }
+                return _playerNode;
+            } }
+
+        private TavernPlayerNode _playerNode = null;
+    }
+}

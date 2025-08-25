@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scripts.Tavern;
 
 namespace Scripts.Tavern
 {
@@ -31,7 +32,7 @@ namespace Scripts.Tavern
             if (TavernGameManager.Instance is null)
                 return false;
 
-            var node = TavernGameManager.Instance.PlayerNodes.Where(x => x.Owner.OwnerObject.Ref.Owner == Owner.OwnerObject.Ref.Owner).FirstOrDefault();
+            var node = TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner);
 
             if (node is null)
                 return false;
