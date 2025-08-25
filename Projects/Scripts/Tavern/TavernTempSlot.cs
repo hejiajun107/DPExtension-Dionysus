@@ -36,7 +36,7 @@ namespace Scripts.Tavern
             if (node is null)
                 return false;
 
-            node.RegisterCombatSlot(this);
+            node.RegisterTempSlot(this);
             _registered = true;
             return true;
         }
