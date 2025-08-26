@@ -17,6 +17,8 @@ namespace Scripts.Tavern
         {
         }
 
+        public CardComponent CurrentCard { get; private set; }
+
         public override void OnUpdate()
         {
             if (!Register())

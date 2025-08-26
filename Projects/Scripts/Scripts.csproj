@@ -144,6 +144,8 @@
     <Compile Include="SpecialCrateScript.cs" />
     <Compile Include="StraightBulletScriptable.cs" />
     <Compile Include="Tavern\CardCollectorScript.cs" />
+    <Compile Include="Tavern\CardComponent.cs" />
+    <Compile Include="Tavern\CardComponentBattle.cs" />
     <Compile Include="Tavern\CardManagerScript.cs" />
     <Compile Include="Tavern\TavernCombatSlot.cs" />
     <Compile Include="Tavern\TavernGameManager.cs" />

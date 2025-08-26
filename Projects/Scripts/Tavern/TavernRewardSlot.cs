@@ -23,6 +23,8 @@ namespace Scripts.Tavern
                 return;
         }
 
+        public CardComponent CurrentCard { get; private set; }
+
         private bool _registered = false;
 
         public bool Register()
