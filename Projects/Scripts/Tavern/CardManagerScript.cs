@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scripts.Tavern;
+using PatcherYRpp;
 
 namespace Scripts.Tavern
 {
@@ -24,6 +25,18 @@ namespace Scripts.Tavern
         {
             if (PlayerNode is null)
                 return;
+        }
+
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        {
+            if(pTarget.CastToTechno(out var ptechno))
+            {
+                var ext = TechnoExt.ExtMap.Find(ptechno);
+                if (ext.IsNullOrExpired())
+                    return;
+
+
+            }
         }
 
         public TavernPlayerNode PlayerNode { get {

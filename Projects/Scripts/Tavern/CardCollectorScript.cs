@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Extension.Ext;
 using Extension.Script;
+using PatcherYRpp;
 using Scripts.Tavern;
 
 namespace Scripts.Tavern
@@ -15,6 +16,19 @@ namespace Scripts.Tavern
     {
         public CardCollectorScript(TechnoExt owner) : base(owner)
         {
+        }
+
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            if (pAttacker.IsNull)
+                return;
+
+            if (pAttacker.CastToTechno(out var ptechno))
+            {
+                var ext = TechnoExt.ExtMap.Find(ptechno);
+                if (ext.IsNullOrExpired())
+                    return;
+            }
         }
 
         public TavernPlayerNode PlayerNode

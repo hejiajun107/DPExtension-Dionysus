@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scripts.Tavern;
+using Extension.INI;
 
 namespace Scripts.Tavern
 {
@@ -57,5 +58,10 @@ namespace Scripts.Tavern
         }
     }
 
+
+    //public class GameManagerSetting : INIAutoConfig
+    //{
+    //    public bool Reverse { get; set; }
+    //}
 
 }

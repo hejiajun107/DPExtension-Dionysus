@@ -32,6 +32,11 @@ namespace Scripts.Tavern
         public List<TavernCombatSlot> TavernCombatSlots { get; private set; } = new List<TavernCombatSlot>();
 
         /// <summary>
+        /// 商店区
+        /// </summary>
+        public List<TavernShopSlot> TavernShopSlots { get; private set; } = new List<TavernShopSlot>();
+
+        /// <summary>
         /// 是否已经注册到GameManger
         /// </summary>
         private bool _registed = false;
@@ -78,6 +83,12 @@ namespace Scripts.Tavern
         {
             TavernTempSlots.Add(slot);
             TavernTempSlots = TavernTempSlots.OrderByDescending(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
+        }
+
+        public void RegisterShopSlot(TavernShopSlot slot)
+        {
+            TavernShopSlots.Add(slot);
+            TavernShopSlots = TavernShopSlots.OrderByDescending(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
         }
         #endregion
 

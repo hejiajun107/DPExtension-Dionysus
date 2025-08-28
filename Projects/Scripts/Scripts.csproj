@@ -147,10 +147,12 @@
     <Compile Include="Tavern\CardComponent.cs" />
     <Compile Include="Tavern\CardComponentBattle.cs" />
     <Compile Include="Tavern\CardManagerScript.cs" />
+    <Compile Include="Tavern\GatheringPointScript.cs" />
     <Compile Include="Tavern\TavernCombatSlot.cs" />
     <Compile Include="Tavern\TavernGameManager.cs" />
     <Compile Include="Tavern\TavernPlayerNode.cs" />
     <Compile Include="Tavern\TavernRewardSlot.cs" />
+    <Compile Include="Tavern\TavernShopSlot.cs" />
     <Compile Include="Tavern\TavernTempSlot.cs" />
     <Compile Include="TechnoDisplayImageScript.cs" />
     <Compile Include="TestObjAutoPutScript.cs" />
