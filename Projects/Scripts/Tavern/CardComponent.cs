@@ -36,7 +36,7 @@ namespace Scripts.Tavern
             EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
             base.Awake();
         }
-        public override void OnDeploy()
+        public override void OnDestroy()
         {
             EventSystem.GScreen.RemovePermanentHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
             base.OnDestroy();
@@ -108,5 +108,19 @@ namespace Scripts.Tavern
         /// 图标,仅PCX
         /// </summary>
         public string Cameo { get; set; }
+
+        /// <summary>
+        /// 对应脚本
+        /// </summary>
+        public string Scripts { get; set; }
+        /// <summary>
+        /// 等级（多少级后才会出现，从1开始）
+        /// </summary>
+        public int Level { get; set; }
+        /// <summary>
+        /// 在卡池中的数量
+        /// </summary>
+        public int Amount { get; set; }
     }
+
 }

@@ -22,7 +22,7 @@ namespace Scripts.Tavern
 
         public bool Enabled { get; set; }
 
-        public CardComponent CurrentCard { get; private set; }
+        public CardType CurrentCard { get; private set; }
 
         public override void OnUpdate()
         {
@@ -48,6 +48,31 @@ namespace Scripts.Tavern
             node.RegisterShopSlot(this);
             _registered = true;
             return true;
+        }
+
+        public void ChangeCard(CardType cardType)
+        {
+            var old = GameObject.GetComponent<CardComponent>();
+            if(old is not null)
+            {
+                old.DetachFromParent();
+                old = null;
+            }
+            CurrentCard = cardType;
+            var script = ScriptManager.GetScript(nameof(CardComponent));
+            var scriptComponent = ScriptManager.CreateScriptableTo(Owner.GameObject, script);
+            if(scriptComponent is CardComponent cardComponent)
+            {
+                cardComponent.CardType = cardType;
+            }
+        }
+
+        public CardComponent TakeCard()
+        {
+            var component = GameObject.GetComponent<CardComponent>();
+            component.DetachFromParent();
+            CurrentCard = null;
+            return component;
         }
     }
 }

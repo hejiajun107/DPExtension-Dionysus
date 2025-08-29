@@ -43,5 +43,13 @@ namespace Scripts.Tavern
             _registered = true;
             return true;
         }
+
+        public void AddCard(CardComponent card)
+        {
+            CurrentCard = card;
+            card.AttachToComponent(this);
+        }
+
+        
     }
 }

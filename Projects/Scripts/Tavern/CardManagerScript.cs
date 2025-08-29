@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Scripts.Tavern;
 using PatcherYRpp;
+using Newtonsoft.Json;
 
 namespace Scripts.Tavern
 {
@@ -20,6 +21,7 @@ namespace Scripts.Tavern
         public CardManagerScript(TechnoExt owner) : base(owner)
         {
         }
+
 
         public override void OnUpdate()
         {
@@ -35,7 +37,21 @@ namespace Scripts.Tavern
                 if (ext.IsNullOrExpired())
                     return;
 
-
+                var shopSlot = ext.GameObject.GetComponent<TavernShopSlot>();
+                if (shopSlot is not null)
+                {
+                    var temp = PlayerNode.TavernTempSlots.Where(x => x.CurrentCard == null).FirstOrDefault();
+                    if(temp is not null)
+                    {
+                        if (shopSlot.CurrentCard != null)
+                        {
+                            var cardComponent = shopSlot.TakeCard();
+                            temp.AddCard(cardComponent);
+                        }
+                    }
+                   
+                    
+                }
             }
         }
 
@@ -49,5 +65,9 @@ namespace Scripts.Tavern
             } }
 
         private TavernPlayerNode _playerNode = null;
+
+ 
     }
+
+    
 }

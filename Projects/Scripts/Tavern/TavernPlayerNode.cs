@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scripts.Tavern;
+using PatcherYRpp.Utilities;
 
 namespace Scripts.Tavern
 {
@@ -40,6 +41,11 @@ namespace Scripts.Tavern
         /// 是否已经注册到GameManger
         /// </summary>
         private bool _registed = false;
+
+        /// <summary>
+        /// 基地等级
+        /// </summary>
+        public int BaseLevel { get; private set; } = 1;
 
         public override void OnUpdate()
         {
@@ -95,9 +101,28 @@ namespace Scripts.Tavern
         /// <summary>
         /// 刷新卡池
         /// </summary>
-        public void OnRefreshCardPool()
+        public void OnRefreshShop()
         {
+            var enabledSlots = TavernShopSlots.Where(x => x.Enabled).ToList();
+            var avaibleCards = TavernGameManager.Instance.GetAvailableCardPools(BaseLevel);
+            
+            var result = new HashSet<int>();
+            var rng = MathEx.Random;
 
+            while (result.Count < enabledSlots.Count())
+            {
+                int num = rng.Next(enabledSlots.Count);
+                result.Add(num);
+            }
+
+            var idx = 0;
+            var resultArr = result.ToArray();
+
+            foreach(var slot in enabledSlots)
+            {
+                slot.ChangeCard(TavernGameManager.Instance.CardTypes[avaibleCards[resultArr[idx]]]);
+                idx++;
+            }
         }
 
         /// <summary>

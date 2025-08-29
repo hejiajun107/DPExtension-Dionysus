@@ -37,7 +37,7 @@ namespace Scripts.Tavern
             base.Awake();
         }
 
-        public override void OnDeploy()
+        public override void OnDestroy()
         {
             EventSystem.GScreen.RemovePermanentHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
             base.OnDestroy();
