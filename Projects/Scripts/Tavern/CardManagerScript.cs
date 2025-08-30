@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Scripts.Tavern;
 using PatcherYRpp;
 using Newtonsoft.Json;
+using DynamicPatcher;
 
 namespace Scripts.Tavern
 {
@@ -22,7 +23,7 @@ namespace Scripts.Tavern
         {
         }
 
-
+     
         public override void OnUpdate()
         {
             if (PlayerNode is null)
@@ -45,8 +46,9 @@ namespace Scripts.Tavern
                     {
                         if (shopSlot.CurrentCard != null)
                         {
-                            var cardComponent = shopSlot.TakeCard();
-                            temp.AddCard(cardComponent);
+                            var cardType = shopSlot.TakeCard();
+
+                            temp.AddCard(cardType);
                         }
                     }
                    

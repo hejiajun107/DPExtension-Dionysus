@@ -138,6 +138,7 @@
     <Compile Include="Tavern\TavernPlayerNode.cs" />
     <Compile Include="Tavern\TavernRewardSlot.cs" />
     <Compile Include="Tavern\TavernShopSlot.cs" />
+    <Compile Include="Tavern\TavernSuperWeapons.cs" />
     <Compile Include="Tavern\TavernTempSlot.cs" />
     <Compile Include="TechnoDisplayImageScript.cs" />
     <Compile Include="TestObjAutoPutScript.cs" />

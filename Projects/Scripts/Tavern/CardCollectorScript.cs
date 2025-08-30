@@ -28,6 +28,8 @@ namespace Scripts.Tavern
                 var ext = TechnoExt.ExtMap.Find(ptechno);
                 if (ext.IsNullOrExpired())
                     return;
+
+
             }
         }
 

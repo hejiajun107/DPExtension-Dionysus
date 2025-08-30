@@ -105,7 +105,7 @@ namespace Scripts.Tavern
                 var type = cardType.Value;
                 for(var i = 0; i < type.Amount; i++)
                 {
-                    pool.Add(type.Name);
+                    pool.Add(type.Key);
                 }
             }
             CardPool = pool;

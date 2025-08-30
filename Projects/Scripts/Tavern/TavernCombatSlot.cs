@@ -39,7 +39,7 @@ namespace Scripts.Tavern
 
         public override void OnDestroy()
         {
-            EventSystem.GScreen.RemovePermanentHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+            EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
             base.OnDestroy();
         }
 
@@ -72,6 +72,17 @@ namespace Scripts.Tavern
 
         public void ChangeCard(CardType cardType,bool destroyOldCards,bool destroyBuffCards) 
         {
+            if(CurrentCardType is not null)
+            {
+                CurrentCardType = cardType;
+            }
+
+            if (destroyOldCards)
+            {
+                CardRecords.RemoveAll(x => x.IsPersist);
+            }
+
+            
 
             RefreshAggregates();
         }

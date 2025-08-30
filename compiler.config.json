@@ -14,7 +14,7 @@
     "Extension.Ext.dll",
     "Extension.Script.dll",
     "Extension.FX.dll",
-    "Extension.Lua.dll",
+    //"Extension.Lua.dll",
     "ScriptUniversal.dll",
     "Extension.Ext4CW.dll",
     "Extension.AttachEffectScript.dll",

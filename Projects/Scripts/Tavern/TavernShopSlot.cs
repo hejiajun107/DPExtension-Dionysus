@@ -6,11 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scripts.Tavern;
+using DynamicPatcher;
 
 namespace Scripts.Tavern
 {
     /// <summary>
-    /// 商店去
+    /// 商店区
     /// </summary>
     [ScriptAlias(nameof(TavernShopSlot))]
     [Serializable]
@@ -20,7 +21,7 @@ namespace Scripts.Tavern
         {
         }
 
-        public bool Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
 
         public CardType CurrentCard { get; private set; }
 
@@ -56,23 +57,27 @@ namespace Scripts.Tavern
             if(old is not null)
             {
                 old.DetachFromParent();
+                old.RelaseCompnent();
                 old = null;
             }
             CurrentCard = cardType;
             var script = ScriptManager.GetScript(nameof(CardComponent));
-            var scriptComponent = ScriptManager.CreateScriptableTo(Owner.GameObject, script);
+            var scriptComponent = ScriptManager.CreateScriptableTo(Owner.GameObject, script,Owner);
             if(scriptComponent is CardComponent cardComponent)
             {
                 cardComponent.CardType = cardType;
             }
         }
 
-        public CardComponent TakeCard()
+        public CardType TakeCard()
         {
+            var type = CurrentCard;
             var component = GameObject.GetComponent<CardComponent>();
             component.DetachFromParent();
+            component.RelaseCompnent();
+            component = null;
             CurrentCard = null;
-            return component;
+            return type;
         }
     }
 }

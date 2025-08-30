@@ -76,25 +76,25 @@ namespace Scripts.Tavern
         public void RegisterRewardSlot(TavernRewardSlot slot)
         {
             TavernRewardSlots.Add(slot);
-            TavernRewardSlots = TavernRewardSlots.OrderByDescending(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
+            TavernRewardSlots = TavernRewardSlots.OrderBy(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
         }
 
         public void RegisterCombatSlot(TavernCombatSlot slot)
         {
             TavernCombatSlots.Add(slot);
-            TavernCombatSlots = TavernCombatSlots.OrderByDescending(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
+            TavernCombatSlots = TavernCombatSlots.OrderBy(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
         }
 
         public void RegisterTempSlot(TavernTempSlot slot)
         {
             TavernTempSlots.Add(slot);
-            TavernTempSlots = TavernTempSlots.OrderByDescending(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
+            TavernTempSlots = TavernTempSlots.OrderBy(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
         }
 
         public void RegisterShopSlot(TavernShopSlot slot)
         {
             TavernShopSlots.Add(slot);
-            TavernShopSlots = TavernShopSlots.OrderByDescending(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
+            TavernShopSlots = TavernShopSlots.OrderBy(x => x.Owner.OwnerObject.Ref.Base.Base.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())).ToList();
         }
         #endregion
 
@@ -111,7 +111,7 @@ namespace Scripts.Tavern
 
             while (result.Count < enabledSlots.Count())
             {
-                int num = rng.Next(enabledSlots.Count);
+                int num = rng.Next(avaibleCards.Count);
                 result.Add(num);
             }
 

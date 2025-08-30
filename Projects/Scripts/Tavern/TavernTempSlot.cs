@@ -17,7 +17,9 @@ namespace Scripts.Tavern
         {
         }
 
-        public CardComponent CurrentCard { get; private set; }
+        public CardType CurrentCard { get; private set; } = null;
+
+        public bool IsEnabled { get; private set; } = true;
 
         public override void OnUpdate()
         {
@@ -44,10 +46,15 @@ namespace Scripts.Tavern
             return true;
         }
 
-        public void AddCard(CardComponent card)
+        public void AddCard(CardType card)
         {
-            CurrentCard = card;
-            card.AttachToComponent(this);
+            var script = ScriptManager.GetScript(nameof(CardComponent));
+            var scriptComponent = ScriptManager.CreateScriptableTo(Owner.GameObject, script, Owner);
+            if (scriptComponent is CardComponent cardComponent)
+            {
+                cardComponent.CardType = card;
+                CurrentCard = card;
+            }
         }
 
         
