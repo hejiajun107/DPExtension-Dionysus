@@ -46,6 +46,13 @@ namespace Scripts.Tavern
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if(mission.Ref.CurrentMission == Mission.Selling)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                OnSell(true, true);
+            }
+
             if (!Register())
                 return;
         }
@@ -108,7 +115,7 @@ namespace Scripts.Tavern
             RefreshAggregates();
         }
 
-        public void OnSale(bool destroyOldCards, bool destroyBuffCards)
+        public void OnSell(bool destroyOldCards, bool destroyBuffCards)
         {
             if(CurrentCardType is not null)
             {
