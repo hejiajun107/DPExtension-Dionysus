@@ -51,8 +51,6 @@ namespace Scripts.Tavern
                             temp.AddCard(cardType);
                         }
                     }
-                   
-                    
                 }
             }
         }

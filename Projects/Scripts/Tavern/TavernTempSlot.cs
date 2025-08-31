@@ -57,6 +57,25 @@ namespace Scripts.Tavern
             }
         }
 
-        
+        /// <summary>
+        /// 移除当前卡牌
+        /// </summary>
+        /// <returns></returns>
+        public CardType RemoveCard() {
+            if(this.CurrentCard is not null)
+            {
+                var card = CurrentCard;
+                var old = GameObject.GetComponent<CardComponent>();
+                if (old is not null)
+                {
+                    old.DetachFromParent();
+                    old.RelaseCompnent();
+                    old = null;
+                }
+                CurrentCard = null;
+                return card;
+            }
+            return null;
+        }
     }
 }

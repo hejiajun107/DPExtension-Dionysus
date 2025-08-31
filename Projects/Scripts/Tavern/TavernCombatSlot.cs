@@ -1,4 +1,5 @@
-﻿using Extension.EventSystems;
+﻿using DynamicPatcher;
+using Extension.EventSystems;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
@@ -72,17 +73,37 @@ namespace Scripts.Tavern
 
         public void ChangeCard(CardType cardType,bool destroyOldCards,bool destroyBuffCards) 
         {
-            if(CurrentCardType is not null)
+            if(CurrentCardType is null)
             {
                 CurrentCardType = cardType;
+            }
+            else
+            {
+                //三连
             }
 
             if (destroyOldCards)
             {
-                CardRecords.RemoveAll(x => x.IsPersist);
+                CardRecords.RemoveAll(x => !x.IsPersist);
             }
 
-            
+            CardRecords.Add(new CardRecord()
+            {
+                CardType = cardType,
+                IsPersist = false,
+            });
+
+            CardRecords.Add(new CardRecord()
+            {
+                CardType = TavernGameManager.Instance.CardTypes["MTNK"],
+                IsPersist = false,
+            });
+
+            CardRecords.Add(new CardRecord()
+            {
+                CardType = TavernGameManager.Instance.CardTypes["MTNK"],
+                IsPersist = false,
+            });
 
             RefreshAggregates();
         }
@@ -98,8 +119,41 @@ namespace Scripts.Tavern
                     CardRecords.RemoveAll(x => !x.IsPersist);
                     RefreshAggregates();
                 }
-
             }    
+        }
+
+        public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
+        {
+            if (pAttacker.IsNull)
+                return;
+
+            if (pAttacker.CastToTechno(out var ptechno))
+            {
+                var ext = TechnoExt.ExtMap.Find(ptechno);
+                if (ext.IsNullOrExpired())
+                    return;
+
+                //从暂存区来的卡牌
+                var tempSlot = ext.GameObject.GetComponent<TavernTempSlot>();
+                if (tempSlot is not null)
+                {
+                    if (tempSlot.CurrentCard is null)
+                    {
+                        return;
+                    }
+
+                    //需要当前卡槽为空或者是相同卡牌
+                    if (CurrentCardType is not null && CurrentCardType.Key != tempSlot.CurrentCard.Key)
+                    {
+                        return;
+                    }
+
+                    var card = tempSlot.RemoveCard();
+                    ChangeCard(card, true, true);
+                    return;
+                }
+
+            }
         }
 
         /// <summary>
@@ -125,14 +179,14 @@ namespace Scripts.Tavern
 
                 if(CurrentCardType != null)
                 {
-                    RenderPCX(CurrentCardType.Cameo, 0, 0, 0);
+                    RenderPCX(CurrentCardType.Cameo, -250, 0, 50);
                 }
 
                 int zCount = 0;
                 foreach(var card in _aggregates)
                 {
-                    RenderPCX(card.CardType.Cameo, 0, 0, 100 + zCount * 20);
-                    DrawNumber(card.Count.ToString(), 0, 0, 100 + zCount * 20);
+                    RenderPCX(card.CardType.Cameo, -250, 0, 50 + 450 + zCount * 100);
+                    DrawNumber(card.Count.ToString(), -240, 0, 50 + 450 + zCount * 100);
                     zCount++;
                 }
             }
@@ -155,8 +209,8 @@ namespace Scripts.Tavern
             Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
             var source = new RectangleStruct(point.X, point.Y, 60, 48);
             Pointer<Surface> pSurface = Surface.Current;
-            var point2 = new Point2D(0, 0);
-            pSurface.Ref.DrawText(txt, source.GetThisPointer(), point2.GetThisPointer(), new ColorStruct(0,255,0));
+            var point2 = new Point2D(2, 32);
+            pSurface.Ref.DrawText(txt, source.GetThisPointer(), point2.GetThisPointer(), new ColorStruct(0, 255, 0));
         }
     }
 
