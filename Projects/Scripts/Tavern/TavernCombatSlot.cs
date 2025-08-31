@@ -9,7 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+using Extension.Utilities;
+
 
 namespace Scripts.Tavern
 {
@@ -208,7 +209,7 @@ namespace Scripts.Tavern
             RectangleStruct rect = pSurface.Ref.GetRect();
             Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
             var source = new RectangleStruct(point.X, point.Y, pcx.Ref.Base.Base.Width, pcx.Ref.Base.Base.Height);
-            PCX.Instance.BlitToSurface(source.GetThisPointer(), pSurface.Convert<DSurface>(), pcx);
+            PCX.Instance.BlitToSurfaceSafely(source.GetThisPointer(), pSurface.Convert<DSurface>(), pcx);
         }
 
         private void DrawNumber(string txt, int offsetX, int offsetY, int offsetZ)
