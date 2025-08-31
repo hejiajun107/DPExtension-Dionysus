@@ -1,11 +1,12 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using PatcherYRpp;
+using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scripts.Tavern;
 
 namespace Scripts.Tavern
 {
@@ -23,6 +24,13 @@ namespace Scripts.Tavern
 
         public override void OnUpdate()
         {
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if (mission.Ref.CurrentMission == Mission.Selling)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                OnSell();
+            }
+
             if (!Register())
                 return;
         }
@@ -55,6 +63,11 @@ namespace Scripts.Tavern
                 cardComponent.CardType = card;
                 CurrentCard = card;
             }
+        }
+
+        public void OnSell()
+        {
+            this.RemoveCard();
         }
 
         /// <summary>

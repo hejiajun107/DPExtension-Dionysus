@@ -22,12 +22,26 @@ namespace Scripts.Tavern
     {
         public CardComponent(TechnoExt owner) : base(owner)
         {
+          
         }
 
+        private static Font _font = null;
+
+        public static Font TextFont { get { 
+            if(_font is null)
+            {
+                var pfc = new System.Drawing.Text.PrivateFontCollection();
+                pfc.AddFontFile("./font-desc.ttc");
+                _font = new(pfc.Families.FirstOrDefault(), 8, FontStyle.Regular);
+            }
+            return _font; } 
+        }
+        
 
         private static Dictionary<string, YRClassHandle<BSurface>> surfacesCache = new Dictionary<string, YRClassHandle<BSurface>>();
-        private const int widgetWidth = 300;
-        private int offsetY = 500;
+        private const int widgetWidth = 250;
+        private const int widgetHeight = 400;
+        private int offsetY = 400;
 
         public CardType CardType { get; set; }
 
@@ -91,49 +105,49 @@ namespace Scripts.Tavern
             var key = CardType.Key;
             if (!surfacesCache.ContainsKey(key))
             {
-                {
-                    Font font = new Font("Microsoft YaHei", 8, FontStyle.Regular);
 
-                    var text = CardType.Description;
+                Font font = TextFont;//new Font("Microsoft YaHei", 8, FontStyle.Regular);
 
-                    var stext = string.Empty;
+                var text = $"{CardType.Name}@" + CardType.Description;
 
-                    var sizeF = EstimateSize(text, out stext);
+                var stext = string.Empty;
 
-                    int widthRect = (int)sizeF.Width + 40;
-                    int heightRect = (int)sizeF.Height + 2;
+                var sizeF = EstimateSize(text, out stext);
 
-                    var bitmap = new Bitmap((int)sizeF.Width + 40, (int)sizeF.Height + 2);
+                int widthRect = (int)sizeF.Width + 40;
+                int heightRect = (int)sizeF.Height + 2;
 
-                    Graphics g = Graphics.FromImage(bitmap);
-                    StringFormat format = new StringFormat(StringFormatFlags.NoClip);
-                    SolidBrush blackBrush = new SolidBrush(Color.FromArgb(255, 30, 30, 30));
-                    SolidBrush whiteBrush = new SolidBrush(Color.White);
-                    Pen whitePen = new Pen(whiteBrush, 2);
+                var bitmap = new Bitmap((int)sizeF.Width + 40, (int)sizeF.Height + 2);
 
-                    var fillrect = new Rectangle(0, 0, widthRect, heightRect);
-                    var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+                Graphics g = Graphics.FromImage(bitmap);
+                StringFormat format = new StringFormat(StringFormatFlags.NoClip);
+                SolidBrush blackBrush = new SolidBrush(Color.FromArgb(255, 30, 30, 30));
+                SolidBrush whiteBrush = new SolidBrush(Color.White);
+                Pen whitePen = new Pen(whiteBrush, 2);
 
-                    g.FillRectangle(blackBrush, fillrect);
-                    g.DrawRectangle(whitePen, fillrect);
-                    g.DrawString(stext, font, whiteBrush, PointF.Empty, format);
+                var fillrect = new Rectangle(0, 0, widthRect, heightRect);
+                var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+
+                g.FillRectangle(blackBrush, fillrect);
+                g.DrawRectangle(whitePen, fillrect);
+                g.DrawString(stext, font, whiteBrush, PointF.Empty, format);
                        
-                    g.Save();
+                g.Save();
 
-                    bitmap = bitmap.Clone(rect, PixelFormat.Format16bppRgb565);
-                    var surface = new YRClassHandle<BSurface>(bitmap.Width, bitmap.Height);
+                bitmap = bitmap.Clone(rect, PixelFormat.Format16bppRgb565);
+                var surface = new YRClassHandle<BSurface>(bitmap.Width, bitmap.Height);
 
 
-                    var data = bitmap.LockBits(rect, ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                var data = bitmap.LockBits(rect, ImageLockMode.ReadOnly, bitmap.PixelFormat);
 
-                    surface.Ref.Allocate(2);
-                    Helpers.Copy(data.Scan0, surface.Ref.BaseSurface.Buffer, data.Stride * data.Height);
+                surface.Ref.Allocate(2);
+                Helpers.Copy(data.Scan0, surface.Ref.BaseSurface.Buffer, data.Stride * data.Height);
 
-                    bitmap.UnlockBits(data);
+                bitmap.UnlockBits(data);
 
-                    surfacesCache.Add(key, surface);
+                surfacesCache.Add(key, surface);
 
-                }
+                
             }
             else
             {
@@ -219,7 +233,7 @@ namespace Scripts.Tavern
 
             lined = string.Join("\n", lines);
             //return new SizeF(widgetWidth, lines.Count * 15 > 1000 ? 1000 : lines.Count * 15);
-            return new SizeF(widgetWidth, 500);
+            return new SizeF(widgetWidth, widgetHeight);
         }
 
         private bool IsCnChar(char ch)
