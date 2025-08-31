@@ -3,16 +3,19 @@ using Extension.EventSystems;
 using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
+using Extension.Utilities;
 using PatcherYRpp;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Extension.Utilities;
 
 namespace Scripts.Tavern
 {
@@ -27,16 +30,39 @@ namespace Scripts.Tavern
 
         private static Font _font = null;
 
-        public static Font TextFont { get { 
-            if(_font is null)
+        private static PrivateFontCollection _pfc;
+
+        public static Font TextFont
+        {
+            get
             {
-                var pfc = new System.Drawing.Text.PrivateFontCollection();
-                pfc.AddFontFile("./font-desc.ttc");
-                _font = new(pfc.Families.FirstOrDefault(), 8, FontStyle.Regular);
+                if (_font is null)
+                {
+                    var pfc = new System.Drawing.Text.PrivateFontCollection();
+                    _pfc = pfc;
+                    byte[] fontData = File.ReadAllBytes("./font-desc.ttf");
+                    IntPtr ptr = Marshal.AllocCoTaskMem(fontData.Length);
+                    try
+                    {
+                        Marshal.Copy(fontData, 0, ptr, fontData.Length);
+                        pfc.AddMemoryFont(ptr, fontData.Length);
+                        AppDomain.CurrentDomain.ProcessExit += (s, e) =>
+                        {
+                            _pfc.Dispose();
+                        };
+                    }
+                    finally
+                    {
+                        // 即使出错也要释放非托管内存
+                        Marshal.FreeCoTaskMem(ptr);
+                    }
+
+                    _font = new(pfc.Families.FirstOrDefault(), 8, FontStyle.Regular);
+                }
+                return _font;
             }
-            return _font; } 
         }
-        
+
 
         private static Dictionary<string, YRClassHandle<BSurface>> surfacesCache = new Dictionary<string, YRClassHandle<BSurface>>();
         private const int widgetWidth = 250;
@@ -130,7 +156,7 @@ namespace Scripts.Tavern
 
                 g.FillRectangle(blackBrush, fillrect);
                 g.DrawRectangle(whitePen, fillrect);
-                g.DrawString(stext, font, whiteBrush, PointF.Empty, format);
+                g.DrawString(stext, font, whiteBrush, new PointF(5,10), format);
                        
                 g.Save();
 
