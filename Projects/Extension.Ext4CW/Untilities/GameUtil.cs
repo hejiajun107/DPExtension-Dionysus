@@ -6,6 +6,7 @@
 //using System.Text;
 //using System.Threading.Tasks;
 
+using DynamicPatcher;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
 using System;
@@ -418,12 +419,18 @@ namespace Extension.Utilities
 
 
 
-        public static bool BlitToSurfaceSafely(this PCX pcx,Pointer<RectangleStruct> boundingRect, Pointer<DSurface> targetSurface, Pointer<BSurface> PCXSurface, int transparentColor = 0xF81F)
+        public static bool BlitToSurfaceSafely(this PCX pcx,Pointer<RectangleStruct> boundingRect, Pointer<DSurface> targetSurface, Pointer<BSurface> PCXSurface, int transparentColor = 0xF81F,bool skipIfNotInViewBounds = true)
         {
             RectangleStruct rect = targetSurface.Ref.Base.GetRect();
             var drect = Rectangle.Intersect(new Rectangle(rect.X,rect.Y,rect.Width,rect.Height)
                 , new Rectangle(boundingRect.Ref.X, boundingRect.Ref.Y, boundingRect.Ref.Width, boundingRect.Ref.Height));
             var finalRect = new RectangleStruct(drect.X, drect.Y, drect.Width, drect.Height);
+
+            if (finalRect.X == 0 && finalRect.Y == 0 && finalRect.Width == 0 && finalRect.Height == 0 && skipIfNotInViewBounds) 
+            {
+                return false;
+            }
+
             return pcx.BlitToSurface(finalRect.GetThisPointer(), targetSurface, PCXSurface, transparentColor);
         }
 

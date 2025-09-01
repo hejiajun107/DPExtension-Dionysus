@@ -1,16 +1,21 @@
-﻿using Extension.Ext;
+﻿using Extension.Coroutines;
+using Extension.EventSystems;
+using Extension.Ext;
+using Extension.INI;
 using Extension.Script;
+using Newtonsoft.Json;
 using PatcherYRpp;
+using Scripts.Tavern;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scripts.Tavern;
-using Extension.INI;
-using System.IO;
-using Newtonsoft.Json;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Scripts.Tavern
 {
@@ -31,18 +36,31 @@ namespace Scripts.Tavern
 
         public List<string> CardPool { get; private set; } = new List<string>();
 
+        public int BaseMaxLevel { get; private set; }
+
+        private List<FlyingText> _flyingTexts = new List<FlyingText>();
+
         public TavernGameManager(TechnoExt owner) : base(owner)
         {
         }
 
         private INIComponentWith<GameManagerSetting> ini;
 
+        private bool inited = false;
+
         public override void Awake()
         {
             ini = Owner.GameObject.CreateRulesIniComponentWith<GameManagerSetting>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             //导入所有卡配置
+            LoadConfig();
             LoadCardTypes();
             InitCardPools();
+            EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+        }
+
+        public override void OnDestroy()
+        {
+            EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
         }
 
         public override void OnUpdate()
@@ -54,13 +72,120 @@ namespace Scripts.Tavern
             }
 
             //未全部注册
-            if (PlayerNodes.Count < maxPlayer)
+            //if (PlayerNodes.Count < maxPlayer)
+            //{
+            //    return;
+            //}
+
+            if (!inited) 
             {
-                return;
+                inited = true;
+                GameObject.StartCoroutine(DoInit());
             }
 
+            UpdateFlyingTexts();
+        }
 
-            
+        public void OnGScreenRender(object sender, EventArgs args)
+        {
+            if (args is GScreenEventArgs gScreenEvtArgs)
+            {
+                if (gScreenEvtArgs.IsLateRender)
+                {
+                    DrawingFlyingText();
+                }
+                else
+                {
+
+                }
+            }
+        }
+
+        public void ShowFlyingTextAt(string text, CoordStruct location, int color = 0)
+        {
+            _flyingTexts.Add(new FlyingText()
+            {
+                Text = text,
+                Duration = 25,
+                Location = location,
+                Color = color
+            });
+        }
+
+        private void DrawingFlyingText()
+        {
+            foreach(var text in _flyingTexts)
+            {
+                if (text.Duration > 0)
+                {
+                    Point2D point = TacticalClass.Instance.Ref.CoordsToClient(text.Location);
+                    Pointer<Surface> pSurface = Surface.Current;
+                    var source = pSurface.Ref.GetRect();
+                    var point2 = new Point2D(point.X, point.Y);
+                    pSurface.Ref.DrawText(text.Text, source.GetThisPointer(), point2.GetThisPointer(), text.Color == 0 ? new ColorStruct(0, 255, 0) : new ColorStruct(255, 0, 0));
+                }
+            }
+        }
+
+        private void UpdateFlyingTexts()
+        {
+            _flyingTexts.RemoveAll(x => x.Duration <= 0);
+            foreach (var flyingText in _flyingTexts)
+            {
+                if (flyingText.Duration > 0)
+                {
+                    flyingText.Duration--;
+                    flyingText.Location = flyingText.Location + new CoordStruct(0, 0, 5);
+                }
+            }
+        }
+
+        IEnumerator DoInit()
+        {
+            yield return new WaitForFrames(5);
+            foreach (var node in PlayerNodes)
+            {
+                for (var i = 0; i < node.TavernCombatSlots.Count(); i++)
+                {
+                    if (i < ini.Data.InitCombatSlots)
+                    {
+                        node.TavernCombatSlots[i].IsEnabled = true;
+                    }
+                    else
+                    {
+                        node.TavernCombatSlots[i].IsEnabled = false;
+                    }
+                }
+
+                for (var i = 0; i < node.TavernShopSlots.Count(); i++)
+                {
+                    if (i < ini.Data.InitShopSlots)
+                    {
+                        node.TavernShopSlots[i].IsEnabled = true;
+                    }
+                    else
+                    {
+                        node.TavernShopSlots[i].IsEnabled = false;
+                    }
+                }
+
+                for (var i = 0; i < node.TavernTempSlots.Count(); i++)
+                {
+                    if (i < ini.Data.InitTempSlots)
+                    {
+                        node.TavernTempSlots[i].IsEnabled = true;
+                    }
+                    else
+                    {
+                        node.TavernTempSlots[i].IsEnabled = false;
+                    }
+                }
+            }
+            yield return new WaitForFrames(1);
+            foreach (var node in PlayerNodes)
+            {
+                node.OnRefreshShop();
+            }
         }
 
         public TavernPlayerNode FindPlayerNodeByHouse(Pointer<HouseClass> house)
@@ -77,6 +202,16 @@ namespace Scripts.Tavern
         {
             PlayerNodes.Add(node);
         }
+
+
+        private void LoadConfig()
+        {
+            if (ini != null)
+            {
+                BaseMaxLevel = ini.Data.BaseMaxLevel;
+            }
+        }
+
 
         private void LoadCardTypes()
         {
@@ -96,6 +231,7 @@ namespace Scripts.Tavern
                 CardTypes = types.ToDictionary(x => x.Key, x => x);
             }
         }
+
 
         private void InitCardPools()
         {
@@ -120,8 +256,39 @@ namespace Scripts.Tavern
         /// </summary>
         [INIField(Key = "CardConfigFiles")]
         public string CardConfigFiles = "";
+        /// <summary>
+        /// 基地最高等级
+        /// </summary>
+        [INIField(Key = "BaseMaxLevel")]
+        public int BaseMaxLevel = 5;
+        [INIField(Key = "BuyCardPrice")]
+        public int BuyCardPrice = 300;
+        [INIField(Key = "SellCardPrice")]
+        public int SellCardPrice = 100;
+        [INIField(Key = "RefreshPrice")]
+        public int RefreshPrice = 100;
+        [INIField(Key = "InitTempSlots")]
+        public int InitTempSlots = 3;
+        [INIField(Key = "InitCombatSlots")]
+        public int InitCombatSlots = 3;
+        [INIField(Key = "InitShopSlots")]
+        public int InitShopSlots = 3;
+    }
 
 
+    [Serializable]
+    public class FlyingText
+    {
+        public string Text { get; set; }
+
+        public int Duration { get; set; }
+
+        public CoordStruct Location { get; set; }
+
+        /// <summary>
+        /// 0 green 1 red
+        /// </summary>
+        public int Color = 0;
     }
 
 }

@@ -49,6 +49,9 @@ namespace Scripts.Tavern
                             var cardType = shopSlot.TakeCard();
 
                             temp.AddCard(cardType);
+
+                            //显示购买卡牌消耗的资金
+                            TavernGameManager.Instance.ShowFlyingTextAt($"-${300}", pTarget.Ref.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 200), 1);
                         }
                     }
                 }

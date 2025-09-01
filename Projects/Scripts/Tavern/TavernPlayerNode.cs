@@ -103,7 +103,7 @@ namespace Scripts.Tavern
         /// </summary>
         public void OnRefreshShop()
         {
-            var enabledSlots = TavernShopSlots.Where(x => x.Enabled).ToList();
+            var enabledSlots = TavernShopSlots.Where(x => x.IsEnabled).ToList();
             var avaibleCards = TavernGameManager.Instance.GetAvailableCardPools(BaseLevel);
             
             var result = new HashSet<int>();
@@ -130,7 +130,34 @@ namespace Scripts.Tavern
         /// </summary>
         public void OnUpgrade()
         {
+            if(BaseLevel < TavernGameManager.Instance.BaseMaxLevel)
+            {
+                BaseLevel++;
+                //解锁槽位
+                var temp = TavernTempSlots.Where(x => !x.IsEnabled).FirstOrDefault();
 
+                if (temp is not null) 
+                {
+                    temp.IsEnabled = true;
+                }
+               
+                var combat = TavernCombatSlots.Where(x => !x.IsEnabled).FirstOrDefault();
+
+                if (combat is not null)
+                {
+                    combat.IsEnabled = true;
+                }
+
+                var shop = TavernShopSlots.Where(x => !x.IsEnabled).FirstOrDefault();
+
+                if (shop is not null)
+                {
+                    shop.IsEnabled = true;
+                }
+
+                //显示升本花费的资金
+                TavernGameManager.Instance.ShowFlyingTextAt($"-${1000}", Owner.OwnerObject.Ref.Base.Base.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 500), 1);
+            }
         }
     }
 }

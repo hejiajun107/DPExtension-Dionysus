@@ -30,4 +30,25 @@ namespace Scripts.Tavern
             }
         }
     }
+
+    [ScriptAlias(nameof(UpgradeBaseSWScript))]
+    [Serializable]
+    public class UpgradeBaseSWScript : SuperWeaponScriptable
+    {
+        public UpgradeBaseSWScript(SuperWeaponExt owner) : base(owner)
+        {
+        }
+
+        public override void OnLaunch(CellStruct cell, bool isPlayer)
+        {
+            if (TavernGameManager.Instance is not null)
+            {
+                var node = TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner);
+                if (node is not null)
+                {
+                    node.OnUpgrade();
+                }
+            }
+        }
+    }
 }

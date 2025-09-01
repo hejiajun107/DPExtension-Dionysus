@@ -5,6 +5,7 @@ using Extension.INI;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.FileFormats;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Scripts.Tavern
 {
@@ -115,7 +117,7 @@ namespace Scripts.Tavern
 
                 if(CardType is not null)
                 {
-                    RenderPCX(CardType.Cameo, -250, 0, 50);
+                    RenderCameo(CardType.Cameo, -250, 0, 50);
                 }
 
                 if(Owner.OwnerObject.Ref.Owner == HouseClass.Player && Owner.OwnerObject.Ref.Base.IsSelected)
@@ -172,12 +174,33 @@ namespace Scripts.Tavern
                 bitmap.UnlockBits(data);
 
                 surfacesCache.Add(key, surface);
-
-                
             }
             else
             {
                 //offsetY = offsetYCache.ContainsKey(key) ? offsetYCache[key] : 0;
+            }
+        }
+
+        private void RenderCameo(string cameo, int offsetX, int offsetY, int offsetZ)
+        {
+            if (cameo.EndsWith(".pcx", StringComparison.InvariantCultureIgnoreCase))
+            {
+                RenderPCX(cameo, offsetX, offsetY, offsetZ);
+            }
+            else
+            {
+                RenderCameoSHP(cameo, offsetX, offsetY, offsetZ);
+            }
+        }
+
+        private void RenderCameoSHP(string shp,int offsetX,int offsetY,int offsetZ)
+        {
+            if (FileSystem.TyrLoadSHPFile(shp + ".shp", out Pointer<SHPStruct> pCustomSHP))
+            {
+                Pointer<Surface> pSurface = Surface.Current;
+                RectangleStruct rect = pSurface.Ref.GetRect();
+                Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
+                pSurface.Ref.DrawSHP(FileSystem.CAMEO_PAL, pCustomSHP, 0, point, rect.GetThisPointer(),BlitterFlags.None);
             }
         }
 
@@ -193,7 +216,7 @@ namespace Scripts.Tavern
             RectangleStruct pcxBounds = new RectangleStruct(0, 0, pcx.Ref.Base.Base.Width, pcx.Ref.Base.Base.Height);
             Pointer<Surface> pSurface = Surface.Current;
             RectangleStruct rect = pSurface.Ref.GetRect();
-            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
+            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
             var source = new RectangleStruct(point.X, point.Y, pcx.Ref.Base.Base.Width, pcx.Ref.Base.Base.Height);
             PCX.Instance.BlitToSurfaceSafely(source.GetThisPointer(), pSurface.Convert<DSurface>(), pcx);
         }
@@ -206,7 +229,7 @@ namespace Scripts.Tavern
             {
                 ref var srcSurface = ref surface.Ref.BaseSurface;
 
-                Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
+                Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 //point += new Point2D(0, -srcSurface.Height);
 
                 //var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - srcSurface.Height / 2,
@@ -292,7 +315,7 @@ namespace Scripts.Tavern
         /// <summary>
         /// 对应单位的注册名
         /// </summary>
-        public string TechnoType { get; set; }
+        public List<CardTechno> Technos { get; set; } = new List<CardTechno>();
 
         /// <summary>
         /// 图标,仅PCX
@@ -317,4 +340,15 @@ namespace Scripts.Tavern
         public List<string> Tags { get; set; }
     }
 
+
+    [Serializable]
+    public class CardTechno
+    {
+        public string Key { get; set; }
+
+        public int Count { get; set; }
+
+        public bool IsPersist { get; set; } = false;
+ 
+    }
 }

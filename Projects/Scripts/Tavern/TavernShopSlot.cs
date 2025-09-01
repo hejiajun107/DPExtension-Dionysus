@@ -1,12 +1,15 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.EventSystems;
+using Extension.Ext;
 using Extension.Script;
+using PatcherYRpp;
+using PatcherYRpp.FileFormats;
+using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scripts.Tavern;
-using DynamicPatcher;
 
 namespace Scripts.Tavern
 {
@@ -21,7 +24,7 @@ namespace Scripts.Tavern
         {
         }
 
-        public bool Enabled { get; set; } = true;
+        public bool IsEnabled { get; set; } = true;
 
         public CardType CurrentCard { get; private set; }
 
@@ -78,6 +81,40 @@ namespace Scripts.Tavern
             component = null;
             CurrentCard = null;
             return type;
+        }
+
+        public override void Awake()
+        {
+            EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+            base.Awake();
+        }
+        public override void OnDestroy()
+        {
+            EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+            base.OnDestroy();
+        }
+
+        public void OnGScreenRender(object sender, EventArgs args)
+        {
+            if (args is GScreenEventArgs gScreenEvtArgs)
+            {
+                if (!gScreenEvtArgs.IsLateRender)
+                {
+                    return;
+                }
+
+                //绘制禁用标识
+                if (!IsEnabled)
+                {
+                    if (FileSystem.TyrLoadSHPFile("banned.shp", out Pointer<SHPStruct> pCustomSHP))
+                    {
+                        Pointer<Surface> pSurface = Surface.Current;
+                        RectangleStruct rect = pSurface.Ref.GetRect();
+                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(-250, 0, 50));
+                        pSurface.Ref.DrawSHP(FileSystem.UNITx_PAL, pCustomSHP, 0, point, rect.GetThisPointer(), BlitterFlags.None);
+                    }
+                }
+            }
         }
     }
 }

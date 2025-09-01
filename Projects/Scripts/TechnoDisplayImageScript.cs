@@ -236,7 +236,7 @@ namespace Scripts
                         {
                             ref var srcSurface = ref surface.Ref.BaseSurface;
 
-                            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.BaseAbstract.GetCoords());
+                            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                             //point += new Point2D(0, -srcSurface.Height);
 
                             //var rect = new Rectangle(point.X - srcSurface.Width / 2, point.Y - srcSurface.Height / 2,
