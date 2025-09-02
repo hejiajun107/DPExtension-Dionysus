@@ -67,9 +67,9 @@ namespace Scripts.Tavern
 
 
         private static Dictionary<string, YRClassHandle<BSurface>> surfacesCache = new Dictionary<string, YRClassHandle<BSurface>>();
-        private const int widgetWidth = 250;
-        private const int widgetHeight = 400;
-        private int offsetY = 400;
+        private const int widgetWidth = 200;
+        private const int widgetHeight = 300;
+        private int offsetY = 300;
 
         public CardType CardType { get; set; }
 
@@ -117,10 +117,10 @@ namespace Scripts.Tavern
 
                 if(CardType is not null)
                 {
-                    RenderCameo(CardType.Cameo, -250, 0, 50);
+                    GameUtil.RenderCameo(CardType.Cameo, Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(-250, 0, 50));
                 }
 
-                if(Owner.OwnerObject.Ref.Owner == HouseClass.Player && Owner.OwnerObject.Ref.Base.IsSelected)
+                if (Owner.OwnerObject.Ref.Owner == HouseClass.Player && Owner.OwnerObject.Ref.Base.IsSelected)
                 {
                     RenderDesc();
                 }
@@ -179,46 +179,6 @@ namespace Scripts.Tavern
             {
                 //offsetY = offsetYCache.ContainsKey(key) ? offsetYCache[key] : 0;
             }
-        }
-
-        private void RenderCameo(string cameo, int offsetX, int offsetY, int offsetZ)
-        {
-            if (cameo.EndsWith(".pcx", StringComparison.InvariantCultureIgnoreCase))
-            {
-                RenderPCX(cameo, offsetX, offsetY, offsetZ);
-            }
-            else
-            {
-                RenderCameoSHP(cameo, offsetX, offsetY, offsetZ);
-            }
-        }
-
-        private void RenderCameoSHP(string shp,int offsetX,int offsetY,int offsetZ)
-        {
-            if (FileSystem.TyrLoadSHPFile(shp + ".shp", out Pointer<SHPStruct> pCustomSHP))
-            {
-                Pointer<Surface> pSurface = Surface.Current;
-                RectangleStruct rect = pSurface.Ref.GetRect();
-                Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
-                pSurface.Ref.DrawSHP(FileSystem.CAMEO_PAL, pCustomSHP, 0, point, rect.GetThisPointer(),BlitterFlags.None);
-            }
-        }
-
-        private void RenderPCX(string pcxName, int offsetX, int offsetY, int offsetZ)
-        {
-            var loaded = PCX.Instance.LoadFile(pcxName);
-            if (!loaded)
-            {
-                Logger.Log($"{pcxName}不存在");
-                return;
-            }
-            var pcx = PCX.Instance.GetSurface(pcxName, Pointer<BytePalette>.Zero);
-            RectangleStruct pcxBounds = new RectangleStruct(0, 0, pcx.Ref.Base.Base.Width, pcx.Ref.Base.Base.Height);
-            Pointer<Surface> pSurface = Surface.Current;
-            RectangleStruct rect = pSurface.Ref.GetRect();
-            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
-            var source = new RectangleStruct(point.X, point.Y, pcx.Ref.Base.Base.Width, pcx.Ref.Base.Base.Height);
-            PCX.Instance.BlitToSurfaceSafely(source.GetThisPointer(), pSurface.Convert<DSurface>(), pcx);
         }
 
         private void RenderDesc()

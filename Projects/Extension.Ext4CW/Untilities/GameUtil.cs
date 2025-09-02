@@ -8,6 +8,7 @@
 
 using DynamicPatcher;
 using PatcherYRpp;
+using PatcherYRpp.FileFormats;
 using PatcherYRpp.Utilities;
 using System;
 using System.Drawing;
@@ -435,6 +436,43 @@ namespace Extension.Utilities
         }
 
 
+
+
+
+        public static void RenderCameo(string cameo, CoordStruct location)
+        {
+            if (cameo.EndsWith(".pcx", StringComparison.InvariantCultureIgnoreCase))
+            {
+                RenderPCX(cameo, location);
+            }
+            else
+            {
+                RenderCameoSHP(cameo, location);
+            }
+        }
+
+        private static void RenderCameoSHP(string shp,CoordStruct location)
+        {
+            if (FileSystem.TyrLoadSHPFile(shp + ".shp", out Pointer<SHPStruct> pCustomSHP))
+            {
+                Pointer<Surface> pSurface = Surface.Current;
+                RectangleStruct rect = pSurface.Ref.GetRect();
+                Point2D point = TacticalClass.Instance.Ref.CoordsToClient(location);
+                pSurface.Ref.DrawSHP(FileSystem.CAMEO_PAL, pCustomSHP, 0, point, rect.GetThisPointer(), BlitterFlags.None);
+            }
+        }
+
+        private static void RenderPCX(string pcxName, CoordStruct location)
+        {
+            var loaded = PCX.Instance.LoadFile(pcxName);
+            var pcx = PCX.Instance.GetSurface(pcxName, Pointer<BytePalette>.Zero);
+            RectangleStruct pcxBounds = new RectangleStruct(0, 0, pcx.Ref.Base.Base.Width, pcx.Ref.Base.Base.Height);
+            Pointer<Surface> pSurface = Surface.Current;
+            RectangleStruct rect = pSurface.Ref.GetRect();
+            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(location);
+            var source = new RectangleStruct(point.X, point.Y, pcx.Ref.Base.Base.Width, pcx.Ref.Base.Base.Height);
+            PCX.Instance.BlitToSurfaceSafely(source.GetThisPointer(), pSurface.Convert<DSurface>(), pcx);
+        }
 
 
     }

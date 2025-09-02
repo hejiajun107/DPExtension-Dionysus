@@ -5,6 +5,7 @@ using Extension.INI;
 using Extension.Script;
 using Newtonsoft.Json;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using Scripts.Tavern;
 using System;
 using System.Collections;
@@ -15,7 +16,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Scripts.Tavern
 {
@@ -36,9 +36,17 @@ namespace Scripts.Tavern
 
         public List<string> CardPool { get; private set; } = new List<string>();
 
+        public List<string> CommanderPrerequisites { get; private set; } = new List<string> { "CTanyBD", "CBorisBD", "CYuriBD" };
+
         public int BaseMaxLevel { get; private set; }
 
         private List<FlyingText> _flyingTexts = new List<FlyingText>();
+
+
+        private static Dictionary<string, string> CameoCached = new Dictionary<string, string>();
+        private INIComponentWith<TechnoData> rulesIni;
+        private INIComponentWith<ArtData> artIni;
+
 
         public TavernGameManager(TechnoExt owner) : base(owner)
         {
@@ -51,6 +59,8 @@ namespace Scripts.Tavern
         public override void Awake()
         {
             ini = Owner.GameObject.CreateRulesIniComponentWith<GameManagerSetting>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
+            rulesIni = this.CreateRulesIniComponentWith<TechnoData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
+            artIni = this.CreateArtIniComponentWith<ArtData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             //导入所有卡配置
             LoadConfig();
             LoadCardTypes();
@@ -145,6 +155,7 @@ namespace Scripts.Tavern
             yield return new WaitForFrames(5);
             foreach (var node in PlayerNodes)
             {
+                //初始节点数
                 for (var i = 0; i < node.TavernCombatSlots.Count(); i++)
                 {
                     if (i < ini.Data.InitCombatSlots)
@@ -179,6 +190,12 @@ namespace Scripts.Tavern
                     {
                         node.TavernTempSlots[i].IsEnabled = false;
                     }
+                }
+
+                //初始化指挥官选择
+                foreach(var cmdbd in CommanderPrerequisites)
+                {
+                    TechnoPlacer.PlaceTechnoNear(TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(cmdbd), node.Owner.OwnerObject.Ref.Owner, CellClass.Coord2Cell(node.Owner.OwnerObject.Ref.Base.Base.GetCoords()));
                 }
             }
             yield return new WaitForFrames(1);
@@ -246,6 +263,39 @@ namespace Scripts.Tavern
             }
             CardPool = pool;
         }
+
+
+
+        /// <summary>
+        /// 根据单位注册名获取图标
+        /// </summary>
+        /// <param name="technoType"></param>
+        /// <returns></returns>
+        public string GetTechnoCameo(string technoType)
+        {
+            if (CameoCached.ContainsKey(technoType))
+                return CameoCached[technoType];
+
+            rulesIni.Section = technoType;
+            string artKey = technoType;
+            if (!string.IsNullOrEmpty(rulesIni.Data.Image))
+            {
+                artKey = rulesIni.Data.Image;
+            }
+            artIni.Section = artKey;
+            var cameo = string.Empty;
+            if (!string.IsNullOrEmpty(artIni.Data.CameoPCX))
+            {
+                cameo = artIni.Data.CameoPCX;
+            }
+            else
+            {
+                cameo = artIni.Data.Cameo;
+            }
+
+            CameoCached.Add(technoType, cameo);
+            return cameo;
+        }
     }
 
 
@@ -289,6 +339,20 @@ namespace Scripts.Tavern
         /// 0 green 1 red
         /// </summary>
         public int Color = 0;
+    }
+
+    public class TechnoData : INIAutoConfig
+    {
+        [INIField(Key = "Image")]
+        public string Image = "";
+    }
+
+    public class ArtData : INIAutoConfig
+    {
+        [INIField(Key = "Cameo")]
+        public string Cameo = string.Empty;
+        [INIField(Key = "CameoPCX")]
+        public string CameoPCX = string.Empty;
     }
 
 }
