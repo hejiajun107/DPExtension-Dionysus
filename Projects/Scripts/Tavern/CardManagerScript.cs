@@ -26,8 +26,22 @@ namespace Scripts.Tavern
      
         public override void OnUpdate()
         {
+            bool deploy = false;
+
+            var mission = Owner.OwnerObject.Convert<MissionClass>();
+            if(mission.Ref.CurrentMission == Mission.Unload)
+            {
+                mission.Ref.ForceMission(Mission.Stop);
+                deploy = true;
+            }
+
             if (PlayerNode is null)
                 return;
+
+            if (deploy)
+            {
+                PlayerNode.OnRefreshShop();
+            }
         }
 
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
