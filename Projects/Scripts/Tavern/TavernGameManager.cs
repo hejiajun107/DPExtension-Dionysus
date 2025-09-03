@@ -112,6 +112,9 @@ namespace Scripts.Tavern
 
         private bool inited = false;
 
+        //用于流程比较长的协程的锁定，避免重复触发
+        private bool coroutineLock = false;
+
         public override void Awake()
         {
             ini = Owner.GameObject.CreateRulesIniComponentWith<GameManagerSetting>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
@@ -158,8 +161,12 @@ namespace Scripts.Tavern
                  
                 if(!PlayerNodes.Where(x => !x.IsReady).Any() || ReadyStatusTick == 0)
                 {
-                    //全部准备好以后进入下一个阶段
-                    GameObject.StartCoroutine(ReadyToBattle());
+                    if (!coroutineLock)
+                    {
+                        coroutineLock = true;
+                        //全部准备好以后进入下一个阶段
+                        GameObject.StartCoroutine(ReadyToBattle());
+                    }
                 }
             }
 
@@ -302,6 +309,7 @@ namespace Scripts.Tavern
             yield return new WaitForFrames(20);
             //1
             gameStatusMachine.Next();
+            coroutineLock = false;
         }
 
         /// <summary>
@@ -474,20 +482,20 @@ namespace Scripts.Tavern
             if(CurrentStatus == GameStatus.Ready)
             {
                 CurrentStatus = GameStatus.Prepared;
+                OnPrepared?.Invoke();
             }
             else if(CurrentStatus == GameStatus.Prepared)
             {
-                CurrentStatus = GameStatus.Prepared;
-                OnPrepared?.Invoke();
+                CurrentStatus = GameStatus.Battle;
+                OnBattleStart?.Invoke();
             }
             else if (CurrentStatus == GameStatus.Battle)
             {
                 CurrentStatus = GameStatus.BattleEnd;
-                OnBattleStart?.Invoke();
+                OnBattleEnd?.Invoke();
             }
             else if (CurrentStatus == GameStatus.BattleEnd)
             {
-                OnBattleEnd?.Invoke();
                 CurrentStatus = GameStatus.Ready;
                 OnRoundStart?.Invoke();
             }

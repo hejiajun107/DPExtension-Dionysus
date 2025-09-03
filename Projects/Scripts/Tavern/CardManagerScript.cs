@@ -121,12 +121,9 @@ namespace Scripts.Tavern
                 if (TavernGameManager.Instance is null)
                     return;
 
-                Logger.Log(TavernGameManager.Instance.ReadyStatusTick);
-                Logger.Log(TavernGameManager.Instance.GameStatus);
-
                 if (TavernGameManager.Instance.GameStatus == GameStatus.Ready && Owner.OwnerObject.Ref.Owner == HouseClass.Player)
                 {
-                    DrawTicks(TavernGameManager.Instance.ReadyStatusTick.ToString(), 0, 0, -100);
+                    DrawTicks(TavernGameManager.Instance.ReadyStatusTick.ToString(), 0, 0, -80);
                 }
             }
         }
