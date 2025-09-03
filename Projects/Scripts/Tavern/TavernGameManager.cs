@@ -1,4 +1,5 @@
-﻿using Extension.Coroutines;
+﻿using DynamicPatcher;
+using Extension.Coroutines;
 using Extension.EventSystems;
 using Extension.Ext;
 using Extension.INI;
@@ -47,6 +48,61 @@ namespace Scripts.Tavern
         private INIComponentWith<TechnoData> rulesIni;
         private INIComponentWith<ArtData> artIni;
 
+        private GameStatusMachine gameStatusMachine = new GameStatusMachine();
+
+        public GameStatus GameStatus { 
+            get 
+            {
+                return gameStatusMachine.CurrentStatus;
+            } 
+        }
+
+        /// <summary>
+        /// 当前回合数
+        /// </summary>
+        public int CurrentRound { get; private set; } = 1;
+
+        /// <summary>
+        /// 准备阶段的计时器
+        /// </summary>
+        public int ReadyStatusTick { get; private set; } = 500;
+
+
+        #region rules
+        /// <summary>
+        /// 刷新价格
+        /// </summary>
+        public int RulesRefreshPrice { 
+            get 
+            {
+                return ini.Data.RefreshPrice;
+            } 
+        }
+
+        /// <summary>
+        /// 购买卡牌价格
+        /// </summary>
+        public int RulesBuyCardPrice
+        {
+            get
+            {
+                return ini.Data.BuyCardPrice;
+            }
+        }
+
+        /// <summary>
+        /// 获得升级酒馆的费用
+        /// </summary>
+        /// <returns></returns>
+        public int GetUpgradeBaseCost(Pointer<HouseClass> house)
+        {
+            var node = FindPlayerNodeByHouse(house);
+            if (node.BaseLevel >= ini.Data.BaseMaxLevel)
+                return 0;
+
+            return ini.Data.InitUpgradeCost + (ini.Data.BaseMaxLevel-1) * ini.Data.BaseMaxLevel;
+        }
+        #endregion
 
         public TavernGameManager(TechnoExt owner) : base(owner)
         {
@@ -91,6 +147,20 @@ namespace Scripts.Tavern
             {
                 inited = true;
                 GameObject.StartCoroutine(DoInit());
+            }
+
+            if(GameStatus == GameStatus.Ready)
+            {
+                if (ReadyStatusTick > 0)
+                {
+                    ReadyStatusTick--;
+                }
+                 
+                if(!PlayerNodes.Where(x => !x.IsReady).Any() || ReadyStatusTick == 0)
+                {
+                    //全部准备好以后进入下一个阶段
+                    GameObject.StartCoroutine(ReadyToBattle());
+                }
             }
 
             UpdateFlyingTexts();
@@ -199,11 +269,92 @@ namespace Scripts.Tavern
                 }
             }
             yield return new WaitForFrames(1);
+          
+
+
+            gameStatusMachine.OnRoundStart += RoundStart;
+            gameStatusMachine.OnPrepared += () =>
+            {
+                Logger.Log("准备完了");
+            };
+            gameStatusMachine.OnBattleStart += () =>
+            {
+                Logger.Log("战斗开始");
+            };
+            gameStatusMachine.OnBattleEnd += () =>
+            {
+                Logger.Log("战斗结束");
+            };
+            gameStatusMachine.Init();
+        }
+
+
+        IEnumerator ReadyToBattle()
+        {
+            yield return new WaitForFrames(20);
+            //5
+            yield return new WaitForFrames(20);
+            //4
+            yield return new WaitForFrames(20);
+            //3
+            yield return new WaitForFrames(20);
+            //2
+            yield return new WaitForFrames(20);
+            //1
+            gameStatusMachine.Next();
+        }
+
+        /// <summary>
+        /// 回合开始
+        /// </summary>
+        private void RoundStart()
+        {
+            //免费刷新一次所有未锁定的商店
             foreach (var node in PlayerNodes)
             {
-                node.OnRefreshShop();
+                //清除玩家金钱
+                var money = node.Owner.OwnerObject.Ref.Owner.Ref.Available_Money();
+                if (money > 0)
+                {
+                    node.Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(-money);
+                }
+
+                if (!node.IsLocked)
+                {
+                    node.OnRefreshShop(true);
+                }
+
+                //玩家获得回合金钱
+                var giveMoney = ini.Data.InitMoney + (CurrentRound - 1) * ini.Data.RoundMoney;
+                if (giveMoney > ini.Data.MaxMoney)
+                {
+                    giveMoney = ini.Data.MaxMoney;
+                }
+                node.Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(giveMoney);
+
+                node.IsLocked = false;
+                node.VoteSkiped = false;
+
+                //所有AI节点直接准备就绪
+                if (!node.Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                {
+                    node.IsReady = true;
+                }
+
+                //todo触发所有卡牌的回合开始效果
             }
+
+            //给与准备时间
+            var ticks = ini.Data.ReadyStatusInitTime + (CurrentRound - 1) * ini.Data.ReadyStatusRoundTime;
+            if (ticks > ini.Data.ReadyStatusMaxTime)
+            {
+                ticks = ini.Data.ReadyStatusMaxTime;
+            }
+            ReadyStatusTick = ticks;
         }
+
+
+
 
         public TavernPlayerNode FindPlayerNodeByHouse(Pointer<HouseClass> house)
         {
@@ -296,8 +447,67 @@ namespace Scripts.Tavern
             CameoCached.Add(technoType, cameo);
             return cameo;
         }
+
+
+        /// <summary>
+        /// 播放没钱的提示
+        /// </summary>
+        public void SoundNoMoney()
+        {
+
+        }
     }
 
+    [Serializable]
+    public class GameStatusMachine
+    {
+        public GameStatus CurrentStatus { get; private set; } = GameStatus.NoInited;
+
+        public void Init()
+        {
+            CurrentStatus = GameStatus.Ready;
+            OnRoundStart?.Invoke();
+        }
+
+        public void Next()
+        {
+            if(CurrentStatus == GameStatus.Ready)
+            {
+                CurrentStatus = GameStatus.Prepared;
+            }
+            else if(CurrentStatus == GameStatus.Prepared)
+            {
+                CurrentStatus = GameStatus.Prepared;
+                OnPrepared?.Invoke();
+            }
+            else if (CurrentStatus == GameStatus.Battle)
+            {
+                CurrentStatus = GameStatus.BattleEnd;
+                OnBattleStart?.Invoke();
+            }
+            else if (CurrentStatus == GameStatus.BattleEnd)
+            {
+                OnBattleEnd?.Invoke();
+                CurrentStatus = GameStatus.Ready;
+                OnRoundStart?.Invoke();
+            }
+        }
+
+        public event Action OnRoundStart;
+        public event Action OnPrepared;
+        public event Action OnBattleStart;
+        public event Action OnBattleEnd;
+
+    }
+
+    public enum GameStatus
+    {
+        NoInited,
+        Ready,
+        Prepared,
+        Battle,
+        BattleEnd
+    }
 
     public class GameManagerSetting : INIAutoConfig
     {
@@ -311,18 +521,83 @@ namespace Scripts.Tavern
         /// </summary>
         [INIField(Key = "BaseMaxLevel")]
         public int BaseMaxLevel = 5;
+        /// <summary>
+        /// 购买卡牌需要的金钱
+        /// </summary>
         [INIField(Key = "BuyCardPrice")]
         public int BuyCardPrice = 300;
+        /// <summary>
+        /// 出售卡牌获得的金钱
+        /// </summary>
         [INIField(Key = "SellCardPrice")]
         public int SellCardPrice = 100;
+        /// <summary>
+        /// 刷新需要的金钱
+        /// </summary>
         [INIField(Key = "RefreshPrice")]
         public int RefreshPrice = 100;
+        /// <summary>
+        /// 初始暂存区数量
+        /// </summary>
         [INIField(Key = "InitTempSlots")]
         public int InitTempSlots = 3;
+        /// <summary>
+        /// 初始上场区数量
+        /// </summary>
         [INIField(Key = "InitCombatSlots")]
         public int InitCombatSlots = 3;
+        /// <summary>
+        /// 初始商店区数量
+        /// </summary>
         [INIField(Key = "InitShopSlots")]
         public int InitShopSlots = 3;
+
+
+        /// <summary>
+        /// 初始金钱
+        /// </summary>
+        [INIField(Key = "InitMoney")]
+        public int InitMoney = 300;
+        /// <summary>
+        /// 随回合数每回合增加的金钱
+        /// </summary>
+        [INIField(Key = "RoundMoney")]
+        public int RoundMoney = 300;
+        /// <summary>
+        /// 每回合获得的最大金钱
+        /// </summary>
+        [INIField(Key = "MaxMoney")]
+        public int MaxMoney = 300;
+
+
+        /// <summary>
+        /// 初始升级酒馆等级所需要的金钱
+        /// </summary>
+        [INIField(Key = "InitUpgradeCost")]
+        public int InitUpgradeCost = 500;
+
+        /// <summary>
+        /// 每级升级酒馆额外增加的金钱
+        /// </summary>
+        [INIField(Key = "UpgradeExtraCost")]
+        public int UpgradeExtraCost = 500;
+
+
+        /// <summary>
+        /// 准备阶段初始时间（帧数）
+        /// </summary>
+        [INIField(Key = "ReadyStatusInitTime")]
+        public int ReadyStatusInitTime = 900;
+        /// <summary>
+        /// 每轮额外增加的准备时间数
+        /// </summary>
+        [INIField(Key = "ReadyStatusRoundTime")]
+        public int ReadyStatusRoundTime = 300;
+        /// <summary>
+        /// 最大准备时间数
+        /// </summary>
+        [INIField(Key = "ReadyStatusMaxTime")]
+        public int ReadyStatusMaxTime = 3000;
     }
 
 

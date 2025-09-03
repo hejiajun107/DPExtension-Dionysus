@@ -51,6 +51,22 @@ namespace Scripts.Tavern
         /// </summary>
         public int BaseLevel { get; private set; } = 1;
 
+        /// <summary>
+        /// 准备状态
+        /// </summary>
+        public bool IsReady {get;set;} = false;
+
+        /// <summary>
+        /// 跳过状态
+        /// </summary>
+        public bool VoteSkiped { get; set; } = false;
+
+
+        /// <summary>
+        /// 是否锁定
+        /// </summary>
+        public bool IsLocked { get; set; } = false;
+
         public override void OnUpdate()
         {
             if (!Register())
@@ -107,11 +123,27 @@ namespace Scripts.Tavern
         }
         #endregion
 
+
         /// <summary>
         /// 刷新卡池
         /// </summary>
-        public void OnRefreshShop()
+        public void OnRefreshShop(bool free = false)
         {
+            if (!free)
+            {
+                if(Owner.OwnerObject.Ref.Owner.Ref.Available_Money() < TavernGameManager.Instance.RulesRefreshPrice)
+                {
+                    TavernGameManager.Instance.SoundNoMoney();
+                    //提示钱不够
+                    return;
+                }
+                else
+                {
+                    Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(-TavernGameManager.Instance.RulesRefreshPrice);
+                    TavernGameManager.Instance.ShowFlyingTextAt($"-${TavernGameManager.Instance.RulesRefreshPrice}", Owner.OwnerObject.Ref.Base.Base.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 500), 1);
+                }
+            }
+                  
             var enabledSlots = TavernShopSlots.Where(x => x.IsEnabled).ToList();
             var avaibleCards = TavernGameManager.Instance.GetAvailableCardPools(BaseLevel);
             

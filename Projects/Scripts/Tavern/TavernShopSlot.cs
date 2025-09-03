@@ -32,6 +32,8 @@ namespace Scripts.Tavern
         {
             if (!Register())
                 return;
+
+            
         }
 
         private bool _registered = false;
@@ -72,7 +74,7 @@ namespace Scripts.Tavern
             }
         }
 
-        public CardType TakeCard()
+        public CardType TakeCard(bool free = false)
         {
             var type = CurrentCard;
             var component = GameObject.GetComponent<CardComponent>();

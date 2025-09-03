@@ -1,14 +1,17 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.EventSystems;
+using Extension.Ext;
 using Extension.Script;
+using Extension.Utilities;
+using Newtonsoft.Json;
+using PatcherYRpp;
+using PatcherYRpp.FileFormats;
+using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scripts.Tavern;
-using PatcherYRpp;
-using Newtonsoft.Json;
-using DynamicPatcher;
 
 namespace Scripts.Tavern
 {
@@ -52,9 +55,19 @@ namespace Scripts.Tavern
                 if (ext.IsNullOrExpired())
                     return;
 
+
                 var shopSlot = ext.GameObject.GetComponent<TavernShopSlot>();
                 if (shopSlot is not null)
                 {
+                    if(Owner.OwnerObject.Ref.Owner.Ref.Available_Money() < TavernGameManager.Instance.RulesBuyCardPrice)
+                    {
+                        //提示金钱不足
+                        TavernGameManager.Instance.SoundNoMoney();
+                        return;
+                    }
+
+
+
                     var temp = PlayerNode.TavernTempSlots.Where(x => x.CurrentCard == null).FirstOrDefault();
                     if(temp is not null)
                     {
@@ -64,6 +77,7 @@ namespace Scripts.Tavern
 
                             temp.AddCard(cardType);
 
+                            Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(-TavernGameManager.Instance.RulesBuyCardPrice);
                             //显示购买卡牌消耗的资金
                             TavernGameManager.Instance.ShowFlyingTextAt($"-${300}", pTarget.Ref.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 200), 1);
                         }
@@ -83,7 +97,49 @@ namespace Scripts.Tavern
 
         private TavernPlayerNode _playerNode = null;
 
- 
+        public override void Awake()
+        {
+            EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+            base.Awake();
+        }
+
+        public override void OnDestroy()
+        {
+            EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
+            base.OnDestroy();
+        }
+
+        public void OnGScreenRender(object sender, EventArgs args)
+        {
+            if (args is GScreenEventArgs gScreenEvtArgs)
+            {
+                if (!gScreenEvtArgs.IsLateRender)
+                {
+                    return;
+                }
+
+                if (TavernGameManager.Instance is null)
+                    return;
+
+                Logger.Log(TavernGameManager.Instance.ReadyStatusTick);
+                Logger.Log(TavernGameManager.Instance.GameStatus);
+
+                if (TavernGameManager.Instance.GameStatus == GameStatus.Ready && Owner.OwnerObject.Ref.Owner == HouseClass.Player)
+                {
+                    DrawTicks(TavernGameManager.Instance.ReadyStatusTick.ToString(), 0, 0, -100);
+                }
+            }
+        }
+
+        private void DrawTicks(string txt, int offsetX, int offsetY, int offsetZ)
+        {
+            Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(offsetX, offsetY, offsetZ));
+            var source = new RectangleStruct(point.X, point.Y, 60, 48);
+            Pointer<Surface> pSurface = Surface.Current;
+            var point2 = new Point2D(2, 32);
+            pSurface.Ref.DrawText(txt, source.GetThisPointer(), point2.GetThisPointer(), new ColorStruct(0, 255, 0));
+        }
+
     }
 
     
