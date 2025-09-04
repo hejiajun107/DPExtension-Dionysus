@@ -19,6 +19,11 @@ namespace Extension.CW
 
 
         public bool IsAiEdition { get; set; }
+
+        /// <summary>
+        /// 是战棋数出来的战斗单位
+        /// </summary>
+        public bool IsTavernBattleUnit { get; set; } = false;
     }
 
     public partial class TechnoGlobalTypeExt

@@ -14,9 +14,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Scripts.Tavern
 {
@@ -66,6 +68,12 @@ namespace Scripts.Tavern
         /// 准备阶段的计时器
         /// </summary>
         public int ReadyStatusTick { get; private set; } = 500;
+
+        /// <summary>
+        /// 战斗阶段的计时器
+        /// </summary>
+        public int BattleEndTicks { get; private set; } = 500;
+
 
 
         #region rules
@@ -170,6 +178,25 @@ namespace Scripts.Tavern
                 }
             }
 
+            if (GameStatus == GameStatus.Battle) 
+            {
+                if (BattleEndTicks > 0)
+                {
+                    BattleEndTicks--;
+                }
+
+                if (!PlayerNodes.Where(x => !x.VoteSkiped).Any() || ReadyStatusTick == 0)
+                {
+                    if (!coroutineLock)
+                    {
+                        //结束战斗
+                        //coroutineLock = true;
+                        ////全部准备好以后进入下一个阶段
+                        //GameObject.StartCoroutine(ReadyToBattle());
+                    }
+                }
+            }
+
             UpdateFlyingTexts();
         }
 
@@ -180,10 +207,15 @@ namespace Scripts.Tavern
                 if (gScreenEvtArgs.IsLateRender)
                 {
                     DrawingFlyingText();
-                }
-                else
-                {
 
+                    if (GameStatus == GameStatus.Battle)
+                    {
+                        Pointer<Surface> pSurface = Surface.Current;
+                        var source = pSurface.Ref.GetRect();
+                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(-100, 0, 600));
+                        var point2 = new Point2D(point.X, point.Y);
+                        pSurface.Ref.DrawText(BattleEndTicks.ToString(), source.GetThisPointer(), point2.GetThisPointer(), new ColorStruct(0, 255, 0));
+                    }
                 }
             }
         }
@@ -226,6 +258,8 @@ namespace Scripts.Tavern
                 }
             }
         }
+
+
 
         IEnumerator DoInit()
         {
@@ -280,14 +314,8 @@ namespace Scripts.Tavern
 
 
             gameStatusMachine.OnRoundStart += RoundStart;
-            gameStatusMachine.OnPrepared += () =>
-            {
-                Logger.Log("准备完了");
-            };
-            gameStatusMachine.OnBattleStart += () =>
-            {
-                Logger.Log("战斗开始");
-            };
+            gameStatusMachine.OnPrepared += Prepared;
+            gameStatusMachine.OnBattleStart += BattleStart;
             gameStatusMachine.OnBattleEnd += () =>
             {
                 Logger.Log("战斗结束");
@@ -311,6 +339,9 @@ namespace Scripts.Tavern
             gameStatusMachine.Next();
             coroutineLock = false;
         }
+
+        
+
 
         /// <summary>
         /// 回合开始
@@ -361,7 +392,84 @@ namespace Scripts.Tavern
             ReadyStatusTick = ticks;
         }
 
+        private void Prepared()
+        {
+            var voteSkipSW = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(ini.Data.VoteSkipSW);
+            var voteTicks = ini.Data.VoteSkipInitTime + (CurrentRound - 1) * ini.Data.VoteSkipRoundTime;
+            if(voteTicks > ini.Data.VoteSkipMaxTime)
+            {
+                voteTicks = ini.Data.VoteSkipMaxTime;
+            }
 
+            foreach (var node in PlayerNodes)
+            {
+                //清除玩家金钱
+                var money = node.Owner.OwnerObject.Ref.Owner.Ref.Available_Money();
+                if (money > 0)
+                {
+                    node.Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(-money);
+                }
+
+                node.VoteSkiped = false;
+
+                //所有AI节点准备跳过
+                if (!node.Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                {
+                    node.VoteSkiped = true;
+                }
+
+                var psw = node.Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(voteSkipSW);
+                psw.Ref.IsCharged = false;
+                psw.Ref.RechargeTimer.Start(voteTicks);
+
+                //todo触发所有卡牌的回合结束效果
+
+
+            }
+
+
+            //设置战斗开始倒计时
+            var ticks = ini.Data.BattleEndInitTime + (CurrentRound - 1) * ini.Data.BattleEndRoundTime;
+            if (ticks > ini.Data.BattleEndMaxTime)
+            {
+                ticks = ini.Data.BattleEndMaxTime;
+            }
+            BattleEndTicks = ticks;
+
+
+            gameStatusMachine.Next();
+        }
+
+        private void BattleStart()
+        {
+            Logger.Log("战斗开始");
+
+            //todo 刷兵
+            foreach(var node in PlayerNodes)
+            {
+                foreach(var slot in node.TavernCombatSlots)
+                {
+                    if(slot.CurrentCardType is not null)
+                    {
+                        var spawn = slot.Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                        foreach(var techno in slot.CardRecords)
+                        {
+                            var ptech = TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(techno.Techno).Ref.Base.CreateObject(node.Owner.OwnerObject.Ref.Owner).Convert<TechnoClass>();
+                            if (ptech.IsNull)
+                                continue;
+
+                            Game.IKnowWhatImDoing++;
+                            ptech.Ref.Base.Put(spawn, Direction.N);
+                            Game.IKnowWhatImDoing--;
+                            ptech.Ref.Base.Scatter(spawn, true, true);
+
+                        }
+                    }
+                }
+            }
+
+
+        }
 
 
         public TavernPlayerNode FindPlayerNodeByHouse(Pointer<HouseClass> house)
@@ -511,6 +619,7 @@ namespace Scripts.Tavern
     public enum GameStatus
     {
         NoInited,
+        ChooseCommander,
         Ready,
         Prepared,
         Battle,
@@ -575,7 +684,7 @@ namespace Scripts.Tavern
         /// 每回合获得的最大金钱
         /// </summary>
         [INIField(Key = "MaxMoney")]
-        public int MaxMoney = 300;
+        public int MaxMoney = 5000;
 
 
         /// <summary>
@@ -592,20 +701,71 @@ namespace Scripts.Tavern
 
 
         /// <summary>
+        /// 选择指挥官的时间（帧数）
+        /// </summary>
+        [INIField(Key = "ChooseCommanderTime")]
+        public int ChooseCommanderTime = 3000;
+
+        /// <summary>
         /// 准备阶段初始时间（帧数）
         /// </summary>
         [INIField(Key = "ReadyStatusInitTime")]
-        public int ReadyStatusInitTime = 900;
+        public int ReadyStatusInitTime = 1500;
         /// <summary>
         /// 每轮额外增加的准备时间数
         /// </summary>
         [INIField(Key = "ReadyStatusRoundTime")]
-        public int ReadyStatusRoundTime = 300;
+        public int ReadyStatusRoundTime = 500;
         /// <summary>
         /// 最大准备时间数
         /// </summary>
         [INIField(Key = "ReadyStatusMaxTime")]
         public int ReadyStatusMaxTime = 3000;
+
+
+        /// <summary>
+        /// 投票跳过的超武
+        /// </summary>
+        [INIField(Key = "VoteSkipSW")]
+
+        public string VoteSkipSW = "BRVoteSW";
+
+        /// <summary>
+        /// 投票跳过的初始时间（帧数）
+        /// </summary>
+        [INIField(Key = "VoteSkipInitTime")]
+        public int VoteSkipInitTime = 1200;
+
+        /// <summary>
+        /// 投票跳过的每回合递增时间
+        /// </summary>
+        [INIField(Key = "VoteSkipRoundTime")]
+        public int VoteSkipRoundTime = 300;
+
+        /// <summary>
+        /// 投票跳过的最大时间
+        /// </summary>
+        [INIField(Key = "VoteSkipMaxTime")]
+        public int VoteSkipMaxTime = 2000;
+        /// <summary>
+        /// 战斗结束初始时间
+        /// </summary>
+        [INIField(Key = "BattleEndInitTime")]
+        public int BattleEndInitTime = 2000;
+        [INIField(Key = "BattleEndRoundTime")]
+        /// <summary>
+        /// 战斗结束每回合递增时间
+        /// </summary>
+        public int BattleEndRoundTime = 300;
+        /// <summary>
+        /// 战斗结束最大时间
+        /// </summary>
+        [INIField(Key = "BattleEndMaxTime")]
+        public int BattleEndMaxTime = 5000;
+
+
+
+
     }
 
 

@@ -106,6 +106,10 @@ namespace Scripts.Tavern
                 if (node is not null)
                 {
                     node.VoteSkiped = !node.VoteSkiped;
+
+                    var psw = node.Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(Owner.OwnerObject.Ref.Type);
+                    psw.Ref.IsCharged = false;
+                    psw.Ref.RechargeTimer.Start(1);
                 }
             }
         }
