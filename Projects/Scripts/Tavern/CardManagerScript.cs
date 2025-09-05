@@ -26,6 +26,8 @@ namespace Scripts.Tavern
         {
         }
 
+        private bool _registered = false;
+
      
         public override void OnUpdate()
         {
@@ -40,6 +42,13 @@ namespace Scripts.Tavern
 
             if (PlayerNode is null)
                 return;
+
+            if (!_registered)
+            {
+                _registered = true;
+                PlayerNode.RegisterCardManager(Owner);
+            }
+
 
             if (deploy)
             {

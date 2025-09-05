@@ -22,4 +22,12 @@ namespace Scripts.Tavern
 
         }
     }
+
+    [Serializable]
+    public class CommanderData
+    {
+        public string Prerequisites { get; set; }
+
+        public string Techno { get; set; }
+    }
 }

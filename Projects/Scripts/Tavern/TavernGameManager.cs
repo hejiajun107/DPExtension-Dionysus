@@ -39,7 +39,11 @@ namespace Scripts.Tavern
 
         public List<string> CardPool { get; private set; } = new List<string>();
 
-        public List<string> CommanderPrerequisites { get; private set; } = new List<string> { "CTanyBD", "CBorisBD", "CYuriBD" };
+        //public List<string> CommanderPrerequisites { get; private set; } = new List<string> { "CTanyBD", "CBorisBD", "CYuriBD" };
+
+        public List<CommanderData> CommanderTypes { get; private set; } = new List<CommanderData>();
+        public List<CommanderData> CommanderPool { get; private set; } = new List<CommanderData>();
+
 
         public int BaseMaxLevel { get; private set; }
 
@@ -73,6 +77,11 @@ namespace Scripts.Tavern
         /// 战斗阶段的计时器
         /// </summary>
         public int BattleEndTicks { get; private set; } = 500;
+
+        /// <summary>
+        /// 指挥官选择的计时器
+        /// </summary>
+        public int ComandderSelectTicks { get; private set; } = 500;
 
 
 
@@ -132,6 +141,7 @@ namespace Scripts.Tavern
             LoadConfig();
             LoadCardTypes();
             InitCardPools();
+            LoadCommanderTypes();
             EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, OnGScreenRender);
         }
 
@@ -160,6 +170,24 @@ namespace Scripts.Tavern
                 GameObject.StartCoroutine(DoInit());
             }
 
+            if(GameStatus == GameStatus.ChooseCommander)
+            {
+                if (ComandderSelectTicks > 0)
+                {
+                    ComandderSelectTicks--;
+                }
+
+                if(ComandderSelectTicks == 0 || !PlayerNodes.Where(x=>x.CommanderSlot.Commander == null).Any())
+                {
+                    if(!coroutineLock)
+                    {
+                        coroutineLock = true;
+                        //全部准备好以后进入下一个阶段
+                        GameObject.StartCoroutine(ReadyToStart());
+                    }
+                }
+            }
+
             if(GameStatus == GameStatus.Ready)
             {
                 if (ReadyStatusTick > 0)
@@ -172,7 +200,6 @@ namespace Scripts.Tavern
                     if (!coroutineLock)
                     {
                         coroutineLock = true;
-                        //全部准备好以后进入下一个阶段
                         GameObject.StartCoroutine(ReadyToBattle());
                     }
                 }
@@ -266,6 +293,8 @@ namespace Scripts.Tavern
             yield return new WaitForFrames(5);
             foreach (var node in PlayerNodes)
             {
+                node.InitRandom();
+
                 //初始节点数
                 for (var i = 0; i < node.TavernCombatSlots.Count(); i++)
                 {
@@ -303,16 +332,28 @@ namespace Scripts.Tavern
                     }
                 }
 
-                //初始化指挥官选择
-                foreach(var cmdbd in CommanderPrerequisites)
+                for(var i = 0; i < ini.Data.ChooseCommanderOptions; i++)
                 {
+                    var idx = 0;
+
+                    if (CommanderPool.Count() > 0)
+                    {
+                        idx = node.NRandom.Next(0, CommanderPool.Count());
+                    }
+
+                    var selecedCommander = CommanderPool[idx];
+                    var cmdbd = selecedCommander.Prerequisites;
+                    CommanderPool.Remove(selecedCommander);
+                    node.CommanderPool.Add(selecedCommander.Techno);
                     TechnoPlacer.PlaceTechnoNear(TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(cmdbd), node.Owner.OwnerObject.Ref.Owner, CellClass.Coord2Cell(node.Owner.OwnerObject.Ref.Base.Base.GetCoords()));
                 }
+                //初始化指挥官选择
+            
             }
             yield return new WaitForFrames(1);
-          
 
 
+            gameStatusMachine.OnCommanderSelectStart += ComanderSelectStart;
             gameStatusMachine.OnRoundStart += RoundStart;
             gameStatusMachine.OnPrepared += Prepared;
             gameStatusMachine.OnBattleStart += BattleStart;
@@ -321,6 +362,41 @@ namespace Scripts.Tavern
                 Logger.Log("战斗结束");
             };
             gameStatusMachine.Init();
+        }
+
+        IEnumerator ReadyToStart()
+        {
+            foreach (var node in PlayerNodes)
+            {
+                var prerequisites = TavernGameManager.Instance.CommanderTypes.Select(x => x.Prerequisites).ToList();
+                //删除所有提供建造前提的建筑
+                var buildings = ObjectFinder.FindTechnosNear(node.CommanderSlot.Owner.OwnerObject.Ref.Base.Base.GetCoords(), 10 * Game.CellSize).Select(x => x.Convert<TechnoClass>())
+                    .Where(x => x.Ref.Owner == node.Owner.OwnerObject.Ref.Owner && prerequisites.Contains(x.Ref.Type.Ref.Base.Base.ID)).ToList();
+                foreach (var building in buildings)
+                {
+                    building.Ref.Base.Remove();
+                    building.Ref.Base.UnInit();
+                }
+            }
+            yield return new WaitForFrames(10);
+            foreach (var node in PlayerNodes)
+            {
+               if(node.CommanderSlot.Commander is null)
+               {
+                    node.CommanderSlot.InitComander(node.CommanderPool[node.NRandom.Next(0, node.CommanderPool.Count)]);
+               }
+            }
+            //5
+            yield return new WaitForFrames(20);
+            //4
+            yield return new WaitForFrames(20);
+            //3
+            yield return new WaitForFrames(20);
+            //2
+            yield return new WaitForFrames(20);
+            //1
+            gameStatusMachine.CommandSelected();
+            coroutineLock = false;
         }
 
 
@@ -341,7 +417,23 @@ namespace Scripts.Tavern
         }
 
         
+        private void ComanderSelectStart()
+        {
+            ComandderSelectTicks = ini.Data.ChooseCommanderTime;
 
+            foreach (var node in PlayerNodes)
+            {
+                //清除玩家金钱
+                var money = node.Owner.OwnerObject.Ref.Owner.Ref.Available_Money();
+                if (money > 0)
+                {
+                    node.Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(-money);
+                }
+            }
+
+
+            
+        }
 
         /// <summary>
         /// 回合开始
@@ -516,6 +608,27 @@ namespace Scripts.Tavern
             }
         }
 
+        private void LoadCommanderTypes()
+        {
+            if (ini != null)
+            {
+                var file= ini.Data.CommanderConfigFile;
+                var types = new List<CommanderData>();
+              
+                using (StreamReader sr = new StreamReader(file))
+                {
+                    var json = sr.ReadToEnd();
+                    types = JsonConvert.DeserializeObject<List<CommanderData>>(json);
+                    CommanderTypes = types;
+
+                    foreach (var type in types)
+                    {
+                        CommanderPool.Add(type);
+                    }
+                }
+            }
+        }
+
 
         private void InitCardPools()
         {
@@ -581,10 +694,17 @@ namespace Scripts.Tavern
 
         public void Init()
         {
+            CurrentStatus = GameStatus.ChooseCommander;
+            OnCommanderSelectStart?.Invoke();
+        }
+
+        public void CommandSelected()
+        {
             CurrentStatus = GameStatus.Ready;
             OnRoundStart?.Invoke();
         }
 
+    
         public void Next()
         {
             if(CurrentStatus == GameStatus.Ready)
@@ -613,6 +733,8 @@ namespace Scripts.Tavern
         public event Action OnPrepared;
         public event Action OnBattleStart;
         public event Action OnBattleEnd;
+        public event Action OnCommanderSelectStart;
+
 
     }
 
@@ -633,6 +755,13 @@ namespace Scripts.Tavern
         /// </summary>
         [INIField(Key = "CardConfigFiles")]
         public string CardConfigFiles = "";
+
+        /// <summary>
+        /// 卡牌配置文件路径，可以多个以,隔开
+        /// </summary>
+        [INIField(Key = "CommanderConfigFile")]
+        public string CommanderConfigFile = "";
+
         /// <summary>
         /// 基地最高等级
         /// </summary>
@@ -705,6 +834,12 @@ namespace Scripts.Tavern
         /// </summary>
         [INIField(Key = "ChooseCommanderTime")]
         public int ChooseCommanderTime = 3000;
+
+        /// <summary>
+        /// 指挥官的选项数
+        /// </summary>
+        [INIField(Key = "ChooseCommanderOptions")]
+        public int ChooseCommanderOptions = 2;
 
         /// <summary>
         /// 准备阶段初始时间（帧数）

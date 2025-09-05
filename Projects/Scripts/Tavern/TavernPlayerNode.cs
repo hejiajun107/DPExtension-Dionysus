@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Scripts.Tavern;
 using PatcherYRpp.Utilities;
+using DynamicPatcher;
+using PatcherYRpp;
 
 namespace Scripts.Tavern
 {
@@ -18,6 +20,8 @@ namespace Scripts.Tavern
         public TavernPlayerNode(TechnoExt owner) : base(owner)
         {
         }
+
+        public TechnoExt CardManager { get; private set; }
 
         /// <summary>
         /// 奖励区
@@ -67,10 +71,32 @@ namespace Scripts.Tavern
         /// </summary>
         public bool IsLocked { get; set; } = false;
 
+        /// <summary>
+        /// 候选池
+        /// </summary>
+        public List<string> CommanderPool { get; set; } = new List<string>();
+
+        public Random NRandom { get; private set; }
+
         public override void OnUpdate()
         {
             if (!Register())
                 return;
+        }
+
+        public void InitRandom()
+        {
+            if(NRandom is null)
+            {
+                CardManager.OwnerObject.Ref.Base.Scatter(CardManager.OwnerObject.Ref.Base.Base.GetCoords(),true,true);
+                var pfoot = CardManager.OwnerObject.Convert<FootClass>();
+                var seed = 0;
+                if(pfoot.Ref.Destination.IsNotNull)
+                {
+                    seed = pfoot.Ref.Destination.Ref.GetCoords().X + pfoot.Ref.Destination.Ref.GetCoords().Y + pfoot.Ref.Destination.Ref.GetCoords().Z;
+                }
+                NRandom = new Random(seed);
+            }
         }
 
         /// <summary>
@@ -121,6 +147,12 @@ namespace Scripts.Tavern
         {
             CommanderSlot = slot;
         }
+
+
+        public void RegisterCardManager(TechnoExt cardManager)
+        {
+            CardManager = cardManager;
+        }
         #endregion
 
 
@@ -148,7 +180,7 @@ namespace Scripts.Tavern
             var avaibleCards = TavernGameManager.Instance.GetAvailableCardPools(BaseLevel);
             
             var result = new HashSet<int>();
-            var rng = MathEx.Random;
+            var rng = NRandom;
 
             while (result.Count < enabledSlots.Count())
             {

@@ -79,6 +79,18 @@ namespace Scripts.Tavern
                     return;
                 }
 
+                if(TavernGameManager.Instance is not null)
+                {
+                    if (TavernGameManager.Instance.GameStatus == GameStatus.ChooseCommander)
+                    {
+                        Pointer<Surface> pSurface = Surface.Current;
+                        var source = pSurface.Ref.GetRect();
+                        Point2D point = TacticalClass.Instance.Ref.CoordsToClient(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(-100, 0, 1000));
+                        var point2 = new Point2D(point.X, point.Y);
+                        pSurface.Ref.DrawText(TavernGameManager.Instance.ComandderSelectTicks.ToString(), source.GetThisPointer(), point2.GetThisPointer(), new ColorStruct(0, 255, 0));
+                    }
+                }
+
                 if(Commander is null)
                 {
                     if (FileSystem.TyrLoadSHPFile("txtcommand.shp", out Pointer<SHPStruct> pCustomSHP))
