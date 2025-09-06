@@ -30,7 +30,14 @@ namespace Scripts.Tavern
             if (mission.Ref.CurrentMission == Mission.Selling)
             {
                 mission.Ref.ForceMission(Mission.Stop);
-                OnSell();
+
+                if (TavernGameManager.Instance is null)
+                    return;
+                //仅允许准备阶段变卖
+                if (TavernGameManager.Instance.GameStatus == GameStatus.Ready)
+                {
+                    OnSell();
+                }
             }
 
             if (!Register())

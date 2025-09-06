@@ -35,6 +35,7 @@ namespace Extension.CW
         public override void Awake()
         {
             Owner.GameObject.FastGetScript1 = this;
+            IsTavernBattleUnit = Data.IsTavernBattleUnit;
             PartialHelper.TechnoAwakeAction(this);
         }
 

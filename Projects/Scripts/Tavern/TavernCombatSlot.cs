@@ -53,11 +53,20 @@ namespace Scripts.Tavern
 
         public override void OnUpdate()
         {
+          
+
+
             var mission = Owner.OwnerObject.Convert<MissionClass>();
             if(mission.Ref.CurrentMission == Mission.Selling)
             {
                 mission.Ref.ForceMission(Mission.Stop);
-                OnSell(true, true);
+                if (TavernGameManager.Instance is null)
+                    return;
+                //仅允许准备阶段变卖
+                if (TavernGameManager.Instance.GameStatus == GameStatus.Ready)
+                {
+                    OnSell(true, true);
+                }
             }
 
             if (!Register())

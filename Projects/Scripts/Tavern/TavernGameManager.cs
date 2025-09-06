@@ -1,5 +1,6 @@
 ﻿using DynamicPatcher;
 using Extension.Coroutines;
+using Extension.CW;
 using Extension.EventSystems;
 using Extension.Ext;
 using Extension.INI;
@@ -18,7 +19,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Scripts.Tavern
 {
@@ -212,14 +212,14 @@ namespace Scripts.Tavern
                     BattleEndTicks--;
                 }
 
-                if (!PlayerNodes.Where(x => !x.VoteSkiped).Any() || ReadyStatusTick == 0)
+                if (!PlayerNodes.Where(x => !x.VoteSkiped).Any() || BattleEndTicks == 0)
                 {
                     if (!coroutineLock)
                     {
                         //结束战斗
-                        //coroutineLock = true;
-                        ////全部准备好以后进入下一个阶段
-                        //GameObject.StartCoroutine(ReadyToBattle());
+                        coroutineLock = true;
+                        //全部准备好以后进入下一个阶段
+                        GameObject.StartCoroutine(EndBattle());
                     }
                 }
             }
@@ -347,6 +347,24 @@ namespace Scripts.Tavern
                     node.CommanderPool.Add(selecedCommander.Techno);
                     TechnoPlacer.PlaceTechnoNear(TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find(cmdbd), node.Owner.OwnerObject.Ref.Owner, CellClass.Coord2Cell(node.Owner.OwnerObject.Ref.Base.Base.GetCoords()));
                 }
+
+                if (!node.Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman()) 
+                {
+                    //AI直接选择，或者直接选用指定指挥官
+                    var prerequisites = TavernGameManager.Instance.CommanderTypes.Select(x => x.Prerequisites).ToList();
+                    //删除所有提供建造前提的建筑
+                    var buildings = ObjectFinder.FindTechnosNear(node.CommanderSlot.Owner.OwnerObject.Ref.Base.Base.GetCoords(), 10 * Game.CellSize).Select(x => x.Convert<TechnoClass>())
+                        .Where(x => x.Ref.Owner == node.Owner.OwnerObject.Ref.Owner && prerequisites.Contains(x.Ref.Type.Ref.Base.Base.ID)).ToList();
+                    foreach (var building in buildings)
+                    {
+                        building.Ref.Base.Remove();
+                        building.Ref.Base.UnInit();
+                    }
+                    if (node.CommanderSlot.Commander is null)
+                    {
+                        node.CommanderSlot.InitComander(node.CommanderPool[node.NRandom.Next(0, node.CommanderPool.Count)]);
+                    }
+                }
                 //初始化指挥官选择
             
             }
@@ -357,10 +375,7 @@ namespace Scripts.Tavern
             gameStatusMachine.OnRoundStart += RoundStart;
             gameStatusMachine.OnPrepared += Prepared;
             gameStatusMachine.OnBattleStart += BattleStart;
-            gameStatusMachine.OnBattleEnd += () =>
-            {
-                Logger.Log("战斗结束");
-            };
+            gameStatusMachine.OnBattleEnd += BattleEnded;
             gameStatusMachine.Init();
         }
 
@@ -416,7 +431,70 @@ namespace Scripts.Tavern
             coroutineLock = false;
         }
 
-        
+        IEnumerator EndBattle()
+        {
+            yield return new WaitForFrames(20);
+            //5
+            yield return new WaitForFrames(20);
+            //4
+            yield return new WaitForFrames(20);
+            //3
+            yield return new WaitForFrames(20);
+            //2
+            yield return new WaitForFrames(20);
+            //1
+
+            var warhead = WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super");
+
+            //消灭所有刷出来的单位
+            var count = TechnoClass.Array.Count();
+            for(var i = count - 1; i >= 0; i--)
+            {
+                var techno = TechnoClass.Array[i];
+
+                var ext = TechnoExt.ExtMap.Find(techno);
+
+                if (ext.IsNullOrExpired())
+                    continue;
+
+                var gext = ext.GameObject.FastGetScript1 as TechnoGlobalExtension;
+
+                if (gext is null)
+                    continue;
+
+                if (gext.IsTavernBattleUnit)
+                {
+                    techno.Ref.Base.TakeDamage(10000, warhead, true);
+                }
+            }
+
+            gameStatusMachine.Next();
+            coroutineLock = false;
+
+
+        }
+
+        /// <summary>
+        /// 战斗结束后的事件，回合数+1,进入下一轮准备
+        /// </summary>
+        private void BattleEnded()
+        {
+            CurrentRound++;
+
+            foreach(var node in PlayerNodes)
+            {
+                if(node.Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+                {
+                    //重置上轮的准备和投票跳过
+                    node.IsReady = false;
+                    node.VoteSkiped = false;
+                }
+            }
+
+            gameStatusMachine.Next();
+        }
+
+
         private void ComanderSelectStart()
         {
             ComandderSelectTicks = ini.Data.ChooseCommanderTime;
@@ -534,7 +612,6 @@ namespace Scripts.Tavern
 
         private void BattleStart()
         {
-            Logger.Log("战斗开始");
 
             //todo 刷兵
             foreach(var node in PlayerNodes)
@@ -555,6 +632,14 @@ namespace Scripts.Tavern
                             Game.IKnowWhatImDoing--;
                             ptech.Ref.Base.Scatter(spawn, true, true);
 
+                            var ext = TechnoExt.ExtMap.Find(ptech);
+                            if(ext is not null)
+                            {
+                                var globalExt = ext.GameObject.FastGetScript1 as TechnoGlobalExtension;
+                                globalExt.IsTavernBattleUnit = true;
+
+                                ext.GameObject.CreateScriptComponent(nameof(TavernAutoBattleScript), nameof(TavernAutoBattleScript), ext);
+                            }
                         }
                     }
                 }

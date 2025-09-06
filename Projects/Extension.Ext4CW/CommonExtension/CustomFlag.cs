@@ -21,7 +21,7 @@ namespace Extension.CW
         public bool IsAiEdition { get; set; }
 
         /// <summary>
-        /// 是战棋数出来的战斗单位
+        /// 是战棋刷出来的战斗单位
         /// </summary>
         public bool IsTavernBattleUnit { get; set; } = false;
     }
@@ -53,7 +53,9 @@ namespace Extension.CW
         [INIField(Key = "UnitBaseNormal")]
         public bool IsUnitBaseNormal = false;
 
-    
+        [INIField(Key = "IsTavernBattleUnit")]
+        public bool IsTavernBattleUnit = false;
+
 
         ///// <summary>
         ///// 

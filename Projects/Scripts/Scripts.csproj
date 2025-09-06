@@ -123,6 +123,7 @@
     <Compile Include="ForceSaleScript.cs" />
     <Compile Include="GuardToPickTargetScript.cs" />
     <Compile Include="JumpetCarrierScript.cs" />
+    <Compile Include="Modes\GIDeployScript.cs" />
     <Compile Include="MovingPlacementScript.cs" />
     <Compile Include="PassengerChangeHouseScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Tavern\ComandComponent.cs" />
     <Compile Include="Tavern\CommanderUnitScript.cs" />
     <Compile Include="Tavern\GatheringPointScript.cs" />
+    <Compile Include="Tavern\TavernAutoBattleScript.cs" />
     <Compile Include="Tavern\TavernCombatSlot.cs" />
     <Compile Include="Tavern\TavernCommanderSlot.cs" />
     <Compile Include="Tavern\TavernGameManager.cs" />
@@ -185,7 +187,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mission\" />
-    <Folder Include="Modes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
