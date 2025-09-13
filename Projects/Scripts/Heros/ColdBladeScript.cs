@@ -212,12 +212,10 @@ namespace DpLib.Scripts.Heros
                     pBullet.Ref.DetonateAndUnInit(techno.Ref.Base.Base.GetCoords());
                     if (i > 0)
                     {
-                        Pointer<EBolt> pBolt = YRMemory.Create<EBolt>();
-                        if (!pBolt.IsNull)
-                        {
-                            pBolt.Ref.Fire(last, techno.Ref.Base.Base.GetCoords(), 0);
-                            pBolt.Ref.AlternateColor = false;
-                        }
+                        var pbolt = Owner.OwnerObject.Ref.Electric_Zap(Owner.OwnerObject.Convert<AbstractClass>(), WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ElectricBolt"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        pbolt.Ref.Point1 = last;
+                        pbolt.Ref.Point2 = techno.Ref.Base.Base.GetCoords();
+                       
                         last = techno.Ref.Base.Base.GetCoords();
                     }
                 }
@@ -229,13 +227,11 @@ namespace DpLib.Scripts.Heros
                         var target = location + new CoordStruct(MathEx.Random.Next(-5 * Game.CellSize, 5 * Game.CellSize), MathEx.Random.Next(-5 * Game.CellSize, 5 * Game.CellSize), 0);
                         var pBullet = bullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 30, warhead, 100, true);
                         pBullet.Ref.DetonateAndUnInit(target);
-
-                        Pointer<EBolt> pBolt = YRMemory.Create<EBolt>();
-                        if (!pBolt.IsNull)
-                        {
-                            pBolt.Ref.Fire(last, target, 0);
-                            pBolt.Ref.AlternateColor = false;
-                        }
+                        //var pbolt = Owner.OwnerObject.Ref.Electric_Zap(Owner.OwnerObject.Convert<AbstractClass>(), WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ElectricBolt"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        var pbolt = Owner.OwnerObject.Ref.Electric_Zap(Owner.OwnerObject.Convert<AbstractClass>(), WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("ElectricBolt"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        pbolt.Ref.Point1 = last;
+                        pbolt.Ref.Point2 = target;
+                      
                         last = target;
                     }
                 }

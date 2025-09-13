@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Scripts.Soviet
 {
-    [ScriptAlias(nameof(TechnoScriptable))]
+    [ScriptAlias(nameof(SovietRocketScript))]
     [Serializable]
     public class SovietRocketScript : TechnoScriptable
     {
