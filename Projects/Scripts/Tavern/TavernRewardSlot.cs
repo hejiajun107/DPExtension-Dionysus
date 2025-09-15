@@ -1,11 +1,12 @@
 ﻿using Extension.Ext;
 using Extension.Script;
+using Scripts.Cards;
+using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scripts.Tavern;
 
 namespace Scripts.Tavern
 {
@@ -24,6 +25,9 @@ namespace Scripts.Tavern
         }
 
         public CardComponent CurrentCard { get; private set; }
+
+        public CardScript CurrentScript { get; private set; }
+
 
         private bool _registered = false;
 

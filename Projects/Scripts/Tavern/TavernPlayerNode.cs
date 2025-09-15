@@ -78,10 +78,23 @@ namespace Scripts.Tavern
 
         public Random NRandom { get; private set; }
 
+        public Queue<CardType> CardCacheQueue { get; set; } = new Queue<CardType>();
+
+
         public override void OnUpdate()
         {
             if (!Register())
                 return;
+
+            //从缓冲区加入暂存区
+            if(CardCacheQueue.Count() > 0)
+            {
+                var tempSlot = TavernTempSlots.Where(x => x.IsEnabled && x.CurrentCard == null).FirstOrDefault();
+                if(tempSlot is not null)
+                {
+                    tempSlot.AddCard(CardCacheQueue.Dequeue());
+                }
+            }
         }
 
         public void InitRandom()

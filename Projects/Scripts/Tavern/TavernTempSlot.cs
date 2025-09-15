@@ -3,6 +3,7 @@ using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
+using Scripts.Cards;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace Scripts.Tavern
         }
 
         public CardType CurrentCard { get; private set; } = null;
+        public CardScript CurrentScript { get; private set; }
+
 
         public bool IsEnabled { get; set; } = true;
 

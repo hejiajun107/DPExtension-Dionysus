@@ -6,6 +6,7 @@ using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
+using Scripts.Cards;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace Scripts.Tavern
         private List<CardAggregate> _aggregates = new List<CardAggregate>();
 
         public CardType CurrentCardType { get; private set; }
+
+        public CardScript CurrentScript { get; private set; }
 
         /// <summary>
         /// 1 2 3连
