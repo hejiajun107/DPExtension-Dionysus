@@ -116,6 +116,7 @@
     <Compile Include="BulletLikeRocketScript.cs" />
     <Compile Include="CallingAirStrikeSWScirpt.cs" />
     <Compile Include="Cards\CardScript.cs" />
+    <Compile Include="Cards\CommonCardScript.cs" />
     <Compile Include="DebugScriptable.cs" />
     <Compile Include="DetectTechnoAndExplodeScript.cs" />
     <Compile Include="DetonatePassThrougthBulletScript.cs" />

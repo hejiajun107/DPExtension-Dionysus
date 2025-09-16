@@ -8,6 +8,7 @@ using Extension.Script;
 using Newtonsoft.Json;
 using PatcherYRpp;
 using PatcherYRpp.Utilities;
+using Scripts.Cards;
 using Scripts.Tavern;
 using System;
 using System.Collections;
@@ -34,6 +35,8 @@ namespace Scripts.Tavern
         public List<TavernPlayerNode> PlayerNodes { get; private set; } = new List<TavernPlayerNode>();
 
         private int maxPlayer = 2;
+
+        private static Dictionary<string, Type> RegisteredCardScripts = new Dictionary<string, Type>();
 
         public Dictionary<string, CardType> CardTypes { get; private set; } = new Dictionary<string, CardType>();
 
@@ -286,7 +289,7 @@ namespace Scripts.Tavern
             }
         }
 
-
+        #region 流程控制
 
         IEnumerator DoInit()
         {
@@ -648,6 +651,7 @@ namespace Scripts.Tavern
 
         }
 
+        #endregion
 
         public TavernPlayerNode FindPlayerNodeByHouse(Pointer<HouseClass> house)
         {
@@ -729,7 +733,7 @@ namespace Scripts.Tavern
             CardPool = pool;
         }
 
-
+        #region Util
 
         /// <summary>
         /// 根据单位注册名获取图标
@@ -761,6 +765,48 @@ namespace Scripts.Tavern
             CameoCached.Add(technoType, cameo);
             return cameo;
         }
+
+        public CardScript CreateCardScript(CardType type,TavernPlayerNode player)
+        {
+            if (string.IsNullOrWhiteSpace(type.Scripts))
+            {
+                return null;
+            }
+
+            TryRegisterCardScript();
+
+            if(RegisteredCardScripts.TryGetValue(type.Scripts, out var cardScriptType))
+            {
+                object instance = Activator.CreateInstance(cardScriptType, type, player); 
+                var script = instance as CardScript;
+                if(script is not null)
+                {
+                    script.OnAwake();
+                }
+                return script;
+            }
+
+            return null;
+        }
+
+        private void TryRegisterCardScript()
+        {
+            if (RegisteredCardScripts.Count() <= 0)
+            {
+                var baseType = typeof(CardScript);
+                var scriptTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => baseType.IsAssignableFrom(t) && t != baseType).ToList();
+                foreach(var scriptType in scriptTypes)
+                {
+                    RegisteredCardScripts.Add(scriptType.Name, scriptType);
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        #endregion
 
 
         /// <summary>

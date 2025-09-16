@@ -13,14 +13,20 @@ namespace Scripts.Cards
     {
         public CardType Type { get; set; }
 
-        public CardScript(CardType type)
+        public CardScript(CardType type, TavernPlayerNode player)
         {
             Type = type;
+            Player = player;
         }
 
-        public object Slot { get; private set; }
+        public object Slot { get; set; }
         
         public TavernPlayerNode Player { get; private set; }
+
+        public virtual void OnAwake()
+        {
+
+        }
 
         public virtual void OnBought()
         {
@@ -32,7 +38,13 @@ namespace Scripts.Cards
 
         }
 
-        public virtual void OnPutToCombatSlot(TavernCombatSlot tavernCombatSlot)
+        public virtual void OnSelledCombat()
+        {
+
+        }
+
+
+        public virtual void OnPlaceToCombatSlot(TavernCombatSlot tavernCombatSlot)
         {
 
         }
