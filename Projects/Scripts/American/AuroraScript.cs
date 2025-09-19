@@ -38,7 +38,7 @@ namespace DpLib.Scripts.American
                 isInShield = false;
                 checkRof = 20;
 
-                if (Owner.OwnerObject.Ref.Ammo > 0 && duration <= 600 && takedDamage <= 15000)
+                if (Owner.OwnerObject.Ref.Ammo > 0 && duration <= 600 && takedDamage <= 1200)
                 {
                     pTargetRef = (TechnoExt.ExtMap.Find(Owner.OwnerObject.Ref.Target.Convert<TechnoClass>()));
                     if (!pTargetRef.IsNullOrExpired())
