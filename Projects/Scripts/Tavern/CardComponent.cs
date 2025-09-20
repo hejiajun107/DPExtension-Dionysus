@@ -6,6 +6,7 @@ using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
+using Scripts.Cards;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
@@ -298,6 +299,7 @@ namespace Scripts.Tavern
         /// 卡牌带有的标签
         /// </summary>
         public List<string> Tags { get; set; }
+
     }
 
 

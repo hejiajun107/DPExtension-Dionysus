@@ -4,6 +4,7 @@ using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
+using Scripts.Cards;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace Scripts.Tavern
         public bool IsEnabled { get; set; } = true;
 
         public CardType CurrentCard { get; private set; }
+
+        public CardScript CardScript { get; private set; }
 
         public override void OnUpdate()
         {
@@ -64,6 +67,7 @@ namespace Scripts.Tavern
                 old.DetachFromParent();
                 old.RelaseCompnent();
                 old = null;
+                CardScript = null;
             }
             CurrentCard = cardType;
             var script = ScriptManager.GetScript(nameof(CardComponent));
@@ -72,6 +76,9 @@ namespace Scripts.Tavern
             {
                 cardComponent.CardType = cardType;
             }
+
+            CardScript = TavernGameManager.Instance.CreateCardScript(cardType, TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner));
+            CardScript.Slot = this;
         }
 
         public CardType TakeCard(bool free = false)
@@ -82,6 +89,7 @@ namespace Scripts.Tavern
             component.RelaseCompnent();
             component = null;
             CurrentCard = null;
+            CardScript = null;
             return type;
         }
 

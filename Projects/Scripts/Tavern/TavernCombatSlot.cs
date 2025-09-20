@@ -31,7 +31,8 @@ namespace Scripts.Tavern
 
         public CardType CurrentCardType { get; private set; }
 
-        public CardScript CurrentScript { get; private set; }
+        public CardScript CardScript { get; private set; } = null;
+
 
         /// <summary>
         /// 1 2 3连
@@ -56,9 +57,6 @@ namespace Scripts.Tavern
 
         public override void OnUpdate()
         {
-          
-
-
             var mission = Owner.OwnerObject.Convert<MissionClass>();
             if(mission.Ref.CurrentMission == Mission.Selling)
             {
@@ -102,6 +100,8 @@ namespace Scripts.Tavern
             if(CurrentCardType is null)
             {
                 CurrentCardType = cardType;
+                CardScript = TavernGameManager.Instance.CreateCardScript(cardType, TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner));
+                CardScript.Slot = this;
 
                 if (destroyOldCards)
                 {
@@ -136,6 +136,8 @@ namespace Scripts.Tavern
                 }
             }
 
+            CardScript?.OnPlaceToCombatSlot(this);
+
             RefreshAggregates();
         }
 
@@ -145,13 +147,23 @@ namespace Scripts.Tavern
             {
                 CurrentCardType = null;
                 CardLevel = 0;
+
+                var price = TavernGameManager.Instance.RulesSellCardPrice;
+
+                if (CardScript is not null)
+                {
+                    price = CardScript.OnSelled(price);
+                    price = CardScript.OnSelledCombat(price);
+                    CardScript = null;
+                }
+
                 if(destroyOldCards)
                 {
                     CardRecords.RemoveAll(x => !x.IsPersist);
                     RefreshAggregates();
                 }
 
-                TavernGameManager.Instance.ShowFlyingTextAt("+$100",Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,200));
+                TavernGameManager.Instance.ShowFlyingTextAt($"+${price}",Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,200));
             }    
         }
 

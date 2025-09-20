@@ -110,6 +110,19 @@ namespace Scripts.Tavern
             }
         }
 
+
+        /// <summary>
+        /// 出售卡牌价格
+        /// </summary>
+        public int RulesSellCardPrice
+        {
+            get
+            {
+                return ini.Data.SellCardPrice;
+            }
+        }
+
+
         /// <summary>
         /// 获得升级酒馆的费用
         /// </summary>
@@ -554,6 +567,16 @@ namespace Scripts.Tavern
                 }
 
                 //todo触发所有卡牌的回合开始效果
+
+
+                if(!string.IsNullOrWhiteSpace(ini.Data.RoundStartLaunchSW))
+                {
+                    var psw = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(ini.Data.RoundStartLaunchSW);
+                    var sw = node.Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(psw);
+                    sw.Ref.Launch(CellClass.Coord2Cell(node.Owner.OwnerObject.Ref.Base.Base.GetCoords()), false);
+                }
+             
+
             }
 
             //给与准备时间
@@ -563,6 +586,9 @@ namespace Scripts.Tavern
                 ticks = ini.Data.ReadyStatusMaxTime;
             }
             ReadyStatusTick = ticks;
+
+            //投放回合开始超武
+
         }
 
         private void Prepared()
@@ -597,6 +623,15 @@ namespace Scripts.Tavern
 
                 //todo触发所有卡牌的回合结束效果
 
+
+
+                //释放回合结束需要释放的超武
+                if (!string.IsNullOrWhiteSpace(ini.Data.RoundEndLaunchSW))
+                {
+                    var pendSW = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(ini.Data.RoundEndLaunchSW);
+                    var endsw = node.Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(pendSW);
+                    endsw.Ref.Launch(CellClass.Coord2Cell(node.Owner.OwnerObject.Ref.Base.Base.GetCoords()), false);
+                }
 
             }
 
@@ -1029,8 +1064,17 @@ namespace Scripts.Tavern
         [INIField(Key = "BattleEndMaxTime")]
         public int BattleEndMaxTime = 5000;
 
+        /// <summary>
+        /// 回合开始发射的超武（用于授予投票准备完毕，刷新等操作的,移除战斗时使用的超武）
+        /// </summary>
+        [INIField(Key = "RoundStartLaunchSW")]
+        /// <summary>
+        /// 回合开始发射的超武（用于移除投票准备完毕，刷新等操作的,授予战斗时使用的超武如投票跳过）
+        /// </summary>
+        public string RoundStartLaunchSW = "";
+        [INIField(Key = "RoundEndLaunchSW")]
 
-
+        public string RoundEndLaunchSW = "";
 
     }
 

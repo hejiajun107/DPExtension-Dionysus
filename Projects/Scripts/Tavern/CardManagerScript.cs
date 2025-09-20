@@ -6,6 +6,7 @@ using Extension.Utilities;
 using Newtonsoft.Json;
 using PatcherYRpp;
 using PatcherYRpp.FileFormats;
+using Scripts.Cards;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace Scripts.Tavern
                 var shopSlot = ext.GameObject.GetComponent<TavernShopSlot>();
                 if (shopSlot is not null)
                 {
-                    if(Owner.OwnerObject.Ref.Owner.Ref.Available_Money() < TavernGameManager.Instance.RulesBuyCardPrice)
+                    if(Owner.OwnerObject.Ref.Owner.Ref.Available_Money()<TavernGameManager.Instance.RulesBuyCardPrice)
                     {
                         //提示金钱不足
                         TavernGameManager.Instance.SoundNoMoney();
@@ -85,10 +86,11 @@ namespace Scripts.Tavern
                             var cardType = shopSlot.TakeCard();
 
                             temp.AddCard(cardType);
+                            temp.CardScript?.OnBought();
 
                             Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(-TavernGameManager.Instance.RulesBuyCardPrice);
                             //显示购买卡牌消耗的资金
-                            TavernGameManager.Instance.ShowFlyingTextAt($"-${300}", pTarget.Ref.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 200), 1);
+                            TavernGameManager.Instance.ShowFlyingTextAt($"-${TavernGameManager.Instance.RulesBuyCardPrice}", pTarget.Ref.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 200), 1);
                         }
                     }
                 }

@@ -22,8 +22,8 @@ namespace Scripts.Tavern
         }
 
         public CardType CurrentCard { get; private set; } = null;
-        public CardScript CurrentScript { get; private set; }
 
+        public CardScript CardScript { get; private set; } = null;
 
         public bool IsEnabled { get; set; } = true;
 
@@ -73,7 +73,8 @@ namespace Scripts.Tavern
             if (scriptComponent is CardComponent cardComponent)
             {
                 cardComponent.CardType = card;
-                CurrentCard = card;
+                CardScript = TavernGameManager.Instance.CreateCardScript(card, TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner));
+                CardScript.Slot = this;
             }
         }
 

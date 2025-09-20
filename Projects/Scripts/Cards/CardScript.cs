@@ -33,14 +33,24 @@ namespace Scripts.Cards
 
         }
 
-        public virtual void OnSelled()
+        /// <summary>
+        /// 出出售时触发，无论是否在场上，返回最终价格
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public virtual int OnSelled(int price)
         {
-
+            return price;
         }
 
-        public virtual void OnSelledCombat()
+        /// <summary>
+        /// 在场上的单位出售时触发，返回最终价格
+        /// </summary>
+        /// <param name="price"></param>
+        /// <returns></returns>
+        public virtual int OnSelledCombat(int price)
         {
-
+            return price;
         }
 
 
