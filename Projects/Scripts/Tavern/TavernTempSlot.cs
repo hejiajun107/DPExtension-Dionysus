@@ -73,6 +73,7 @@ namespace Scripts.Tavern
             if (scriptComponent is CardComponent cardComponent)
             {
                 cardComponent.CardType = card;
+                CurrentCard = card;
                 CardScript = TavernGameManager.Instance.CreateCardScript(card, TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner));
                 CardScript.Slot = this;
             }

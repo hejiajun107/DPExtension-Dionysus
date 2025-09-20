@@ -76,4 +76,12 @@ namespace Scripts.Cards
 
 
     }
+
+    [Serializable]
+    public class EmptyCardScript : CardScript
+    {
+        public EmptyCardScript(CardType type, TavernPlayerNode player) : base(type, player)
+        {
+        }
+    }
 }

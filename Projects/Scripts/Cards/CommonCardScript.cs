@@ -1,4 +1,5 @@
-﻿using Extension.INI;
+﻿using DynamicPatcher;
+using Extension.INI;
 using Scripts.Tavern;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,12 @@ namespace Scripts.Cards
         public override void OnAwake()
         {
             var ini = TavernGameManager.Instance.CreateRulesIniComponentWith<CommonCardScriptData>(Type.Key);
-            //ini.Data.
-
+          
             var dtype = typeof(CommonCardScriptData);
 
-            for (var i = 1; i <= 3; i++) 
+            for (var i = 1; i <= 1; i++) 
             {
-                var evt = dtype.GetField($"Event{i}").GetValue(ini.Data) as string;
+                var evt = (dtype.GetField($"Event{i}").GetValue(ini.Data)) as string;
                 if (string.IsNullOrWhiteSpace(evt))
                 {
                     continue;
@@ -34,6 +34,20 @@ namespace Scripts.Cards
             }
         }
 
+        public override void OnBought()
+        {
+            base.OnBought();
+        }
+
+        public override void OnRoundStarted()
+        {
+            base.OnRoundStarted();
+        }
+
+        public override void OnRoundEnded()
+        {
+            base.OnRoundStarted();
+        }
 
     }
 
@@ -162,8 +176,8 @@ namespace Scripts.Cards
 
         [INIField(Key = "CommonCardScript.Action1FilterCellSpread")]
         public int Action1FilterCellSpread = 1;
-        [INIField(Key = "CommonCardScript.ActionTargetCellSpread")]
-        public int ActionTargetCellSpread = 1;
+        [INIField(Key = "CommonCardScript.Action1TargetCellSpread")]
+        public int Action1TargetCellSpread = 1;
     }
 
     

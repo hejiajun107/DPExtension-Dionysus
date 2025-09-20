@@ -567,9 +567,13 @@ namespace Scripts.Tavern
                 }
 
                 //todo触发所有卡牌的回合开始效果
+                foreach (var item in node.TavernCombatSlots)
+                {
+                    item.CardScript?.OnRoundStarted();
+                }
 
 
-                if(!string.IsNullOrWhiteSpace(ini.Data.RoundStartLaunchSW))
+                if (!string.IsNullOrWhiteSpace(ini.Data.RoundStartLaunchSW))
                 {
                     var psw = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(ini.Data.RoundStartLaunchSW);
                     var sw = node.Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(psw);
@@ -622,7 +626,10 @@ namespace Scripts.Tavern
                 psw.Ref.RechargeTimer.Start(voteTicks);
 
                 //todo触发所有卡牌的回合结束效果
-
+                foreach (var item in node.TavernCombatSlots)
+                {
+                    item.CardScript?.OnRoundEnded();
+                }
 
 
                 //释放回合结束需要释放的超武
@@ -805,7 +812,7 @@ namespace Scripts.Tavern
         {
             if (string.IsNullOrWhiteSpace(type.Scripts))
             {
-                return null;
+                return new EmptyCardScript(type,player);
             }
 
             TryRegisterCardScript();
@@ -821,7 +828,7 @@ namespace Scripts.Tavern
                 return script;
             }
 
-            return null;
+            return new EmptyCardScript(type, player);
         }
 
         private void TryRegisterCardScript()
