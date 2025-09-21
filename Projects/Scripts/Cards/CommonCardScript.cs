@@ -2,6 +2,7 @@
 using Extension.INI;
 using Scripts.Tavern;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,18 @@ namespace Scripts.Cards
                 {
                     continue;
                 }
+
+                var trigger = new CommonCardTrigger();
+
+                trigger.Event = (CommonCardEvent)Enum.Parse(typeof(CommonCardEvent), evt);
+                trigger.Action = (CommonCardAction)(Enum.Parse(typeof(CommonCardAction), (dtype.GetField($"Action{i}").GetValue(ini.Data)) as string));
+                trigger.AffectRange = (CommonAffectRange)(Enum.Parse(typeof(CommonAffectRange), (dtype.GetField($"Action{i}AffectRange").GetValue(ini.Data)) as string));
+                trigger.ActionFilter = (dtype.GetField($"Action{i}Filter").GetValue(ini.Data)) as string;
+                trigger.ActionCardFilter = (dtype.GetField($"Action{i}CardFilter").GetValue(ini.Data)) as string;
+                trigger.ActionResult = (dtype.GetField($"Action{i}Result").GetValue(ini.Data)) as string;
+
+
+                Triggers.Add(trigger);
             }
         }
 
@@ -46,7 +59,105 @@ namespace Scripts.Cards
 
         public override void OnRoundEnded()
         {
-            base.OnRoundStarted();
+            var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnRoundEnd).ToList();
+            if(Slot is TavernCombatSlot currentSlot)
+            {
+                foreach (var trigger in triggers)
+                {
+                    var slots = GetAffectSlots(currentSlot, trigger.AffectRange, 1);
+                    
+                    foreach(var slot in slots)
+                    {
+                        slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionResult], IsPersist = false });
+                        slot.RefreshAggregates();
+                    }
+                }
+            }
+         
+        }
+
+
+        private List<TavernCombatSlot> GetAffectSlots(TavernCombatSlot current,CommonAffectRange range,int spread)
+        {
+            var slots = new List<TavernCombatSlot>();
+
+            var node = Player;
+
+            var currentIndex = Player.TavernCombatSlots.IndexOf(current);
+
+            switch (range)
+            {
+                case CommonAffectRange.Self:
+                    {
+                        slots.Add(current);
+                        break;
+                    }
+                case CommonAffectRange.LeftSide:
+                    {
+                        var start = currentIndex - spread;
+                        if (start < 0)
+                            start = 0;
+
+                        if(start<currentIndex)
+                        {
+                            slots.AddRange(slots.Skip(start).Take(currentIndex - start).ToList());
+                        }
+
+                        break;
+                    }
+                case CommonAffectRange.RightSide:
+                    {
+                        var end = currentIndex + spread;
+                        
+                        if(end > node.TavernCombatSlots.Count() - 1)
+                        {
+                            end = node.TavernCombatSlots.Count() - 1;
+                        }
+
+                        if(end>currentIndex)
+                        {
+                            slots.AddRange(slots.Skip(currentIndex).Take(end - currentIndex).ToList());
+                        }
+                        break;
+                    }
+                case CommonAffectRange.BothSide:
+                    {
+                        var start = currentIndex - spread;
+                        var end = currentIndex + spread;
+
+                        if (start < 0)
+                        {
+                            start = 0;
+                        }
+
+                        if (end > node.TavernCombatSlots.Count() - 1)
+                        {
+                            end = node.TavernCombatSlots.Count() - 1;
+                        }
+
+                        if (end > start)
+                        {
+                            slots.AddRange(slots.Skip(start).Take(end - start).Where(x => x != current).ToList());
+                        }
+
+                        break;
+                    }
+                case CommonAffectRange.AllExceptSelf:
+                    {
+                        slots.AddRange(node.TavernCombatSlots.Where(x => x != current).ToList());
+                        break;
+                    }
+                case CommonAffectRange.All:
+                    {
+                        slots.AddRange(node.TavernCombatSlots);
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+
+            return slots;
         }
 
     }
@@ -58,6 +169,14 @@ namespace Scripts.Cards
         public CommonCardEvent Event { get; set; }
 
         public CommonCardAction Action { get; set; }
+
+        public CommonAffectRange AffectRange { get; set; }
+
+        public string ActionFilter { get; set; }
+
+        public string ActionCardFilter { get; set; }
+
+        public string ActionResult { get; set; }
 
 
     }
@@ -154,6 +273,12 @@ namespace Scripts.Cards
         [INIField(Key = "CommonCardScript.Action1Filter")]
         public string Action1Filter = "";
         /// <summary>
+        /// 限定生效的卡牌，可以是Key,Tag
+        /// </summary>
+        [INIField(Key = "CommonCardScript.Action1CardFilter")]
+        public string Action1CardFilter;
+
+        /// <summary>
         /// 响应对象的范围，对应CommonAffectRange
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1FilterRange")]
@@ -161,18 +286,21 @@ namespace Scripts.Cards
         /// <summary>
         /// 响应的结果，对应CommonCardAction
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1Target")]
-        public string Action1Target = "";
+        [INIField(Key = "CommonCardScript.Action1Result")]
+        public string Action1Result = "";
         /// <summary>
         /// 响应结果作用于哪对应CommonAffectRange
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1AffectRange")]
-        public string Action1AffectRange = "";
+        public string Action1AffectRange = "Self";
         /// <summary>
         /// 响应结果的转化率，默认1比1
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1Rate")]
         public int Action1Rate = 1;
+
+
+
 
         [INIField(Key = "CommonCardScript.Action1FilterCellSpread")]
         public int Action1FilterCellSpread = 1;
