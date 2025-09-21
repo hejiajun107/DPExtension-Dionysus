@@ -40,8 +40,9 @@ namespace Scripts.Cards
                 trigger.AffectRange = (CommonAffectRange)(Enum.Parse(typeof(CommonAffectRange), (dtype.GetField($"Action{i}AffectRange").GetValue(ini.Data)) as string));
                 trigger.ActionFilter = (dtype.GetField($"Action{i}Filter").GetValue(ini.Data)) as string;
                 trigger.ActionCardFilter = (dtype.GetField($"Action{i}CardFilter").GetValue(ini.Data)) as string;
-                trigger.ActionResult = (dtype.GetField($"Action{i}Result").GetValue(ini.Data)) as string;
-
+                trigger.ActionTechnoResult = (dtype.GetField($"Action{i}TechnoResult").GetValue(ini.Data)) as string;
+                trigger.ActionCardResult = (dtype.GetField($"Action{i}CardResult").GetValue(ini.Data)) as string;
+                trigger.ActionTechnoResultCount = int.Parse(dtype.GetField($"Action{i}TechnoResultCount").GetValue(ini.Data).ToString());
 
                 Triggers.Add(trigger);
             }
@@ -65,10 +66,16 @@ namespace Scripts.Cards
                 foreach (var trigger in triggers)
                 {
                     var slots = GetAffectSlots(currentSlot, trigger.AffectRange, 1);
-                    
-                    foreach(var slot in slots)
+
+                    foreach (var slot in slots)
                     {
-                        slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionResult], IsPersist = false });
+                        for (var i = 0; i < trigger.ActionTechnoResultCount; i++)
+                        {
+                            if(slot.IsEnabled && slot.CurrentCardType is not null)
+                            {
+                                slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = false });
+                            }
+                        }
                         slot.RefreshAggregates();
                     }
                 }
@@ -100,7 +107,7 @@ namespace Scripts.Cards
 
                         if(start<currentIndex)
                         {
-                            slots.AddRange(slots.Skip(start).Take(currentIndex - start).ToList());
+                            slots.AddRange(node.TavernCombatSlots.Skip(start).Take(currentIndex - start).ToList());
                         }
 
                         break;
@@ -116,7 +123,7 @@ namespace Scripts.Cards
 
                         if(end>currentIndex)
                         {
-                            slots.AddRange(slots.Skip(currentIndex).Take(end - currentIndex).ToList());
+                            slots.AddRange(node.TavernCombatSlots.Skip(currentIndex).Take(end - currentIndex).ToList());
                         }
                         break;
                     }
@@ -137,7 +144,7 @@ namespace Scripts.Cards
 
                         if (end > start)
                         {
-                            slots.AddRange(slots.Skip(start).Take(end - start).Where(x => x != current).ToList());
+                            slots.AddRange(node.TavernCombatSlots.Skip(start).Take(end - start + 1).Where(x => x != current).ToList());
                         }
 
                         break;
@@ -176,7 +183,11 @@ namespace Scripts.Cards
 
         public string ActionCardFilter { get; set; }
 
-        public string ActionResult { get; set; }
+        
+
+        public string ActionTechnoResult { get; set; }
+        public int ActionTechnoResultCount { get; set; } = 1;
+        public string ActionCardResult { get; set; }
 
 
     }
@@ -286,8 +297,16 @@ namespace Scripts.Cards
         /// <summary>
         /// 响应的结果，对应CommonCardAction
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1Result")]
-        public string Action1Result = "";
+        [INIField(Key = "CommonCardScript.Action1TechnoResult")]
+        public string Action1TechnoResult = "";
+        [INIField(Key = "CommonCardScript.Action1TechnoResultCount")]
+        public int Action1TechnoResultCount = 1;
+        /// <summary>
+        /// 响应的结果所属卡面
+        /// </summary>
+        [INIField(Key = "CommonCardScript.Action1CardResult")]
+        public string Action1CardResult = "";
+
         /// <summary>
         /// 响应结果作用于哪对应CommonAffectRange
         /// </summary>
