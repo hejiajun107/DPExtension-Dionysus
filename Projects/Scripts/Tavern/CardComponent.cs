@@ -298,7 +298,7 @@ namespace Scripts.Tavern
         /// <summary>
         /// 卡牌带有的标签
         /// </summary>
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; set; } = new List<string>();
 
     }
 

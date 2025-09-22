@@ -34,9 +34,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Acornima">
+      <HintPath>..\..\Libraries\Acornima.dll</HintPath>
+    </Reference>
     <Reference Include="DynamicPatcher">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\DynamicPatcher.dll</HintPath>
+    </Reference>
+    <Reference Include="Jint">
+      <HintPath>..\..\Libraries\Jint.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Client">
       <SpecificVersion>False</SpecificVersion>

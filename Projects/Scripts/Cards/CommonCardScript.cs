@@ -1,5 +1,6 @@
 ﻿using DynamicPatcher;
 using Extension.INI;
+using Jint;
 using Scripts.Tavern;
 using System;
 using System.Collections;
@@ -38,11 +39,16 @@ namespace Scripts.Cards
                 trigger.Event = (CommonCardEvent)Enum.Parse(typeof(CommonCardEvent), evt);
                 trigger.Action = (CommonCardAction)(Enum.Parse(typeof(CommonCardAction), (dtype.GetField($"Action{i}").GetValue(ini.Data)) as string));
                 trigger.AffectRange = (CommonAffectRange)(Enum.Parse(typeof(CommonAffectRange), (dtype.GetField($"Action{i}AffectRange").GetValue(ini.Data)) as string));
-                trigger.ActionFilter = (dtype.GetField($"Action{i}Filter").GetValue(ini.Data)) as string;
-                trigger.ActionCardFilter = (dtype.GetField($"Action{i}CardFilter").GetValue(ini.Data)) as string;
+                trigger.ActionCheckRange = (CommonAffectRange)(Enum.Parse(typeof(CommonAffectRange), (dtype.GetField($"Action{i}CheckRange").GetValue(ini.Data)) as string));
+                trigger.ActionCheckKeywords = (dtype.GetField($"Action{i}CheckKeywords").GetValue(ini.Data)) as string;
+                trigger.ActionAffectKeywords = (dtype.GetField($"Action{i}AffectKeywords").GetValue(ini.Data)) as string;
+                trigger.ActionCheckCellSpread = int.Parse(dtype.GetField($"Action{i}CheckCellSpread").GetValue(ini.Data).ToString());
+                trigger.ActionAffectCellSpread = int.Parse(dtype.GetField($"Action{i}AffectCellSpread").GetValue(ini.Data).ToString());
+
+
                 trigger.ActionTechnoResult = (dtype.GetField($"Action{i}TechnoResult").GetValue(ini.Data)) as string;
                 trigger.ActionCardResult = (dtype.GetField($"Action{i}CardResult").GetValue(ini.Data)) as string;
-                trigger.ActionTechnoResultCount = int.Parse(dtype.GetField($"Action{i}TechnoResultCount").GetValue(ini.Data).ToString());
+                trigger.ActionTechnoResultCount = (dtype.GetField($"Action{i}TechnoResultCount").GetValue(ini.Data).ToString());
 
                 Triggers.Add(trigger);
             }
@@ -65,15 +71,18 @@ namespace Scripts.Cards
             {
                 foreach (var trigger in triggers)
                 {
-                    var slots = GetAffectSlots(currentSlot, trigger.AffectRange, 1);
+                    var slots = GetAffectSlots(currentSlot, trigger.AffectRange, trigger.ActionAffectKeywords, trigger.ActionAffectCellSpread);
+                    var filterSlots = GetAffectSlots(currentSlot, trigger.ActionCheckRange, trigger.ActionCheckKeywords, trigger.ActionCheckCellSpread);
 
+                    if (trigger.Action == CommonCardAction.Add || trigger.Action == CommonCardAction.AddPermanent)
                     foreach (var slot in slots)
                     {
-                        for (var i = 0; i < trigger.ActionTechnoResultCount; i++)
+                        var count = ParseCountExpression(trigger.ActionTechnoResultCount, new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot));
+                        for (var i = 0; i < count; i++)
                         {
                             if(slot.IsEnabled && slot.CurrentCardType is not null)
                             {
-                                slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = false });
+                                slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.AddPermanent });
                             }
                         }
                         slot.RefreshAggregates();
@@ -84,7 +93,20 @@ namespace Scripts.Cards
         }
 
 
-        private List<TavernCombatSlot> GetAffectSlots(TavernCombatSlot current,CommonAffectRange range,int spread)
+        private int ParseCountExpression(string count, CombatSlotsJSInvokeEntry slots, CombatSlotJSInvokeEntry slot)
+        {
+            if(int.TryParse(count, out var countValue)) 
+                return countValue;
+
+            using var engine = new Engine();
+            var result = engine
+               .Execute($"function calc(matched, current) {{ return {count}; }}")
+               .Invoke("calc", slots, slot);
+
+            return (int)result.AsNumber();
+        }
+
+        private List<TavernCombatSlot> GetAffectSlots(TavernCombatSlot current,CommonAffectRange range,string keywords,int spread)
         {
             var slots = new List<TavernCombatSlot>();
 
@@ -163,6 +185,12 @@ namespace Scripts.Cards
                     break;
             }
 
+            if (!string.IsNullOrWhiteSpace(keywords))
+            {
+                var arrayKeywords = keywords.Split(',');
+                slots.Where(x => x.CurrentCardType != null && (arrayKeywords.Contains(x.CurrentCardType.Key) || x.CurrentCardType.Tags.Intersect(arrayKeywords).Any()));
+            }
+
 
             return slots;
         }
@@ -179,15 +207,21 @@ namespace Scripts.Cards
 
         public CommonAffectRange AffectRange { get; set; }
 
-        public string ActionFilter { get; set; }
+        public CommonAffectRange ActionCheckRange { get; set; }
 
-        public string ActionCardFilter { get; set; }
+        public string ActionCheckKeywords { get; set; }
+
+        public string ActionAffectKeywords { get; set; }
 
         
 
         public string ActionTechnoResult { get; set; }
-        public int ActionTechnoResultCount { get; set; } = 1;
+        public string ActionTechnoResultCount { get; set; } = "1";
         public string ActionCardResult { get; set; }
+
+        public int ActionCheckCellSpread { get; set; } = 1;
+        public int ActionAffectCellSpread { get; set; } = 1;
+
 
 
     }
@@ -226,14 +260,19 @@ namespace Scripts.Cards
         /// 增加指定卡
         /// </summary>
         Add,
+        AddPermanent,
+
         /// <summary>
         /// 转化指定卡
         /// </summary>
         Convert,
+        ConvertPermanent,
+
         /// <summary>
         /// 夺取指定卡
         /// </summary>
-        Rob
+        Move,
+        MovePermanent
     }
 
     public enum CommonAffectRange
@@ -278,29 +317,29 @@ namespace Scripts.Cards
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1")]
         public string Action1 = "";
+
         /// <summary>
-        /// 响应触发动作的对象，可以是Key,Tag,多个以,隔开
+        /// 响应对象的范围关键词，支持key,tag,以,隔开多个
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1Filter")]
-        public string Action1Filter = "";
-        /// <summary>
-        /// 限定生效的卡牌，可以是Key,Tag
-        /// </summary>
-        [INIField(Key = "CommonCardScript.Action1CardFilter")]
-        public string Action1CardFilter;
+        [INIField(Key = "CommonCardScript.Action1CheckKeywords")]
+        public string Action1CheckKeywords = "";
 
         /// <summary>
         /// 响应对象的范围，对应CommonAffectRange
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1FilterRange")]
-        public string Action1FilterRange = "";
+        [INIField(Key = "CommonCardScript.Action1CheckRange")]
+        public string Action1CheckRange = "";
         /// <summary>
         /// 响应的结果，对应CommonCardAction
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1TechnoResult")]
         public string Action1TechnoResult = "";
+
+        /// <summary>
+        /// 响应结果的数量，支持表达式
+        /// </summary>
         [INIField(Key = "CommonCardScript.Action1TechnoResultCount")]
-        public int Action1TechnoResultCount = 1;
+        public string Action1TechnoResultCount = "1";
         /// <summary>
         /// 响应的结果所属卡面
         /// </summary>
@@ -312,20 +351,103 @@ namespace Scripts.Cards
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1AffectRange")]
         public string Action1AffectRange = "Self";
+
         /// <summary>
-        /// 响应结果的转化率，默认1比1
+        /// 响应结果的范围关键词，支持key,tag,以,隔开多个
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1Rate")]
-        public int Action1Rate = 1;
+        [INIField(Key = "CommonCardScript.Action1AffectKeywords")]
+        public string Action1AffectKeywords = "";
 
 
-
-
-        [INIField(Key = "CommonCardScript.Action1FilterCellSpread")]
-        public int Action1FilterCellSpread = 1;
-        [INIField(Key = "CommonCardScript.Action1TargetCellSpread")]
-        public int Action1TargetCellSpread = 1;
+        /// <summary>
+        /// 范围1
+        /// </summary>
+        [INIField(Key = "CommonCardScript.Action1CheckCellSpread")]
+        public int Action1CheckCellSpread = 1;
+        /// <summary>
+        /// 范围2
+        /// </summary>
+        [INIField(Key = "CommonCardScript.Action1AffectCellSpread")]
+        public int Action1AffectCellSpread = 1;
     }
 
-    
+
+    #region 给JS公式用的对象
+    public class CombatSlotsJSInvokeEntry
+    {
+     
+        public CombatSlotsJSInvokeEntry(List<TavernCombatSlot> slots) 
+        {
+            Slots = slots;
+        }
+
+        public List<TavernCombatSlot> Slots { get; private set; }
+
+        public int CountCard(params string[] types)
+        {
+            if (types is null || !types.Any())
+                return Slots.Count();
+
+            foreach(var slot in Slots)
+            {
+                if (slot.CurrentCardType == null) continue;
+            }
+
+
+            return Slots.Where(x => x.CurrentCardType != null && (types.Contains(x.CurrentCardType.Key) || types.Intersect(x.CurrentCardType.Tags).Any())).Count();
+        }
+
+        public int CountTechno(params string[] types)
+        {
+            var records = new List<CardRecord>();
+
+            foreach (var slot in Slots)
+            {
+                records.AddRange(slot.CardRecords);
+            }
+
+            var results = records.Select(x => new
+            {
+                Key = x.Techno,
+                Tags = x.CardType.Tags ?? new List<string>()
+            });
+
+            if (types is null || !types.Any())
+                return results.Count();
+
+            return results.Where(x=> types.Contains(x.Key) || types.Intersect(x.Tags).Any()).Count();
+        }
+    }
+
+    public class CombatSlotJSInvokeEntry
+    {
+        public CombatSlotJSInvokeEntry(TavernCombatSlot slot)
+        {
+            Slot = slot;
+        }
+
+        public TavernCombatSlot Slot { get; private set; }
+
+        public int CountCard(params string[] types)
+        {
+            if (types is null || !types.Any())
+                return 1;
+            return Slot.CurrentCardType != null && (types.Intersect(Slot.CurrentCardType.Tags).Any() || types.Contains(Slot.CurrentCardType.Key)) ? 1 : 0;
+        }
+
+        public int CountTechno(params string[] types)
+        {
+            var results = Slot.CardRecords.Select(x => new
+            {
+                Key = x.Techno,
+                Tags = x.CardType.Tags ?? new List<string>()
+            });
+
+            if (types is null || !types.Any())
+                return results.Count();
+
+            return results.Where(x => types.Contains(x.Key) || types.Intersect(x.Tags).Any()).Count();
+        }
+    }
+    #endregion
 }

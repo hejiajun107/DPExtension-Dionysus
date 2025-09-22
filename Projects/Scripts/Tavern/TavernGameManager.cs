@@ -930,7 +930,7 @@ namespace Scripts.Tavern
         public string CardConfigFiles = "";
 
         /// <summary>
-        /// 卡牌配置文件路径，可以多个以,隔开
+        /// 指挥官配置文件路径，可以多个以,隔开
         /// </summary>
         [INIField(Key = "CommanderConfigFile")]
         public string CommanderConfigFile = "";
