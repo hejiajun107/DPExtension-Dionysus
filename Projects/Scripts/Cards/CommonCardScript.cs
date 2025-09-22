@@ -61,13 +61,26 @@ namespace Scripts.Cards
 
         public override void OnRoundStarted()
         {
-            base.OnRoundStarted();
+            var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnRoundStart).ToList();
+            ExcuteTrigger(triggers);
         }
 
         public override void OnRoundEnded()
         {
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnRoundEnd).ToList();
-            if(Slot is TavernCombatSlot currentSlot)
+            ExcuteTrigger(triggers);
+        }
+
+        public override int OnSelledCombat(int price)
+        {
+            var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnSelledCombat).ToList();
+            ExcuteTrigger(triggers);
+            return base.OnSelledCombat(price);
+        }
+
+        private void ExcuteTrigger(List<CommonCardTrigger> triggers)
+        {
+            if (Slot is TavernCombatSlot currentSlot)
             {
                 foreach (var trigger in triggers)
                 {
@@ -75,21 +88,20 @@ namespace Scripts.Cards
                     var filterSlots = GetAffectSlots(currentSlot, trigger.ActionCheckRange, trigger.ActionCheckKeywords, trigger.ActionCheckCellSpread);
 
                     if (trigger.Action == CommonCardAction.Add || trigger.Action == CommonCardAction.AddPermanent)
-                    foreach (var slot in slots)
-                    {
-                        var count = ParseCountExpression(trigger.ActionTechnoResultCount, new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot));
-                        for (var i = 0; i < count; i++)
+                        foreach (var slot in slots)
                         {
-                            if(slot.IsEnabled && slot.CurrentCardType is not null)
+                            var count = ParseCountExpression(trigger.ActionTechnoResultCount, new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot));
+                            for (var i = 0; i < count; i++)
                             {
-                                slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.AddPermanent });
+                                if (slot.IsEnabled && slot.CurrentCardType is not null)
+                                {
+                                    slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.AddPermanent });
+                                }
                             }
+                            slot.RefreshAggregates();
                         }
-                        slot.RefreshAggregates();
-                    }
                 }
             }
-         
         }
 
 
