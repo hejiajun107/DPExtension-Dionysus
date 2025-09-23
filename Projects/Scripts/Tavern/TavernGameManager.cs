@@ -566,6 +566,8 @@ namespace Scripts.Tavern
                     node.IsReady = true;
                 }
 
+                node.CurrentRoundSellRecords.RemoveAll(x => true);
+
                 //todo触发所有卡牌的回合开始效果
                 foreach (var item in node.TavernCombatSlots)
                 {

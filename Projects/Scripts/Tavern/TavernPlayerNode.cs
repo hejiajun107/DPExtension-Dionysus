@@ -81,6 +81,10 @@ namespace Scripts.Tavern
         public Queue<CardType> CardCacheQueue { get; set; } = new Queue<CardType>();
 
 
+        public List<SellRecord> SellRecords { get; set; } = new List<SellRecord>();
+        public List<SellRecord> CurrentRoundSellRecords { get; set; } = new List<SellRecord>();
+
+
         public override void OnUpdate()
         {
             if (!Register())
@@ -245,5 +249,13 @@ namespace Scripts.Tavern
                 TavernGameManager.Instance.ShowFlyingTextAt($"-${1000}", Owner.OwnerObject.Ref.Base.Base.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 500), 1);
             }
         }
+    }
+
+    [Serializable]
+    public class SellRecord
+    {
+        public string Key { get; set; }
+
+        public CardType Card { get; set; }
     }
 }

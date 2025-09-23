@@ -145,6 +145,10 @@ namespace Scripts.Tavern
         {
             if(CurrentCardType is not null)
             {
+                var node = TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner);
+                node.SellRecords.Add(new SellRecord { Key = CurrentCardType.Key, Card = TavernGameManager.Instance.CardTypes[CurrentCardType.Key] });
+                node.CurrentRoundSellRecords.Add(new SellRecord { Key = CurrentCardType.Key, Card = TavernGameManager.Instance.CardTypes[CurrentCardType.Key] });
+
                 CurrentCardType = null;
                 CardLevel = 0;
 
@@ -164,7 +168,7 @@ namespace Scripts.Tavern
                 }
 
                 TavernGameManager.Instance.ShowFlyingTextAt($"+${price}",Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0,0,200));
-            }    
+            }
         }
 
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH, Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)

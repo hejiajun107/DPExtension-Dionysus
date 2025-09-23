@@ -1,10 +1,12 @@
 ﻿using DynamicPatcher;
 using Extension.INI;
 using Jint;
+using PatcherYRpp;
 using Scripts.Tavern;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +51,8 @@ namespace Scripts.Cards
                 trigger.ActionTechnoResult = (dtype.GetField($"Action{i}TechnoResult").GetValue(ini.Data)) as string;
                 trigger.ActionCardResult = (dtype.GetField($"Action{i}CardResult").GetValue(ini.Data)) as string;
                 trigger.ActionTechnoResultCount = (dtype.GetField($"Action{i}TechnoResultCount").GetValue(ini.Data).ToString());
+                trigger.ActionInvokeScript = (dtype.GetField($"Action{i}InvokeScript").GetValue(ini.Data).ToString());
+
 
                 Triggers.Add(trigger);
             }
@@ -59,36 +63,50 @@ namespace Scripts.Cards
             base.OnBought();
         }
 
+        public override void OnPlaceToCombatSlot(TavernCombatSlot tavernCombatSlot)
+        {
+            var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnCombatPut).ToList();
+            ExcuteTrigger(triggers, Slot);
+        }
+
         public override void OnRoundStarted()
         {
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnRoundStart).ToList();
-            ExcuteTrigger(triggers);
+            ExcuteTrigger(triggers,Slot);
         }
 
         public override void OnRoundEnded()
         {
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnRoundEnd).ToList();
-            ExcuteTrigger(triggers);
+            ExcuteTrigger(triggers,Slot);
         }
 
         public override int OnSelledCombat(int price)
         {
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnSelledCombat).ToList();
-            ExcuteTrigger(triggers);
+            ExcuteTrigger(triggers,Slot);
             return base.OnSelledCombat(price);
         }
 
-        private void ExcuteTrigger(List<CommonCardTrigger> triggers)
+        private void ExcuteTrigger(List<CommonCardTrigger> triggers,object eventSlot)
         {
-            if (Slot is TavernCombatSlot currentSlot)
+            if (eventSlot is TavernCombatSlot currentSlot)
             {
                 foreach (var trigger in triggers)
                 {
                     var slots = GetAffectSlots(currentSlot, trigger.AffectRange, trigger.ActionAffectKeywords, trigger.ActionAffectCellSpread);
                     var filterSlots = GetAffectSlots(currentSlot, trigger.ActionCheckRange, trigger.ActionCheckKeywords, trigger.ActionCheckCellSpread);
 
-                    if (trigger.Action == CommonCardAction.Add || trigger.Action == CommonCardAction.AddPermanent)
-                        foreach (var slot in slots)
+                    Engine engine = null;
+                    if (!string.IsNullOrWhiteSpace(trigger.ActionInvokeScript))
+                    {
+                        engine = new Engine();
+                        engine.Execute($"function doAction(matched,current,player) {{ {trigger.ActionInvokeScript}; }}");
+                    }
+
+                    foreach (var slot in slots)
+                    {
+                        if (trigger.Action == CommonCardAction.Add || trigger.Action == CommonCardAction.AddPermanent)
                         {
                             var count = ParseCountExpression(trigger.ActionTechnoResultCount, new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot));
                             for (var i = 0; i < count; i++)
@@ -98,8 +116,13 @@ namespace Scripts.Cards
                                     slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.AddPermanent });
                                 }
                             }
-                            slot.RefreshAggregates();
                         }
+                        if(engine is not null)
+                        {
+                            engine.Invoke("doAction", new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot), new PlayerJSInvokeEntry(Player));
+                        }
+                        slot.RefreshAggregates();
+                    }
                 }
             }
         }
@@ -112,8 +135,8 @@ namespace Scripts.Cards
 
             using var engine = new Engine();
             var result = engine
-               .Execute($"function calc(matched, current) {{ return {count}; }}")
-               .Invoke("calc", slots, slot);
+               .Execute($"function calc(matched, current , player) {{ return {count}; }}")
+               .Invoke("calc", slots, slot,new PlayerJSInvokeEntry(Player));
 
             return (int)result.AsNumber();
         }
@@ -235,6 +258,10 @@ namespace Scripts.Cards
         public int ActionAffectCellSpread { get; set; } = 1;
 
 
+        /// <summary>
+        /// 触发动作调用的脚本
+        /// </summary>
+        public string ActionInvokeScript { get; set; } = string.Empty;
 
     }
 
@@ -381,10 +408,17 @@ namespace Scripts.Cards
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1AffectCellSpread")]
         public int Action1AffectCellSpread = 1;
+
+        /// <summary>
+        /// 结果脚本
+        /// </summary>
+        [INIField(Key = "CommonCardScript.Action1InvokeScript")]
+        public int Action1InvokeScript = 1;
     }
 
 
     #region 给JS公式用的对象
+    [Serializable]
     public class CombatSlotsJSInvokeEntry
     {
      
@@ -431,6 +465,7 @@ namespace Scripts.Cards
         }
     }
 
+    [Serializable]
     public class CombatSlotJSInvokeEntry
     {
         public CombatSlotJSInvokeEntry(TavernCombatSlot slot)
@@ -459,6 +494,46 @@ namespace Scripts.Cards
                 return results.Count();
 
             return results.Where(x => types.Contains(x.Key) || types.Intersect(x.Tags).Any()).Count();
+        }
+    }
+
+    [Serializable]
+    public class PlayerJSInvokeEntry
+    {
+        public PlayerJSInvokeEntry(TavernPlayerNode player)
+        {
+            Player = player;
+        }
+
+        public TavernPlayerNode Player { get; private set; }
+
+        public int CountSelled(params string[] types)
+        {
+            if (types is null || !types.Any())
+                return Player.SellRecords.Count();
+
+            return Player.SellRecords.Where(x => types.Contains(x.Key) || types.Intersect(x.Card.Tags).Any()).Count();
+        }
+
+        public int CountCurrentSelled(params string[] types)
+        {
+            if (types is null || !types.Any())
+                return Player.CurrentRoundSellRecords.Count();
+
+            return Player.CurrentRoundSellRecords.Where(x => types.Contains(x.Key) || types.Intersect(x.Card.Tags).Any()).Count();
+        }
+
+        public PlayerJSInvokeEntry ClearCurrentSelled()
+        {
+            Player.CurrentRoundSellRecords.RemoveAll(x => true);
+            return this;
+        }
+
+        public PlayerJSInvokeEntry GiveMoney(int amount)
+        {
+            Player.Owner.OwnerObject.Ref.Owner.Ref.GiveMoney(amount);
+            TavernGameManager.Instance.ShowFlyingTextAt($"+${amount}", Player.Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 200));
+            return this;
         }
     }
     #endregion
