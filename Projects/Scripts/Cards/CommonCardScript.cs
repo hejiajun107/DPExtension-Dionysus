@@ -345,6 +345,7 @@ namespace Scripts.Cards
 
     public enum CommonCardAction
     {
+        None,
         /// <summary>
         /// 增加指定卡
         /// </summary>
