@@ -1034,14 +1034,14 @@ namespace Scripts.Tavern
 
 
         /// <summary>
-        /// 投票跳过的超武
+        /// 投票跳过战斗阶段的超武
         /// </summary>
         [INIField(Key = "VoteSkipSW")]
 
         public string VoteSkipSW = "BRVoteSW";
 
         /// <summary>
-        /// 投票跳过的初始时间（帧数）
+        /// 允许投票跳过的初始时间（帧数）
         /// </summary>
         [INIField(Key = "VoteSkipInitTime")]
         public int VoteSkipInitTime = 1200;

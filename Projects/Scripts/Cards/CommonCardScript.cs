@@ -43,11 +43,11 @@ namespace Scripts.Cards
                 trigger.AffectRange = (CommonAffectRange)(Enum.Parse(typeof(CommonAffectRange), (dtype.GetField($"Action{i}AffectRange").GetValue(ini.Data)) as string));
                 trigger.ActionCheckRange = (CommonAffectRange)(Enum.Parse(typeof(CommonAffectRange), (dtype.GetField($"Action{i}CheckRange").GetValue(ini.Data)) as string));
                 trigger.ActionCheckKeywords = (dtype.GetField($"Action{i}CheckKeywords").GetValue(ini.Data)) as string;
+                trigger.ActionCheckTechnoKeywords = (dtype.GetField($"Action{i}CheckTechnoKeywords").GetValue(ini.Data)) as string;
                 trigger.ActionAffectKeywords = (dtype.GetField($"Action{i}AffectKeywords").GetValue(ini.Data)) as string;
                 trigger.ActionCheckCellSpread = int.Parse(dtype.GetField($"Action{i}CheckCellSpread").GetValue(ini.Data).ToString());
                 trigger.ActionAffectCellSpread = int.Parse(dtype.GetField($"Action{i}AffectCellSpread").GetValue(ini.Data).ToString());
-
-
+                trigger.ActionConvertRate = int.Parse(dtype.GetField($"Action{i}ConvertRate").GetValue(ini.Data).ToString());
                 trigger.ActionTechnoResult = (dtype.GetField($"Action{i}TechnoResult").GetValue(ini.Data)) as string;
                 trigger.ActionCardResult = (dtype.GetField($"Action{i}CardResult").GetValue(ini.Data)) as string;
                 trigger.ActionTechnoResultCount = (dtype.GetField($"Action{i}TechnoResultCount").GetValue(ini.Data).ToString());
@@ -117,7 +117,52 @@ namespace Scripts.Cards
                                 }
                             }
                         }
-                        if(engine is not null)
+                        else if(trigger.Action == CommonCardAction.Convert || trigger.Action == CommonCardAction.ConvertPermanent)
+                        {
+                            var count = ParseCountExpression(trigger.ActionTechnoResultCount, new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot));
+                            var keywords = !string.IsNullOrWhiteSpace(trigger.ActionCheckTechnoKeywords) ? trigger.ActionCheckTechnoKeywords.Split(',') : new string[0];
+                            var query = slot.CardRecords.Where(x => true);
+                            if (keywords.Any())
+                            {
+                                query = query.Where(x => keywords.Contains(x.Techno) || x.CardType.Tags.Intersect(keywords).Any());
+                            }
+
+                            var technoCount = query.Count();
+                            var num = (int)Math.Floor((double)technoCount / trigger.ActionConvertRate);
+
+                            var taked = query.Take(num * trigger.ActionConvertRate).ToList();
+
+                            slot.CardRecords.RemoveAll(x => taked.Contains(x));
+
+                            for(var i = 0; i < num; i++)
+                            {
+                                slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.ConvertPermanent });
+                            }
+                        }
+                        else if(trigger.Action == CommonCardAction.Move || trigger.Action == CommonCardAction.MovePermanent)
+                        {
+                            var keywords = !string.IsNullOrWhiteSpace(trigger.ActionCheckTechnoKeywords) ? trigger.ActionCheckTechnoKeywords.Split(',') : new string[0];
+                            var count = ParseCountExpression(trigger.ActionTechnoResultCount, new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot));
+                            foreach (var fslot in filterSlots)
+                            {
+                                var query = fslot.CardRecords.Where(x => true);
+                                if (keywords.Any())
+                                {
+                                    query = query.Where(x => keywords.Contains(x.Techno) || x.CardType.Tags.Intersect(keywords).Any());
+                                }
+
+                                var taked = query.Take(count).ToList();
+
+                                fslot.CardRecords.RemoveAll(x => taked.Contains(x));
+
+                                taked.ForEach(x => x.IsPersist = trigger.Action == CommonCardAction.ConvertPermanent);
+
+                                slot.CardRecords.AddRange(taked);
+                                fslot.RefreshAggregates();
+                            }
+                        }
+
+                        if (engine is not null)
                         {
                             engine.Invoke("doAction", new CombatSlotsJSInvokeEntry(filterSlots), new CombatSlotJSInvokeEntry(slot), new PlayerJSInvokeEntry(Player));
                         }
@@ -246,6 +291,9 @@ namespace Scripts.Cards
 
         public string ActionCheckKeywords { get; set; }
 
+        public string ActionCheckTechnoKeywords { get; set; }
+
+
         public string ActionAffectKeywords { get; set; }
 
         
@@ -262,6 +310,8 @@ namespace Scripts.Cards
         /// 触发动作调用的脚本
         /// </summary>
         public string ActionInvokeScript { get; set; } = string.Empty;
+
+        public int ActionConvertRate { get; set; } = 1;
 
     }
 
@@ -358,7 +408,7 @@ namespace Scripts.Cards
         public string Action1 = "";
 
         /// <summary>
-        /// 响应对象的范围关键词，支持key,tag,以,隔开多个
+        /// 响应对象的范围关键词（卡牌），支持key,tag,以,隔开多个
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1CheckKeywords")]
         public string Action1CheckKeywords = "";
@@ -373,6 +423,12 @@ namespace Scripts.Cards
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1TechnoResult")]
         public string Action1TechnoResult = "";
+
+        /// <summary>
+        /// 转化或移动时作用单位的关键词，支持key,tag,以,隔开多个
+        /// </summary>
+        [INIField(Key = "CommonCardScript.Action1CheckTechnoKeywords")]
+        public string Action1CheckTechnoKeywords = "";
 
         /// <summary>
         /// 响应结果的数量，支持表达式
@@ -397,6 +453,11 @@ namespace Scripts.Cards
         [INIField(Key = "CommonCardScript.Action1AffectKeywords")]
         public string Action1AffectKeywords = "";
 
+        /// <summary>
+        /// 当效果为Convert时，转化率，默认为1
+        /// </summary>
+        [INIField(Key = "CommonCardScript.Action1ConvertRate")]
+        public int Action1ConvertRate = 1;
 
         /// <summary>
         /// 范围1
@@ -414,6 +475,11 @@ namespace Scripts.Cards
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1InvokeScript")]
         public int Action1InvokeScript = 1;
+
+
+
+        
+       
     }
 
 
@@ -523,6 +589,16 @@ namespace Scripts.Cards
             return Player.CurrentRoundSellRecords.Where(x => types.Contains(x.Key) || types.Intersect(x.Card.Tags).Any()).Count();
         }
 
+        public int BaseLevel()
+        {
+            return Player.BaseLevel;
+        }
+
+        public int Money()
+        {
+            return Player.Owner.OwnerObject.Ref.Owner.Ref.Available_Money() ;
+        }
+
         public PlayerJSInvokeEntry ClearCurrentSelled()
         {
             Player.CurrentRoundSellRecords.RemoveAll(x => true);
@@ -533,6 +609,15 @@ namespace Scripts.Cards
         {
             Player.Owner.OwnerObject.Ref.Owner.Ref.GiveMoney(amount);
             TavernGameManager.Instance.ShowFlyingTextAt($"+${amount}", Player.Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 200));
+            return this;
+        }
+
+        public PlayerJSInvokeEntry GiveCardTemp(string card,int count)
+        {
+            for(var i = 0; i < count; i++)
+            {
+                Player.CardCacheQueue.Enqueue(TavernGameManager.Instance.CardTypes[card]);
+            }
             return this;
         }
     }
