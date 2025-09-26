@@ -70,6 +70,11 @@ namespace Scripts.Tavern
                 }
             }
 
+            if(CurrentCardType is null)
+            {
+                Owner.OwnerObject.Ref.Ammo = 0;
+            }
+
             if (!Register())
                 return;
         }
@@ -102,6 +107,7 @@ namespace Scripts.Tavern
                 CurrentCardType = cardType;
                 CardScript = TavernGameManager.Instance.CreateCardScript(cardType, TavernGameManager.Instance.FindPlayerNodeByHouse(Owner.OwnerObject.Ref.Owner));
                 CardScript.Slot = this;
+                Owner.OwnerObject.Ref.Ammo = 0;
 
                 if (destroyOldCards)
                 {
@@ -119,6 +125,8 @@ namespace Scripts.Tavern
                     if (CardLevel == 3)
                     {
                         //todo 获得三连奖励
+
+                        CardScript?.OnCardTriple();
                     }
                 }
             }

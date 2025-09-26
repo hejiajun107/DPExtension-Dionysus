@@ -74,6 +74,16 @@ namespace Scripts.Cards
 
         }
 
+        public virtual void OnBaseUpgrade()
+        {
+
+        }
+
+        public virtual void OnCardTriple()
+        {
+
+        }
+
 
     }
 

@@ -22,11 +22,18 @@ namespace Scripts.Cards
 
         public List<CommonCardTrigger> Triggers { get; private set; } = new List<CommonCardTrigger>();
 
+        private int RoundCounter = 1;
+
+        private int CurrentCount = 1;
+
         public override void OnAwake()
         {
             var ini = TavernGameManager.Instance.CreateRulesIniComponentWith<CommonCardScriptData>(Type.Key);
           
             var dtype = typeof(CommonCardScriptData);
+
+            RoundCounter = ini.Data.RoundCounter;
+            CurrentCount = ini.Data.RoundCounter;
 
             for (var i = 1; i <= 1; i++) 
             {
@@ -65,20 +72,64 @@ namespace Scripts.Cards
 
         public override void OnPlaceToCombatSlot(TavernCombatSlot tavernCombatSlot)
         {
+            if (RoundCounter > 0)
+            {
+                tavernCombatSlot.Owner.OwnerObject.Ref.Ammo = CurrentCount;
+            }
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnCombatPut).ToList();
             ExcuteTrigger(triggers, Slot);
         }
 
         public override void OnRoundStarted()
         {
+            if (RoundCounter > 1)
+            {
+                if (CurrentCount > 0)
+                {
+                    CurrentCount--;
+                    if(Slot is TavernCombatSlot combatSlot)
+                    {
+                        combatSlot.Owner.OwnerObject.Ref.Ammo = CurrentCount;
+                    }
+                    return;
+                }
+            }
+
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnRoundStart).ToList();
             ExcuteTrigger(triggers,Slot);
         }
 
+        public override void OnBaseUpgrade()
+        {
+            var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnBaseUpgrade).ToList();
+            ExcuteTrigger(triggers, Slot);
+        }
+
+        public override void OnCardTriple()
+        {
+            var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnCardTriple).ToList();
+            ExcuteTrigger(triggers, Slot);
+        }
+
         public override void OnRoundEnded()
         {
+            if (RoundCounter > 1)
+            {
+                if (CurrentCount > 0)
+                    return;
+            }
+
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnRoundEnd).ToList();
             ExcuteTrigger(triggers,Slot);
+
+            if (CurrentCount <= 0 && RoundCounter>0)
+            {
+                CurrentCount = RoundCounter;
+                if (Slot is TavernCombatSlot combatSlot)
+                {
+                    combatSlot.Owner.OwnerObject.Ref.Ammo = CurrentCount;
+                }
+            }
         }
 
         public override int OnSelledCombat(int price)
@@ -313,6 +364,7 @@ namespace Scripts.Cards
 
         public int ActionConvertRate { get; set; } = 1;
 
+
     }
 
     public enum CommonCardEvent
@@ -341,6 +393,18 @@ namespace Scripts.Cards
         /// 卡牌被卖出时触发
         /// </summary>
         OnSelled,
+        /// <summary>
+        /// 对指定卡槽攻击
+        /// </summary>
+        OnFire,
+        /// <summary>
+        /// 当酒馆升级时
+        /// </summary>
+        OnBaseUpgrade,
+        /// <summary>
+        /// 当发生三连时
+        /// </summary>
+        OnCardTriple,
     }
 
     public enum CommonCardAction
@@ -477,9 +541,9 @@ namespace Scripts.Cards
         [INIField(Key = "CommonCardScript.Action1InvokeScript")]
         public int Action1InvokeScript = 1;
 
+        [INIField(Key = "CommonCardScript.RoundCounter")]
 
-
-        
+        public int RoundCounter = 1;
        
     }
 
@@ -561,6 +625,14 @@ namespace Scripts.Cards
                 return results.Count();
 
             return results.Where(x => types.Contains(x.Key) || types.Intersect(x.Tags).Any()).Count();
+        }
+
+        public void ReplaceCard(string card,bool overwrite)
+        {
+            if (Slot.CurrentCardType is not null && !overwrite)
+                return;
+
+            Slot.ChangeCard(TavernGameManager.Instance.CardTypes[card], true, true);
         }
     }
 

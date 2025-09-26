@@ -245,6 +245,11 @@ namespace Scripts.Tavern
                     shop.IsEnabled = true;
                 }
 
+                foreach(var slot in TavernCombatSlots)
+                {
+                    slot.CardScript?.OnBaseUpgrade() ;
+                }
+
                 //显示升本花费的资金
                 TavernGameManager.Instance.ShowFlyingTextAt($"-${1000}", Owner.OwnerObject.Ref.Base.Base.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 500), 1);
             }
