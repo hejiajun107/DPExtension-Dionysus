@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
 using PatcherYRpp;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scripts.Mission
+namespace Scripts
 {
     [ScriptAlias(nameof(KeepMoveSpeedScript))]
     [Serializable]
@@ -31,7 +32,7 @@ namespace Scripts.Mission
         public override void Awake()
         {
             var ini = GameObject.CreateRulesIniComponentWith<KeepMoveSpeedData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
-            speed = Owner.OwnerObject.Ref.Type.Ref.Speed;
+            speed = ini.Data.OSpeed;
             targetSpeed = ini.Data.Speed;
             duration = ini.Data.Duration;
 
@@ -67,5 +68,8 @@ namespace Scripts.Mission
 
         [INIField(Key = "KeepMoveSpeed.Speed")]
         public int Speed = 4;
+
+        [INIField(Key = "Speed")]
+        public int OSpeed = 4;
     }
 }
