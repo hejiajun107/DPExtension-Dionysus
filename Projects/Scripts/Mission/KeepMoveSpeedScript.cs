@@ -50,7 +50,7 @@ namespace Scripts
 
             if (duration-- > 0)
             {
-                pfoot.Ref.SpeedMultiplier = ((double)targetSpeed / (double)speed);
+                pfoot.Ref.SpeedMultiplier = (Math.Ceiling(((double)targetSpeed / (double)speed) * (double)Math.Pow(10,3)) / (double)Math.Pow(10,3));
             }
             else
             {
