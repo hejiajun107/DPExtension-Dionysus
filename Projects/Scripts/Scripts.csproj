@@ -238,6 +238,7 @@
     <Compile Include="LinkSWScript.cs" />
     <Compile Include="Mission\CannotAttackAlliesScript.cs" />
     <Compile Include="Mission\KeepMoveSpeedScript.cs" />
+    <Compile Include="Mission\SafeGuardTechnoScript.cs" />
     <Compile Include="MMKSeekerScript.cs" />
     <Compile Include="Modes\CricketControlScript.cs" />
     <Compile Include="Modes\GIDeployScript.cs" />
