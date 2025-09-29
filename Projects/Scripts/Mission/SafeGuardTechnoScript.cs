@@ -87,8 +87,10 @@ namespace Scripts
                 }
                 else
                 {
-                    var pfoot = Owner.OwnerObject.Convert<FootClass>();
-                    pfoot.Ref.MoveTo(ProtectTarget.OwnerObject.Ref.Base.Base.GetCoords());
+                    Owner.OwnerObject.Ref.SetDestination(ProtectTarget.OwnerObject.Convert<AbstractClass>());
+                    mission.Ref.QueueMission(Mission.Move, true);
+                    //var pfoot = Owner.OwnerObject.Convert<FootClass>();
+                    //pfoot.Ref.MoveTo(ProtectTarget.OwnerObject.Ref.Base.Base.GetCoords());
                     //mission.Ref.QueueMission(Mission.Move, true);
                 }
             }
@@ -98,8 +100,10 @@ namespace Scripts
                 {
                     var mission = Owner.OwnerObject.Convert<MissionClass>();
                     mission.Ref.ForceMission(Mission.Stop);
-                    var pfoot = Owner.OwnerObject.Convert<FootClass>();
-                    pfoot.Ref.MoveTo(ProtectTarget.OwnerObject.Ref.Base.Base.GetCoords());
+                    Owner.OwnerObject.Ref.SetDestination(ProtectTarget.OwnerObject.Convert<AbstractClass>());
+                    mission.Ref.QueueMission(Mission.Move, true);
+                    //var pfoot = Owner.OwnerObject.Convert<FootClass>();
+                    //pfoot.Ref.MoveTo(ProtectTarget.OwnerObject.Ref.Base.Base.GetCoords());
                     //mission.Ref.QueueMission(Mission.Move, true);
                 }
             }
