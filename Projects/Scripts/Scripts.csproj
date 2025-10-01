@@ -91,6 +91,7 @@
     <Compile Include="AE\BlackHoleAttachEffectScript.cs" />
     <Compile Include="AE\BurningAttachEffect.cs" />
     <Compile Include="AE\DamageDeepenAttachEffectScript.cs" />
+    <Compile Include="AE\EmergencyHealthAttachEffectScript.cs" />
     <Compile Include="AE\ForceFacingAttachEffectScript.cs" />
     <Compile Include="AE\FreezingSnapAttachEffectScript.cs" />
     <Compile Include="AE\GuardOfHimikoScript.cs" />

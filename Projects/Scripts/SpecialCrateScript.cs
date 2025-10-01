@@ -1,4 +1,5 @@
-﻿using Extension.Ext;
+﻿using DynamicPatcher;
+using Extension.Ext;
 using Extension.INI;
 using Extension.Script;
 using Newtonsoft.Json;
@@ -23,11 +24,18 @@ namespace Scripts
         private int rof = 5;
         private string warhead = string.Empty;
         private List<string> required = new List<string>();
+        private bool removeAfterTriggered = true;
+        private string sw = string.Empty;
+        private int range = 1;
+        private bool actived = false;
 
         public override void Awake()
         {
             var ini = this.CreateRulesIniComponentWith<SpecialCrateData>(Owner.OwnerObject.Ref.Type.Ref.Base.Base.ID);
             warhead = ini.Data.Warhead;
+            removeAfterTriggered = ini.Data.RemoveAfterTriggered;
+            sw = ini.Data.SW;
+            range = ini.Data.Range;
 
             if(!string.IsNullOrWhiteSpace(ini.Data.Required))
             {
@@ -37,6 +45,9 @@ namespace Scripts
 
         public override void OnUpdate()
         {
+            if (actived)
+                return;
+
             if (rof-- > 0)
                 return;
 
@@ -44,7 +55,7 @@ namespace Scripts
 
             var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-            var technos = ObjectFinder.FindTechnosNear(location, 1 * Game.CellSize).Where(x => !x.Ref.InLimbo).OrderByDescending(x => x.Ref.Base.GetCoords().DistanceFrom(location)).ToList();
+            var technos = ObjectFinder.FindTechnosNear(location, range * Game.CellSize).Where(x => !x.Ref.InLimbo).OrderByDescending(x => x.Ref.Base.GetCoords().DistanceFrom(location)).ToList();
 
             if (!technos.Any())
                 return;
@@ -65,9 +76,27 @@ namespace Scripts
                 pbullet.Ref.DetonateAndUnInit(target.Ref.Base.GetCoords());
             }
 
-            Owner.OwnerObject.Ref.Base.Remove();
-            Owner.OwnerObject.Ref.Base.UnInit();
+            if (!string.IsNullOrEmpty(sw))
+            {
+                var swType = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(sw);
+                if (swType.IsNotNull)
+                {
+                    var psw = target.Convert<TechnoClass>().Ref.Owner.Ref.FindSuperWeapon(swType);
+                    psw.Ref.IsCharged = true;
+                    psw.Ref.Launch(CellClass.Coord2Cell(target.Ref.Base.GetCoords()), true);
+                    psw.Ref.IsCharged = false;
+                }
+            }
 
+            if (removeAfterTriggered)
+            {
+                Owner.OwnerObject.Ref.Base.Remove();
+                Owner.OwnerObject.Ref.Base.UnInit();
+            }
+            else
+            {
+                actived = true;
+            }
         }
     }
 
@@ -78,6 +107,16 @@ namespace Scripts
 
         [INIField(Key = "SpecialCrate.Warhead")]
         public string Warhead = "";
+
+
+        [INIField(Key = "SpecialCrate.SuperWeapon")]
+        public string SW = "";
+
+        [INIField(Key = "SpecialCrate.RemoveAfterTriggered")]
+        public bool RemoveAfterTriggered = true;
+
+        [INIField(Key = "SpecialCrate.Range")]
+        public int Range = 1;
 
     }
 
