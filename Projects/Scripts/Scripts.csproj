@@ -237,8 +237,10 @@
     <Compile Include="JumpWithBulletScript.cs" />
     <Compile Include="LimboBulletScript.cs" />
     <Compile Include="LinkSWScript.cs" />
+    <Compile Include="Mission\All08GameManager.cs" />
     <Compile Include="Mission\CannotAttackAlliesScript.cs" />
     <Compile Include="Mission\KeepMoveSpeedScript.cs" />
+    <Compile Include="Shared\MissionData.cs" />
     <Compile Include="Mission\SafeGuardTechnoScript.cs" />
     <Compile Include="MMKSeekerScript.cs" />
     <Compile Include="Modes\CricketControlScript.cs" />
