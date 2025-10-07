@@ -238,6 +238,7 @@
     <Compile Include="LimboBulletScript.cs" />
     <Compile Include="LinkSWScript.cs" />
     <Compile Include="Mission\All08GameManager.cs" />
+    <Compile Include="Mission\CallIronCurtainSpecialScript.cs" />
     <Compile Include="Mission\CannotAttackAlliesScript.cs" />
     <Compile Include="Mission\KeepMoveSpeedScript.cs" />
     <Compile Include="Shared\MissionData.cs" />
