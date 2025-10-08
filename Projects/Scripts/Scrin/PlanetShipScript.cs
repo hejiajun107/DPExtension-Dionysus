@@ -68,6 +68,7 @@ namespace Scripts.Scrin
                 charge++;
             }
 
+
             //UpdateAnim();
 
             //if (InIonStorm)
@@ -149,6 +150,24 @@ namespace Scripts.Scrin
             pBullet.Ref.Base.SetLocation(pos2);
             Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, laserWeapon, to);
             pBullet.Ref.DetonateAndUnInit(to);
+        }
+
+
+
+        public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
+        {
+            if (!Owner.OwnerObject.Ref.Owner.Ref.ControlledByHuman())
+            {
+                if (charge >= chargeMax)
+                {
+                    if(pTarget.Ref.GetCoords().BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords())< 6 * Game.CellSize)
+                    {
+                        charge = 0;
+                        Owner.GameObject.StartCoroutine(DoIonStorm());
+                    }
+                }
+            }
+            base.OnFire(pTarget, weaponIndex);
         }
 
 
