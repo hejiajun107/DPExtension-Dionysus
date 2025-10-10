@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -159,7 +160,9 @@ namespace Scripts.Tavern
 
                 g.FillRectangle(blackBrush, fillrect);
                 g.DrawRectangle(whitePen, fillrect);
-                g.DrawString(stext, font, whiteBrush, new PointF(5,10), format);
+
+                DrawColoredText(g, stext, font, 5, 10);
+                //g.DrawString(stext, font, whiteBrush, new PointF(5,10), format);
                        
                 g.Save();
 
@@ -179,6 +182,62 @@ namespace Scripts.Tavern
             else
             {
                 //offsetY = offsetYCache.ContainsKey(key) ? offsetYCache[key] : 0;
+            }
+        }
+
+        private static readonly Regex ColorRegex = new Regex(@"\[color=([0-9A-Fa-f]{6})\](.*?)\[/color\]", RegexOptions.Compiled);
+
+        private void DrawColoredText(Graphics g, string input, Font font, float startX, float startY)
+        {
+            var regex = ColorRegex;
+            string[] lines = input.Split('\n');
+            float lineHeight = g.MeasureString("测", font, new SizeF(float.MaxValue, 0), StringFormat.GenericTypographic).Height;
+
+            foreach (string line in lines)
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    startY += lineHeight;
+                    continue;
+                }
+
+                float x = startX;
+                var matches = regex.Matches(line);
+                int offset = 0;
+
+                // 使用更精确的 StringFormat
+                var format = StringFormat.GenericTypographic;
+                format.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+                foreach (Match match in matches)
+                {
+                    if (match.Index > offset)
+                    {
+                        string prefix = line.Substring(offset, match.Index - offset);
+                        g.DrawString(prefix, font, Brushes.White, new PointF(x, startY), format);
+                        x += g.MeasureString(prefix, font, PointF.Empty, format).Width;
+                    }
+
+                    string colorCode = match.Groups[1].Value;
+                    string text = match.Groups[2].Value;
+                    Color color = ColorTranslator.FromHtml("#" + colorCode);
+                    using (var brush = new SolidBrush(color))
+                    {
+                        g.DrawString(text, font, brush, new PointF(x, startY), format);
+                        x += g.MeasureString(text, font, PointF.Empty, format).Width;
+                    }
+
+                    offset = match.Index + match.Length;
+                }
+
+                if (offset < line.Length)
+                {
+                    string suffix = line.Substring(offset);
+                    g.DrawString(suffix, font, Brushes.White, new PointF(x, startY), format);
+                    x += g.MeasureString(suffix, font, PointF.Empty, format).Width;
+                }
+
+                startY += lineHeight;
             }
         }
 
@@ -216,14 +275,35 @@ namespace Scripts.Tavern
             var enL = 100 / 18;
             var lines = new List<string>();
 
-            var oriLines = text.Split('@').ToList();
+            var oriLines = text.Split('\n','@').ToList();
             var sb = new StringBuilder();
             var length = 0;
             foreach (var line in oriLines)
             {
+                bool matched = false;
+               
                 foreach (var chr in line)
                 {
                     var chlength = IsCnChar(chr) ? cnL : enL;
+                    
+
+                    if(matched)
+                    {
+                        chlength = 0;
+                        if (chr == ']')
+                        {
+                            matched = false;
+                        }
+                    }
+                    else
+                    {
+                        if(chr == '[')
+                        {
+                            matched = true;
+                            chlength = 0;
+                        }    
+                    }
+
                     if (length + chlength > widgetWidth)
                     {
                         lines.Add(sb.ToString());
