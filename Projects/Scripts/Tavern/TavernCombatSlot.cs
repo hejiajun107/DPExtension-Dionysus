@@ -122,10 +122,12 @@ namespace Scripts.Tavern
                 {
                     CardLevel++;
 
-                    if (CardLevel == 3)
+                    if (CardLevel == 2)
+                    {
+                        CardScript?.OnCardDouble();
+                    }else if(CardLevel == 3)
                     {
                         //todo 获得三连奖励
-
                         CardScript?.OnCardTriple();
                     }
                 }
@@ -203,9 +205,16 @@ namespace Scripts.Tavern
                     }
 
                     //需要当前卡槽为空或者是相同卡牌
-                    if (CurrentCardType is not null && CurrentCardType.Key != tempSlot.CurrentCard.Key && CardLevel < 3)
+                    if (CurrentCardType is not null )
                     {
-                        return;
+                        if (CurrentCardType.Key != tempSlot.CurrentCard.Key)
+                        {
+                            return;
+                        }
+                        else if(CurrentCardType.Level>=3 || !CurrentCardType.Combo)
+                        {
+                            return;
+                        }
                     }
 
                     var card = tempSlot.RemoveCard();

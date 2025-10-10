@@ -84,6 +84,19 @@ namespace Scripts.Tavern
         public List<SellRecord> SellRecords { get; set; } = new List<SellRecord>();
         public List<SellRecord> CurrentRoundSellRecords { get; set; } = new List<SellRecord>();
 
+        /// <summary>
+        /// 距离上次上级x回合
+        /// </summary>
+        public int RoundAfterUpgrade { get; private set; } = 0;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void OnRoundEnded()
+        {
+            RoundAfterUpgrade++;
+        }
+
 
         public override void OnUpdate()
         {
@@ -250,8 +263,7 @@ namespace Scripts.Tavern
                     slot.CardScript?.OnBaseUpgrade() ;
                 }
 
-                //显示升本花费的资金
-                TavernGameManager.Instance.ShowFlyingTextAt($"-${1000}", Owner.OwnerObject.Ref.Base.Base.GetCoords() + new PatcherYRpp.CoordStruct(0, 0, 500), 1);
+                RoundAfterUpgrade = 0;
             }
         }
     }

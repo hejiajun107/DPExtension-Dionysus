@@ -26,16 +26,32 @@ namespace Scripts.Cards
 
         private int CurrentCount = 1;
 
+        public string DoubleSection { get; private set; } = string.Empty;
+
+        public string TripleSection { get; private set; } = string.Empty;
+
         public override void OnAwake()
         {
             var ini = TavernGameManager.Instance.CreateRulesIniComponentWith<CommonCardScriptData>(Type.Key);
-          
+            InitTriggers(ini, true);
+        }
+
+        private void InitTriggers(INIComponentWith<CommonCardScriptData> ini,bool first)
+        {
             var dtype = typeof(CommonCardScriptData);
 
             RoundCounter = ini.Data.RoundCounter;
-            CurrentCount = ini.Data.RoundCounter;
 
-            for (var i = 1; i <= 1; i++) 
+            if (first)
+            {
+                CurrentCount = ini.Data.RoundCounter;
+                DoubleSection = ini.Data.RookieSection;
+                TripleSection = ini.Data.EliteSection;
+            }
+
+            Triggers = new List<CommonCardTrigger>();
+
+            for (var i = 1; i <= 1; i++)
             {
                 var evt = (dtype.GetField($"Event{i}").GetValue(ini.Data)) as string;
                 if (string.IsNullOrWhiteSpace(evt))
@@ -105,10 +121,25 @@ namespace Scripts.Cards
             ExcuteTrigger(triggers, Slot);
         }
 
+        public override void OnCardDouble()
+        {
+            if (!string.IsNullOrEmpty(DoubleSection))
+            {
+                var ini = TavernGameManager.Instance.CreateRulesIniComponentWith<CommonCardScriptData>(Type.Key);
+                InitTriggers(ini, false);
+            }
+        }
+
         public override void OnCardTriple()
         {
             var triggers = Triggers.Where(x => x.Event == CommonCardEvent.OnCardTriple).ToList();
             ExcuteTrigger(triggers, Slot);
+
+            if (!string.IsNullOrEmpty(TripleSection))
+            {
+                var ini = TavernGameManager.Instance.CreateRulesIniComponentWith<CommonCardScriptData>(Type.Key);
+                InitTriggers(ini, false);
+            }
         }
 
         public override void OnRoundEnded()
@@ -544,6 +575,17 @@ namespace Scripts.Cards
         [INIField(Key = "CommonCardScript.RoundCounter")]
 
         public int RoundCounter = 1;
+
+        /// <summary>
+        /// 二连读取的效果section
+        /// </summary>
+        [INIField(Key = "CommonCardScript.RookieSection")]
+        public string RookieSection = "";
+        /// <summary>
+        /// 三联读取的效果section
+        /// </summary>
+        [INIField(Key = "CommonCardScript.EliteSection")]
+        public string EliteSection = "";
        
     }
 
@@ -594,6 +636,65 @@ namespace Scripts.Cards
 
             return results.Where(x=> types.Contains(x.Key) || types.Intersect(x.Tags).Any()).Count();
         }
+
+        public CombatSlotsJSInvokeEntry TriggerEvent(string evt)
+        {
+            if(Enum.TryParse<CommonCardEvent>(evt,out var cardEvent))
+            {
+                foreach (var slot in Slots)
+                {
+                    switch (cardEvent)
+                    {
+                        case CommonCardEvent.OnBought:
+                            {
+                                slot?.CardScript?.OnBought();
+                                break;
+                            }
+                        case CommonCardEvent.OnCombatPut:
+                            {
+                                slot?.CardScript?.OnPlaceToCombatSlot(slot);
+                                break;
+                            }
+                        case CommonCardEvent.OnRoundStart:
+                            {
+                                slot?.CardScript?.OnRoundStarted();
+                                break;
+                            }
+                        case CommonCardEvent.OnRoundEnd:
+                            {
+                                slot?.CardScript?.OnRoundEnded();
+                                break;
+                            }
+                        case CommonCardEvent.OnSelledCombat:
+                            {
+                                slot?.CardScript?.OnSelledCombat(TavernGameManager.Instance.RulesSellCardPrice);
+                                break;
+                            }
+                        case CommonCardEvent.OnSelled:
+                            {
+                                slot?.CardScript?.OnSelledCombat(TavernGameManager.Instance.RulesSellCardPrice);
+                                break;
+                            }
+                        case CommonCardEvent.OnFire:
+                            break;
+                        case CommonCardEvent.OnBaseUpgrade:
+                            {
+                                slot?.CardScript?.OnBaseUpgrade();
+                                break;
+                            }
+                        case CommonCardEvent.OnCardTriple:
+                            {
+                                slot?.CardScript?.OnCardTriple();
+                                break;
+                            }
+                        default:
+                            break;
+                    }
+                }
+            }
+            
+            return this;
+        }
     }
 
     [Serializable]
@@ -633,6 +734,62 @@ namespace Scripts.Cards
                 return;
 
             Slot.ChangeCard(TavernGameManager.Instance.CardTypes[card], true, true);
+        }
+
+        public CombatSlotJSInvokeEntry TriggerEvent(string evt)
+        {
+            if (Enum.TryParse<CommonCardEvent>(evt, out var cardEvent))
+            {
+                switch (cardEvent)
+                {
+                    case CommonCardEvent.OnBought:
+                        {
+                            Slot?.CardScript?.OnBought();
+                            break;
+                        }
+                    case CommonCardEvent.OnCombatPut:
+                        {
+                        Slot?.CardScript?.OnPlaceToCombatSlot(Slot);
+                            break;
+                        }
+                    case CommonCardEvent.OnRoundStart:
+                        {
+                            Slot?.CardScript?.OnRoundStarted();
+                            break;
+                        }
+                    case CommonCardEvent.OnRoundEnd:
+                        {
+                            Slot?.CardScript?.OnRoundEnded();
+                            break;
+                        }
+                    case CommonCardEvent.OnSelledCombat:
+                        {
+                            Slot?.CardScript?.OnSelledCombat(TavernGameManager.Instance.RulesSellCardPrice);
+                            break;
+                        }
+                    case CommonCardEvent.OnSelled:
+                        {
+                            Slot?.CardScript?.OnSelledCombat(TavernGameManager.Instance.RulesSellCardPrice);
+                            break;
+                        }
+                    case CommonCardEvent.OnFire:
+                        break;
+                    case CommonCardEvent.OnBaseUpgrade:
+                        {
+                            Slot?.CardScript?.OnBaseUpgrade();
+                            break;
+                        }
+                    case CommonCardEvent.OnCardTriple:
+                        {
+                            Slot?.CardScript?.OnCardTriple();
+                            break;
+                        }
+                    default:
+                        break;
+                }
+            }
+
+            return this;
         }
     }
 

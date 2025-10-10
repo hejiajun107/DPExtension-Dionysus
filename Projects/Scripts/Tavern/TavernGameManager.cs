@@ -133,7 +133,15 @@ namespace Scripts.Tavern
             if (node.BaseLevel >= ini.Data.BaseMaxLevel)
                 return 0;
 
-            return ini.Data.InitUpgradeCost + (ini.Data.BaseMaxLevel-1) * ini.Data.BaseMaxLevel;
+            var cost = ini.Data.InitUpgradeCost + (ini.Data.BaseMaxLevel - 1) * ini.Data.BaseMaxLevel;
+            cost = cost - node.RoundAfterUpgrade * ini.Data.UpgradeCostDecrease;
+
+            if(cost>ini.Data.UpgradeCostMin)
+            {
+                cost = ini.Data.UpgradeCostMin;
+            }
+
+            return cost;
         }
         #endregion
 
@@ -615,6 +623,8 @@ namespace Scripts.Tavern
                     node.Owner.OwnerObject.Ref.Owner.Ref.TransactMoney(-money);
                 }
 
+                node.OnRoundEnded();
+
                 node.VoteSkiped = false;
 
                 //所有AI节点准备跳过
@@ -1003,6 +1013,17 @@ namespace Scripts.Tavern
         [INIField(Key = "UpgradeExtraCost")]
         public int UpgradeExtraCost = 500;
 
+        /// <summary>
+        /// 每回合升级酒馆降低的金额
+        /// </summary>
+        [INIField(Key = "UpgradeCostDecrease")]
+        public int UpgradeCostDecrease = 100;
+
+        /// <summary>
+        /// 升级酒馆的最低金额
+        /// </summary>
+        [INIField(Key = "UpgradeCostMin")]
+        public int UpgradeCostMin = 500;
 
         /// <summary>
         /// 选择指挥官的时间（帧数）

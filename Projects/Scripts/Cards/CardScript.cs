@@ -79,6 +79,12 @@ namespace Scripts.Cards
 
         }
 
+        public virtual void OnCardDouble()
+        {
+
+        }
+
+
         public virtual void OnCardTriple()
         {
 

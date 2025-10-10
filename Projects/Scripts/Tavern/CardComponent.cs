@@ -300,6 +300,11 @@ namespace Scripts.Tavern
         /// </summary>
         public List<string> Tags { get; set; } = new List<string>();
 
+        /// <summary>
+        /// 是否可以三连
+        /// </summary>
+        public bool Combo { get; set; } = true;
+
     }
 
 
@@ -312,5 +317,12 @@ namespace Scripts.Tavern
 
         public bool IsPersist { get; set; } = false;
  
+    }
+
+
+    public class TechnoExtendData : INIAutoConfig
+    {
+        [INIField(Key = "Tags")]
+        public string Tags = "";
     }
 }
