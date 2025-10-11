@@ -74,8 +74,15 @@ namespace Scripts.Cards
                 trigger.ActionTechnoResult = (dtype.GetField($"Action{i}TechnoResult").GetValue(ini.Data)) as string;
                 trigger.ActionCardResult = (dtype.GetField($"Action{i}CardResult").GetValue(ini.Data)) as string;
                 trigger.ActionTechnoResultCount = (dtype.GetField($"Action{i}TechnoResultCount").GetValue(ini.Data).ToString());
+                if (!string.IsNullOrWhiteSpace(trigger.ActionTechnoResultCount))
+                {
+                    trigger.ActionTechnoResultCount = trigger.ActionTechnoResultCount.Replace("&semi", ";");
+                }
                 trigger.ActionInvokeScript = (dtype.GetField($"Action{i}InvokeScript").GetValue(ini.Data).ToString());
-
+                if (!string.IsNullOrWhiteSpace(trigger.ActionInvokeScript))
+                {
+                    trigger.ActionInvokeScript = trigger.ActionInvokeScript.Replace("&semi", ";");
+                }
 
                 Triggers.Add(trigger);
             }
@@ -849,6 +856,32 @@ namespace Scripts.Cards
                 Player.CardCacheQueue.Enqueue(TavernGameManager.Instance.CardTypes[card]);
             }
             return this;
+        }
+
+        public PlayerJSInvokeEntry UnloackTempSlot()
+        {
+            return this;
+        }
+
+        public PlayerJSInvokeEntry UnloackCombatSlot()
+        {
+            return this;
+        }
+
+        public PlayerJSInvokeEntry UnloackShopSlot()
+        {
+            return this;
+        }
+
+        public PlayerJSInvokeEntry UpgradeBase()
+        {
+            Player.OnUpgrade();
+            return this;
+        }
+
+        public int Random(int min, int max)
+        {
+            return Player.NRandom.Next(min, max);
         }
     }
     #endregion

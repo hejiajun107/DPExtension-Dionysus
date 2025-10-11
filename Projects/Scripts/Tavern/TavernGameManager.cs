@@ -1106,6 +1106,12 @@ namespace Scripts.Tavern
 
         public string RoundEndLaunchSW = "";
 
+        /// <summary>
+        /// 自动变更所属到最近的出生点所属方，而不要通过触发变更所属
+        /// </summary>
+        [INIField(Key = "AutoSetHouseEnabled")]
+        public bool AutoSetHouseEnabled = false;
+
     }
 
 
