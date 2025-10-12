@@ -153,6 +153,11 @@ namespace Scripts
 
         public override void OnDestroy()
         {
+            if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
+            {
+                return;
+            }
+
             foreach (var salve in salveTechnos)
             {
                 if (!salve.IsNullOrExpired())
@@ -165,6 +170,11 @@ namespace Scripts
 
         public override void OnRemove()
         {
+            if (Owner.OwnerObject.Ref.Base.Base.WhatAmI() == AbstractType.Building)
+            {
+                return;
+            }
+
             foreach (var salve in salveTechnos)
             {
                 if (!salve.IsNullOrExpired())
@@ -172,7 +182,6 @@ namespace Scripts
                     salve.OwnerObject.Ref.Base.Remove();
                 }
             }
-            base.OnRemove();
         }
 
         public override void OnStopCommand()
