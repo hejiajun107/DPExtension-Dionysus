@@ -860,16 +860,37 @@ namespace Scripts.Cards
 
         public PlayerJSInvokeEntry UnloackTempSlot()
         {
+            var temp = Player.TavernTempSlots.Where(x => !x.IsEnabled).FirstOrDefault();
+
+            if (temp is not null)
+            {
+                temp.IsEnabled = true;
+            }
+        
             return this;
         }
 
         public PlayerJSInvokeEntry UnloackCombatSlot()
         {
+            var combat = Player.TavernCombatSlots.Where(x => !x.IsEnabled).FirstOrDefault();
+
+            if (combat is not null)
+            {
+                combat.IsEnabled = true;
+            }
+
             return this;
         }
 
         public PlayerJSInvokeEntry UnloackShopSlot()
         {
+            var shop = Player.TavernShopSlots.Where(x => !x.IsEnabled).FirstOrDefault();
+
+            if (shop is not null)
+            {
+                shop.IsEnabled = true;
+            }
+
             return this;
         }
 
