@@ -90,6 +90,10 @@ namespace Scripts.Cards
 
         }
 
+        public virtual void OnFire(object target)
+        {
+
+        }
 
     }
 

@@ -39,6 +39,8 @@ namespace Scripts.Tavern
         private static Dictionary<string, Type> RegisteredCardScripts = new Dictionary<string, Type>();
 
         public Dictionary<string, CardType> CardTypes { get; private set; } = new Dictionary<string, CardType>();
+        public Dictionary<string, TechnoMetaData> TechnoMetaDatas { get; private set; } = new Dictionary<string, TechnoMetaData>();
+
 
         public List<string> CardPool { get; private set; } = new List<string>();
 
@@ -735,6 +737,10 @@ namespace Scripts.Tavern
         private void LoadCardTypes()
         {
             if (ini != null) {
+                var technos = new HashSet<string>();
+
+                var metaReader = GameObject.CreateRulesIniComponentWith<TechnoExtendData>("Special");
+
                 var fileConfig = ini.Data.CardConfigFiles;
                 var files = fileConfig.Split(',').ToList();
                 var types = new List<CardType>();
@@ -748,6 +754,24 @@ namespace Scripts.Tavern
                     }
                 }
                 CardTypes = types.ToDictionary(x => x.Key, x => x);
+
+                foreach(var cardtype in CardTypes)
+                {
+                    foreach(var techno in cardtype.Value.Technos)
+                    {
+                        technos.Add(techno.Key);
+                    }
+                }
+
+                foreach(var techno in technos)
+                {
+                    ini.Section = techno;
+                    TechnoMetaDatas.Add(techno, new TechnoMetaData()
+                    {
+                        Tags = string.IsNullOrWhiteSpace(metaReader.Data.Tags) ? new List<string>() : metaReader.Data.Tags.Split(',').ToList()
+                    });
+                }
+
             }
         }
 

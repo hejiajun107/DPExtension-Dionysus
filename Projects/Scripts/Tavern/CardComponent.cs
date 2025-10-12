@@ -387,6 +387,12 @@ namespace Scripts.Tavern
 
     }
 
+    [Serializable]
+    public class TechnoMetaData
+    {
+        public List<string> Tags { get; set; } = new List<string>();
+    }
+
 
     [Serializable]
     public class CardTechno

@@ -202,7 +202,7 @@ namespace Scripts.Cards
                             {
                                 if (slot.IsEnabled && slot.CurrentCardType is not null)
                                 {
-                                    slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.AddPermanent });
+                                    slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.AddPermanent, Tags = TavernGameManager.Instance.TechnoMetaDatas[trigger.ActionTechnoResult]?.Tags });
                                 }
                             }
                         }
@@ -213,7 +213,7 @@ namespace Scripts.Cards
                             var query = slot.CardRecords.Where(x => true);
                             if (keywords.Any())
                             {
-                                query = query.Where(x => keywords.Contains(x.Techno) || x.CardType.Tags.Intersect(keywords).Any());
+                                query = query.Where(x => keywords.Contains(x.Techno) || x.Tags.Intersect(keywords).Any());
                             }
 
                             var technoCount = query.Count();
@@ -225,7 +225,7 @@ namespace Scripts.Cards
 
                             for(var i = 0; i < num; i++)
                             {
-                                slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.ConvertPermanent });
+                                slot.CardRecords.Add(new CardRecord() { Techno = trigger.ActionTechnoResult, CardType = TavernGameManager.Instance.CardTypes[trigger.ActionCardResult], IsPersist = trigger.Action == CommonCardAction.ConvertPermanent, Tags = TavernGameManager.Instance.TechnoMetaDatas[trigger.ActionTechnoResult]?.Tags });
                             }
                         }
                         else if(trigger.Action == CommonCardAction.Move || trigger.Action == CommonCardAction.MovePermanent)
@@ -237,7 +237,7 @@ namespace Scripts.Cards
                                 var query = fslot.CardRecords.Where(x => true);
                                 if (keywords.Any())
                                 {
-                                    query = query.Where(x => keywords.Contains(x.Techno) || x.CardType.Tags.Intersect(keywords).Any());
+                                    query = query.Where(x => keywords.Contains(x.Techno) || x.Tags.Intersect(keywords).Any());
                                 }
 
                                 var taked = query.Take(count).ToList();
@@ -635,7 +635,7 @@ namespace Scripts.Cards
             var results = records.Select(x => new
             {
                 Key = x.Techno,
-                Tags = x.CardType.Tags ?? new List<string>()
+                Tags = x.Tags ?? new List<string>()
             });
 
             if (types is null || !types.Any())
@@ -726,7 +726,7 @@ namespace Scripts.Cards
             var results = Slot.CardRecords.Select(x => new
             {
                 Key = x.Techno,
-                Tags = x.CardType.Tags ?? new List<string>()
+                Tags = x.Tags ?? new List<string>()
             });
 
             if (types is null || !types.Any())

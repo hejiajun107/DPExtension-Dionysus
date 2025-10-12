@@ -141,7 +141,8 @@ namespace Scripts.Tavern
                     {
                         CardType = cardType,
                         IsPersist = techno.IsPersist,
-                        Techno = techno.Key
+                        Techno = techno.Key,
+                        Tags = TavernGameManager.Instance.TechnoMetaDatas[techno.Key]?.Tags
                     });
                 }
             }
@@ -310,6 +311,8 @@ namespace Scripts.Tavern
         public CardType CardType { get; set; }
 
         public string Techno { get; set; }
+
+        public List<string> Tags { get; set; }
 
         /// <summary>
         /// 是否是永久卡
