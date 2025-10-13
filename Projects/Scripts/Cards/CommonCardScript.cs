@@ -836,11 +836,75 @@ namespace Scripts.Cards
             return Player.Owner.OwnerObject.Ref.Owner.Ref.Available_Money() ;
         }
 
-        public PlayerJSInvokeEntry ClearCurrentSelled()
+        public PlayerJSInvokeEntry ClearSelled(params string[] types)
         {
-            Player.CurrentRoundSellRecords.RemoveAll(x => true);
+            if(types is null || !types.Any())
+            {
+                Player.SellRecords.RemoveAll(x => true);
+            }
+            else
+            {
+                Player.SellRecords.RemoveAll(x => types.Contains(x.Key) || types.Intersect(x.Card.Tags).Any());
+            }
+
             return this;
         }
+
+        public PlayerJSInvokeEntry ClearCurrentSelled(params string[] types)
+        {
+            if (types is null || !types.Any())
+            {
+                Player.CurrentRoundSellRecords.RemoveAll(x => true);
+            }
+            else
+            {
+                Player.CurrentRoundSellRecords.RemoveAll(x => types.Contains(x.Key) || types.Intersect(x.Card.Tags).Any());
+            }
+            return this;
+        }
+
+        public int TakeCardsFromSelled(string[] types, int group = 1, bool clear = true)
+        {
+            var query = Player.SellRecords.AsQueryable();
+            if (types is not null && types.Any())
+            {
+                query = query.Where(x => types.Contains(x.Key) || types.Intersect(x.Card.Tags).Any());
+            }
+
+            var totalCount = query.Count();
+
+            var count = totalCount / group;
+
+            if (count > 0 && clear)
+            {
+                var taked = query.Take(count * group).ToList();
+                Player.SellRecords.RemoveAll(x => taked.Contains(x));
+            }
+           
+            return count;
+        }
+
+        public int TakeCardsFromCurrentSelled(string[] types, int group = 1, bool clear= true)
+        {
+            var query = Player.CurrentRoundSellRecords.AsQueryable();
+            if (types is not null && types.Any())
+            {
+                query = query.Where(x => types.Contains(x.Key) || types.Intersect(x.Card.Tags).Any());
+            }
+
+            var totalCount = query.Count();
+
+            var count = totalCount / group;
+
+            if (count > 0 && clear)
+            {
+                var taked = query.Take(count * group).ToList();
+                Player.CurrentRoundSellRecords.RemoveAll(x => taked.Contains(x));
+            }
+
+            return count;
+        }
+
 
         public PlayerJSInvokeEntry GiveMoney(int amount)
         {
