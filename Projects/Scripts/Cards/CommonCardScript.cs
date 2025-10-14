@@ -16,6 +16,8 @@ namespace Scripts.Cards
     [Serializable]
     public class CommonCardScript : CardScript
     {
+        public Dictionary<string, int> Variables { get; private set; } = new Dictionary<string, int>();
+
         public CommonCardScript(CardType type, TavernPlayerNode player) : base(type, player)
         {
         }
@@ -702,6 +704,7 @@ namespace Scripts.Cards
             
             return this;
         }
+   
     }
 
     [Serializable]
@@ -797,6 +800,51 @@ namespace Scripts.Cards
             }
 
             return this;
+        }
+
+        public int GetVariable(string name)
+        {
+            if(Slot.CardScript is CommonCardScript cs)
+            {
+                if (cs.Variables.ContainsKey(name))
+                {
+                    return cs.Variables[name];
+                }
+                return 0;
+            }
+            return 0;
+        }
+
+        public int SetVariable(string name,int value)
+        {
+            if (Slot.CardScript is CommonCardScript cs)
+            {
+                if (cs.Variables.ContainsKey(name))
+                {
+                    return cs.Variables[name] = value;
+                }
+                else
+                {
+                    cs.Variables.Add(name, value);
+                }
+                return value;
+            }
+            return 0;
+        }
+
+        public int ClearVariable(string name)
+        {
+            if (Slot.CardScript is CommonCardScript cs)
+            {
+                if (cs.Variables.ContainsKey(name))
+                {
+                    var result = cs.Variables[name];
+                    cs.Variables.Remove(name);
+                    return result;
+                }
+                return 0;
+            }
+            return 0;
         }
     }
 
@@ -908,8 +956,9 @@ namespace Scripts.Cards
 
         public PlayerJSInvokeEntry GiveMoney(int amount)
         {
+            
             Player.Owner.OwnerObject.Ref.Owner.Ref.GiveMoney(amount);
-            TavernGameManager.Instance.ShowFlyingTextAt($"+${amount}", Player.Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 200));
+            TavernGameManager.Instance.ShowFlyingTextAt($"{(amount > 0 ? "+" : "-")}${Math.Abs(amount)}", Player.Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 200));
             return this;
         }
 
@@ -968,6 +1017,49 @@ namespace Scripts.Cards
         {
             return Player.NRandom.Next(min, max);
         }
+
+
+
+
+
+        public int GetVariable(string name)
+        {
+            if (Player.Variables.ContainsKey(name))
+            {
+                return Player.Variables[name];
+            }
+            return 0;
+        }
+
+        public int SetVariable(string name, int value)
+        {
+            if (Player.Variables.ContainsKey(name))
+            {
+                return Player.Variables[name] = value;
+            }
+            else
+            {
+                Player.Variables.Add(name, value);
+            }
+            return value;
+        }
+
+        public int ClearVariable(string name)
+        {
+            if (Player.Variables.ContainsKey(name))
+            {
+                var result = Player.Variables[name];
+                Player.Variables.Remove(name);
+                return result;
+            }
+            return 0;
+        }
+
+
+
+
+
+
     }
     #endregion
 }

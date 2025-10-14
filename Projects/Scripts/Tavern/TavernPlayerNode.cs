@@ -89,6 +89,8 @@ namespace Scripts.Tavern
         /// </summary>
         public int RoundAfterUpgrade { get; private set; } = 0;
 
+        public Dictionary<string, int> Variables { get; private set; } = new Dictionary<string, int>();
+
         /// <summary>
         /// 
         /// </summary>
