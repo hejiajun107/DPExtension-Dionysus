@@ -765,7 +765,7 @@ namespace Scripts.Tavern
 
                 foreach(var techno in technos)
                 {
-                    ini.Section = techno;
+                    metaReader.Section = techno;
                     TechnoMetaDatas.Add(techno, new TechnoMetaData()
                     {
                         Tags = string.IsNullOrWhiteSpace(metaReader.Data.Tags) ? new List<string>() : metaReader.Data.Tags.Split(',').ToList()

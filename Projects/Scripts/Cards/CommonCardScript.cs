@@ -83,7 +83,11 @@ namespace Scripts.Cards
                 trigger.ActionInvokeScript = (dtype.GetField($"Action{i}InvokeScript").GetValue(ini.Data).ToString());
                 if (!string.IsNullOrWhiteSpace(trigger.ActionInvokeScript))
                 {
-                    trigger.ActionInvokeScript = trigger.ActionInvokeScript.Replace("&semi", ";");
+                    trigger.ActionInvokeScript = trigger.ActionInvokeScript.Replace("<<", ";");
+                    if(trigger.ActionInvokeScript.StartsWith("\"") && trigger.ActionInvokeScript.EndsWith("\""))
+                    {
+                        trigger.ActionInvokeScript.Substring(1, trigger.ActionInvokeScript.Length - 1);
+                    }
                 }
 
                 Triggers.Add(trigger);
@@ -579,7 +583,7 @@ namespace Scripts.Cards
         /// 结果脚本
         /// </summary>
         [INIField(Key = "CommonCardScript.Action1InvokeScript")]
-        public int Action1InvokeScript = 1;
+        public string Action1InvokeScript = "";
 
         [INIField(Key = "CommonCardScript.RoundCounter")]
 
