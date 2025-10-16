@@ -508,96 +508,112 @@ namespace Scripts.Cards
         /// <summary>
         /// 什么时候触发，对应CommonCardEvent
         /// </summary>
-        [INIField(Key = "CommonCardScript.Event1")]
+        //[INIField(Key = "CommonCardScript.Event1")]
+        [INIField(Key = "事件1")]
         public string Event1 = "";
         /// <summary>
         /// 触发时的动作对应CommonCardAction
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1")]
+        //[INIField(Key = "CommonCardScript.Action1")]
+        [INIField(Key = "动作1")]
         public string Action1 = "";
 
         /// <summary>
         /// 响应对象的范围关键词（卡牌），支持key,tag,以,隔开多个
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1CheckKeywords")]
+        //[INIField(Key = "CommonCardScript.Action1CheckKeywords")]
+        [INIField(Key = "动作1检查关键词")]
         public string Action1CheckKeywords = "";
 
         /// <summary>
         /// 响应对象的范围，对应CommonAffectRange
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1CheckRange")]
+        //[INIField(Key = "CommonCardScript.Action1CheckRange")]
+        [INIField(Key = "动作1检查范围")]
         public string Action1CheckRange = "";
         /// <summary>
         /// 响应的结果，对应CommonCardAction
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1TechnoResult")]
+        //[INIField(Key = "CommonCardScript.Action1TechnoResult")]
+        [INIField(Key = "动作1单位结果")]
         public string Action1TechnoResult = "";
 
         /// <summary>
         /// 转化或移动时作用单位的关键词，支持key,tag,以,隔开多个
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1CheckTechnoKeywords")]
+        //[INIField(Key = "CommonCardScript.Action1CheckTechnoKeywords")]
+        [INIField(Key = "动作1检查单位关键词")]
         public string Action1CheckTechnoKeywords = "";
 
         /// <summary>
         /// 响应结果的数量，支持表达式
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1TechnoResultCount")]
+        //[INIField(Key = "CommonCardScript.Action1TechnoResultCount")]
+        [INIField(Key = "动作1单位结果数量")]
         public string Action1TechnoResultCount = "1";
         /// <summary>
         /// 响应的结果所属卡面
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1CardResult")]
+        //[INIField(Key = "CommonCardScript.Action1CardResult")]
+        [INIField(Key = "动作1卡牌结果")]
         public string Action1CardResult = "";
 
         /// <summary>
         /// 响应结果作用于哪对应CommonAffectRange
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1AffectRange")]
+        //[INIField(Key = "CommonCardScript.Action1AffectRange")]
+        [INIField(Key = "动作1响应范围")]
+
         public string Action1AffectRange = "Self";
 
         /// <summary>
         /// 响应结果的范围关键词，支持key,tag,以,隔开多个
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1AffectKeywords")]
+        //[INIField(Key = "CommonCardScript.Action1AffectKeywords")]
+        [INIField(Key = "动作1响应结果关键词")]
         public string Action1AffectKeywords = "";
 
         /// <summary>
         /// 当效果为Convert时，转化率，默认为1
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1ConvertRate")]
+        //[INIField(Key = "CommonCardScript.Action1ConvertRate")]
+        [INIField(Key = "动作1转化率")]
         public int Action1ConvertRate = 1;
 
         /// <summary>
         /// 范围1
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1CheckCellSpread")]
+        //[INIField(Key = "CommonCardScript.Action1CheckCellSpread")]
+        [INIField(Key = "动作1检查距离")]
         public int Action1CheckCellSpread = 1;
         /// <summary>
         /// 范围2
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1AffectCellSpread")]
+        //[INIField(Key = "CommonCardScript.Action1AffectCellSpread")]
+        [INIField(Key = "动作1响应距离")]
         public int Action1AffectCellSpread = 1;
 
         /// <summary>
         /// 结果脚本
         /// </summary>
-        [INIField(Key = "CommonCardScript.Action1InvokeScript")]
+        //[INIField(Key = "CommonCardScript.Action1InvokeScript")]
+        [INIField(Key = "动作1结果脚本")]
         public string Action1InvokeScript = "";
 
-        [INIField(Key = "CommonCardScript.RoundCounter")]
+        //[INIField(Key = "CommonCardScript.RoundCounter")]
+        [INIField(Key = "回合计数器")]
 
         public int RoundCounter = 1;
 
         /// <summary>
         /// 二连读取的效果section
         /// </summary>
-        [INIField(Key = "CommonCardScript.RookieSection")]
+        [INIField(Key = "二连")]
         public string RookieSection = "";
         /// <summary>
         /// 三联读取的效果section
         /// </summary>
-        [INIField(Key = "CommonCardScript.EliteSection")]
+        [INIField(Key = "三连")]
         public string EliteSection = "";
        
     }
