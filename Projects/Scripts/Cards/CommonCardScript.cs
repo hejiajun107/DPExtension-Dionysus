@@ -83,10 +83,19 @@ namespace Scripts.Cards
                 trigger.ActionInvokeScript = (dtype.GetField($"Action{i}InvokeScript").GetValue(ini.Data).ToString());
                 if (!string.IsNullOrWhiteSpace(trigger.ActionInvokeScript))
                 {
-                    trigger.ActionInvokeScript = trigger.ActionInvokeScript.Replace("<<", ";");
-                    if(trigger.ActionInvokeScript.StartsWith("\"") && trigger.ActionInvokeScript.EndsWith("\""))
+                    if (trigger.ActionInvokeScript.StartsWith("b64:"))
                     {
-                        trigger.ActionInvokeScript.Substring(1, trigger.ActionInvokeScript.Length - 1);
+                        var str = trigger.ActionInvokeScript.Replace("b64:", "");
+                        var jsBytes = Convert.FromBase64String(str);
+                        trigger.ActionInvokeScript = Encoding.UTF8.GetString(jsBytes);
+                    }
+                    else
+                    {
+                        trigger.ActionInvokeScript = trigger.ActionInvokeScript.Replace("<<", ";");
+                        if (trigger.ActionInvokeScript.StartsWith("\"") && trigger.ActionInvokeScript.EndsWith("\""))
+                        {
+                            trigger.ActionInvokeScript.Substring(1, trigger.ActionInvokeScript.Length - 1);
+                        }
                     }
                 }
 
@@ -991,7 +1000,7 @@ namespace Scripts.Cards
             return this;
         }
 
-        public PlayerJSInvokeEntry UnloackTempSlot()
+        public PlayerJSInvokeEntry UnlockTempSlot()
         {
             var temp = Player.TavernTempSlots.Where(x => !x.IsEnabled).FirstOrDefault();
 
@@ -1003,7 +1012,7 @@ namespace Scripts.Cards
             return this;
         }
 
-        public PlayerJSInvokeEntry UnloackCombatSlot()
+        public PlayerJSInvokeEntry UnlockCombatSlot()
         {
             var combat = Player.TavernCombatSlots.Where(x => !x.IsEnabled).FirstOrDefault();
 
@@ -1015,7 +1024,7 @@ namespace Scripts.Cards
             return this;
         }
 
-        public PlayerJSInvokeEntry UnloackShopSlot()
+        public PlayerJSInvokeEntry UnlockShopSlot()
         {
             var shop = Player.TavernShopSlots.Where(x => !x.IsEnabled).FirstOrDefault();
 
