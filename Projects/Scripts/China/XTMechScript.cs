@@ -585,7 +585,7 @@ namespace DpLib.Scripts.China
         IEnumerator SpellShakeSkill(CoordStruct targetCoord)
         {
             var start = Owner.OwnerObject.Ref.Base.Base.GetCoords();
-            var range = 9;
+            var range = 11;
 
 
             var flipX = targetCoord.X > start.X ? 1 : -1;
@@ -606,7 +606,7 @@ namespace DpLib.Scripts.China
 
             foreach (var target in targetCoords)
             {
-                var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 150, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ShockerWH"), 100, true);
+                var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 200, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("ShockerWH"), 100, true);
                 bullet.Ref.DetonateAndUnInit(target);
             }
         }
