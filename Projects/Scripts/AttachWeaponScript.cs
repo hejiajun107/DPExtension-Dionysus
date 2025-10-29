@@ -493,7 +493,7 @@ namespace Scripts
 
             for(var i = 0; i < burst; i++)
             {
-                Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, pWeapon.Ref.Damage, pWH, speed, bright);
+                Pointer<BulletClass> pBullet = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, (int)(pWeapon.Ref.Damage * Owner.OwnerObject.Ref.FirepowerMultiplier), pWH, speed, bright);
                 pBullet.Ref.WeaponType = pWeapon;
                 //// 设置所属
                 //pBullet.SetSourceHouse(pAttackingHouse);

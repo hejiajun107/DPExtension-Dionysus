@@ -60,7 +60,7 @@ namespace Scripts.Japan
             {
                 if (Owner.OwnerObject.Ref.Base.Health <= 0)
                 {
-                    var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, Owner.OwnerObject.Ref.Veterancy.IsElite() ? 500 : 250, pWarhead, 100, true);
+                    var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, (int)((Owner.OwnerObject.Ref.Veterancy.IsElite() ? 500 : 250) * Owner.OwnerObject.Ref.FirepowerMultiplier), pWarhead, 100, true);
                     bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                 }
             }

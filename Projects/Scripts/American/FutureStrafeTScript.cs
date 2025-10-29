@@ -194,7 +194,7 @@ namespace DPMisc.DynamicPatcher.Scripts.MyScripts.Test
 
             Pointer<TechnoClass> ownerTechno = ownerTechnoExt.OwnerObject;
             Pointer<BulletTypeClass> bulletType = weaponType.Ref.projectile.Convert<BulletTypeClass>();
-            Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(ownerTechno.Convert<AbstractClass>(), ownerTechno, weaponType.Ref.Damage, weaponType.Ref.Warhead, weaponType.Ref.Speed, weaponType.Ref.Bright);
+            Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(ownerTechno.Convert<AbstractClass>(), ownerTechno, (int)(weaponType.Ref.Damage * ownerTechno.Ref.FirepowerMultiplier), weaponType.Ref.Warhead, weaponType.Ref.Speed, weaponType.Ref.Bright);
             pBullet.Ref.Base.SetLocation(target);
 
 

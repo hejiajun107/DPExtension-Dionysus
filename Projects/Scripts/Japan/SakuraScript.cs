@@ -19,7 +19,7 @@ namespace DpLib.Scripts.Japan
         private int delay = 100;
         public override void OnFire(Pointer<AbstractClass> pTarget, int weaponIndex)
         {
-            Logger.Log(Owner.OwnerObject.Ref.SpawnOwner.IsNull);
+            //Logger.Log(Owner.OwnerObject.Ref.SpawnOwner.IsNull);
 
             base.OnFire(pTarget, weaponIndex);
 

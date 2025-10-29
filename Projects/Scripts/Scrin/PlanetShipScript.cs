@@ -136,7 +136,7 @@ namespace Scripts.Scrin
         private void FlashTo(CoordStruct from,CoordStruct to,Pointer<AbstractClass> pTarget)
         {
             var laserWeapon = WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("PlanetLaser");
-            Pointer<BulletClass> pBullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 60, pWh, 100, true);
+            Pointer<BulletClass> pBullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, (int)(60 * Owner.OwnerObject.Ref.FirepowerMultiplier), pWh, 100, true);
 
             var dx = from.X - to.X;
             var dy = from.Y - to.Y;

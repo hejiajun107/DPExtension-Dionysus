@@ -44,7 +44,7 @@ namespace DpLib.Scripts.Soviet
             {
                 if (SleepDuration > 30)
                 {
-                    var extraDamage = (int)((SleepDuration / 100d) * 35);
+                    var extraDamage = (int)(((SleepDuration / 100d) * 35) * Owner.OwnerObject.Ref.FirepowerMultiplier);
                     if (SleepDuration <= 300)
                     {
                         Pointer<BulletClass> plv1 = pBulletType.Ref.CreateBullet(pTarget, Owner.OwnerObject, extraDamage, teslaWarhead, 100, true);

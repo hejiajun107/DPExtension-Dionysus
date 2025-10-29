@@ -97,7 +97,7 @@ namespace Scripts.Scrin
 						
 						component.Attack(tcoord);
 
-                        extraDamage += vanishExt.OwnerObject.Ref.Veterancy.IsElite() ? pWp.Ref.Damage * 2 : pWp.Ref.Damage;
+                        extraDamage += (int)((vanishExt.OwnerObject.Ref.Veterancy.IsElite() ? pWp.Ref.Damage * 2 : pWp.Ref.Damage) * vanishExt.OwnerObject.Ref.FirepowerMultiplier);
                     }
 
 

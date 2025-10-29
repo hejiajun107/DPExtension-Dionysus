@@ -44,7 +44,7 @@ namespace DpLib.Scripts.Yuri
                 //pLaser.Ref.Thickness = 3;
 
 
-                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, 25, warhead, 100, true);
+                Pointer<BulletClass> pBullet = bulletType.Ref.CreateBullet(pTechno.Convert<AbstractClass>(), pTechno, (int)((25 * pTechno.Ref.FirepowerMultiplier)), warhead, 100, true);
                 pBullet.Ref.Base.SetLocation(target);
 
                 pTargetRef.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, wp, start);

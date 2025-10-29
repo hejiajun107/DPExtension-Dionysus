@@ -86,7 +86,7 @@ namespace DpLib.Scripts.China
                 if (weaponIndex == 0)
                 {
                     var damage = 60;
-                    Pointer<BulletClass> pag = pAGMissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, empWarhead, 100, false);
+                    Pointer<BulletClass> pag = pAGMissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, (int)(damage * Owner.OwnerObject.Ref.FirepowerMultiplier), empWarhead, 100, false);
                     pag.Ref.SetTarget(pTarget);
                     pag.Ref.MoveTo(Owner.OwnerObject.Ref.Base.Base.GetCoords(), new BulletVelocity(0, 0, 0));
                 }
@@ -98,7 +98,7 @@ namespace DpLib.Scripts.China
                     for (var i = 0; i < 3; i++)
                     {
                         var damage = 70;
-                        Pointer<BulletClass> paa = pAAMissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, aaWarhead, 90 - i * 10, false);
+                        Pointer<BulletClass> paa = pAAMissle.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, (int)(damage * Owner.OwnerObject.Ref.FirepowerMultiplier), aaWarhead, 90 - i * 10, false);
                         paa.Ref.SetTarget(pTarget);
                         paa.Ref.MoveTo(i % 2 == 0 ? flh1 : flh2, new BulletVelocity(rd.Next(-50,50), rd.Next(-50, 50), 0));
                     }

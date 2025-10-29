@@ -170,7 +170,7 @@ namespace DpLib.Scripts.Scrin
             pDebuffBullet.Ref.DetonateAndUnInit(techno.Ref.Base.Base.GetCoords());
 
 
-            Pointer<BulletClass> bullet = jumpWeapon.Ref.Projectile.Ref.CreateBullet(target, techno, jumpWeapon.Ref.Damage, jumpWeapon.Ref.Warhead, 60, true);
+            Pointer<BulletClass> bullet = jumpWeapon.Ref.Projectile.Ref.CreateBullet(target, techno, (int)(jumpWeapon.Ref.Damage * techno.Ref.FirepowerMultiplier), jumpWeapon.Ref.Warhead, 60, true);
             bullet.Ref.MoveTo(techno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 50), new BulletVelocity(0, 0, 800));
             bullet.Ref.SetTarget(target);
 

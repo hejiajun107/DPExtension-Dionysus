@@ -65,7 +65,7 @@ namespace Scripts.Japan
 
                 var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
                 var pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Attacker.IsNullOrExpired() ? Pointer<TechnoClass>.Zero : Attacker.OwnerObject,
-                    damage,
+                    (int)(damage * (Attacker.IsNullOrExpired() ? 1 : Attacker.OwnerObject.Ref.FirepowerMultiplier)),
                     WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JALCDestWH"),
                     100, true);
 

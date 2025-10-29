@@ -94,10 +94,10 @@ namespace DpLib.Scripts.Japan
                         continue;
                     }
 
-                    Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 60, damageWarhead, 30, true);
+                    Pointer<BulletClass> dbullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, (int)(60 * Owner.OwnerObject.Ref.FirepowerMultiplier), damageWarhead, 30, true);
                     dbullet.Ref.DetonateAndUnInit(ptechno.Ref.Base.Base.GetCoords());
 
-                    Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 60, shootWarhead, 30, true);
+                    Pointer<BulletClass> bullet = shootBullet.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, (int)(60 * Owner.OwnerObject.Ref.FirepowerMultiplier), shootWarhead, 30, true);
                     bullet.Ref.MoveTo(ptechno.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 150), new BulletVelocity(0, 0, 0));
                     bullet.Ref.SetTarget(Owner.OwnerObject.Convert<AbstractClass>());
                     count++;

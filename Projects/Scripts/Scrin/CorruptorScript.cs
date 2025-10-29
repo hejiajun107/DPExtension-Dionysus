@@ -79,7 +79,7 @@ namespace DpLib.Scripts.Scrin
                     if (doHealth)
                     {
                         Owner.OwnerObject.Ref.Ammo--;
-                        var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 120, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CorruptorHealwh"), 100, false);
+                        var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, (int)(120 * Owner.OwnerObject.Ref.FirepowerMultiplier), WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("CorruptorHealwh"), 100, false);
                         bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
                     }
                 }

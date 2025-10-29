@@ -283,7 +283,7 @@ namespace Scripts.Yuri
                 if ((ptechno.Ref.IsMindControlled() || ptechno.Ref.Type.Ref.ImmuneToPsionics) && !gext.Data.IsEpicUnit && !gext.Data.IsHero)
                 {
                     var damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 240 : 120;
-                    var pbullet = inviso.Ref.CreateBullet(pTarget, Owner.OwnerObject, damage, warhead, 100, true);
+                    var pbullet = inviso.Ref.CreateBullet(pTarget, Owner.OwnerObject, (int)(damage * Owner.OwnerObject.Ref.FirepowerMultiplier), warhead, 100, true);
                     pbullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
                 }
             }
@@ -336,7 +336,7 @@ namespace Scripts.Yuri
                 if ((ptechno.Ref.IsMindControlled() || ptechno.Ref.Type.Ref.ImmuneToPsionics) && !gext.Data.IsEpicUnit && !gext.Data.IsHero)
                 {
                     var damage = Owner.OwnerObject.Ref.Veterancy.IsElite() ? 170 : 85;
-                    var pbullet = inviso.Ref.CreateBullet(pTarget, Owner.OwnerObject, damage, warhead, 100, true);
+                    var pbullet = inviso.Ref.CreateBullet(pTarget, Owner.OwnerObject, (int)(damage * Owner.OwnerObject.Ref.FirepowerMultiplier), warhead, 100, true);
                     pbullet.Ref.DetonateAndUnInit(pTarget.Ref.GetCoords());
                 }
             }
