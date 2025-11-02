@@ -22,10 +22,15 @@ namespace Scripts
         {
         }
 
+        //BUZZERS
+        private static List<string> ScrinTanks = new List<string>() { "SCSeeker", "SCRINAA", "Corruptor" };
+        
+
         public override void OnLaunch(CellStruct cell, bool isPlayer)
         {
             var coord = CellClass.Cell2Coord(cell);
             var technos = ObjectFinder.FindTechnosNear(coord, Game.CellSize * 6).Select(x=> x.Convert<TechnoClass>()).ToList().Where(x=>x.Ref.Owner == Owner.OwnerObject.Ref.Owner && !x.Ref.Base.InLimbo).OrderBy(x=>x.Ref.Type.Ref.Base.Base.ID.ToString()).ThenBy(x=>x.Ref.Base.Base.GetCoords().BigDistanceForm(coord)).ToList();
+
 
             var passengers = technos.Where(x => x.Ref.Base.Base.WhatAmI() == AbstractType.Infantry).Where(x => x.Ref.Type.Ref.Size <= 2).ToList();
 
@@ -43,23 +48,44 @@ namespace Scripts
             foreach(var passenger in passengers)
             {
                 var mission = passenger.Convert<MissionClass>();
-                if (mission.Ref.CurrentMission != Mission.Guard)
+                if (mission.Ref.CurrentMission != Mission.Guard && mission.Ref.CurrentMission != Mission.Area_Guard)
                     continue;
 
-                var carrier = carriers.Where(x => x.Current + passenger.Ref.Type.Ref.Size <= x.Max && passenger.Ref.Type.Ref.SizeLimit <= x.Limit).OrderBy(x=>x.Current).FirstOrDefault();
+                if(passenger.Ref.Type.Ref.Base.Base.ID == "BUZZERS")
+                {
+                    var carrier = carriers.Where(x => x.Current + passenger.Ref.Type.Ref.Size <= x.Max && passenger.Ref.Type.Ref.SizeLimit <= x.Limit && ScrinTanks.Contains(x.TechnoExt.OwnerObject.Ref.Type.Ref.Base.Base.ID)).OrderBy(x => x.Current).FirstOrDefault();
 
-                if (carrier is null)
-                    continue;
+                    if (carrier is null)
+                        continue;
 
-                carrier.Current += (int)passenger.Ref.Type.Ref.Size;
+                    carrier.Current += (int)passenger.Ref.Type.Ref.Size;
 
-                if(carrier.Current >= carrier.Max)
-                    carriers.Remove(carrier);
+                    if (carrier.Current >= carrier.Max)
+                        carriers.Remove(carrier);
 
-                mission.Ref.ForceMission(Mission.Stop);
-                passenger.Ref.SetFocus(carrier.TechnoExt.OwnerObject.Convert<AbstractClass>());
-                mission.Ref.ForceMission(Mission.Enter);
-                mission.Ref.Mission_Enter();
+                    mission.Ref.ForceMission(Mission.Stop);
+                    passenger.Ref.SetFocus(carrier.TechnoExt.OwnerObject.Convert<AbstractClass>());
+                    mission.Ref.ForceMission(Mission.Enter);
+                    mission.Ref.Mission_Enter();
+                }
+                else
+                {
+                    var carrier = carriers.Where(x => x.Current + passenger.Ref.Type.Ref.Size <= x.Max && passenger.Ref.Type.Ref.SizeLimit <= x.Limit && !ScrinTanks.Contains(x.TechnoExt.OwnerObject.Ref.Type.Ref.Base.Base.ID)).OrderBy(x => x.Current).FirstOrDefault();
+
+                    if (carrier is null)
+                        continue;
+
+                    carrier.Current += (int)passenger.Ref.Type.Ref.Size;
+
+                    if (carrier.Current >= carrier.Max)
+                        carriers.Remove(carrier);
+
+                    mission.Ref.ForceMission(Mission.Stop);
+                    passenger.Ref.SetFocus(carrier.TechnoExt.OwnerObject.Convert<AbstractClass>());
+                    mission.Ref.ForceMission(Mission.Enter);
+                    mission.Ref.Mission_Enter();
+                }
+        
             }
 
             base.OnLaunch(cell, isPlayer);
