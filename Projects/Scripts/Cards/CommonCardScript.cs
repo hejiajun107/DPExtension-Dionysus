@@ -94,7 +94,7 @@ namespace Scripts.Cards
                         trigger.ActionInvokeScript = trigger.ActionInvokeScript.Replace("<<", ";");
                         if (trigger.ActionInvokeScript.StartsWith("\"") && trigger.ActionInvokeScript.EndsWith("\""))
                         {
-                            trigger.ActionInvokeScript.Substring(1, trigger.ActionInvokeScript.Length - 1);
+                            trigger.ActionInvokeScript = trigger.ActionInvokeScript.Substring(1, trigger.ActionInvokeScript.Length - 1);
                         }
                     }
                 }
