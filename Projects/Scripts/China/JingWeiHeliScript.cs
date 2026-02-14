@@ -116,9 +116,11 @@ namespace DpLib.Scripts.China
         {
             if (pAttackingHouse.IsNotNull)
             {
-                if(pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                if (pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner) || pAttackingHouse == Owner.OwnerObject.Ref.Owner)
                 {
-                    if(pWH.Ref.Base.ID.ToString() == "FireGunFlame")
+                    var wh = pWH.Ref.Base.ID.ToString();
+
+                    if (wh == "FireGunFlame" || wh == "FireGunFlameCXS" || wh == "FireGunFlameS")
                     {
                         pDamage.Ref = 0;
                         return;
