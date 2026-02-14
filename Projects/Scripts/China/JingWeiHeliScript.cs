@@ -114,6 +114,18 @@ namespace DpLib.Scripts.China
         public override void OnReceiveDamage(Pointer<int> pDamage, int DistanceFromEpicenter, Pointer<WarheadTypeClass> pWH,
        Pointer<ObjectClass> pAttacker, bool IgnoreDefenses, bool PreventPassengerEscape, Pointer<HouseClass> pAttackingHouse)
         {
+            if (pAttackingHouse.IsNotNull)
+            {
+                if(pAttackingHouse.Ref.IsAlliedWith(Owner.OwnerObject.Ref.Owner))
+                {
+                    if(pWH.Ref.Base.ID.ToString() == "FireGunFlame")
+                    {
+                        pDamage.Ref = 0;
+                        return;
+                    }
+                }
+            }
+
             if (IsMkIIUpdated == false)
             {
                 //判断是否来自升级弹头
