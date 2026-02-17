@@ -138,20 +138,28 @@ namespace Scripts
                         }
                     case SkillType.IcwWall:
                         {
-                            SkillCompleted(skill.Value);
 
-                            var mycoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+                            if (MapClass.Instance.TryGetCellAt(DisplayClass.Display_ZoneCell + DisplayClass.Display_ZoneOffset, out var pcell))
+                            {
+                                SkillCompleted(skill.Value);
 
-                            var facing = Owner.OwnerObject.Ref.Facing.current().GetValue();
+                                var mycoord = Owner.OwnerObject.Ref.Base.Base.GetCoords();
 
-                            var angle = facing / ((short.MaxValue - short.MinValue) / 360);
-                            var langle = (double)facing / 32768 * Math.PI - Math.PI / 2;
+                                var facing = Owner.OwnerObject.Ref.Facing.current().GetValue();
 
-                            var center = new CoordStruct(mycoord.X + (int)(600 * (Math.Cos(langle))), mycoord.Y + (int)(600 * Math.Sin(langle)), mycoord.Z);
+                                var angle = facing / ((short.MaxValue - short.MinValue) / 360);
+                                var langle = (double)facing / 32768 * Math.PI - Math.PI / 2;
 
+                                //var center = new CoordStruct(mycoord.X + (int)(600 * (Math.Cos(langle))), mycoord.Y + (int)(600 * Math.Sin(langle)), mycoord.Z);
+                                var center = pcell.Ref.Base.GetCoords();
 
-                            GameObject.StartCoroutine(StartIceWall(center, langle));
-
+                                GameObject.StartCoroutine(StartIceWall(center, langle));
+                            }
+                            else
+                            {
+                                SkillCanced(skill.Value);
+                            }
+                         
                             break;
                         }
                     case SkillType.SunStrike:
@@ -353,6 +361,22 @@ namespace Scripts
                             }
                             break;
                         }
+                    case SkillType.UltraSunStrike:
+                        {
+                            SkillCompleted(skill.Value);
+
+                            var targets = Finder.FindTechno(Owner.OwnerObject.Ref.Owner, x => !x.Ref.Base.InLimbo, FindRange.Enermy).OrderBy(x=> MathEx.Random.Next()).Take(30);
+
+                            foreach (var targetTechno in targets)
+                            {
+                              
+                                var target = targetTechno.OwnerObject.Ref.Base.Base.GetCoords();
+                                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("ISunstrikeCharge"), target);
+                                GameObject.StartCoroutine(SunStrike(target));
+
+                            }
+                            break;
+                        }
                     default:
                         {
                             break;
@@ -384,7 +408,7 @@ namespace Scripts
                 timer += 20;
 
                 var bullet1 = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GhostWalkWh1"), 100, false);
-                var bullet2 = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GhostWalkWh2"), 100, false);
+                var bullet2 = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 5, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("GhostWalkWh2"), 100, false);
                 var location = Owner.OwnerObject.Ref.Base.Base.GetCoords();
                 bullet1.Ref.DetonateAndUnInit(location);
                 bullet2.Ref.DetonateAndUnInit(location);
@@ -416,11 +440,39 @@ namespace Scripts
 
         IEnumerator StartIceWall(CoordStruct center, double langle)
         {
+            int xPerCell = (int)(256 * Math.Sin(langle));
+            int yPerCell = -(int)(256 * Math.Cos(langle));
+
+            var locations = new List<CoordStruct>();
+            for (int i = -10; i < 11; i++)
+            {
+                CoordStruct pos = center + new CoordStruct(xPerCell * i, yPerCell * i, 0);
+
+                if (MapClass.Instance.TryGetCellAt(pos, out var pCell1))
+                {
+                    pos.Z = pCell1.Ref.Base.GetCoords().Z; // 手动修正地形高度
+                    if (pCell1.Ref.ContainsBridge())
+                    {
+                        pos.Z += Game.BridgeHeight; // 手动修正桥面高度
+                    }
+                } // 最终得到位于地面、水面、桥面的Coords
+
+                locations.Add(pos);
+            }
+
+            locations = locations.OrderBy(x => x.BigDistanceForm(center)).ToList();
+
+            yield return new WaitForFrames(30);
+
+            //生成初始冰墙
+            foreach(var loc in locations)
+            {
+                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find(Ices[rd.Next(0, 3)]), loc);
+                yield return new WaitForFrames(3);
+            }
+
             for (var j = 0; j <= 15; j++)
             {
-                int xPerCell = (int)(256 * Math.Sin(langle));
-                int yPerCell = -(int)(256 * Math.Cos(langle));
-
                 for (int i = -10; i < 11; i++)
                 {
                     CoordStruct pos = center + new CoordStruct(xPerCell * i, yPerCell * i, 0);
@@ -483,6 +535,15 @@ namespace Scripts
 
             var technos = ObjectFinder.FindTechnosNear(center, 3 * Game.CellSize);
             var count = technos.Count;
+
+            if (count > 0)
+            {
+                for (var j = 0; j < count; j++)
+                {
+                    TechnoPlacer.PlaceTechnoNear(TechnoTypeClass.ABSTRACTTYPE_ARRAY.Find("FORGESP2"), Owner.OwnerObject.Ref.Owner, CellClass.Coord2Cell(center));
+                }
+            }
+
             if (count == 0)
                 count = 1;
 
@@ -541,7 +602,18 @@ namespace Scripts
         //EEE
         SunStrike,
         //R
-        Invoke
+        Invoke,
+        //alt
+        UltraSunStrike,
+
+        //space,
+        FlyBoot,
+        //3
+        Blink,
+        //4
+        Refresh,
+        //z
+        BKB
 
     }
 
