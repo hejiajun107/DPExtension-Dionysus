@@ -377,6 +377,34 @@ namespace Scripts
                             }
                             break;
                         }
+                    case SkillType.Blink:
+                        {
+                            if (MapClass.Instance.TryGetCellAt(DisplayClass.Display_ZoneCell + DisplayClass.Display_ZoneOffset, out var pcell))
+                            {
+                                var target = pcell.Ref.Base.GetCoords();
+                                if (target.BigDistanceForm(Owner.OwnerObject.Ref.Base.Base.GetCoords()) > Game.CellSize * 20)
+                                {
+                                    SkillCanced(skill.Value);
+                                }
+                                else
+                                {
+                                    GameObject.StartCoroutine(BlinkTo(target));
+                                    SkillCompleted(skill.Value);
+                                }
+                            }
+                            else
+                            {
+                                SkillCanced(skill.Value);
+                            }
+                            break;
+                        }
+                    case SkillType.BKB:
+                        {
+                            SkillCompleted(skill.Value);
+                            var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(),Pointer<TechnoClass>.Zero, 10, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BKBWh"), 100, false);
+                            bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                            break;
+                        }
                     default:
                         {
                             break;
@@ -507,23 +535,31 @@ namespace Scripts
 
             for (var i = 0; i <= 200; i++)
             {
-                CoordStruct lastpos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(startAngle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(startAngle * Math.PI / 180), 5)), center.Z);
+                //CoordStruct lastpos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(startAngle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(startAngle * Math.PI / 180), 5)), center.Z);
 
-                for (var angle = startAngle + 5; angle < startAngle + 340; angle += 5)
+                //for (var angle = startAngle + 5; angle < startAngle + 340; angle += 5)
+                //{
+                //    var currentPos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
+                //    Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(lastpos, currentPos, color, color, color, 5);
+                //    pLaser.Ref.Thickness = 5;
+                //    pLaser.Ref.IsHouseColor = true;
+                //    lastpos = currentPos;
+                //}
+
+                //radius -= 1;
+                //startAngle += 5;
+
+                //Pointer<LaserDrawClass> pMiddle = YRMemory.Create<LaserDrawClass>(center, center + new CoordStruct(0, 0, 3000), color, color, color, 5);
+                //pMiddle.Ref.Thickness = 50 - i / 5;
+                //pMiddle.Ref.IsHouseColor = true;
+
+                if (i % 10 == 0)
                 {
-                    var currentPos = new CoordStruct(center.X + (int)(radius * Math.Round(Math.Cos(angle * Math.PI / 180), 5)), center.Y + (int)(radius * Math.Round(Math.Sin(angle * Math.PI / 180), 5)), center.Z);
-                    Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(lastpos, currentPos, color, color, color, 5);
-                    pLaser.Ref.Thickness = 5;
-                    pLaser.Ref.IsHouseColor = true;
-                    lastpos = currentPos;
+                    var pBullet = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible").Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 0, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special"), 100, false);
+                    pBullet.Ref.Base.SetLocation(center);
+                    Owner.OwnerObject.Ref.CreateLaser(pBullet.Convert<ObjectClass>(), 0, WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("SunStrikeLaser"), center + new CoordStruct(0, 0, 9000));
+                    pBullet.Ref.DetonateAndUnInit(center);
                 }
-
-                radius -= 1;
-                startAngle += 5;
-
-                Pointer<LaserDrawClass> pMiddle = YRMemory.Create<LaserDrawClass>(center, center + new CoordStruct(0, 0, 3000), color, color, color, 5);
-                pMiddle.Ref.Thickness = 50 - i / 5;
-                pMiddle.Ref.IsHouseColor = true;
 
                 yield return new WaitForFrames(1);
             }
@@ -574,6 +610,74 @@ namespace Scripts
                 await connection?.InvokeAsync("CancelSkill", skill);
             });
         }
+
+        IEnumerator BlinkTo(CoordStruct target)
+        {
+            var pTechno = Owner.OwnerObject;
+            var animType = AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("CHRONOEXPMINI");
+            var pfoot = pTechno.Convert<FootClass>();
+            //pfoot.Ref.Locomotor.Stop_Moving();
+
+            var mission = pTechno.Convert<MissionClass>();
+
+            if (MapClass.Instance.TryGetCellAt(pTechno.Ref.Base.Base.GetCoords(), out Pointer<CellClass> pCell))
+            {
+                pfoot.Ref.Base.SetDestination(Pointer<AbstractClass>.Zero, false);
+                mission.Ref.QueueMission(Mission.Move, false);
+                mission.Ref.NextMission();
+                mission.Ref.ForceMission(Mission.Sleep);
+            }
+            //mission.Ref.ForceMission(Mission.Sleep);
+            //pfoot.Ref.Locomotor.Stop_Moving();
+            //mission.Ref.ForceMission(Mission.Stop);
+            yield return new WaitForFrames(10);
+            YRMemory.Create<AnimClass>(animType, Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            TrySetLocation(target);
+            YRMemory.Create<AnimClass>(animType, target);
+            //yield return new WaitForFrames(1);
+            //if (MapClass.Instance.TryGetCellAt(target, out Pointer<CellClass> pCell2))
+            //{
+            //    pfoot.Ref.Base.SetDestination(pCell2.Convert<AbstractClass>(), false);
+            //    mission.Ref.QueueMission(Mission.Move, false);
+            //    mission.Ref.NextMission();
+            //}
+            //mission.Ref.ForceMission(Mission.Stop);
+            //yield return new WaitForFrames(1);
+
+
+        }
+
+        private bool TrySetLocation(CoordStruct location)
+        {
+            if (!Owner.OwnerObject.Ref.Owner.IsNull)
+            {
+                var pTechno = Owner.OwnerObject;
+                var mission = pTechno.Convert<MissionClass>();
+                mission.Ref.ForceMission(Mission.Area_Guard);
+
+                var currentLocation = Owner.OwnerObject.Ref.Base.Base.GetCoords();
+
+                //位置
+                var pfoot = pTechno.Convert<FootClass>();
+                //pTechno.Ref.SetDestination(default);
+                if (MapClass.Instance.TryGetCellAt(location, out Pointer<CellClass> pCell))
+                {
+                    var source = pTechno.Ref.Base.Base.GetCoords();
+                    pfoot.Ref.Locomotor.Mark_All_Occupation_Bits(0);
+                    pfoot.Ref.Locomotor.Force_Track(-1, source);
+                    pTechno.Ref.Base.UnmarkAllOccupationBits(source);
+                    var cLocal = pCell.Ref.Base.GetCoords();
+                    var pLocal = new CoordStruct(cLocal.X, cLocal.Y, location.Z);
+                    pTechno.Ref.Base.SetLocation(pLocal);
+                    pTechno.Ref.Base.UnmarkAllOccupationBits(pLocal);
+                    pTechno.Ref.Base.Scatter(location, true, true);
+                }
+
+                return true;
+            }
+            return false;
+        }
+
 
     }
 
@@ -832,6 +936,9 @@ namespace Scripts
 
         private CoordStruct lastCoord;
 
+        private int delay = 20;
+
+
         public override void OnUpdate()
         {
             if (Owner.OwnerObject.Ref.Owner.IsNull)
@@ -840,6 +947,12 @@ namespace Scripts
             if (pAnim.IsNull)
             {
                 CreateAnim();
+            }
+
+            if (delay-- == 0)
+            {
+                delay = 20;
+                YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("XTornado"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
             }
 
             pAnim.Ref.Base.SetLocation(Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, -Owner.OwnerObject.Ref.Base.GetHeight() + 2000));
