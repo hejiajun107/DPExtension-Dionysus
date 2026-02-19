@@ -403,6 +403,13 @@ namespace Scripts
                             SkillCompleted(skill.Value);
                             var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(),Pointer<TechnoClass>.Zero, 10, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("BKBWh"), 100, false);
                             bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                            YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("BkbAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords() + new CoordStruct(0, 0, 500));
+                            break;
+                        }
+                    case SkillType.Refresh:
+                        {
+                            SkillCompleted(skill.Value);
+                            YRMemory.Create<AnimClass>(AnimTypeClass.ABSTRACTTYPE_ARRAY.Find("RefreshBallAnim"), Owner.OwnerObject.Ref.Base.Base.GetCoords());
                             break;
                         }
                     default:
@@ -618,21 +625,37 @@ namespace Scripts
             var pfoot = pTechno.Convert<FootClass>();
             //pfoot.Ref.Locomotor.Stop_Moving();
 
-            var mission = pTechno.Convert<MissionClass>();
+            var bullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Pointer<TechnoClass>.Zero, 10, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("StopInvokerWH"), 100, false);
+            bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
 
-            if (MapClass.Instance.TryGetCellAt(pTechno.Ref.Base.Base.GetCoords(), out Pointer<CellClass> pCell))
-            {
-                pfoot.Ref.Base.SetDestination(Pointer<AbstractClass>.Zero, false);
-                mission.Ref.QueueMission(Mission.Move, false);
-                mission.Ref.NextMission();
-                mission.Ref.ForceMission(Mission.Sleep);
-            }
+            var mission = pTechno.Convert<MissionClass>();
+            mission.Ref.ForceMission(Mission.Stop);
+
+            //if (MapClass.Instance.TryGetCellAt(pTechno.Ref.Base.Base.GetCoords(), out Pointer<CellClass> pCell))
+            //{
+            //    pfoot.Ref.Base.SetDestination(pCell.Convert<AbstractClass>(), false);
+            //    mission.Ref.QueueMission(Mission.Move, false);
+            //    mission.Ref.NextMission();
+            //    TrySetLocation(pCell.Ref.Base.GetCoords());
+            //}
             //mission.Ref.ForceMission(Mission.Sleep);
             //pfoot.Ref.Locomotor.Stop_Moving();
             //mission.Ref.ForceMission(Mission.Stop);
-            yield return new WaitForFrames(10);
+            //yield return new WaitForFrames(1);
+            //mission.Ref.ForceMission(Mission.Stop);
+            //yield return new WaitForFrames(1);
             YRMemory.Create<AnimClass>(animType, Owner.OwnerObject.Ref.Base.Base.GetCoords());
-            TrySetLocation(target);
+            if (MapClass.Instance.TryGetCellAt(target, out Pointer<CellClass> pcell))
+            {
+                var facing = Owner.OwnerObject.Ref.Facing;
+                Owner.OwnerObject.Ref.Base.Remove();
+                Owner.OwnerObject.Ref.Base.Put(pcell.Ref.Base.GetCoords(), GameUtil.Facing2Dir(facing));
+                Owner.OwnerObject.Ref.Base.Select();
+            }
+            //TrySetLocation(target);
+            //var bullet2 = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Pointer<TechnoClass>.Zero, 10, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("StopInvokerWH"), 100, false);
+            //bullet2.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+            //mission.Ref.ForceMission(Mission.Stop);
             YRMemory.Create<AnimClass>(animType, target);
             //yield return new WaitForFrames(1);
             //if (MapClass.Instance.TryGetCellAt(target, out Pointer<CellClass> pCell2))
@@ -642,7 +665,7 @@ namespace Scripts
             //    mission.Ref.NextMission();
             //}
             //mission.Ref.ForceMission(Mission.Stop);
-            //yield return new WaitForFrames(1);
+            yield return new WaitForFrames(1);
 
 
         }
