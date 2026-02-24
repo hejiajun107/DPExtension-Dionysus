@@ -235,6 +235,7 @@
     <Compile Include="Japan\WaveEnergyMechScript.cs" />
     <Compile Include="JumpetCarrierScript.cs" />
     <Compile Include="JumpWithBulletScript.cs" />
+    <Compile Include="LaserTrailerBulletScirpt.cs" />
     <Compile Include="LimboBulletScript.cs" />
     <Compile Include="LinkSWScript.cs" />
     <Compile Include="Mission\All08GameManager.cs" />
