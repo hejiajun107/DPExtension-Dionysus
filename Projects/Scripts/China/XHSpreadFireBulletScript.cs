@@ -256,15 +256,26 @@ namespace DpLib.Scripts.China
 
                                 var pos1 = new CoordStruct(targetPos.X, targetPos.Y, mylocation.Z);
 
-                                var laserColor = LaserLevels[level - 1];
+                                //关闭当前建筑
+                                Pointer<BulletClass> pEmpBullet = pBulletType.Ref.CreateBullet(pOwnerRef.OwnerObject.Convert<AbstractClass>(), pOwnerRef.OwnerObject, 1, empWarhead, 100, false);
 
-                                Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(targetPos, pos1, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
-                                pLaser.Ref.IsHouseColor = true;
-                                pLaser.Ref.Thickness = 7;
 
-                                Pointer<LaserDrawClass> pLaser2 = YRMemory.Create<LaserDrawClass>(pos1, mylocation, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
-                                pLaser2.Ref.IsHouseColor = true;
-                                pLaser2.Ref.Thickness = 7;
+                                string laserColorWp = "XHChargeLaser" + level;
+                                //var laserColor = LaserLevels[level - 1];
+                                //var laserColor = LaserLevels[level - 1];
+
+                                pEmpBullet.Ref.Base.SetLocation(pos1);
+                                Owner.OwnerObject.Ref.Owner.Ref.CreateLaser(pEmpBullet.Convert<ObjectClass>(), 0, WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(laserColorWp), targetPos);
+                                pEmpBullet.Ref.Base.SetLocation(mylocation);
+                                Owner.OwnerObject.Ref.Owner.Ref.CreateLaser(pEmpBullet.Convert<ObjectClass>(), 0, WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(laserColorWp), pos1);
+
+                                //Pointer<LaserDrawClass> pLaser = YRMemory.Create<LaserDrawClass>(targetPos, pos1, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
+                                //pLaser.Ref.IsHouseColor = true;
+                                //pLaser.Ref.Thickness = 7;
+
+                                //Pointer<LaserDrawClass> pLaser2 = YRMemory.Create<LaserDrawClass>(pos1, mylocation, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
+                                //pLaser2.Ref.IsHouseColor = true;
+                                //pLaser2.Ref.Thickness = 7;
 
                                 //Pointer<LaserDrawClass> pLaser3 = YRMemory.Create<LaserDrawClass>(pos1, right, laserColor, laserColor, new ColorStruct(0, 0, 0), 200);
                                 //pLaser3.Ref.IsHouseColor = true;
@@ -272,8 +283,7 @@ namespace DpLib.Scripts.China
 
 
 
-                                //关闭当前建筑
-                                Pointer<BulletClass> pEmpBullet = pBulletType.Ref.CreateBullet(pOwnerRef.OwnerObject.Convert<AbstractClass>(), pOwnerRef.OwnerObject, 1, empWarhead, 100, false);
+                              
                                 pEmpBullet.Ref.DetonateAndUnInit(targetPos);
 
 
@@ -373,11 +383,33 @@ namespace DpLib.Scripts.China
                 baseDamage += 50;
             }
 
-            //绘制大激光
-            Pointer<LaserDrawClass> pBigLaser = YRMemory.Create<LaserDrawClass>(startLocation, targetLocation, bigLaserColor, bigLaserColor, new ColorStruct(0, 0, 0), 120);
-            pBigLaser.Ref.IsHouseColor = true;
-            var thickness = 15 + totalLevel * 3;
-            pBigLaser.Ref.Thickness = thickness;
+            ////绘制大激光
+            //Pointer<LaserDrawClass> pBigLaser = YRMemory.Create<LaserDrawClass>(startLocation, targetLocation, bigLaserColor, bigLaserColor, new ColorStruct(0, 0, 0), 120);
+            //pBigLaser.Ref.IsHouseColor = true;
+            //var thickness = 15 + totalLevel * 3;
+            //pBigLaser.Ref.Thickness = thickness;
+
+            var atkLaserWp = "XHBigLaser1";
+            if (totalLevel >= 3 && totalLevel <10)
+            {
+                atkLaserWp = "XHBigLaser2";
+            }else if(totalLevel >10 && totalLevel <= 15)
+            {
+                atkLaserWp = "XHBigLaser3";
+            }else if(totalLevel >= 15 && totalLevel < 20)
+            {
+                atkLaserWp = "XHBigLaser4";
+            }else if (totalLevel >= 20)
+            {
+                atkLaserWp = "XHBigLaser5";
+            }
+
+            Pointer<BulletClass> pLaserBullet = pBulletType.Ref.CreateBullet(pOwnerRef.OwnerObject.Convert<AbstractClass>(), pOwnerRef.OwnerObject, 0, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Special"), 100, false);
+            pLaserBullet.Ref.Base.SetLocation(targetLocation);
+            Owner.OwnerObject.Ref.Owner.Ref.CreateLaser(pLaserBullet.Convert<ObjectClass>(), 0, WeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(atkLaserWp), startLocation);
+            pLaserBullet.Ref.DetonateAndUnInit(targetLocation);
+
+
 
             if (totalLevel == 0)
             {
