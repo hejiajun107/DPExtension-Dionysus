@@ -1,4 +1,5 @@
-﻿using Extension.Coroutines;
+﻿using DynamicPatcher;
+using Extension.Coroutines;
 using Extension.Ext;
 using Extension.Script;
 using PatcherYRpp;
@@ -42,16 +43,30 @@ namespace DpLib.Scripts.Japan
         private static Pointer<WarheadTypeClass> toGroundWh => WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JEPBombWH");
 
 
+        private int sleeping = 0;
+
+
         public override void OnUpdate()
         {
             base.OnUpdate();
 
             if(IsDead)
             {
-                Owner.OwnerObject.Ref.Base.TakeDamage(10000, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("Super"), false);
+                if(Owner.OwnerObject.Ref.Base.Health>20)
+                {
+                    Owner.OwnerObject.Ref.Base.Health = 20;
+                }
+                IsDead = false;
+                sleeping = 500;
             }
 
             var mission = Owner.OwnerObject.Convert<MissionClass>();
+
+            if (sleeping > 0)
+            {
+                sleeping--;
+            }
+
             if (mission.Ref.CurrentMission == Mission.Unload)
             {
                 bool canMissionExplode = true;
@@ -70,7 +85,8 @@ namespace DpLib.Scripts.Japan
                     
                 }
 
-                if(canMissionExplode)
+
+                if(canMissionExplode && !isBooming && sleeping == 0)
                 {
                     IsExploding = !IsExploding;
                     explodeDelay = 200;
@@ -101,18 +117,22 @@ namespace DpLib.Scripts.Japan
                     if (explodeDelay == 0)
                     {
                         var yellowAmount = Owner.OwnerObject.Ref.Tiberium.GetAmount(0);
+                        var yellow2Amount = Owner.OwnerObject.Ref.Tiberium.GetAmount(2);
                         var colorfulAmount = Owner.OwnerObject.Ref.Tiberium.GetAmount(1);
                         Owner.OwnerObject.Ref.Tiberium.RemoveAmount(colorfulAmount, 1);
                         Owner.OwnerObject.Ref.Tiberium.RemoveAmount(yellowAmount, 0);
-                        Owner.GameObject.StartCoroutine(Boom((int)yellowAmount, (int)colorfulAmount, Owner.OwnerObject.Ref.Base.Base.GetCoords()));
+                        Owner.OwnerObject.Ref.Tiberium.RemoveAmount(yellow2Amount, 2);
+                        Owner.GameObject.StartCoroutine(Boom((int)yellowAmount + (int)yellow2Amount, (int)colorfulAmount, Owner.OwnerObject.Ref.Base.Base.GetCoords()));
                         explodeDelay--;
                     }
                     else
                     {
-                        if (Owner.OwnerObject.CastToFoot(out var pfoot))
-                        {
-                            pfoot.Ref.SpeedMultiplier = 0;
-                        }
+                        var bullet = pBulletType.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, 1, WarheadTypeClass.ABSTRACTTYPE_ARRAY.Find("JEPStopMoveWH"), 100, true);
+                        bullet.Ref.DetonateAndUnInit(Owner.OwnerObject.Ref.Base.Base.GetCoords());
+                        //if (Owner.OwnerObject.CastToFoot(out var pfoot))
+                        //{
+                        //    pfoot.Ref.SpeedMultiplier = 0;
+                        //}
                     }
                 }
             }
@@ -254,6 +274,7 @@ namespace DpLib.Scripts.Japan
             }
         }
 
+        private bool isBooming = false;
 
 
         IEnumerator Boom(int yellow, int colorful, CoordStruct center)
@@ -262,6 +283,7 @@ namespace DpLib.Scripts.Japan
 
             var max = count / 4 + 5;
 
+            isBooming = true;
 
             var waveCount = 6;
 
@@ -292,7 +314,7 @@ namespace DpLib.Scripts.Japan
                 {
                     var pos = new CoordStruct(center.X + (int)(r * Math.Round(Math.Cos(angle * Math.PI / 180), 2)), center.Y + (int)(r * Math.Round(Math.Sin(angle * Math.PI / 180), 2)), center.Z);
                     var pInviso = BulletTypeClass.ABSTRACTTYPE_ARRAY.Find("Invisible");
-                    int damage = 100;
+                    int damage = 20 + yellow + colorful;
                     Pointer<BulletClass> pBullet = pInviso.Ref.CreateBullet(Owner.OwnerObject.Convert<AbstractClass>(), Owner.OwnerObject, damage, toGroundWh, 100, true);
                     pBullet.Ref.DetonateAndUnInit(pos);
                 }
@@ -302,8 +324,10 @@ namespace DpLib.Scripts.Japan
 
             yield return new WaitForFrames(5);
 
-
+            IsExploding = false;
             IsDead = true;
+            isBooming = false;
+
         }
 
 

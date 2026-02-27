@@ -336,7 +336,7 @@ namespace Scripts
             var target = Master.OwnerObject.Ref.Target;
             if(Defination.NeverAttackGround)
             {
-                if (!target.CastToTechno(out _))
+                if (target.IsNotNull && !target.CastToTechno(out _))
                 {
                     target = Pointer<AbstractClass>.Zero;
                 }
