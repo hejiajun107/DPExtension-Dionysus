@@ -73,14 +73,15 @@ namespace Scripts.China
 
                 if(charge>=chargeMax)
                 {
-                    if (Owner.OwnerObject.Ref.Owner.Ref.IsControlledByCurrentPlayer())
-                    {
+                 
                         var swType = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find("XHCallFireSW");
                         Pointer<SuperClass> pSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(swType);
                         pSuper.Ref.IsCharged = true;
-                        MapClass.UnselectAll();
-                        Game.CurrentSWType = swType.Ref.ArrayIndex;
-                    }
+                        if (Owner.OwnerObject.Ref.Owner.IsControlledByCurrentPlayer())
+                        {
+                            MapClass.UnselectAll();
+                            Game.CurrentSWType = swType.Ref.ArrayIndex;
+                        }
                 }
                 else
                 {

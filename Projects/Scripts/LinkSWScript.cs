@@ -115,7 +115,7 @@ namespace DpLib.Scripts
                             Pointer<SuperClass> nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw2);
                             nextSuperExt = SuperWeaponExt.ExtMap.Find(nextSuper);
                             nextSuperExt.OwnerObject.Ref.IsCharged = true;
-                            if(Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer && !isAi)
+                            if(Owner.OwnerObject.Ref.Owner.IsControlledByCurrentPlayer() && !isAi)
                             {
                                 Game.CurrentSWType = sw2.Ref.ArrayIndex;
                             }
@@ -184,7 +184,7 @@ namespace DpLib.Scripts
                                 Pointer<SuperClass> nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw3);
                                 nextSuperExt = SuperWeaponExt.ExtMap.Find(nextSuper);
                                 nextSuperExt.OwnerObject.Ref.IsCharged = true;
-                                if (Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer && !isAi)
+                                if (Owner.OwnerObject.Ref.Owner.IsControlledByCurrentPlayer() && !isAi)
                                 {
                                     Game.CurrentSWType = sw3.Ref.ArrayIndex;
                                 }
@@ -201,7 +201,7 @@ namespace DpLib.Scripts
                                 Pointer<SuperClass> nextSuper = Owner.OwnerObject.Ref.Owner.Ref.FindSuperWeapon(sw4);
                                 nextSuperExt = SuperWeaponExt.ExtMap.Find(nextSuper);
                                 nextSuperExt.OwnerObject.Ref.IsCharged = true;
-                                if (Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer && !isAi)
+                                if (Owner.OwnerObject.Ref.Owner.IsControlledByCurrentPlayer() && !isAi)
                                 {
                                     Game.CurrentSWType = sw4.Ref.ArrayIndex;
                                 }
@@ -277,7 +277,7 @@ namespace DpLib.Scripts
             //取消超武释放时也移除所有建筑
             if (inited && inCurrentSW)
             {
-                if (Owner.OwnerObject.Ref.Owner.Ref.CurrentPlayer  && !isAi)
+                if (Owner.OwnerObject.Ref.Owner.IsControlledByCurrentPlayer() && !isAi)
                 {
                     if (Game.CurrentSWType == -1)
                     {

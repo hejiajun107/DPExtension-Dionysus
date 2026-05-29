@@ -242,6 +242,7 @@
     <Compile Include="Mission\CallIronCurtainSpecialScript.cs" />
     <Compile Include="Mission\CannotAttackAlliesScript.cs" />
     <Compile Include="Mission\KeepMoveSpeedScript.cs" />
+    <Compile Include="Rogue\RogueGetUpgradeSWScript.cs" />
     <Compile Include="Scrin\SCEngineerScript.cs" />
     <Compile Include="Shared\MissionData.cs" />
     <Compile Include="Mission\SafeGuardTechnoScript.cs" />
@@ -312,6 +313,7 @@
     <Compile Include="Yuri\MagnetronScript.cs" />
     <Compile Include="Yuri\MindFrenzyScript.cs" />
     <Compile Include="Yuri\PlastTowerScript.cs" />
+    <Compile Include="Yuri\ReaperScript.cs" />
     <Compile Include="Yuri\RegeneratorBulletScript.cs" />
     <Compile Include="Yuri\RegeneratorScript.cs" />
     <Compile Include="Yuri\SMNKScript.cs" />

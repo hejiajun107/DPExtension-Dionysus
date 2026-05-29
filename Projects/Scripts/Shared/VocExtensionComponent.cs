@@ -7,6 +7,9 @@ using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Extension.Ext4CW;
+using Extension.Utilities;
+
 
 namespace Extension.Shared
 {
@@ -108,7 +111,7 @@ namespace Extension.Shared
 
             if (ownerOnly) 
             {
-                if (!Owner.OwnerObject.Ref.Owner.Ref.IsControlledByCurrentPlayer())
+                if (!Owner.OwnerObject.Ref.Owner.IsControlledByCurrentPlayer())
                     return;
             }
 

@@ -280,6 +280,11 @@ namespace Extension.Utilities
             }
         }
 
+        public static bool IsControlledByCurrentPlayer(this Pointer<HouseClass> pHouse)
+        {
+            return pHouse == HouseClass.Player;
+        }
+
         //public static CoordStruct GetFLH(this TechnoExt technoExt, CoordStruct flh, DirStruct dir, bool flip = false)
         //{
         //    return GetFLH(technoExt.OwnerObject.Ref.Base.Base.GetCoords(), flh, dir, flip);

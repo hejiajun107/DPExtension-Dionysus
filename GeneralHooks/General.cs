@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Extension.Components;
 using Extension.EventSystems;
 using Extension.CW;
+using PatcherYRpp;
 
 namespace GeneralHooks
 {
@@ -21,8 +22,11 @@ namespace GeneralHooks
         private static void MathExHandler(object sender, EventArgs e)
         {
             // ensure network synchronization
-            MathEx.SetRandomSeed(0);
-            //Logger.Log("set random seed!");
+           
+            int seed = ScenarioClass.Instance.Random.RandomRanged(1, 99999);
+            MathEx.SetRandomSeed(seed);
+            //MathEx.SetRandomSeed(0);
+            //Logger.Log("set random seed!" + seed);
         }
 
         [Hook(HookType.AresHook, Address = 0x52BA60, Size = 5)]
