@@ -1,19 +1,20 @@
-﻿using Extension.CW;
+﻿using DynamicPatcher;
+using Extension.CW;
 using Extension.CWUtilities;
+using Extension.EventSystems;
 using Extension.Ext;
 using Extension.Ext4CW.Untilities;
 using Extension.INI;
 using Extension.Script;
 using Extension.Utilities;
 using PatcherYRpp;
+using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using DynamicPatcher;
-using PatcherYRpp.Utilities;
-using System.Reflection;
 
 namespace Scripts
 {
@@ -158,22 +159,54 @@ namespace Scripts
                 return;
             }
 
-            foreach (var salve in salveTechnos)
+            //foreach (var salve in salveTechnos)
+            //{
+            //    if (!salve.IsNullOrExpired())
+            //    {
+            //        if (!salve.OwnerObject.Ref.Base.InLimbo)
+            //        {
+            //            salve.OwnerObject.Ref.Stun();
+            //            salve.OwnerObject.Ref.Base.Remove();
+            //        }
+
+            //        salve.OwnerObject.Ref.Base.RegisterKill(Owner.OwnerObject.Ref.Owner);
+
+            //        salve.OwnerObject.Ref.Base.UnInit();
+            //    }
+            //}
+            EventSystem.General.AddTemporaryHandler(EventSystem.General.LogicClassUpdateEvent, ClearSalves);
+
+        }
+
+        public void ClearSalves(object sender, EventArgs args)
+        {
+            if (args is LogicClassUpdateEventArgs largs)
             {
-                if (!salve.IsNullOrExpired())
+                if (!largs.IsLateUpdate)
+                    return;
+            }
+            else
+            {
+                return;
+            }
+
+            var salvesToClean = salveTechnos.ToList();
+
+
+            foreach (var salve in salvesToClean)
+            {
+                if (!salve.IsNullOrExpired() && salve.OwnerObject != null)
                 {
-                    if (!salve.OwnerObject.Ref.Base.InLimbo)
-                    {
-                        salve.OwnerObject.Ref.Stun();
-                        salve.OwnerObject.Ref.Base.Remove();
-                    }
-
-                    salve.OwnerObject.Ref.Base.RegisterKill(Owner.OwnerObject.Ref.Owner);
-
+                    salve.OwnerObject.Ref.Stun();
+                    salve.OwnerObject.Ref.Base.Remove();
+                    salve.OwnerObject.Ref.Base.RegisterKill(salve.OwnerObject.Ref.Owner);
                     salve.OwnerObject.Ref.Base.UnInit();
                 }
             }
+
+            EventSystem.General.RemoveTemporaryHandler(EventSystem.General.LogicClassUpdateEvent, ClearSalves);
         }
+
 
         public override void OnRemove()
         {
