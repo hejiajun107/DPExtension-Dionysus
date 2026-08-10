@@ -3,6 +3,7 @@ using Extension.UI.Core;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Extension.UI
@@ -21,8 +22,17 @@ namespace Extension.UI
 
         //
         // 摘要:
-        //     ID -> Description 映射（来自 [SWPanel.SWxxx] Description）。
+        //     ID -> Description 映射。
+        //     填充顺序：
+        //       1. 读 [SWID] UIDescription=（CSF 标签）→ 调 StringTable.LoadString 查到 desc 文本；
+        //       2. 用 [SWPanel.SWID] Description= 作为覆盖（直接文本）。
         private Dictionary<string, string> descriptions = new Dictionary<string, string>();
+
+        //
+        // 摘要:
+        //     ID -> SidebarPCX 文件名 映射（来自 INI [SWID] SidebarPCX=）。
+        //     非空时按钮强制用此 PCX 绘制（覆盖 SHP）。
+        private Dictionary<string, string> sidebarPCXs = new Dictionary<string, string>();
 
         // 按钮默认尺寸（与 SuperWeaponButton.DefaultWidth/DefaultHeight 一致）
         private const int ButtonWidth = 60;
@@ -65,6 +75,7 @@ namespace Extension.UI
         {
             swIds.Clear();
             descriptions.Clear();
+            sidebarPCXs.Clear();
 
             if (pINI.IsNull)
             {
@@ -97,10 +108,31 @@ namespace Extension.UI
                 }
                 Interval = interval;
 
-                // 读取每个超武的 Description
+                // 读取每个超武的 SidebarPCX / Description
                 foreach (string id in swIds)
                 {
-                    descriptions[id] = ReadIniString(pINI, "SWPanel." + id, "Description");
+                    // 1) SidebarPCX= 来自超武节
+                    sidebarPCXs[id] = ReadIniString(pINI, id, "SidebarPCX");
+
+                    // 2) Description：
+                    //    a. 先读 [SWID] UIDescription= → 视为 CSF 标签，调用 StringTable.LoadString 查真正 desc 文本
+                    //    b. 再用 [SWPanel.SWID] Description= 覆盖（直接文本）
+                    string desc = string.Empty;
+                    string csfLabel = ReadIniString(pINI, id, "UIDescription");
+                    if (!string.IsNullOrEmpty(csfLabel))
+                    {
+                        string resolved = LoadCSFString(csfLabel);
+                        if (!string.IsNullOrEmpty(resolved))
+                        {
+                            desc = resolved;
+                        }
+                    }
+                    string overrideDesc = ReadIniString(pINI, "SWPanel." + id, "Description");
+                    if (!string.IsNullOrEmpty(overrideDesc))
+                    {
+                        desc = overrideDesc;
+                    }
+                    descriptions[id] = desc;
                 }
 
                 _configLoaded = true;
@@ -109,6 +141,63 @@ namespace Extension.UI
             {
                 Logger.PrintException(ex);
             }
+        }
+
+        //
+        // 摘要:
+        //     调用游戏原生 StringTable::LoadString @ 0x734E60 查询 CSF 标签对应的文本。
+        //     查不到（返回空或以 MISSING: 开头）时返回 string.Empty。
+        private static unsafe string LoadCSFString(string label)
+        {
+            if (string.IsNullOrEmpty(label))
+            {
+                return string.Empty;
+            }
+            try
+            {
+                // const wchar_t* __fastcall StringTable::LoadString(
+                //     const char* pLabel,  // ECX
+                //     char* pExtraData,   // EDX (nullptr)
+                //     const char* pFile,  // stack
+                //     int nLine           // stack
+                // );
+                // 通过 FastCallTransferStation：首参 = 地址，后续依次填 ECX / EDX / stack...
+                IntPtr ansiLabel = AnsiStringToHGlobal(label);
+                try
+                {
+                    var func = (delegate* unmanaged[Thiscall]<int, IntPtr, IntPtr, IntPtr, int, IntPtr>)ASM.FastCallTransferStation;
+                    IntPtr result = func(0x734E60, ansiLabel, IntPtr.Zero, IntPtr.Zero, 0);
+                    if (result == IntPtr.Zero)
+                    {
+                        return string.Empty;
+                    }
+                    string text = Marshal.PtrToStringUni(result);
+                    // 原生对未命中 label 返回 "MISSING:<label>" 字符串
+                    if (!string.IsNullOrEmpty(text) && text.StartsWith("MISSING:", StringComparison.Ordinal))
+                    {
+                        return string.Empty;
+                    }
+                    return text ?? string.Empty;
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(ansiLabel);
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private static IntPtr AnsiStringToHGlobal(string s)
+        {
+            if (s == null) return IntPtr.Zero;
+            byte[] bytes = Encoding.Default.GetBytes(s);
+            IntPtr ptr = Marshal.AllocHGlobal(bytes.Length + 1);
+            Marshal.Copy(bytes, 0, ptr, bytes.Length);
+            Marshal.WriteByte(ptr, bytes.Length, 0);
+            return ptr;
         }
 
         // 实例字段 buffer，参考 INIFileReader 的做法
@@ -215,6 +304,7 @@ namespace Extension.UI
 
             List<Pointer<SuperClass>> currentSupers = new List<Pointer<SuperClass>>();
             List<string> currentDescs = new List<string>();
+            List<string> currentPCXs = new List<string>();
 
             foreach (string id in swIds)
             {
@@ -246,6 +336,8 @@ namespace Extension.UI
                 currentSupers.Add(pSuper);
                 string desc = descriptions.TryGetValue(id, out string d) ? d : string.Empty;
                 currentDescs.Add(desc);
+                string pcx = sidebarPCXs.TryGetValue(id, out string p) ? p : string.Empty;
+                currentPCXs.Add(pcx);
             }
 
             // 检测变化：数量不同或任一指针不同则重建
@@ -269,7 +361,7 @@ namespace Extension.UI
                 ClearChildren();
                 for (int i = 0; i < currentSupers.Count; i++)
                 {
-                    AddChild(new SuperWeaponButton(currentSupers[i], currentDescs[i]));
+                    AddChild(new SuperWeaponButton(currentSupers[i], currentDescs[i], currentPCXs[i]));
                 }
             }
         }

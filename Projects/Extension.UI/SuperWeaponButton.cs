@@ -20,8 +20,14 @@ namespace Extension.UI
 
         //
         // 摘要:
-        //     Tooltip 描述文本（由 Task 7 的 Tooltip 机制使用）。
+        //     Tooltip 描述文本（由 Panel 填入：从 [SWID] UIDescription= CSF 查询，或覆盖值）。
         public string Description;
+
+        //
+        // 摘要:
+        //     强制使用 PCX 作为图标（来自 INI [SWID] SidebarPCX= 指定的文件名）。
+        //     非空时优先用 PCX 绘制（覆盖 SHP），空则按默认流程（SHP → SidebarImageFile PCX 回退）。
+        public string SidebarPCX;
 
         //
         // 摘要:
@@ -44,20 +50,25 @@ namespace Extension.UI
         // 就绪边框颜色（亮黄）
         private static readonly ColorStruct ReadyBorderColor = new ColorStruct(255, 255, 100);
 
-        public SuperWeaponButton(Pointer<SuperClass> owner) : this(owner, string.Empty)
+        public SuperWeaponButton(Pointer<SuperClass> owner) : this(owner, string.Empty, string.Empty)
         {
         }
 
-        public SuperWeaponButton(Pointer<SuperClass> owner, string description)
+        public SuperWeaponButton(Pointer<SuperClass> owner, string description, string sidebarPCX)
         {
             OwnerObject = owner;
             Description = description ?? string.Empty;
+            SidebarPCX = sidebarPCX ?? string.Empty;
             ClientRectangle = new RectangleStruct(0, 0, DefaultWidth, DefaultHeight);
         }
 
         //
         // 摘要:
         //     绘制 cameo、充能遮罩、就绪闪烁。用 try-catch 包裹超武 API 调用保证异常安全。
+        //     绘制优先级：
+        //       1. SidebarPCX（INI 指定，强制 PCX）；
+        //       2. SHP（SidebarImage，默认 cameo）；
+        //       3. SidebarImageFile PCX（SHP 为空时回退）。
         protected override void OnDraw()
         {
             base.OnDraw();
@@ -79,28 +90,64 @@ namespace Extension.UI
                 RectangleStruct bound = pSurface.Ref.GetRect();
                 Point2D pos = new Point2D(rect.X, rect.Y);
 
-                // 获取 cameo SHP：SuperClass.Type -> SuperWeaponTypeClass.SidebarImage
                 Pointer<SuperWeaponTypeClass> pType = OwnerObject.Ref.Type;
                 if (pType.IsNull)
                 {
                     return;
                 }
-                Pointer<SHPStruct> pCameo = pType.Ref.SidebarImage;
-                if (pCameo.IsNull)
+
+                bool isCharged = OwnerObject.Ref.IsCharged;
+                bool drewIcon = false;
+
+                // ---------- 1. 优先：SidebarPCX 强制 PCX ----------
+                if (!string.IsNullOrEmpty(SidebarPCX))
+                {
+                    drewIcon = DrawPCX(SidebarPCX, pSurface, rect);
+                    if (drewIcon && isCharged) _flashFrame++;
+                }
+
+                // ---------- 2. 其次：SHP ----------
+                if (!drewIcon)
+                {
+                    Pointer<SHPStruct> pCameo = pType.Ref.SidebarImage;
+                    if (!pCameo.IsNull)
+                    {
+                        pSurface.Ref.DrawSHP(FileSystem.CAMEO_PAL, pCameo, 0, pos, bound.GetThisPointer(), BlitterFlags.None);
+                        drewIcon = true;
+
+                        if (isCharged)
+                        {
+                            _flashFrame++;
+                            if (_flashFrame % 16 > 8)
+                            {
+                                pSurface.Ref.DrawSHP(
+                                    FileSystem.CAMEO_PAL, pCameo, 0, pos, bound.GetThisPointer(),
+                                    BlitterFlags.None, 2000, 0);
+                            }
+                        }
+                    }
+                }
+
+                // ---------- 3. 回退：SidebarImageFile 指示的 PCX ----------
+                if (!drewIcon)
+                {
+                    string pcxFile = pType.Ref.SidebarImageFile;
+                    if (!string.IsNullOrEmpty(pcxFile))
+                    {
+                        drewIcon = DrawPCX(pcxFile, pSurface, rect);
+                        if (drewIcon && isCharged) _flashFrame++;
+                    }
+                }
+
+                if (!drewIcon)
                 {
                     return;
                 }
 
-                bool isCharged = OwnerObject.Ref.IsCharged;
-
-                // 绘制 cameo（调色板用 CAMEO_PAL，frame=0，BlitterFlags.None 不居中）
-                pSurface.Ref.DrawSHP(FileSystem.CAMEO_PAL, pCameo, 0, pos, bound.GetThisPointer(), BlitterFlags.None);
-
-                // 充能进度遮罩：未充满且需要显示进度时，在底部绘制深色遮罩
+                // 充能进度遮罩
                 if (!isCharged && OwnerObject.Ref.ShouldDrawProgress())
                 {
                     double progress = GetChargeProgress();
-                    // 遮罩从底部向上，高度 = (1 - progress) * Height
                     int maskHeight = (int)((1.0 - progress) * rect.Height);
                     if (maskHeight > 0)
                     {
@@ -109,26 +156,13 @@ namespace Extension.UI
                             rect.Y + rect.Height - maskHeight,
                             rect.Width,
                             maskHeight);
-                        // FillRect 不支持 BlitterFlags 半透明，用深色实心遮罩近似
                         pSurface.Ref.FillRect(maskRect, Drawing.RGB2DWORD(ChargeMaskColor));
                     }
                 }
 
-                // 就绪闪烁
+                // 就绪边框
                 if (isCharged)
                 {
-                    _flashFrame++;
-
-                    // 每 16 帧一个周期，后半周期（>8）增亮绘制
-                    if (_flashFrame % 16 > 8)
-                    {
-                        // bright=2000 表示 2 倍亮度，实现闪烁高亮
-                        pSurface.Ref.DrawSHP(
-                            FileSystem.CAMEO_PAL, pCameo, 0, pos, bound.GetThisPointer(),
-                            BlitterFlags.None, 2000, 0);
-                    }
-
-                    // 绘制就绪边框
                     pSurface.Ref.DrawRect(rect, Drawing.RGB2DWORD(ReadyBorderColor));
                 }
             }
@@ -136,6 +170,22 @@ namespace Extension.UI
             {
                 Logger.PrintException(ex);
             }
+        }
+
+        //
+        // 摘要:
+        //     用 PCX 管理器加载并绘制指定文件到目标矩形。成功返回 true。
+        private bool DrawPCX(string pcxFile, Pointer<Surface> pSurface, RectangleStruct rect)
+        {
+            PCX.Instance.LoadFile(pcxFile);
+            Pointer<BSurface> pPCX = PCX.Instance.GetSurface(pcxFile, Pointer<BytePalette>.Zero);
+            if (pPCX.IsNull)
+            {
+                return false;
+            }
+            RectangleStruct blitRect = new RectangleStruct(rect.X, rect.Y, rect.Width, rect.Height);
+            PCX.Instance.BlitToSurface(blitRect.GetThisPointer(), pSurface.Convert<DSurface>(), pPCX);
+            return true;
         }
 
         //
@@ -234,27 +284,21 @@ namespace Extension.UI
             {
                 List<string> lines = new List<string>();
 
-                // 第1行：超武名称（用 INI ID）
+                // 第1行：超武名称（从 CSF 解析的 Base.UIName，空则回退到 INI ID）
                 if (!OwnerObject.IsNull && !OwnerObject.Ref.Type.IsNull)
                 {
-                    lines.Add(OwnerObject.Ref.Type.Ref.Base.ID.ToString());
-                }
-
-                // 第2行：充能状态
-                if (!OwnerObject.IsNull)
-                {
-                    if (OwnerObject.Ref.IsCharged)
+                    string uiName = OwnerObject.Ref.Type.Ref.Base.UIName;
+                    if (!string.IsNullOrEmpty(uiName))
                     {
-                        lines.Add("Ready");
+                        lines.Add(uiName);
                     }
                     else
                     {
-                        int timeLeft = OwnerObject.Ref.RechargeTimer.GetTimeLeft();
-                        lines.Add("Charging: " + timeLeft + " frames");
+                        lines.Add(OwnerObject.Ref.Type.Ref.Base.ID.ToString());
                     }
                 }
 
-                // 第3行+：INI Description
+                // 第2行+：描述（由 Panel 从 INI UIDescription= 标签查 CSF desc 条目填入，或 Description= 覆盖）
                 if (!string.IsNullOrEmpty(Description))
                 {
                     lines.Add(Description);
