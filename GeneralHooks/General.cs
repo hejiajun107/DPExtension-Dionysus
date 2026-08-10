@@ -1,4 +1,4 @@
-﻿using DynamicPatcher;
+using DynamicPatcher;
 using PatcherYRpp.Utilities;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Extension.Components;
 using Extension.EventSystems;
-using Extension.CW;
+using Extension.UI;
 using PatcherYRpp;
 
 namespace GeneralHooks
@@ -41,8 +41,14 @@ namespace GeneralHooks
         public static unsafe UInt32 Scenario_Start1(REGISTERS* R)
         {
             EventSystem.General.Broadcast(EventSystem.General.ScenarioStartEvent, EventArgs.Empty);
-            var uiManager = new UIManager();
-            uiManager.Init();
+            try
+            {
+                UIRoot.Instance.Init();
+            }
+            catch (Exception e)
+            {
+                Logger.PrintException(e);
+            }
             return 0;
         }
 
@@ -80,7 +86,14 @@ namespace GeneralHooks
         public static unsafe UInt32 Scenario_ClearClasses(REGISTERS* R)
         {
             EventSystem.General.Broadcast(EventSystem.General.ScenarioClearClassesEvent, EventArgs.Empty);
-
+            try
+            {
+                UIRoot.Instance.Cleanup();
+            }
+            catch (Exception e)
+            {
+                Logger.PrintException(e);
+            }
             return 0;
         }
 

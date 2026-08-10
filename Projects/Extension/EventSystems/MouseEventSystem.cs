@@ -1,4 +1,5 @@
-﻿using System;
+using PatcherYRpp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace Extension.EventSystems
 {
+    public enum MouseButtons
+    {
+        None = 0,
+        Left = 1,
+        Right = 2,
+    }
+
     public class MouseMoveEvent : EventBase
     {
         public override string Name => "MouseMoveEvent";
@@ -25,9 +33,13 @@ namespace Extension.EventSystems
 
     public class MouseEventArgs : EventArgs
     {
-        public MouseEventArgs()
+        public Point2D Position;
+        public MouseButtons Button;
+
+        public MouseEventArgs(Point2D position, MouseButtons button)
         {
-            
+            Position = position;
+            Button = button;
         }
     }
 

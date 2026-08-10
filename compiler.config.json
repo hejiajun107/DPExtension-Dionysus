@@ -13,6 +13,7 @@
     "Extension.dll",
     "Extension.Ext.dll",
     "Extension.Script.dll",
+    "Extension.UI.dll",
     "Extension.FX.dll",
     "Extension.Lua.dll",
     "ScriptUniversal.dll",

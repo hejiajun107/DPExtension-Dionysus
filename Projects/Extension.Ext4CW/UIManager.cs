@@ -1,4 +1,4 @@
-﻿using DynamicPatcher;
+using DynamicPatcher;
 using Extension.EventSystems;
 using PatcherYRpp.FileFormats;
 using PatcherYRpp;
@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace Extension.CW
 {
     [Serializable]
+    [Obsolete("UI 渲染逻辑已迁移至 Extension.UI.UIRoot，此类保留仅为兼容，不再使用。")]
     public class UIManager
     {
         public void Init()
