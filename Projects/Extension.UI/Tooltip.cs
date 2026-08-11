@@ -124,39 +124,33 @@ namespace Extension.UI
                 int tooltipWidth = maxLineWidth + Padding * 2;
                 int tooltipHeight = Lines.Count * lineStep + Padding * 2;
 
-                // ---- 2.1 计算右侧安全边界（Tooltip 右端对齐 Sidebar 左侧）
-                // 优先用 Target.Parent.ClientRectangle.Right（SuperWeaponPanel 右缘紧贴 Sidebar 左缘，最准确），
-                // 无 Parent 或值异常时才用 Screen.Right - DefaultSidebarWidth 兜底。
+                // ---- 2.1 计算右侧安全边界（Tooltip 右端对齐游戏原生 Sidebar 左侧）
+                // Surface.GetRect() 返回本地坐标（X 通常为 0），不是屏幕坐标。
+                // 正确做法：Sidebar 在屏幕右侧 → Sidebar.Left = Screen.Right - Sidebar.GetWidth()
                 int screenRight = screen.X + screen.Width;
-                int safeRightLimit = screenRight - DefaultSidebarWidth;
-                if (Target.Parent != null)
+                int safeRightLimit = screenRight - DefaultSidebarWidth; // 兜底
+                try
                 {
-                    int parentRight = Target.Parent.ClientRectangle.X + Target.Parent.ClientRectangle.Width;
-                    if (parentRight > 200 && parentRight < screenRight - 20)
+                    Pointer<Surface> pSidebar = Surface.Sidebar;
+                    if (!pSidebar.IsNull)
                     {
-                        // 父容器右缘只要合理就直接用
-                        safeRightLimit = parentRight;
+                        int sidebarW = pSidebar.Ref.GetWidth();
+                        if (sidebarW > 80 && sidebarW < screen.Width)
+                        {
+                            safeRightLimit = screenRight - sidebarW;
+                        }
                     }
                 }
-                // 最后夹紧
-                if (safeRightLimit > screenRight - 20) safeRightLimit = screenRight - DefaultSidebarWidth;
+                catch { /* 兜底值已设好 */ }
+                // 夹紧：不能太靠左（< 200）也不能跑到屏幕右边外
                 if (safeRightLimit < 200) safeRightLimit = 200;
+                if (safeRightLimit > screenRight - 20) safeRightLimit = screenRight - DefaultSidebarWidth;
 
-                // ---- 2.2 定位：默认放在按钮正上方，Tooltip 右端顶到 Sidebar 左侧（safeRightLimit） ----
-                // 先按左对齐按钮定个初值
-                int x = targetRect.X;
+                // ---- 2.2 定位：Tooltip 右端对齐 Sidebar 左侧（safeRightLimit），放在按钮正上方 ----
+                int x = safeRightLimit - tooltipWidth + +200;
                 int y = targetRect.Y - tooltipHeight - Gap;
 
-                // 右端必须 ≤ safeRightLimit（否则往左挪，保证右端对齐 Sidebar 左侧）
-                if (x + tooltipWidth > safeRightLimit)
-                {
-                    x = safeRightLimit - tooltipWidth;
-                }
-                // 水平：右端不越屏；左边界屏内
-                if (x + tooltipWidth > screen.X + screen.Width)
-                {
-                    x = screen.X + screen.Width - tooltipWidth;
-                }
+                // 左边界屏内（如果 tooltip 太宽导致 x < 0，则贴左边）
                 if (x < screen.X) x = screen.X;
 
                 // 上方不够高 → 回退到按钮下方；最后兜底夹紧到屏幕内

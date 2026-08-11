@@ -73,7 +73,7 @@ namespace Extension.UI
         {
             base.OnDraw();
 
-            if (OwnerObject.IsNull)
+            if (OwnerObject.IsNull || !OwnerObject.Ref.Granted)
             {
                 return;
             }
@@ -222,7 +222,7 @@ namespace Extension.UI
         {
             base.OnClick();
 
-            if (OwnerObject.IsNull)
+            if (OwnerObject.IsNull || !OwnerObject.Ref.Granted)
             {
                 return;
             }
@@ -285,7 +285,7 @@ namespace Extension.UI
                 List<string> lines = new List<string>();
 
                 // 第1行：超武名称（从 CSF 解析的 Base.UIName，空则回退到 INI ID）
-                if (!OwnerObject.IsNull && !OwnerObject.Ref.Type.IsNull)
+                if (!OwnerObject.IsNull && OwnerObject.Ref.Granted && !OwnerObject.Ref.Type.IsNull)
                 {
                     string uiName = OwnerObject.Ref.Type.Ref.Base.UIName;
                     if (!string.IsNullOrEmpty(uiName))

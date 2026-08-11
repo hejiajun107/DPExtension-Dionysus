@@ -320,11 +320,11 @@ namespace Extension.UI
                 }
 
                 Pointer<SuperClass> pSuper = pPlayer.Ref.FindSuperWeapon(pType);
-                if (pSuper.IsNull)
+                if (pSuper.IsNull || !pSuper.Ref.Granted)
                 {
                     if (!_loggedNotOwned.Contains(id))
                     {
-                        Logger.Log("[SWPanel] 玩家没有超武 '{0}'（类型已找到，但 HouseClass.Player 无此超武实例）", id);
+                        Logger.Log("[SWPanel] 玩家没有超武 '{0}'（未获得或 HouseClass.Player 无此超武实例）", id);
                         _loggedNotOwned.Add(id);
                     }
                     continue;
