@@ -56,7 +56,6 @@ namespace Extension.UI
         // 诊断日志去重标志
         private bool _hasLoggedPlayerNull;
         private HashSet<string> _loggedNotFound = new HashSet<string>();
-        private HashSet<string> _loggedNotOwned = new HashSet<string>();
 
         public SuperWeaponPanel()
         {
@@ -322,17 +321,11 @@ namespace Extension.UI
                 Pointer<SuperClass> pSuper = pPlayer.Ref.FindSuperWeapon(pType);
                 if (pSuper.IsNull || !pSuper.Ref.Granted)
                 {
-                    if (!_loggedNotOwned.Contains(id))
-                    {
-                        Logger.Log("[SWPanel] 玩家没有超武 '{0}'（未获得或 HouseClass.Player 无此超武实例）", id);
-                        _loggedNotOwned.Add(id);
-                    }
                     continue;
                 }
 
-                // 找到了，从"未找到/未拥有"日志集合中移除（以便下次再丢失时重新记录）
+                // 找到了，从"未找到"日志集合中移除（以便下次再丢失时重新记录）
                 _loggedNotFound.Remove(id);
-                _loggedNotOwned.Remove(id);
                 currentSupers.Add(pSuper);
                 string desc = descriptions.TryGetValue(id, out string d) ? d : string.Empty;
                 currentDescs.Add(desc);

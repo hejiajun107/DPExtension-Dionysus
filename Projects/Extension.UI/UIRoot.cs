@@ -33,6 +33,15 @@ namespace Extension.UI
 
         //
         // 摘要:
+        //     是否需要把鼠标切成手/指针形。OnMouseMove 置状态，OnGScreenRender 每帧写 WWMouseClass.PointerFrame，
+        //     这样不会被游戏 Sidebar / Tactical 每帧的指针设置覆盖。
+        private bool _uiCursorActive;
+
+        // 诊断用：每 ~60 帧打一次 PointerFrame 候选地址当前值
+        private int _cursorDiagCounter;
+
+        //
+        // 摘要:
         //     MouseDown 时命中的控件。MouseUp 时若命中同一控件则触发 OnClick。
         private Control _pressedControl;
 
@@ -136,6 +145,33 @@ namespace Extension.UI
                 Draw();
                 // Tooltip 在所有控件绘制之后绘制，保证位于最上层
                 _tooltip?.Draw();
+
+                // ---- 每帧三层保险写入手型 ----
+                // MouseEvent Hook (UpdateCursor 内) 已写一次；游戏后续 SetCursor 可能覆盖，
+                // LateRender 是当前渲染循环最晚的阶段，这里再写一次确保最终绘制生效。
+                // 三层写入: 1)MouseClass.MouseCursorIndex(0x555C) 2)MouseCursorCurrentFrame(0x5564) 3)WWMouseClass.ImageFrameIndex(+0x08)
+                try
+                {
+                    if (_uiCursorActive)
+                    {
+                        WWMouseClass.SetPointerFrameSelectHand();
+                    }
+
+                    // 诊断日志（每 ~60 帧）
+                    _cursorDiagCounter++;
+                    if (_cursorDiagCounter >= 60)
+                    {
+                        _cursorDiagCounter = 0;
+                        long pInst = WWMouseClass.ReadInstancePointerRaw;
+                        int imgFrame = WWMouseClass.ReadImageFrameIndex;
+                        int mcIdx = SidebarClass.ReadMouseCursorIndex;
+                        int mcFrame = SidebarClass.ReadMouseCursorCurrentFrame;
+                        Logger.Log(
+                            "[Cursor] uiActive={0}  pWWMouseClass=0x{1:X}  ImageFrameIndex={2}  MC_Index(0x555C)={3}  MC_Frame(0x5564)={4}",
+                            _uiCursorActive, pInst, imgFrame, mcIdx, mcFrame);
+                    }
+                }
+                catch { /* 忽略 */ }
             }
         }
 
@@ -188,6 +224,8 @@ namespace Extension.UI
                         _tooltip.IsVisible = false;
                         _hoveredControl = hit;
                         _hoverTriggered = false;
+                        // 更新指针形状状态：悬停在任何命中控件上时显示手型
+                        _uiCursorActive = (hit != null);
                         if (hit != null)
                         {
                             hit.IsHovered = true;

@@ -22,6 +22,8 @@ namespace DP4CW.DPExtension_Dionysus.GeneralHooks
                 EventSystem.MouseEventSystem.Broadcast(EventSystem.MouseEventSystem.MouseMoveEvent, args);
                 if (UIRoot.Instance.IsMouseEventConsumed)
                 {
+                    // 三层保险写入手型：MouseClass(Index+Frame) + WWMouseClass.ImageFrameIndex
+                    WWMouseClass.SetPointerFrameSelectHand();
                     return 0x69301A;
                 }
             }
@@ -38,11 +40,11 @@ namespace DP4CW.DPExtension_Dionysus.GeneralHooks
             try
             {
                 Point2D position = WWMouseClass.Instance.GetCoords();
-                // Down Hook 对应 MouseClass_UpdateCursor_LeftPress，仅为左键触发
                 var args = new MouseEventArgs(position, MouseButtons.Left);
                 EventSystem.MouseEventSystem.Broadcast(EventSystem.MouseEventSystem.MouseDownEvent, args);
                 if (UIRoot.Instance.IsMouseEventConsumed)
                 {
+                    WWMouseClass.SetPointerFrameSelectHand();
                     return 0x6931B4;
                 }
             }
@@ -59,11 +61,11 @@ namespace DP4CW.DPExtension_Dionysus.GeneralHooks
             try
             {
                 Point2D position = WWMouseClass.Instance.GetCoords();
-                // Up Hook 对应 MouseClass_UpdateCursor_LeftRelease，仅为左键触发
                 var args = new MouseEventArgs(position, MouseButtons.Left);
                 EventSystem.MouseEventSystem.Broadcast(EventSystem.MouseEventSystem.MouseUpEvent, args);
                 if (UIRoot.Instance.IsMouseEventConsumed)
                 {
+                    WWMouseClass.SetPointerFrameSelectHand();
                     return 0x693276;
                 }
             }

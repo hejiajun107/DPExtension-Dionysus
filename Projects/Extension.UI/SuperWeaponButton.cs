@@ -73,7 +73,7 @@ namespace Extension.UI
         {
             base.OnDraw();
 
-            if (OwnerObject.IsNull || !OwnerObject.Ref.Granted)
+            if (OwnerObject.IsNull)
             {
                 return;
             }
@@ -222,7 +222,7 @@ namespace Extension.UI
         {
             base.OnClick();
 
-            if (OwnerObject.IsNull || !OwnerObject.Ref.Granted)
+            if (OwnerObject.IsNull)
             {
                 return;
             }
