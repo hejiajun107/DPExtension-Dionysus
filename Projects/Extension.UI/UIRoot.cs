@@ -37,12 +37,9 @@ namespace Extension.UI
         //     这样不会被游戏 Sidebar / Tactical 每帧的指针设置覆盖。
         private bool _uiCursorActive;
 
-        // 诊断用：每 ~60 帧打一次 PointerFrame 候选地址当前值
-        private int _cursorDiagCounter;
-
         //
         // 摘要:
-        //     MouseDown 时命中的控件。MouseUp 时若命中同一控件则触发 OnClick。
+        //     MouseDown 时命中的控件。MouseUp 时命中同一控件则触发 OnClick。
         private Control _pressedControl;
 
         //
@@ -155,17 +152,6 @@ namespace Extension.UI
                     if (_uiCursorActive)
                     {
                         SidebarClass.UpdateCursor(0, false);
-                    }
-
-                    // 诊断日志（每 ~60 帧）
-                    _cursorDiagCounter++;
-                    if (_cursorDiagCounter >= 60)
-                    {
-                        _cursorDiagCounter = 0;
-                        int mcIdx = SidebarClass.ReadMouseCursorIndex;
-                        int mcFrame = SidebarClass.ReadMouseCursorCurrentFrame;
-                        Logger.Log("[Cursor] uiActive={0}  MC_Index(0x555C)={1}  MC_Frame(0x5564)={2}",
-                            _uiCursorActive, mcIdx, mcFrame);
                     }
                 }
                 catch { /* 忽略 */ }

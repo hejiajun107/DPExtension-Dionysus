@@ -53,10 +53,6 @@ namespace Extension.UI
         //     INI 配置是否已加载（懒加载标志）。
         private bool _configLoaded;
 
-        // 诊断日志去重标志
-        private bool _hasLoggedPlayerNull;
-        private HashSet<string> _loggedNotFound = new HashSet<string>();
-
         public SuperWeaponPanel()
         {
             Orientation = PanelOrientation.Horizontal;
@@ -96,8 +92,6 @@ namespace Extension.UI
                         }
                     }
                 }
-                Logger.Log("[SWPanel] 解析到 {0} 个超武 ID: {1}", swIds.Count, string.Join(", ", swIds));
-
                 // 读取 Interval（按钮间距，默认 2）
                 string intervalStr = ReadIniString(pINI, "SWPanel", "Interval");
                 int interval = 2;
@@ -110,8 +104,14 @@ namespace Extension.UI
                 // 读取每个超武的 SidebarPCX / Description
                 foreach (string id in swIds)
                 {
-                    // 1) SidebarPCX= 来自超武节
-                    sidebarPCXs[id] = ReadIniString(pINI, id, "SidebarPCX");
+                    // 1) SidebarPCX= 来自超武节，替换 %Side% 为当前阵营序号
+                    string pcxName = ReadIniString(pINI, id, "SidebarPCX");
+                    if (!string.IsNullOrEmpty(pcxName))
+                    {
+                        int sideIndex = HouseClass.Player.Ref.Type.Ref.SideIndex;
+                        pcxName = pcxName.Replace("%Side%", sideIndex.ToString());
+                    }
+                    sidebarPCXs[id] = pcxName;
 
                     // 2) Description：
                     //    a. 先读 [SWID] UIDescription= → 视为 CSF 标签，调用 StringTable.LoadString 查真正 desc 文本
@@ -292,14 +292,8 @@ namespace Extension.UI
             Pointer<HouseClass> pPlayer = HouseClass.Player;
             if (pPlayer.IsNull)
             {
-                if (!_hasLoggedPlayerNull)
-                {
-                    Logger.Log("[SWPanel] HouseClass.Player 为空，跳过（可能场景尚未完全初始化）");
-                    _hasLoggedPlayerNull = true;
-                }
                 return;
             }
-            _hasLoggedPlayerNull = false;
 
             List<Pointer<SuperClass>> currentSupers = new List<Pointer<SuperClass>>();
             List<string> currentDescs = new List<string>();
@@ -310,11 +304,6 @@ namespace Extension.UI
                 Pointer<SuperWeaponTypeClass> pType = SuperWeaponTypeClass.ABSTRACTTYPE_ARRAY.Find(id);
                 if (pType.IsNull)
                 {
-                    if (!_loggedNotFound.Contains(id))
-                    {
-                        Logger.Log("[SWPanel] 超武类型 '{0}' 未在 [SuperWeaponTypes] 中找到", id);
-                        _loggedNotFound.Add(id);
-                    }
                     continue;
                 }
 
@@ -324,8 +313,6 @@ namespace Extension.UI
                     continue;
                 }
 
-                // 找到了，从"未找到"日志集合中移除（以便下次再丢失时重新记录）
-                _loggedNotFound.Remove(id);
                 currentSupers.Add(pSuper);
                 string desc = descriptions.TryGetValue(id, out string d) ? d : string.Empty;
                 currentDescs.Add(desc);
@@ -349,7 +336,6 @@ namespace Extension.UI
 
             if (changed)
             {
-                Logger.Log("[SWPanel] 超武按钮列表变化: {0} -> {1}，重建按钮", _lastSupers.Count, currentSupers.Count);
                 _lastSupers = currentSupers;
                 ClearChildren();
                 for (int i = 0; i < currentSupers.Count; i++)
