@@ -12,6 +12,11 @@ namespace DP4CW.DPExtension_Dionysus.GeneralHooks
 {
     public static class MouseEvent
     {
+        // MouseCursorType.Default = 0（箭头指针）
+        // 参考 Phobos SWButtonClass::OnMouseEnter:
+        //   MouseClass::Instance.UpdateCursor(MouseCursorType::Default, false);
+        private const int MOUSE_CURSOR_DEFAULT = 0;
+
         [Hook(HookType.AresHook, Address = 0x69300B, Size = 0x6)]
         public static unsafe UInt32 Mouse_Move(REGISTERS* R)
         {
@@ -22,8 +27,7 @@ namespace DP4CW.DPExtension_Dionysus.GeneralHooks
                 EventSystem.MouseEventSystem.Broadcast(EventSystem.MouseEventSystem.MouseMoveEvent, args);
                 if (UIRoot.Instance.IsMouseEventConsumed)
                 {
-                    // 三层保险写入手型：MouseClass(Index+Frame) + WWMouseClass.ImageFrameIndex
-                    WWMouseClass.SetPointerFrameSelectHand();
+                    SidebarClass.UpdateCursor(MOUSE_CURSOR_DEFAULT, false);
                     return 0x69301A;
                 }
             }
@@ -44,7 +48,7 @@ namespace DP4CW.DPExtension_Dionysus.GeneralHooks
                 EventSystem.MouseEventSystem.Broadcast(EventSystem.MouseEventSystem.MouseDownEvent, args);
                 if (UIRoot.Instance.IsMouseEventConsumed)
                 {
-                    WWMouseClass.SetPointerFrameSelectHand();
+                    SidebarClass.UpdateCursor(MOUSE_CURSOR_DEFAULT, false);
                     return 0x6931B4;
                 }
             }
@@ -65,7 +69,7 @@ namespace DP4CW.DPExtension_Dionysus.GeneralHooks
                 EventSystem.MouseEventSystem.Broadcast(EventSystem.MouseEventSystem.MouseUpEvent, args);
                 if (UIRoot.Instance.IsMouseEventConsumed)
                 {
-                    WWMouseClass.SetPointerFrameSelectHand();
+                    SidebarClass.UpdateCursor(MOUSE_CURSOR_DEFAULT, false);
                     return 0x693276;
                 }
             }

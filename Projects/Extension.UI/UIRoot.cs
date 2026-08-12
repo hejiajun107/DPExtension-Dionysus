@@ -146,15 +146,15 @@ namespace Extension.UI
                 // Tooltip 在所有控件绘制之后绘制，保证位于最上层
                 _tooltip?.Draw();
 
-                // ---- 每帧三层保险写入手型 ----
-                // MouseEvent Hook (UpdateCursor 内) 已写一次；游戏后续 SetCursor 可能覆盖，
-                // LateRender 是当前渲染循环最晚的阶段，这里再写一次确保最终绘制生效。
-                // 三层写入: 1)MouseClass.MouseCursorIndex(0x555C) 2)MouseCursorCurrentFrame(0x5564) 3)WWMouseClass.ImageFrameIndex(+0x08)
+                // ---- 每帧调用 UpdateCursor 确保光标为 Default ----
+                // MouseEvent Hook 已调用一次，但游戏后续逻辑可能覆盖，
+                // LateRender 是渲染循环最晚阶段，这里再调用一次确保最终绘制生效。
+                // 参考 Phobos: MouseClass::Instance.UpdateCursor(MouseCursorType::Default, false)
                 try
                 {
                     if (_uiCursorActive)
                     {
-                        WWMouseClass.SetPointerFrameSelectHand();
+                        SidebarClass.UpdateCursor(0, false);
                     }
 
                     // 诊断日志（每 ~60 帧）
@@ -162,13 +162,10 @@ namespace Extension.UI
                     if (_cursorDiagCounter >= 60)
                     {
                         _cursorDiagCounter = 0;
-                        long pInst = WWMouseClass.ReadInstancePointerRaw;
-                        int imgFrame = WWMouseClass.ReadImageFrameIndex;
                         int mcIdx = SidebarClass.ReadMouseCursorIndex;
                         int mcFrame = SidebarClass.ReadMouseCursorCurrentFrame;
-                        Logger.Log(
-                            "[Cursor] uiActive={0}  pWWMouseClass=0x{1:X}  ImageFrameIndex={2}  MC_Index(0x555C)={3}  MC_Frame(0x5564)={4}",
-                            _uiCursorActive, pInst, imgFrame, mcIdx, mcFrame);
+                        Logger.Log("[Cursor] uiActive={0}  MC_Index(0x555C)={1}  MC_Frame(0x5564)={2}",
+                            _uiCursorActive, mcIdx, mcFrame);
                     }
                 }
                 catch { /* 忽略 */ }
