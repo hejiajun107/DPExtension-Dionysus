@@ -1,4 +1,4 @@
-﻿using Extension.CWUtilities;
+using Extension.CWUtilities;
 using Extension.Ext;
 using Extension.INI;
 using Extension.Utilities;
@@ -215,17 +215,20 @@ namespace Extension.CW
                                         }
 
 
-                                        //if (x.Ref.Base.IsDisguised())
-                                        //{
-                                        //    var fakeHouse = x.Ref.Base.GetDisguiseHouse(true);
-                                        //    if (!fakeHouse.IsNull)
-                                        //    {
-                                        //        if (fakeHouse.Ref.IsAlliedWith(house))
-                                        //        {
-                                        //            return false;
-                                        //        }
-                                        //    }
-                                        //}
+                                        // 间谍伪装判断：伪装成己方/盟友时跳过，避免攻击伪装单位
+                                        // 直接读 TechnoClass 字段（+0x518/+0x51C），不调用视角相关虚函数，保证联机同步
+                                        if (!x.Ref.Disguise.IsNull)
+                                        {
+                                            var fakeHouse = x.Ref.DisguisedAsHouse;
+                                            if (!fakeHouse.IsNull)
+                                            {
+                                                if (fakeHouse.Ref.ArrayIndex == house.Ref.ArrayIndex
+                                                    || house.Ref.IsAlliedWith(fakeHouse.Ref.ArrayIndex))
+                                                {
+                                                    return false;
+                                                }
+                                            }
+                                        }
 
                                         var bounsRange = 0;
                                         if (x.Ref.Base.GetHeight() > 10)

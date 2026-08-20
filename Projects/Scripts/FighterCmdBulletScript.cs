@@ -1,4 +1,4 @@
-﻿using Extension.CW;
+using Extension.CW;
 using Extension.Ext;
 using Extension.Ext4CW;
 using Extension.Script;
@@ -95,18 +95,20 @@ namespace DpLib.Scripts
                             return false;
                         }
 
-                        //if (x.Ref.Base.IsDisguised())
-                        //{
-                        //    return false;
-                        //    //var fakeHouse = x.Ref.Base.GetDisguiseHouse(true);
-                        //    //if (!fakeHouse.IsNull)
-                        //    //{
-                        //    //    if (fakeHouse.Ref.IsAlliedWith(house))
-                        //    //    {
-                        //    //        return false;
-                        //    //    }
-                        //    //}
-                        //}
+                        // 间谍伪装判断：伪装成己方/盟友时跳过，避免攻击伪装单位
+                        // 直接读 TechnoClass 字段（+0x518/+0x51C），不调用视角相关虚函数，保证联机同步
+                        if (!x.Ref.Disguise.IsNull)
+                        {
+                            var fakeHouse = x.Ref.DisguisedAsHouse;
+                            if (!fakeHouse.IsNull)
+                            {
+                                if (fakeHouse.Ref.ArrayIndex == house.Ref.ArrayIndex
+                                    || house.Ref.IsAlliedWith(fakeHouse.Ref.ArrayIndex))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
 
                         if ((coords - new CoordStruct(0, 0, height)).DistanceFrom(location) <= (1536 + bounsRange) && type != AbstractType.Building)
                         {
