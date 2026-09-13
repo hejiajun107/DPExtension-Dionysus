@@ -124,7 +124,7 @@ namespace Extension.UI
                 int tooltipWidth = maxLineWidth + Padding * 2;
                 int tooltipHeight = Lines.Count * lineStep + Padding * 2;
 
-                // ---- 2.1 计算右侧安全边界（Tooltip 右端对齐游戏原生 Sidebar 左侧）
+                // ---- 2.1 计算右侧安全边界（Tooltip 右端不超过游戏原生 Sidebar 左侧）
                 // Surface.GetRect() 返回本地坐标（X 通常为 0），不是屏幕坐标。
                 // 正确做法：Sidebar 在屏幕右侧 → Sidebar.Left = Screen.Right - Sidebar.GetWidth()
                 int screenRight = screen.X + screen.Width;
@@ -146,10 +146,15 @@ namespace Extension.UI
                 if (safeRightLimit < 200) safeRightLimit = 200;
                 if (safeRightLimit > screenRight - 20) safeRightLimit = screenRight - DefaultSidebarWidth;
 
-                // ---- 2.2 定位：Tooltip 右端对齐 Sidebar 左侧（safeRightLimit），放在按钮正上方 ----
-                int x = safeRightLimit - tooltipWidth + +200;
+                // ---- 2.2 定位：Tooltip 左端对齐按钮左端，右端不超过 Sidebar 左侧 ----
+                int x = targetRect.X;
                 int y = targetRect.Y - tooltipHeight - Gap;
 
+                // 右端超出 Sidebar 左侧 → 向左平移，使右端刚好对齐 Sidebar 左侧
+                if (x + tooltipWidth > safeRightLimit)
+                {
+                    x = safeRightLimit - tooltipWidth;
+                }
                 // 左边界屏内（如果 tooltip 太宽导致 x < 0，则贴左边）
                 if (x < screen.X) x = screen.X;
 

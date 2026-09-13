@@ -12,7 +12,7 @@ namespace Extension.UI
     // 摘要:
     //     超武面板容器。从 INI [SWPanel] 读取配置的超武 ID 列表，
     //     从当前玩家（HouseClass.Player）的超武列表中匹配，创建 SuperWeaponButton
-    //     并纵向排列在 sidebar 左侧（ViewBound 右边缘）、屏幕底部。
+    //     并横向排列在屏幕左侧（ViewBound 左边缘）、底部。
     public class SuperWeaponPanel : Panel
     {
         //
@@ -221,8 +221,8 @@ namespace Extension.UI
         //
         // 摘要:
         //     重写 Arrange：忽略父级 finalRect，根据 Surface.ViewBound 计算绝对位置——
-        //     横向排列在 sidebar 左侧、屏幕底部：
-        //       X = ViewBound 右边缘 - 面板总宽度
+        //     横向排列在屏幕左侧、底部：
+        //       X = ViewBound 左边缘
         //       Y = ViewBound 底部 - 按钮高度
         //     面板宽度 = 按钮数 * ButtonWidth + (按钮数 - 1) * Interval。
         //     设置 ClientRectangle 后由 Panel.ArrangeChildren 横向排列按钮。
@@ -233,7 +233,7 @@ namespace Extension.UI
             int count = _children.Count;
             int width = count > 0 ? count * ButtonWidth + (count - 1) * Interval : 0;
 
-            int x = view.X + view.Width - width;
+            int x = view.X;
             int y = view.Y + view.Height - ButtonHeight;
 
             RectangleStruct absolute = new RectangleStruct(x, y, width, ButtonHeight);
