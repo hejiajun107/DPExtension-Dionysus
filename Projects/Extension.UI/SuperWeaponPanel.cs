@@ -38,6 +38,9 @@ namespace Extension.UI
         private const int ButtonWidth = 60;
         private const int ButtonHeight = 48;
 
+        // 贴底显示（与单位过滤面板一致，底部对齐 ViewBound 底边）
+        private const int BottomMargin = 0;
+
         //
         // 摘要:
         //     上一次匹配到的超武指针列表，用于检测玩家超武增减。
@@ -221,9 +224,9 @@ namespace Extension.UI
         //
         // 摘要:
         //     重写 Arrange：忽略父级 finalRect，根据 Surface.ViewBound 计算绝对位置——
-        //     横向排列在屏幕左侧、底部：
-        //       X = ViewBound 左边缘
-        //       Y = ViewBound 底部 - 按钮高度
+        //     横向排列在 3×3 单位过滤面板右侧、贴底：
+        //       X = ViewBound 左边缘 + 过滤面板总宽(200) + 间距(4)
+        //       Y = ViewBound 底部 - 按钮高度 - BottomMargin
         //     面板宽度 = 按钮数 * ButtonWidth + (按钮数 - 1) * Interval。
         //     设置 ClientRectangle 后由 Panel.ArrangeChildren 横向排列按钮。
         public override RectangleStruct Arrange(RectangleStruct finalRect)
@@ -233,8 +236,9 @@ namespace Extension.UI
             int count = _children.Count;
             int width = count > 0 ? count * ButtonWidth + (count - 1) * Interval : 0;
 
-            int x = view.X;
-            int y = view.Y + view.Height - ButtonHeight;
+            // 右移给 3×3 面板腾位：面板总宽(200) + 间距(4) = 204
+            int x = view.X + UnitFilterPanel.TotalWidth + UnitFilterPanel.SiblingGap;
+            int y = view.Y + view.Height - ButtonHeight - BottomMargin;
 
             RectangleStruct absolute = new RectangleStruct(x, y, width, ButtonHeight);
             ClientRectangle = absolute;

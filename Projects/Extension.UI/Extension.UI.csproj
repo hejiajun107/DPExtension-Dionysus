@@ -56,6 +56,9 @@
     <Compile Include="TacticalPanel.cs" />
     <Compile Include="Tooltip.cs" />
     <Compile Include="UIRoot.cs" />
+    <Compile Include="UnitFilterButton.cs" />
+    <Compile Include="UnitFilterPanel.cs" />
+    <Compile Include="UnitGroup.cs" />
     <Compile Include="Core\UIComponent.cs" />
   </ItemGroup>
   <ItemGroup>
