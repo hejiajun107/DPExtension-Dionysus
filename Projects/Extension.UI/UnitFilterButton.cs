@@ -33,6 +33,8 @@ namespace Extension.UI
 
         // 空格填充色（纯黑）
         private static readonly ColorStruct EmptyColor = new ColorStruct(0, 0, 0);
+        // 图标全部解析失败时使用的 UI 占位图标（PCX），避免格子出现纯黑
+        private const string NoCameoPCX = "uinocameo.pcx";
         // 选中高亮边框色（亮黄）
         private static readonly ColorStruct HighlightColor = new ColorStruct(255, 255, 100);
 
@@ -57,7 +59,7 @@ namespace Extension.UI
         //     绘制 cameo 或黑色空格，并在当前选中含该类型时画高亮边框。
         //     图标名解析（与游戏/Ares 一致）：按 rules [ID] Image= 定位 art 节（缺省=ID），
         //     从 art INI 取 CameoPCX / Cameo。
-        //     绘制优先级：CameoPCX(PCX) → Cameo(SHP) → 引擎默认 missing cameo → 黑底。
+        //     绘制优先级：CameoPCX(PCX) → Cameo(SHP) → CameoFile → uinocameo.pcx → 引擎默认 missing cameo → 黑底。
         protected override void OnDraw()
         {
             base.OnDraw();
@@ -131,7 +133,14 @@ namespace Extension.UI
                     }
                 }
 
-                // 3) 兜底：画引擎默认 missing cameo（类型初始化时 Cameo 字段默认指向全局占位 SHP）
+                // 3) 兜底：先用 UI 的 no-cameo 占位图（uinocameo.pcx）取代引擎的 missing cameo
+                if (!drew)
+                {
+                    drew = DrawPCX(NoCameoPCX, pSurface, rect);
+                }
+
+                // 4) 占位图也加载不到时，才退回引擎默认 missing cameo
+                //    （类型初始化时 Cameo 字段默认指向全局占位 SHP）
                 if (!drew)
                 {
                     Pointer<SHPStruct> pDefault = TypePointer.Ref.Cameo;
@@ -142,7 +151,7 @@ namespace Extension.UI
                     }
                 }
 
-                // 4) 默认图标也不可用时才画黑色
+                // 5) 仍然拿不到才画纯黑
                 if (!drew)
                 {
                     pSurface.Ref.FillRect(rect, Drawing.RGB2DWORD(EmptyColor));
