@@ -81,15 +81,17 @@ namespace Extension.UI
             EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseDownEvent, _mouseDownHandler);
             EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseUpEvent, _mouseUpHandler);
 
-            // 创建超武面板和单位过滤面板并添加到控件树
+            // 创建超武面板和单位过滤面板并添加到控件树。
+            // 添加顺序 = 绘制顺序（先加的在下层）。超武面板置于下层，
+            // 单位过滤面板在上层，交界处由单位面板的边框压住，避免接缝穿帮。
             ClearChildren();
             try
             {
-                UnitFilterPanel filterPanel = new UnitFilterPanel();
-                AddChild(filterPanel);
-
                 SuperWeaponPanel swPanel = new SuperWeaponPanel();
                 AddChild(swPanel);
+
+                UnitFilterPanel filterPanel = new UnitFilterPanel();
+                AddChild(filterPanel);
             }
             catch (Exception ex)
             {

@@ -41,6 +41,12 @@ namespace Extension.UI
         // 贴底显示（与单位过滤面板一致，底部对齐 ViewBound 底边）
         private const int BottomMargin = 0;
 
+        // 边框厚度（共享 PanelFrame）。左侧不画边框，故内容只在 上/右/下 缩进。
+        private const int FrameInset = PanelFrame.Slice;
+
+        // 面板底色（纯黑）
+        private static readonly ColorStruct BackgroundColor = new ColorStruct(0, 0, 0);
+
         //
         // 摘要:
         //     上一次匹配到的超武指针列表，用于检测玩家超武增减。
@@ -225,25 +231,88 @@ namespace Extension.UI
         // 摘要:
         //     重写 Arrange：忽略父级 finalRect，根据 Surface.ViewBound 计算绝对位置——
         //     横向排列在 3×3 单位过滤面板右侧、贴底：
-        //       X = ViewBound 左边缘 + 过滤面板总宽(200) + 间距(4)
-        //       Y = ViewBound 底部 - 按钮高度 - BottomMargin
-        //     面板宽度 = 按钮数 * ButtonWidth + (按钮数 - 1) * Interval。
-        //     设置 ClientRectangle 后由 Panel.ArrangeChildren 横向排列按钮。
+        //       X = ViewBound 左边缘 + 过滤面板总宽(200)
+        //           （左边缘紧贴单位面板右边框，不留缝隙、也不压住其边框；
+        //             本面板不画左边框，两条边框自然接上）
+        //       Y = ViewBound 底部 - 面板高 - BottomMargin
+        //     面板尺寸自适应：宽 = 按钮数*ButtonWidth + (按钮数-1)*Interval + 右边框，
+        //     高 = ButtonHeight + 上下边框。无超武时宽高置 0（整体不显示）。
+        //     设置 ClientRectangle 后由 ArrangeChildren 横向排列按钮。
         public override RectangleStruct Arrange(RectangleStruct finalRect)
         {
             RectangleStruct view = Surface.ViewBound;
 
             int count = _children.Count;
-            int width = count > 0 ? count * ButtonWidth + (count - 1) * Interval : 0;
+            int x = view.X + UnitFilterPanel.TotalWidth;
 
-            // 右移给 3×3 面板腾位：面板总宽(200) + 间距(4) = 204
-            int x = view.X + UnitFilterPanel.TotalWidth + UnitFilterPanel.SiblingGap;
-            int y = view.Y + view.Height - ButtonHeight - BottomMargin;
+            // 无超武：面板整体不显示
+            if (count == 0)
+            {
+                RectangleStruct empty = new RectangleStruct(x, view.Y + view.Height - BottomMargin, 0, 0);
+                ClientRectangle = empty;
+                return empty;
+            }
 
-            RectangleStruct absolute = new RectangleStruct(x, y, width, ButtonHeight);
+            // 自适应宽度：按钮总宽 + 右边框（左侧不画边框，不加左边宽）
+            int contentWidth = count * ButtonWidth + (count - 1) * Interval;
+            int width = contentWidth + FrameInset;
+            int height = ButtonHeight + 2 * FrameInset;
+            int y = view.Y + view.Height - height - BottomMargin;
+
+            RectangleStruct absolute = new RectangleStruct(x, y, width, height);
             ClientRectangle = absolute;
             ArrangeChildren(ClientRectangle);
             return ClientRectangle;
+        }
+
+        //
+        // 摘要:
+        //     内容区避开边框：左不缩进（无左边框），上/右/下各缩进 FrameInset。
+        //     边框在 OnDraw 用整块 ClientRectangle 绘制，按钮则排在这块内容区内。
+        protected override void ArrangeChildren(RectangleStruct clientRect)
+        {
+            if (clientRect.Width <= 0 || clientRect.Height <= 0)
+            {
+                return;
+            }
+            RectangleStruct content = new RectangleStruct(
+                clientRect.X,
+                clientRect.Y + FrameInset,
+                clientRect.Width - FrameInset,
+                clientRect.Height - 2 * FrameInset);
+            base.ArrangeChildren(content);
+        }
+
+        //
+        // 摘要:
+        //     铺黑底 + 绘制外边框（不画左边框），最后由 base.Draw() 画子按钮。
+        //     无超武时不绘制任何内容（面板整体不显示）。
+        protected override void OnDraw()
+        {
+            base.OnDraw();
+
+            try
+            {
+                Pointer<Surface> pSurface = Surface.Current;
+                if (pSurface.IsNull)
+                {
+                    return;
+                }
+
+                // 无超武：不显示（无黑底、无边框）
+                if (_children.Count == 0 || ClientRectangle.Width <= 0 || ClientRectangle.Height <= 0)
+                {
+                    return;
+                }
+
+                pSurface.Ref.FillRect(ClientRectangle, Drawing.RGB2DWORD(BackgroundColor));
+                // 左侧不画边框，其余三边 + 相应角照常
+                PanelFrame.DrawFrame(pSurface, ClientRectangle, left: false, right: true, top: true, bottom: true);
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+            }
         }
 
         protected override void OnUpdate()

@@ -25,6 +25,9 @@ namespace Extension.UI
         // 单位 ID → 解析后的 art 节名 缓存（rules [ID] Image=，缺省为 ID 本身）
         private static readonly Dictionary<string, string> ArtSectionCache = new Dictionary<string, string>();
 
+        // 单位 ID → 是否应隐藏 缓存（Insignificant/DontScore）
+        private static readonly Dictionary<string, bool> HiddenCache = new Dictionary<string, bool>();
+
         // 读 INI 用的复用缓冲区（游戏逻辑单线程，可复用静态缓冲区）
         private static readonly byte[] ReadBuffer = new byte[2048];
 
@@ -80,6 +83,48 @@ namespace Extension.UI
             string pcx = ReadArtString(artSection, "CameoPCX");
             CameoPCXCache[id] = pcx;
             return pcx;
+        }
+
+        //
+        // 摘要:
+        //     是否应把该单位类型隐藏（不显示在 UnitFilterPanel）。
+        //     从 rules INI 读 [单位ID] Insignificant= / DontScore=，任一为真即隐藏。
+        //     这两个键在项目里没有内存字段（尤其 DontScore），统一从配置读取，避免猜偏移导致崩溃。
+        public static bool IsHidden(Pointer<TechnoTypeClass> pType)
+        {
+            if (pType.IsNull)
+            {
+                return false;
+            }
+            string id = pType.Ref.BaseAbstractType.ID.ToString();
+            if (string.IsNullOrEmpty(id))
+            {
+                return false;
+            }
+            if (HiddenCache.TryGetValue(id, out bool cached))
+            {
+                return cached;
+            }
+
+            bool hidden = IsTruthy(ReadRulesString(id, "Insignificant"))
+                       || IsTruthy(ReadRulesString(id, "DontScore"));
+            HiddenCache[id] = hidden;
+            return hidden;
+        }
+
+        //
+        // 摘要:
+        //     解析 INI 布尔值：yes/true/1 为真，其余（含空值）为假。
+        private static bool IsTruthy(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+            value = value.Trim();
+            return string.Equals(value, "yes", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(value, "true", StringComparison.OrdinalIgnoreCase)
+                || value == "1";
         }
 
         //

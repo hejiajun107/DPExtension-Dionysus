@@ -53,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SuperWeaponButton.cs" />
     <Compile Include="SuperWeaponPanel.cs" />
+    <Compile Include="PanelFrame.cs" />
     <Compile Include="TacticalPanel.cs" />
     <Compile Include="Tooltip.cs" />
     <Compile Include="UIRoot.cs" />
