@@ -119,6 +119,10 @@ namespace Extension.UI
             }
         }
 
+        // ==== 临时诊断（已注释，需要排查时再启用）====
+        // private static string _lastDiag;
+        // ==== 临时诊断结束 ====
+
         //
         // 摘要:
         //     扫描 CurrentObjects，按分组键（GroupAs 字符串）去重提取类型（最多 9 个）。
@@ -129,34 +133,66 @@ namespace Extension.UI
             var typeMap = new Dictionary<string, Pointer<TechnoTypeClass>>();
             var currentObjs = ObjectClass.CurrentObjects;
 
+            // ==== 临时诊断（已注释，需要排查时再启用）====
+            // string diag = "count=" + currentObjs.Count;
+
             for (int i = 0; i < currentObjs.Count && typeMap.Count < 9; i++)
             {
                 var pObj = currentObjs[i];
                 if (pObj.IsNull)
                 {
+                    // diag += $" obj[{i}]=null";
                     continue;
                 }
                 var pTechno = pObj.Convert<TechnoClass>();
                 if (pTechno.IsNull)
                 {
+                    // diag += $" obj[{i}]=nonTechno";
                     continue;
                 }
                 var pType = pTechno.Ref.Type;
                 if (pType.IsNull)
                 {
+                    // diag += $" obj[{i}]=typeNull";
                     continue;
                 }
+
+                // 逐对象隔离：单个类型读 INI 抛异常时不应打断整次扫描
+                bool hidden;
+                string groupKey;
+                try
+                {
+                    hidden = UnitGroup.IsHidden(pType);
+                    groupKey = UnitGroup.GetGroupKey(pType);
+                }
+                catch (Exception ex)
+                {
+                    Logger.PrintException(ex);
+                    // diag += $" obj[{i}]=EXCEPTION";
+                    continue;
+                }
+
+                // diag += $" obj[{i}]={id},hidden={hidden},key={groupKey}";
+
                 // Insignificant / DontScore 的单位不进入过滤列表
-                if (UnitGroup.IsHidden(pType))
+                if (hidden)
                 {
                     continue;
                 }
-                string groupKey = UnitGroup.GetGroupKey(pType);
                 if (!typeMap.ContainsKey(groupKey))
                 {
                     typeMap[groupKey] = pType;
                 }
             }
+
+            // ==== 临时诊断（已注释，需要排查时再启用）====
+            // diag += " => buttons=" + typeMap.Count;
+            // if (diag != _lastDiag)
+            // {
+            //     _lastDiag = diag;
+            //     Logger.Log("[UnitFilterPanel] " + diag);
+            // }
+            // ==== 临时诊断结束 ====
 
             // 比较分组键列表是否变化
             var newKeys = new List<string>(typeMap.Keys);
@@ -165,8 +201,6 @@ namespace Extension.UI
             {
                 return;
             }
-            _lastGroupKeys = newKeys;
-
             // 重建按钮
             ClearChildren();
             // 注意：AddChild 只进队列，_children 下一帧 ProcessQueues 才更新，
@@ -174,14 +208,26 @@ namespace Extension.UI
             int added = 0;
             foreach (var kv in typeMap)
             {
-                AddChild(new UnitFilterButton(kv.Value, kv.Key));
-                added++;
+                try
+                {
+                    AddChild(new UnitFilterButton(kv.Value, kv.Key));
+                    added++;
+                }
+                catch (Exception ex)
+                {
+                    // 单个按钮构造失败不应拖垮整次重建；added 不自增，随后由空格补齐
+                    Logger.PrintException(ex);
+                }
             }
             // 不足 9 格补空格
             for (; added < 9; added++)
             {
                 AddChild(new UnitFilterButton());
             }
+
+            // 分组键列表在重建成功之后再提交：重建中途抛异常则不提交，
+            // 下一帧会重新触发重建，避免面板永久停留在「全黑、无按钮」状态
+            _lastGroupKeys = newKeys;
 
             _isDirty = true;
         }
