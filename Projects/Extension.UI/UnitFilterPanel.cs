@@ -150,6 +150,11 @@ namespace Extension.UI
                     // diag += $" obj[{i}]=nonTechno";
                     continue;
                 }
+                // 只统计本地玩家自己的单位：CurrentObjects 里可能混入其他玩家/中立的对象
+                if (pTechno.Ref.Owner != HouseClass.Player)
+                {
+                    continue;
+                }
                 var pType = pTechno.Ref.Type;
                 if (pType.IsNull)
                 {

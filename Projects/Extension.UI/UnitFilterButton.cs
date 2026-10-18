@@ -301,6 +301,12 @@ namespace Extension.UI
                     {
                         continue;
                     }
+                    // 只操作本地玩家自己的对象：过滤面板只显示己方单位，
+                    // 非己方对象不参与本次过滤（不调用其 Deselect）。
+                    if (pTechno.Ref.Owner != HouseClass.Player)
+                    {
+                        continue;
+                    }
                     var pType = pTechno.Ref.Type;
                     if (pType.IsNull || UnitGroup.GetGroupKey(pType) != GroupKey)
                     {
