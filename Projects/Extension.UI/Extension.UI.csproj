@@ -51,6 +51,7 @@
     <Compile Include="Core\Control.cs" />
     <Compile Include="Core\Panel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ExtraButtonPanel.cs" />
     <Compile Include="SuperWeaponButton.cs" />
     <Compile Include="SuperWeaponPanel.cs" />
     <Compile Include="PanelFrame.cs" />

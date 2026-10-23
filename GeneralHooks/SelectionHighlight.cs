@@ -10,6 +10,8 @@ namespace GeneralHooks
     //      - 100ms 平滑提亮 + 420ms 平滑淡出，总长 520ms；峰值提亮 45%（最大 +450，上限 1500）
     //      - 亮度标度按 YR 正常日光约 1000 设计，只改本次绘制参数，不写回永久光照缓存
     //      - 覆盖步兵/SHP载具/建筑（共享 SHP 本体绘制）、载具 Voxel、飞机等公共 Voxel
+    //      - 建筑附带的运行动画走独立的 AnimClass 绘制流程，按建筑动画槽单独接入亮度，
+    //        但共用建筑同一次高亮进度，不另起计时器
     //      - 隐形/显隐过渡、铁幕、力场护盾期间不叠加
     //      - 取消选择时先按 地址 + UniqueID 从存活集合核对，再请求本体重绘（静止建筑必须重绘）
     //      - 联机安全：只读本地选中状态与本地对象状态，不发网络事件、不用同步随机数
@@ -28,6 +30,13 @@ namespace GeneralHooks
         const int OFS_FORCE_SHIELDED = 0x1C4;     // int (0/1)
         const int OFS_CLOAK_STATE = 0x220;        // CloakState
 
+        // BuildingClass::Anims[21]，含 Active/Idle/生产/升级/低电量/特殊动画等槽
+        const int OFS_BUILDING_ANIMS = 0x55C;
+        const int BUILDING_ANIM_SLOTS = 0x15;
+
+        // 动画绘制函数内的亮度栈参数（与 Phobos AnimClass_Draw_TintColor 同一个槽）
+        const int STACK_ANIM_INTENSITY = 0x38;
+
         struct Entry
         {
             public int Id;
@@ -37,7 +46,14 @@ namespace GeneralHooks
             public bool Finished;
         }
 
+        struct AnimBinding
+        {
+            public int Id;
+            public int Strength;
+        }
+
         static readonly Dictionary<IntPtr, Entry> _entries = new Dictionary<IntPtr, Entry>(64);
+        static readonly Dictionary<IntPtr, AnimBinding> _animBindings = new Dictionary<IntPtr, AnimBinding>(128);
         static readonly List<IntPtr> _restoreKeys = new List<IntPtr>(16);
         static readonly List<int> _restoreIds = new List<int>(16);
         static readonly List<IntPtr> _removeKeys = new List<IntPtr>(16);
@@ -170,9 +186,54 @@ namespace GeneralHooks
         public static void Reset()
         {
             _entries.Clear();
+            _animBindings.Clear();
             _removeKeys.Clear();
             _restoreKeys.Clear();
             _restoreIds.Clear();
+        }
+
+        // ---- 建筑附带动画 ----
+
+        static bool IsBuilding(Pointer<TechnoClass> pTechno)
+        {
+            return pTechno.Ref.BaseAbstract.WhatAmI() == AbstractType.Building;
+        }
+
+        static unsafe Pointer<AnimClass> GetBuildingAnim(Pointer<BuildingClass> pBuilding, int slot)
+        {
+            return ((Pointer<Pointer<AnimClass>>)pBuilding.RawOffset(OFS_BUILDING_ANIMS))[slot];
+        }
+
+        // 从建筑自己的动画槽确定归属：不按地图格推断，也不要求 OwnerObject 有值
+        static void BindBuildingAnims(Pointer<TechnoClass> pTechno, int strength)
+        {
+            Pointer<BuildingClass> pBuilding = pTechno.Convert<BuildingClass>();
+            for (int slot = 0; slot < BUILDING_ANIM_SLOTS; slot++)
+            {
+                Pointer<AnimClass> pAnim = GetBuildingAnim(pBuilding, slot);
+                if (pAnim.IsNull)
+                {
+                    continue;
+                }
+                AnimBinding binding;
+                binding.Id = pAnim.Ref.Base.Base.UniqueID;
+                binding.Strength = strength;
+                _animBindings[pAnim] = binding;
+            }
+        }
+
+        // 建筑重绘时，让它的运行动画一起重绘，暂停的动画也能淡出
+        static void MarkBuildingAnimsForRedraw(Pointer<TechnoClass> pTechno)
+        {
+            Pointer<BuildingClass> pBuilding = pTechno.Convert<BuildingClass>();
+            for (int slot = 0; slot < BUILDING_ANIM_SLOTS; slot++)
+            {
+                Pointer<AnimClass> pAnim = GetBuildingAnim(pBuilding, slot);
+                if (!pAnim.IsNull)
+                {
+                    pAnim.Ref.Base.MarkForRedraw();
+                }
+            }
         }
 
         // ---- 每帧更新：早于地图绘制与脏区收集 ----
@@ -180,6 +241,7 @@ namespace GeneralHooks
         static void Update()
         {
             _now = (uint)Environment.TickCount;
+            _animBindings.Clear(); // 绑定表每帧清空重建，动画中途替换也会接着当前进度淡出
 
             // ① 完整遍历当前选中集合（含建筑），推进脉冲；强度变化时请求本体重绘
             ref DynamicVectorClass<Pointer<ObjectClass>> selected = ref ObjectClass.CurrentObjects;
@@ -203,9 +265,22 @@ namespace GeneralHooks
                 {
                     continue;
                 }
-                if (Observe(pTechno, obj.Base.UniqueID))
+
+                int id = obj.Base.UniqueID;
+                bool changed = Observe(pTechno, id);
+                if (changed)
                 {
                     obj.MarkForRedraw();
+                }
+
+                int strength = GetStrength(pTechno, id);
+                if (strength > 0 && IsBuilding(pTechno))
+                {
+                    BindBuildingAnims(pTechno, strength);
+                    if (changed)
+                    {
+                        MarkBuildingAnimsForRedraw(pTechno);
+                    }
                 }
             }
 
@@ -266,6 +341,10 @@ namespace GeneralHooks
                     continue; // 已销毁或地址被其他对象复用
                 }
                 obj.MarkForRedraw();
+                if (IsBuilding(pTechno))
+                {
+                    MarkBuildingAnimsForRedraw(pTechno);
+                }
             }
         }
 
@@ -341,6 +420,40 @@ namespace GeneralHooks
                         R->EDI = (uint)result;
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.PrintException(e);
+            }
+            return 0;
+        }
+
+        // 建筑运行动画（AnimClass）的独立绘制流程：ESI=AnimClass，亮度在栈槽 0x38
+        // 紧接 Phobos AnimClass_Draw_TintColor(0x4235D3, 6) 之后，且不与其重叠
+        [Hook(HookType.AresHook, Address = 0x4235D9, Size = 6)]
+        public static unsafe UInt32 AnimClass_Draw_BuildingSelectionHighlight(REGISTERS* R)
+        {
+            try
+            {
+                if (_animBindings.Count == 0)
+                {
+                    return 0;
+                }
+                Pointer<AnimClass> pAnim = new Pointer<AnimClass>((int)R->ESI);
+                if (pAnim.IsNull)
+                {
+                    return 0;
+                }
+                if (!_animBindings.TryGetValue(pAnim, out AnimBinding binding))
+                {
+                    return 0;
+                }
+                if (pAnim.Ref.Base.Base.UniqueID != binding.Id)
+                {
+                    return 0; // 地址被复用，不是当初绑定的那个动画
+                }
+                int* pIntensity = (int*)((byte*)R->ESP + STACK_ANIM_INTENSITY);
+                *pIntensity = Brighten(*pIntensity, binding.Strength);
             }
             catch (Exception e)
             {
