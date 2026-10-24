@@ -1,4 +1,5 @@
 using DynamicPatcher;
+using Extension.INI;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,13 @@ namespace Extension.UI
 
         // 单位 ID → 是否应隐藏 缓存（Insignificant/DontScore）
         private static readonly Dictionary<string, bool> HiddenCache = new Dictionary<string, bool>();
+
+        // 单位 ID → 教程 PCX 列表 缓存（空列表表示未配置，已查过）
+        private static readonly Dictionary<string, List<string>> TutorialCache =
+            new Dictionary<string, List<string>>();
+
+        // 无教程时的共享空列表（避免每帧分配）
+        private static readonly List<string> EmptyTutorialList = new List<string>();
 
         // 读 INI 用的复用缓冲区（游戏逻辑单线程，可复用静态缓冲区）
         private static readonly byte[] ReadBuffer = new byte[2048];
@@ -114,6 +122,132 @@ namespace Extension.UI
 
         //
         // 摘要:
+        //     获取单位类型的 ID（TypeClass 的 ID 字符串）。取不到时返回空字符串。
+        public static string GetTypeId(Pointer<TechnoTypeClass> pType)
+        {
+            if (pType.IsNull)
+            {
+                return string.Empty;
+            }
+            string id = pType.Ref.BaseAbstractType.ID.ToString();
+            return id ?? string.Empty;
+        }
+
+        //
+        // 摘要:
+        //     获取单位类型的教程图 PCX 列表（rules [单位ID] TutorialPCX=，逗号分隔，顺序即页序）。
+        //     未配置 / 解析为空时返回空列表（该单位没有教程）。
+        //     结果按单位 ID 缓存，不每帧读 INI。
+        public static List<string> GetTutorialPCX(Pointer<TechnoTypeClass> pType)
+        {
+            if (pType.IsNull)
+            {
+                return EmptyTutorialList;
+            }
+            string id = pType.Ref.BaseAbstractType.ID.ToString();
+            if (string.IsNullOrEmpty(id))
+            {
+                return EmptyTutorialList;
+            }
+            if (TutorialCache.TryGetValue(id, out List<string> cached))
+            {
+                return cached;
+            }
+
+            List<string> list;
+            try
+            {
+                list = ParsePCXList(ReadRulesString(id, "TutorialPCX"));
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+                list = EmptyTutorialList;
+            }
+            TutorialCache[id] = list;
+            return list;
+        }
+
+        //
+        // 摘要:
+        //     解析逗号分隔的 PCX 列表：去空白、去空项、缺 .pcx 后缀补上、去重。
+        //     INI 的 ReadString 不会自动截断 ';' 注释，这里手动截掉。
+        private static List<string> ParsePCXList(string raw)
+        {
+            var list = new List<string>();
+            if (string.IsNullOrEmpty(raw))
+            {
+                return list;
+            }
+            int comment = raw.IndexOf(';');
+            if (comment >= 0)
+            {
+                raw = raw.Substring(0, comment);
+            }
+            foreach (string part in raw.Split(','))
+            {
+                string name = part.Trim();
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+                if (!name.EndsWith(".pcx", StringComparison.OrdinalIgnoreCase))
+                {
+                    name += ".pcx";
+                }
+                if (!list.Contains(name))
+                {
+                    list.Add(name);
+                }
+            }
+            return list;
+        }
+
+        //
+        // 摘要:
+        //     取当前选中集合里**第一个**本地玩家的单位类型（按 CurrentObjects 顺序）。
+        //     教程按钮的显示与打开都以这个类型为准：它没教程就不显示，即使后面还有别的类型配了教程。
+        public static bool TryGetFirstLocalSelectedType(out Pointer<TechnoTypeClass> pType)
+        {
+            pType = Pointer<TechnoTypeClass>.Zero;
+            try
+            {
+                var currentObjs = ObjectClass.CurrentObjects;
+                for (int i = 0; i < currentObjs.Count; i++)
+                {
+                    var pObj = currentObjs[i];
+                    if (pObj.IsNull)
+                    {
+                        continue;
+                    }
+                    var pTechno = pObj.Convert<TechnoClass>();
+                    if (pTechno.IsNull)
+                    {
+                        continue;
+                    }
+                    // 只取本地玩家自己的对象：CurrentObjects 里可能混入其他玩家/中立对象
+                    if (pTechno.Ref.Owner != HouseClass.Player)
+                    {
+                        continue;
+                    }
+                    var pSelectedType = pTechno.Ref.Type;
+                    if (pSelectedType.IsNull)
+                    {
+                        continue;
+                    }
+                    pType = pSelectedType;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+            }
+            return false;
+        }
+
+        //
+        // 摘要:
         //     解析 INI 布尔值：yes/true/1 为真，其余（含空值）为假。
         private static bool IsTruthy(string value)
         {
@@ -169,10 +303,56 @@ namespace Extension.UI
 
         //
         // 摘要:
-        //     从 rules INI 读取 [section] key=。
+        //     从合并后的 rules 读取 [section] key=：地图附加 INI → 游戏模式 INI → rulesmd.ini
+        //     （前面的优先）。这样写在地图 INI 里的标签也能生效，与引擎/Ares 的地图覆盖行为一致。
+        //     合并读取失败时回退到引擎全局 rules INI。
         public static string ReadRulesString(string section, string key)
         {
+            try
+            {
+                string dependency = GetMergedRulesDependency();
+                string value = Ini.Get<string>(dependency, section, key, null);
+                if (value != null)
+                {
+                    return value;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+            }
             return ReadFromIni(CCINIClass.INI_Rules, section, key);
+        }
+
+        //
+        // 摘要:
+        //     取合并 rules 的依赖链（如 "地图.map->游戏模式.ini->rulesmd.ini"），
+        //     并滤掉尚未就绪的空文件名，避免拼出 "->->" 这种空路径。
+        private static string GetMergedRulesDependency()
+        {
+            string[] parts = Ini.SplitDependency(Ini.RulesDependency);
+            var valid = new List<string>(parts.Length);
+            foreach (string part in parts)
+            {
+                if (!string.IsNullOrEmpty(part))
+                {
+                    valid.Add(part);
+                }
+            }
+            return string.Join("->", valid);
+        }
+
+        //
+        // 摘要:
+        //     清空所有按单位 ID 的缓存。场景切换（换了地图）后必须调用，
+        //     否则地图 INI 里的覆盖值会沿用上一张地图的结果。
+        public static void ResetCaches()
+        {
+            Cache.Clear();
+            CameoPCXCache.Clear();
+            ArtSectionCache.Clear();
+            HiddenCache.Clear();
+            TutorialCache.Clear();
         }
 
         private static string ReadFromIni(Pointer<CCINIClass> pINI, string section, string key)

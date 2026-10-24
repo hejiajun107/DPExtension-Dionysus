@@ -59,6 +59,11 @@ namespace Extension.UI
         //     在 Draw() 之后调用 _tooltip.Draw() 以保证位于最上层。
         private Tooltip _tooltip = new Tooltip();
 
+        //
+        // 摘要:
+        //     教程模态面板（最上层）。点击 helpbtn 打开，打开期间消费视口内全部点击。
+        private readonly TutorialPanel _tutorialPanel = new TutorialPanel();
+
         private UIRoot()
         {
         }
@@ -81,11 +86,17 @@ namespace Extension.UI
             EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseDownEvent, _mouseDownHandler);
             EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseUpEvent, _mouseUpHandler);
 
-            // 创建附加按钮面板、超武面板和单位过滤面板并添加到控件树。
+            // 创建附加按钮面板、超武面板、单位过滤面板和教程面板并添加到控件树。
             // 添加顺序 = 绘制顺序（先加的在下层）：
-            //   附加按钮面板（最下）→ 超武面板 → 单位过滤面板（最上）。
+            //   附加按钮面板（最下）→ 超武面板 → 单位过滤面板 → 教程面板（最上）。
             // 附加按钮面板的左/下边框由上面两块面板压住；超武栏隐藏时其下边框自行兜底。
             // 单位过滤面板在上层，交界处由单位面板的边框压住，避免接缝穿帮。
+            // 场景切换：清空按单位 ID 的 INI 缓存与教程配置/过渡素材缓存，
+            // 使地图 INI 里的覆盖值在换图后重新生效
+            UnitGroup.ResetCaches();
+            TutorialConfig.Reset();
+            _tutorialPanel.ResetCache();
+
             ClearChildren();
             try
             {
@@ -97,6 +108,9 @@ namespace Extension.UI
 
                 UnitFilterPanel filterPanel = new UnitFilterPanel();
                 AddChild(filterPanel);
+
+                // 教程面板最后加入 = 最上层；默认隐藏，打开时覆盖整个视口（模态）
+                AddChild(_tutorialPanel);
             }
             catch (Exception ex)
             {
@@ -110,6 +124,8 @@ namespace Extension.UI
         public void Cleanup()
         {
             Unsubscribe();
+            // 关闭教程面板；面板对象本身保留复用，不重复 AddChild
+            _tutorialPanel.Close();
             ClearChildren();
 
             _hoveredControl = null;
@@ -170,10 +186,42 @@ namespace Extension.UI
 
         //
         // 摘要:
+        //     打开教程面板（模态）。打开时隐藏 Tooltip，避免遮在面板上。
+        public void OpenTutorial(string typeId, List<string> pcxList)
+        {
+            try
+            {
+                _tooltip.IsVisible = false;
+                _tooltip.Target = null;
+                _tutorialPanel.Open(typeId, pcxList);
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+            }
+        }
+
+        //
+        // 摘要:
         //     UIRoot 自身不消费鼠标事件，仅检查子控件。
         //     鼠标不在任何子控件上时返回 null，使游戏正常处理鼠标。
+        //     教程面板打开期间为模态：视口内任意点击都由教程面板消费（返回面板自身），
+        //     从而让 MouseEvent 的两个入口 hook 跳过游戏世界处理；视口外不消费。
         public override Control HitTest(Point2D pos)
         {
+            if (_tutorialPanel.Visible)
+            {
+                RectangleStruct view = Surface.ViewBound;
+                bool inside = pos.X >= view.X && pos.X < view.X + view.Width
+                           && pos.Y >= view.Y && pos.Y < view.Y + view.Height;
+                if (!inside)
+                {
+                    return null;
+                }
+                Control hit = _tutorialPanel.HitTest(pos);
+                return hit ?? (Control)_tutorialPanel;
+            }
+
             RectangleStruct rect = ClientRectangle;
             if (pos.X < rect.X || pos.X >= rect.X + rect.Width ||
                 pos.Y < rect.Y || pos.Y >= rect.Y + rect.Height)
@@ -293,6 +341,13 @@ namespace Extension.UI
 
             // 窗口可能 resize，每帧将 ClientRectangle 同步到 Surface.ViewBound
             ClientRectangle = Surface.ViewBound;
+
+            // 教程面板为模态，打开期间不显示 Tooltip / 悬停提示
+            if (_tutorialPanel.Visible)
+            {
+                _tooltip.IsVisible = false;
+                return;
+            }
 
             // Hover 计时：悬停超过 30 帧触发 OnHover（仅触发一次）
             if (_hoveredControl != null && !_hoverTriggered)

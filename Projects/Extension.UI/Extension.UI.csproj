@@ -57,6 +57,9 @@
     <Compile Include="PanelFrame.cs" />
     <Compile Include="TacticalPanel.cs" />
     <Compile Include="Tooltip.cs" />
+    <Compile Include="TutorialConfig.cs" />
+    <Compile Include="TutorialNavButton.cs" />
+    <Compile Include="TutorialPanel.cs" />
     <Compile Include="UIRoot.cs" />
     <Compile Include="UnitFilterButton.cs" />
     <Compile Include="UnitFilterPanel.cs" />
