@@ -4,6 +4,10 @@ using PatcherYRpp;
 using PatcherYRpp.FileFormats;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Extension.UI
 {
@@ -33,6 +37,11 @@ namespace Extension.UI
             public Pointer<BSurface> Surface;
             public int Width;
             public int Height;
+
+            // 解码页（jpg/png 等）自己持有的表面；PCX 页由引擎缓存，这里为 false
+            public bool Owned;
+            public IntPtr BufferPtr;
+            public bool Raw => Owned;
         }
 
         // 九宫格边框宽度（共享 PanelFrame，固定 8px）
@@ -128,15 +137,17 @@ namespace Extension.UI
                         {
                             continue;
                         }
-                        Pointer<BSurface> pSurface = LoadPCX(file);
+                        Pointer<BSurface> pSurface = LoadImage(file, out bool owned, out IntPtr bufferPtr);
                         if (pSurface.IsNull)
                         {
+                            Logger.Log("[TutorialPanel] page load failed: " + file);
                             continue;
                         }
                         int w = pSurface.Ref.BaseSurface.Width;
                         int h = pSurface.Ref.BaseSurface.Height;
                         if (w <= 0 || h <= 0)
                         {
+                            ReleaseSurface(pSurface, owned, bufferPtr);
                             continue;
                         }
                         _pages.Add(new PageInfo
@@ -144,7 +155,9 @@ namespace Extension.UI
                             File = file,
                             Surface = pSurface,
                             Width = w,
-                            Height = h
+                            Height = h,
+                            Owned = owned,
+                            BufferPtr = bufferPtr
                         });
                     }
                 }
@@ -182,7 +195,7 @@ namespace Extension.UI
         {
             _state = State.Closed;
             _typeId = string.Empty;
-            _pages.Clear();
+            DisposePages();
             _navButtons.Clear();
             ClearChildren();
             _pageIndex = 0;
@@ -210,7 +223,7 @@ namespace Extension.UI
         private void ResetContent()
         {
             _state = State.Closed;
-            _pages.Clear();
+            DisposePages();
             _navButtons.Clear();
             ClearChildren();
             _pageIndex = 0;
@@ -231,6 +244,344 @@ namespace Extension.UI
                 Logger.PrintException(ex);
                 return Pointer<BSurface>.Zero;
             }
+        }
+
+        //
+        // 摘要:
+        //     释放所有解码页持有的表面（PCX 页归引擎缓存，不动）。
+        private void DisposePages()
+        {
+            foreach (PageInfo page in _pages)
+            {
+                try
+                {
+                    ReleaseSurface(page.Surface, page.Owned, page.BufferPtr);
+                }
+                catch (Exception ex)
+                {
+                    Logger.PrintException(ex);
+                }
+            }
+            _pages.Clear();
+        }
+
+        //
+        // 摘要:
+        //     释放解码页：像素缓冲用 FreeHGlobal 配对 AllocHGlobal，表面对象用引擎
+        //     operator delete 只回收内存、不走虚析构。
+        //     不能调 YRClassHandle.Dispose()/BSurface.Destructor：该结构里 BufferSize 与
+        //     VRAMmed/BufferAllocated 等字段重叠（offset 24/28），析构会去 Release 一个
+        //     被写坏的 Surf 指针，导致关闭面板时崩溃。
+        private static void ReleaseSurface(Pointer<BSurface> surface, bool owned, IntPtr bufferPtr)
+        {
+            if (!owned || surface.IsNull)
+            {
+                return;
+            }
+            if (bufferPtr != IntPtr.Zero)
+            {
+                Marshal.FreeHGlobal(bufferPtr);
+            }
+            surface.Ref.BaseSurface.Buffer = Pointer<byte>.Zero;
+            YRMemory.Deallocate(surface);
+        }
+
+        //
+        // 摘要:
+        //     按扩展名分流加载：.pcx 走引擎 PCX 缓存；.jpg/.jpeg/.png/.bmp 走 GDI+ 解码，
+        //     转成 16bpp RGB565 表面，owned=true 时由调用方负责 ReleaseSurface。
+        private static Pointer<BSurface> LoadImage(string file, out bool owned, out IntPtr bufferPtr)
+        {
+            owned = false;
+            bufferPtr = IntPtr.Zero;
+            string ext = Path.GetExtension(file);
+            if (string.IsNullOrEmpty(ext) || ext.Equals(".pcx", StringComparison.OrdinalIgnoreCase))
+            {
+                return LoadPCX(file);
+            }
+            if (!ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase)
+                && !ext.Equals(".jpeg", StringComparison.OrdinalIgnoreCase)
+                && !ext.Equals(".png", StringComparison.OrdinalIgnoreCase)
+                && !ext.Equals(".bmp", StringComparison.OrdinalIgnoreCase))
+            {
+                return Pointer<BSurface>.Zero;
+            }
+            return LoadDecoded(file, out owned, out bufferPtr);
+        }
+
+        //
+        // 摘要:
+        //     从散装文件/MIX 读字节 → GDI+ 解码 → 16bpp RGB565（Bayer 4×4 有序抖动）。
+        //     Bitmap 在拷完像素后立即释放，不留缓存。
+        private static Pointer<BSurface> LoadDecoded(string file, out bool owned, out IntPtr bufferPtr)
+        {
+            owned = false;
+            bufferPtr = IntPtr.Zero;
+            try
+            {
+                byte[] bytes = ReadFileBytes(file);
+                if (bytes == null || bytes.Length == 0)
+                {
+                    return Pointer<BSurface>.Zero;
+                }
+
+                using (MemoryStream stream = new MemoryStream(bytes))
+                using (Bitmap source = new Bitmap(stream))
+                {
+                    int width = source.Width;
+                    int height = source.Height;
+                    if (width <= 0 || height <= 0)
+                    {
+                        return Pointer<BSurface>.Zero;
+                    }
+
+                    Rectangle rect = new Rectangle(0, 0, width, height);
+                    using (Bitmap converted = source.Clone(rect, PixelFormat.Format32bppArgb))
+                    {
+                        // 表面对象用引擎 operator new + Constructor(0x4AEC60)，指针自己持有，
+                        // 不用 YRClassHandle（它的终结器会走虚析构，见 ReleaseSurface 注释）。
+                        Pointer<BSurface> surface = YRMemory.Create<BSurface>(width, height);
+                        if (surface.IsNull)
+                        {
+                            return Pointer<BSurface>.Zero;
+                        }
+
+                        IntPtr pBuffer = Marshal.AllocHGlobal(width * height * 2);
+                        if (pBuffer == IntPtr.Zero)
+                        {
+                            YRMemory.Deallocate(surface);
+                            return Pointer<BSurface>.Zero;
+                        }
+
+                        surface.Ref.BaseSurface.Buffer = pBuffer;
+                        surface.Ref.BaseSurface.BytesPerPixel = 2;
+
+                        BitmapData data = converted.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                        try
+                        {
+                            CopyDither565(data, surface.Ref.BaseSurface.Buffer, width, height);
+                        }
+                        finally
+                        {
+                            converted.UnlockBits(data);
+                        }
+
+                        owned = true;
+                        bufferPtr = pBuffer;
+                        return surface;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+                return Pointer<BSurface>.Zero;
+            }
+        }
+
+        //
+        // 摘要:
+        //     读取文件全部字节（散装文件或 MIX 内的同名资源）。
+        //     走引擎的 LoadWholeFileEx（0x4A38D0），它覆盖散装 + MIX 的完整解析链。
+        //     关键：MIX 命中的缓冲可能是档案映射视图而非堆内存，只有 outAllocated 为 true
+        //     时才能释放，否则会把 MIX 视图当堆块 free 掉，造成堆损坏（关闭面板时崩溃）。
+        private static byte[] ReadFileBytes(string file)
+        {
+            IntPtr pData = IntPtr.Zero;
+            bool allocated = false;
+            try
+            {
+                pData = FileSystem.LoadWholeFileEx(file, out allocated);
+                if (pData == IntPtr.Zero)
+                {
+                    return null;
+                }
+
+                // 用图片结构自解析长度，不依赖 CCFileClass.FileSize
+                int size = DetectImageLength(pData);
+                if (size <= 0)
+                {
+                    return null;
+                }
+
+                byte[] bytes = new byte[size];
+                Marshal.Copy(pData, bytes, 0, size);
+                return bytes;
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+                return null;
+            }
+            finally
+            {
+                if (pData != IntPtr.Zero && allocated)
+                {
+                    YRMemory.Deallocate(pData);
+                }
+            }
+        }
+
+        //
+        // 摘要:
+        //     按文件头解析图片的字节长度（JPEG / PNG / BMP）。结构异常返回 0。
+        private static unsafe int DetectImageLength(IntPtr pData)
+        {
+            byte* p = (byte*)pData;
+            if (p[0] == 0xFF && p[1] == 0xD8)
+            {
+                return DetectJpegLength(p);
+            }
+            if (p[0] == 0x89 && p[1] == 0x50 && p[2] == 0x4E && p[3] == 0x47)
+            {
+                return DetectPngLength(p);
+            }
+            if (p[0] == (byte)'B' && p[1] == (byte)'M')
+            {
+                return p[2] | (p[3] << 8) | (p[4] << 16) | (p[5] << 24);
+            }
+            return 0;
+        }
+
+        // 上限 64MB，防止文件损坏时无限扫描
+        private const int MaxScanLength = 64 * 1024 * 1024;
+
+        //
+        // 摘要:
+        //     遍历 JPEG 段结构定位 EOI（0xFFD9）。会正确跳过熵编码数据里的
+        //     0xFF00 填充与 RST 标记，也不会被 EXIF 内嵌缩略图的 EOI 误导。
+        private static unsafe int DetectJpegLength(byte* p)
+        {
+            int offset = 2; // 跳过 SOI
+            while (offset < MaxScanLength)
+            {
+                if (p[offset] != 0xFF)
+                {
+                    return 0;
+                }
+                byte marker = p[offset + 1];
+                offset += 2;
+
+                if (marker == 0xD9)
+                {
+                    return offset; // EOI
+                }
+                if (marker == 0xD8 || marker == 0x01 || (marker >= 0xD0 && marker <= 0xD7))
+                {
+                    continue; // 无长度的独立标记
+                }
+
+                int length = (p[offset] << 8) | p[offset + 1];
+                if (length < 2)
+                {
+                    return 0;
+                }
+
+                if (marker == 0xDA)
+                {
+                    // SOS：之后是熵编码数据，扫描到下一个真实标记
+                    int scan = offset + length;
+                    while (scan < MaxScanLength)
+                    {
+                        if (p[scan] != 0xFF)
+                        {
+                            scan++;
+                            continue;
+                        }
+                        byte next = p[scan + 1];
+                        if (next == 0x00 || (next >= 0xD0 && next <= 0xD7))
+                        {
+                            scan += 2;
+                            continue;
+                        }
+                        if (next == 0xD9)
+                        {
+                            return scan + 2;
+                        }
+                        offset = scan;
+                        break;
+                    }
+                    continue;
+                }
+
+                offset += length;
+            }
+            return 0;
+        }
+
+        //
+        // 摘要:
+        //     遍历 PNG chunk 定位 IEND，返回文件总长度。
+        private static unsafe int DetectPngLength(byte* p)
+        {
+            int offset = 8; // 跳过 PNG 签名
+            while (offset < MaxScanLength)
+            {
+                int length = (p[offset] << 24) | (p[offset + 1] << 16) | (p[offset + 2] << 8) | p[offset + 3];
+                if (length < 0)
+                {
+                    return 0;
+                }
+                uint type = ((uint)p[offset + 4] << 24) | ((uint)p[offset + 5] << 16)
+                          | ((uint)p[offset + 6] << 8) | p[offset + 7];
+                offset += 8 + length + 4; // 数据 + CRC
+                if (type == 0x49454E44) // IEND
+                {
+                    return offset;
+                }
+            }
+            return 0;
+        }
+
+        // 4×4 Bayer 抖动矩阵（0..15）
+        private static readonly int[] Bayer4x4 =
+        {
+             0,  8,  2, 10,
+            12,  4, 14,  6,
+             3, 11,  1,  9,
+            15,  7, 13,  5
+        };
+
+        //
+        // 摘要:
+        //     32bpp BGRA 像素 → 16bpp RGB565，带 4×4 有序抖动以减轻渐变色带。
+        private static unsafe void CopyDither565(BitmapData data, Pointer<byte> pBuffer, int width, int height)
+        {
+            byte* pScan = (byte*)(IntPtr)data.Scan0;
+            byte* pDst = (byte*)(IntPtr)pBuffer;
+            int stride = data.Stride;
+
+            for (int y = 0; y < height; y++)
+            {
+                byte* pSrc = pScan + y * stride;
+                ushort* pRow = (ushort*)(pDst + y * width * 2);
+                int bayerRow = (y & 3) * 4;
+
+                for (int x = 0; x < width; x++)
+                {
+                    int threshold = Bayer4x4[bayerRow + (x & 3)];
+                    // 5 位通道步长 8，6 位通道步长 4，抖动偏移取半个步长
+                    int d5 = (threshold - 8) * 8 / 16;
+                    int d6 = (threshold - 8) * 4 / 16;
+
+                    int b = pSrc[x * 4 + 0];
+                    int g = pSrc[x * 4 + 1];
+                    int r = pSrc[x * 4 + 2];
+
+                    int r5 = ClampToByte(r + d5) >> 3;
+                    int g6 = ClampToByte(g + d6) >> 2;
+                    int b5 = ClampToByte(b + d5) >> 3;
+
+                    pRow[x] = (ushort)((r5 << 11) | (g6 << 5) | b5);
+                }
+            }
+        }
+
+        private static int ClampToByte(int value)
+        {
+            if (value < 0) return 0;
+            if (value > 255) return 255;
+            return value;
         }
 
         //
@@ -260,9 +611,6 @@ namespace Extension.UI
 
                 // 帧数用于播放推进
                 _transitionFrames = Math.Max(1, (int)_transitionSHP.Ref.Frames);
-
-                // 一次性诊断：确认帧数，便于核对播放长度
-                Logger.Log("[TutorialPanel] " + name + " frames=" + _transitionSHP.Ref.Frames);
             }
 
             _state = State.Transition;
@@ -581,7 +929,17 @@ namespace Extension.UI
             }
 
             RectangleStruct clip = new RectangleStruct(left, top, right - left, bottom - top);
-            PCX.Instance.BlitToSurface(clip.GetThisPointer(), pSurface.Convert<DSurface>(), page.Surface);
+            if (page.Raw)
+            {
+                // 解码页是 16bpp RGB565，整块 blit（无调色板/透明色），源矩形按页内偏移裁剪
+                RectangleStruct src = new RectangleStruct(
+                    clip.X - x, clip.Y - y, clip.Width, clip.Height);
+                pSurface.Ref.Blit(view, clip, page.Surface.Convert<Surface>(), clip, src, true, true);
+            }
+            else
+            {
+                PCX.Instance.BlitToSurface(clip.GetThisPointer(), pSurface.Convert<DSurface>(), page.Surface);
+            }
         }
 
         //

@@ -162,25 +162,53 @@ namespace Extension.UI
 
         private void OnGScreenRender(object sender, EventArgs e)
         {
-            if (e is GScreenEventArgs args && args.IsLateRender)
+            if (!(e is GScreenEventArgs args))
             {
-                Update();
-                Draw();
-                // Tooltip 在所有控件绘制之后绘制，保证位于最上层
-                _tooltip?.Draw();
+                return;
+            }
 
-                // ---- 每帧调用 UpdateCursor 确保光标为 Default ----
-                // MouseEvent Hook 已调用一次，但游戏后续逻辑可能覆盖，
-                // LateRender 是渲染循环最晚阶段，这里再调用一次确保最终绘制生效。
-                // 参考 Phobos: MouseClass::Instance.UpdateCursor(MouseCursorType::Default, false)
-                try
+            // 早阶段：把自己挪到临时 handler 链末尾。
+            // 事件按订阅顺序派发，单位脚本（如 XHWarShipScript）在建造后才 AddTemporaryHandler，
+            // 会排在我们之后并覆盖 UI；每帧早阶段重挂一次，保证晚阶段我们最后绘制（最上层）。
+            if (!args.IsLateRender)
+            {
+                RequeueRenderHandler();
+                return;
+            }
+
+            Update();
+            Draw();
+            // Tooltip 在所有控件绘制之后绘制，保证位于最上层
+            _tooltip?.Draw();
+
+            // ---- 每帧调用 UpdateCursor 确保光标为 Default ----
+            // MouseEvent Hook 已调用一次，但游戏后续逻辑可能覆盖，
+            // LateRender 是渲染循环最晚阶段，这里再调用一次确保最终绘制生效。
+            // 参考 Phobos: MouseClass::Instance.UpdateCursor(MouseCursorType::Default, false)
+            try
+            {
+                if (_uiCursorActive)
                 {
-                    if (_uiCursorActive)
-                    {
-                        SidebarClass.UpdateCursor(0, false);
-                    }
+                    SidebarClass.UpdateCursor(0, false);
                 }
-                catch { /* 忽略 */ }
+            }
+            catch { /* 忽略 */ }
+        }
+
+        //
+        // 摘要:
+        //     把渲染 handler 移到 GScreenRenderEvent 临时链末尾，确保晚阶段最后绘制。
+        //     早阶段派发用的是 GetInvocationList 快照，改链不影响本次循环。
+        private void RequeueRenderHandler()
+        {
+            try
+            {
+                EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, _renderHandler);
+                EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, _renderHandler);
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
             }
         }
 

@@ -3,6 +3,7 @@ using Extension.INI;
 using PatcherYRpp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Extension.UI
@@ -170,7 +171,8 @@ namespace Extension.UI
 
         //
         // 摘要:
-        //     解析逗号分隔的 PCX 列表：去空白、去空项、缺 .pcx 后缀补上、去重。
+        //     解析逗号分隔的教程图列表：去空白、去空项、无后缀时补 .pcx、去重。
+        //     带后缀的（.pcx/.jpg/.jpeg/.png/.bmp）保留原样，由 TutorialPanel 按扩展名分流。
         //     INI 的 ReadString 不会自动截断 ';' 注释，这里手动截掉。
         private static List<string> ParsePCXList(string raw)
         {
@@ -191,7 +193,8 @@ namespace Extension.UI
                 {
                     continue;
                 }
-                if (!name.EndsWith(".pcx", StringComparison.OrdinalIgnoreCase))
+                // 只给完全没有后缀的名字补 .pcx，避免把 xxx.jpg 变成 xxx.jpg.pcx
+                if (string.IsNullOrEmpty(Path.GetExtension(name)))
                 {
                     name += ".pcx";
                 }
