@@ -269,9 +269,12 @@ namespace Extension.UI
         // 摘要:
         //     释放解码页：像素缓冲用 FreeHGlobal 配对 AllocHGlobal，表面对象用引擎
         //     operator delete 只回收内存、不走虚析构。
-        //     不能调 YRClassHandle.Dispose()/BSurface.Destructor：该结构里 BufferSize 与
-        //     VRAMmed/BufferAllocated 等字段重叠（offset 24/28），析构会去 Release 一个
-        //     被写坏的 Surf 指针，导致关闭面板时崩溃。
+        //     不能调 YRClassHandle.Dispose()/BSurface.Destructor，原因有二：
+        //       1. YRpp 的 BufferAllocated(offset 28) 实际落在引擎的 owns(0x1C) 上，
+        //          置 true 后析构会用引擎 operator delete 释放 CRT 堆缓冲（跨堆崩溃）；
+        //       2. 真实虚析构 0x411650 是 thiscall + 1 参数且 ret 4，YRpp 按无参调用
+        //          会读到栈上的垃圾 flag，随机二次释放对象。
+        //     详见 docs/jpg-image-support.md。
         private static void ReleaseSurface(Pointer<BSurface> surface, bool owned, IntPtr bufferPtr)
         {
             if (!owned || surface.IsNull)
