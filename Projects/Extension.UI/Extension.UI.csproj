@@ -62,9 +62,11 @@
     <Compile Include="TutorialNavButton.cs" />
     <Compile Include="TutorialPanel.cs" />
     <Compile Include="UIRoot.cs" />
+    <Compile Include="UiViewport.cs" />
     <Compile Include="UnitFilterButton.cs" />
     <Compile Include="UnitFilterPanel.cs" />
     <Compile Include="UnitGroup.cs" />
+    <Compile Include="ZoomIndicator.cs" />
     <Compile Include="Core\UIComponent.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,12 @@ namespace Extension.EventSystems
         public override string Description => "Raised when mouse up";
     }
 
+    public class MouseWheelEvent : EventBase
+    {
+        public override string Name => "MouseWheelEvent";
+        public override string Description => "Raised when mouse wheel rolled";
+    }
+
     public class MouseEventArgs : EventArgs
     {
         public Point2D Position;
@@ -43,6 +49,21 @@ namespace Extension.EventSystems
         }
     }
 
+    public class MouseWheelEventArgs : EventArgs
+    {
+        /// <summary>滚轮增量，正数向前（放大），负数向后（缩小）。</summary>
+        public int Delta;
+
+        /// <summary>鼠标位置（客户区坐标）。</summary>
+        public Point2D Position;
+
+        public MouseWheelEventArgs(int delta, Point2D position)
+        {
+            Delta = delta;
+            Position = position;
+        }
+    }
+
 
     public class MouseEventSystem : EventSystem
     {
@@ -51,10 +72,12 @@ namespace Extension.EventSystems
             MouseMoveEvent = new MouseMoveEvent();
             MouseDownEvent = new MouseDownEvent();
             MouseUpEvent = new MouseUpEvent();
+            MouseWheelEvent = new MouseWheelEvent();
         }
 
         public MouseMoveEvent MouseMoveEvent { get; }
         public MouseDownEvent MouseDownEvent { get; }
         public MouseUpEvent MouseUpEvent { get; }
+        public MouseWheelEvent MouseWheelEvent { get; }
     }
 }

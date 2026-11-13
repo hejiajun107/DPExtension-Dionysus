@@ -18,6 +18,15 @@ namespace Extension.EventSystems
         public override string Name => "SidebarClass_Draw_It";
         public override string Description => "Raised when Sidebar is Render";
     }
+    /// <summary>
+    /// Composite 已经按缩放倍率拉伸上屏到 Primary 之后触发。
+    /// 监听者画在 Primary 上，坐标与尺寸都是 1:1 的屏幕坐标，不参与战场缩放。
+    /// </summary>
+    public class ScreenSpaceRenderEvent : EventBase
+    {
+        public override string Name => "GScreenClass_Render_ScreenSpace";
+        public override string Description => "Raised after the tactical surface is blitted to Primary";
+    }
     public class GScreenEventArgs : EventArgs
     {
         public GScreenEventArgs(bool isBeginRender)
@@ -35,9 +44,11 @@ namespace Extension.EventSystems
         {
             GScreenRenderEvent = new GScreenRenderEvent();
             SidebarRenderEvent = new SidebarRenderEvent();
+            ScreenSpaceRenderEvent = new ScreenSpaceRenderEvent();
         }
 
         public GScreenRenderEvent GScreenRenderEvent { get; }
         public SidebarRenderEvent SidebarRenderEvent { get; }
+        public ScreenSpaceRenderEvent ScreenSpaceRenderEvent { get; }
     }
 }

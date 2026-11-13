@@ -139,6 +139,8 @@
     <Compile Include="Utilities\IReloadable.cs" />
     <Compile Include="Utilities\PartialHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ZoomController.cs" />
+    <Compile Include="ZoomBridge.cs" />
     <Compile Include="Script\ScriptManager.cs" />
     <Compile Include="Utilities\SwizzleablePointer.cs" />
     <Compile Include="World.cs" />

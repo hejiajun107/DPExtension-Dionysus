@@ -16,10 +16,16 @@ namespace Extension.UI
 
         public static UIRoot Instance => _instance;
 
+        //
+        // 摘要:
+        //     是否处于战场内（Init 之后、Cleanup 之前）。滚轮 Hook 用它判断能否接管消息。
+        public bool IsActive { get; private set; }
+
         private EventHandler _renderHandler;
         private EventHandler _mouseMoveHandler;
         private EventHandler _mouseDownHandler;
         private EventHandler _mouseUpHandler;
+        private EventHandler _mouseWheelHandler;
 
         //
         // 摘要:
@@ -33,7 +39,7 @@ namespace Extension.UI
 
         //
         // 摘要:
-        //     是否需要把鼠标切成手/指针形。OnMouseMove 置状态，OnGScreenRender 每帧写 WWMouseClass.PointerFrame，
+        //     是否需要把鼠标切成手/指针形。OnMouseMove 置状态，OnScreenSpaceRender 每帧写 WWMouseClass.PointerFrame，
         //     这样不会被游戏 Sidebar / Tactical 每帧的指针设置覆盖。
         private bool _uiCursorActive;
 
@@ -64,19 +70,31 @@ namespace Extension.UI
         //     教程模态面板（最上层）。点击 helpbtn 打开，打开期间消费视口内全部点击。
         private readonly TutorialPanel _tutorialPanel = new TutorialPanel();
 
+        //
+        // 摘要:
+        //     缩放刻度盘（缩放功能已停用，暂不加入控件树）。
+        // private readonly ZoomIndicator _zoomIndicator = new ZoomIndicator();
+
         private UIRoot()
         {
         }
 
         //
         // 摘要:
-        //     订阅 GScreenRenderEvent 和鼠标事件，注册 ConsumeMouseHandler。
+        //     订阅 GScreenRenderEvent（晚阶段，画进 Composite）和鼠标事件。
         //     幂等：内部先取消已有订阅再重新订阅，避免重复注册。
         public void Init()
         {
             Unsubscribe();
+            IsActive = true;
 
-            _renderHandler = OnGScreenRender;
+            // 场景切换：复位缩放状态，恢复原始视野，并记录 UI 基准视口
+            ZoomController.Clear();
+            ZoomBridge.Deactivate();
+            ZoomBridge.Activate();
+            UiViewport.Capture();
+
+            _renderHandler = OnLateRender;
             EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, _renderHandler);
 
             _mouseMoveHandler = OnMouseMove;
@@ -85,6 +103,9 @@ namespace Extension.UI
             EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseMoveEvent, _mouseMoveHandler);
             EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseDownEvent, _mouseDownHandler);
             EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseUpEvent, _mouseUpHandler);
+
+            _mouseWheelHandler = OnMouseWheel;
+            EventSystem.MouseEventSystem.AddTemporaryHandler(EventSystem.MouseEventSystem.MouseWheelEvent, _mouseWheelHandler);
 
             // 创建附加按钮面板、超武面板、单位过滤面板和教程面板并添加到控件树。
             // 添加顺序 = 绘制顺序（先加的在下层）：
@@ -109,6 +130,9 @@ namespace Extension.UI
                 UnitFilterPanel filterPanel = new UnitFilterPanel();
                 AddChild(filterPanel);
 
+                // 缩放功能已停用，缩放刻度盘一并移除
+                // AddChild(_zoomIndicator);
+
                 // 教程面板最后加入 = 最上层；默认隐藏，打开时覆盖整个视口（模态）
                 AddChild(_tutorialPanel);
             }
@@ -124,7 +148,11 @@ namespace Extension.UI
         public void Cleanup()
         {
             Unsubscribe();
-            // 关闭教程面板；面板对象本身保留复用，不重复 AddChild
+            // 场景结束：恢复原始视野，清掉缩放状态与 UI 基准视口
+            ZoomController.Clear();
+            ZoomBridge.Deactivate();
+            UiViewport.Reset();
+            // 关闭教程面板；面板对象保留复用，不重复 AddChild
             _tutorialPanel.Close();
             ClearChildren();
 
@@ -134,6 +162,7 @@ namespace Extension.UI
             _hoverTriggered = false;
             _tooltip.IsVisible = false;
             _tooltip.Target = null;
+            IsActive = false;
         }
 
         private void Unsubscribe()
@@ -158,21 +187,24 @@ namespace Extension.UI
                 EventSystem.MouseEventSystem.RemoveTemporaryHandler(EventSystem.MouseEventSystem.MouseUpEvent, _mouseUpHandler);
                 _mouseUpHandler = null;
             }
+            if (_mouseWheelHandler != null)
+            {
+                EventSystem.MouseEventSystem.RemoveTemporaryHandler(EventSystem.MouseEventSystem.MouseWheelEvent, _mouseWheelHandler);
+                _mouseWheelHandler = null;
+            }
         }
 
-        private void OnGScreenRender(object sender, EventArgs e)
+        private void OnLateRender(object sender, EventArgs e)
         {
-            if (!(e is GScreenEventArgs args))
+            if (!IsActive)
             {
                 return;
             }
 
-            // 早阶段：把自己挪到临时 handler 链末尾。
-            // 事件按订阅顺序派发，单位脚本（如 XHWarShipScript）在建造后才 AddTemporaryHandler，
-            // 会排在我们之后并覆盖 UI；每帧早阶段重挂一次，保证晚阶段我们最后绘制（最上层）。
-            if (!args.IsLateRender)
+            // GScreenRenderEvent 每帧广播两次（开始 / 晚阶段），这里只响应晚阶段。
+            // 缩放功能已停用：UI 重新画进 Composite，坐标就是 1:1 的屏幕坐标。
+            if (e is GScreenEventArgs args && !args.IsLateRender)
             {
-                RequeueRenderHandler();
                 return;
             }
 
@@ -183,7 +215,7 @@ namespace Extension.UI
 
             // ---- 每帧调用 UpdateCursor 确保光标为 Default ----
             // MouseEvent Hook 已调用一次，但游戏后续逻辑可能覆盖，
-            // LateRender 是渲染循环最晚阶段，这里再调用一次确保最终绘制生效。
+            // 这里是渲染循环最晚阶段，再调用一次确保最终绘制生效。
             // 参考 Phobos: MouseClass::Instance.UpdateCursor(MouseCursorType::Default, false)
             try
             {
@@ -193,23 +225,6 @@ namespace Extension.UI
                 }
             }
             catch { /* 忽略 */ }
-        }
-
-        //
-        // 摘要:
-        //     把渲染 handler 移到 GScreenRenderEvent 临时链末尾，确保晚阶段最后绘制。
-        //     早阶段派发用的是 GetInvocationList 快照，改链不影响本次循环。
-        private void RequeueRenderHandler()
-        {
-            try
-            {
-                EventSystem.GScreen.RemoveTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, _renderHandler);
-                EventSystem.GScreen.AddTemporaryHandler(EventSystem.GScreen.GScreenRenderEvent, _renderHandler);
-            }
-            catch (Exception ex)
-            {
-                Logger.PrintException(ex);
-            }
         }
 
         //
@@ -239,7 +254,7 @@ namespace Extension.UI
         {
             if (_tutorialPanel.Visible)
             {
-                RectangleStruct view = Surface.ViewBound;
+                RectangleStruct view = UiViewport.View;
                 bool inside = pos.X >= view.X && pos.X < view.X + view.Width
                            && pos.Y >= view.Y && pos.Y < view.Y + view.Height;
                 if (!inside)
@@ -363,12 +378,40 @@ namespace Extension.UI
             }
         }
 
+        //
+        // 摘要:
+        //     处理滚轮：鼠标落在 UI 控件上时由控件消费，否则交给缩放控制器。
+        private void OnMouseWheel(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!(e is MouseWheelEventArgs args))
+                {
+                    return;
+                }
+
+                Control hit = HitTest(args.Position);
+                _mouseConsumed = (hit != null);
+
+                // 缩放功能已停用：滚轮不再改变倍率
+                // if (!_mouseConsumed)
+                // {
+                //     ZoomController.OnWheel(args.Delta);
+                // }
+            }
+            catch (Exception ex)
+            {
+                Logger.PrintException(ex);
+            }
+        }
+
         protected override void OnUpdate()
         {
             base.OnUpdate();
 
-            // 窗口可能 resize，每帧将 ClientRectangle 同步到 Surface.ViewBound
-            ClientRectangle = Surface.ViewBound;
+            // 窗口可能 resize：未缩放时刷新基准视口；缩放期间 UI 固定在基准上
+            UiViewport.RefreshIfUnzoomed();
+            ClientRectangle = UiViewport.View;
 
             // 教程面板为模态，打开期间不显示 Tooltip / 悬停提示
             if (_tutorialPanel.Visible)

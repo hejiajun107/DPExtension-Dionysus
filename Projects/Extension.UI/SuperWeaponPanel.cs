@@ -229,7 +229,7 @@ namespace Extension.UI
 
         //
         // 摘要:
-        //     重写 Arrange：忽略父级 finalRect，根据 Surface.ViewBound 计算绝对位置——
+        //     重写 Arrange：忽略父级 finalRect，根据 UiViewport.View 计算绝对位置——
         //     横向排列在 3×3 单位过滤面板右侧、贴底：
         //       X = ViewBound 左边缘 + 过滤面板总宽(200)
         //           （左边缘紧贴单位面板右边框，不留缝隙、也不压住其边框；
@@ -240,7 +240,7 @@ namespace Extension.UI
         //     设置 ClientRectangle 后由 ArrangeChildren 横向排列按钮。
         public override RectangleStruct Arrange(RectangleStruct finalRect)
         {
-            RectangleStruct view = Surface.ViewBound;
+            RectangleStruct view = UiViewport.View;
 
             int count = _children.Count;
             int x = view.X + UnitFilterPanel.TotalWidth;
@@ -331,7 +331,7 @@ namespace Extension.UI
                 RebuildButtons();
 
                 // 检测 ViewBound 变化，触发重新布局以更新位置
-                RectangleStruct view = Surface.ViewBound;
+                RectangleStruct view = UiViewport.View;
                 if (view != _lastViewBound)
                 {
                     _lastViewBound = view;

@@ -58,12 +58,12 @@ namespace Extension.UI
 
         //
         // 摘要:
-        //     重写 Arrange：根据 Surface.ViewBound 计算绝对位置——
+        //     重写 Arrange：根据 UiViewport.View 计算绝对位置——
         //     左对齐 ViewBound 左边缘，底部对齐超武栏底部（距底 BottomMargin）。
         //     面板总尺寸 = 3×3 网格 + 边框厚度。
         public override RectangleStruct Arrange(RectangleStruct finalRect)
         {
-            RectangleStruct view = Surface.ViewBound;
+            RectangleStruct view = UiViewport.View;
 
             int x = view.X;
             int y = view.Y + view.Height - TotalHeight - BottomMargin;
@@ -106,7 +106,7 @@ namespace Extension.UI
                 RebuildButtons();
 
                 // 检测 ViewBound 变化
-                RectangleStruct view = Surface.ViewBound;
+                RectangleStruct view = UiViewport.View;
                 if (view != _lastViewBound)
                 {
                     _lastViewBound = view;

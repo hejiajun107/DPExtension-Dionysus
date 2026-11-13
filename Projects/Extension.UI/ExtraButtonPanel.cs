@@ -70,7 +70,7 @@ namespace Extension.UI
                 return ClientRectangle;
             }
 
-            RectangleStruct view = Surface.ViewBound;
+            RectangleStruct view = UiViewport.View;
 
             int x = view.X + UnitFilterPanel.TotalWidth - FrameInset;
             int y = view.Y + view.Height - SuperWeaponPanelHeight + FrameInset - TotalHeight - BottomMargin;
@@ -88,7 +88,7 @@ namespace Extension.UI
             UpdateVisibility();
 
             // 检测 ViewBound 变化（窗口尺寸改变）以触发重新布局
-            RectangleStruct view = Surface.ViewBound;
+            RectangleStruct view = UiViewport.View;
             if (view != _lastViewBound)
             {
                 _lastViewBound = view;

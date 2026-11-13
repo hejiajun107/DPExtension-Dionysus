@@ -646,7 +646,7 @@ namespace Extension.UI
                     AdvanceTransition();
                 }
 
-                RectangleStruct view = Surface.ViewBound;
+                RectangleStruct view = UiViewport.View;
                 if (view != _lastViewBound)
                 {
                     _lastViewBound = view;
@@ -718,7 +718,7 @@ namespace Extension.UI
             int width = ContentWidth + 2 * FrameInset;
             int height = ContentHeight + 2 * FrameInset;
 
-            RectangleStruct view = Surface.ViewBound;
+            RectangleStruct view = UiViewport.View;
             int x = view.X + (view.Width - width) / 2;
             int y = view.Y + (view.Height - height) / 2;
 

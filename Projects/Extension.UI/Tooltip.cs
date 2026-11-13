@@ -60,7 +60,7 @@ namespace Extension.UI
                 if (pSurf.IsNull) return;
 
                 RectangleStruct targetRect = Target.ClientRectangle;
-                RectangleStruct screen = Surface.ViewBound;
+                RectangleStruct screen = UiViewport.View;
                 // 真正 DrawText 用的裁剪矩形 = 整个视口，避免文字被图标 / Sidebar 意外截断
                 RectangleStruct drawBound = screen;
                 // 测量用的超大裁剪矩形（包含负坐标超大范围，保证测量起点在矩形内）
